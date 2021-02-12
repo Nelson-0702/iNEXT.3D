@@ -1,5 +1,100 @@
-#
-#
+# DataInfo -------------------------------------------------------------------
+#' Exhibit basic data information
+#' 
+#' \code{DataInfo}: exhibits basic data information
+#' 
+#' @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
+#' then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+#' @examples 
+#' data(spider)
+#' DataInfo(spider, datatype="abundance")
+#' @export
+DataInfo <- function(x, datatype="abundance"){
+  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(is.na(pmatch(datatype, TYPE)))
+    stop("invalid datatype")
+  if(pmatch(datatype, TYPE) == -1)
+    stop("ambiguous datatype")
+  datatype <- match.arg(datatype, TYPE)
+  
+  if(datatype=="incidence_freq") datatype <- "incidence"
+  
+  if(datatype=="incidence_raw"){
+    if(class(x)=="list"){
+      x <- lapply(x, as.incfreq)
+    }else{
+      x <- as.incfreq(x)
+    }
+    datatype <- "incidence"
+  }
+  
+  Fun.abun <- function(x){
+    n <- sum(x)
+    fk <- sapply(1:10, function(k) sum(x==k))
+    f1 <- fk[1]
+    f2 <- fk[2]
+    Sobs <- sum(x>0)
+    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)  #estimation of unseen species via Chao1
+    A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
+    Chat <- round(1 - f1/n*A, 4)
+    c(n, Sobs, Chat, fk)
+  }
+  
+  Fun.ince <- function(x){
+    nT <- x[1]
+    x <- x[-1]
+    U <- sum(x)
+    Qk <- sapply(1:10, function(k) sum(x==k))
+    Q1 <- Qk[1]
+    Q2 <- Qk[2]
+    Sobs <- sum(x>0)
+    Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)  #estimation of unseen species via Chao2
+    A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
+    Chat <- round(1 - Q1/U*A,4)
+    out <- c(nT, U, Sobs, Chat, Qk)
+  }
+  
+  if(datatype == "abundance"){
+    if(class(x) == "numeric" | class(x) == "integer"){
+      out <- matrix(Fun.abun(x), nrow=1)
+    }else if(class(x) == "list"){
+      out <- do.call("rbind", lapply(x, Fun.abun))
+    } else if(class(x)[1] == "matrix" | class(x) == "data.frame"){
+      out <- t(apply(as.matrix(x), 2, Fun.abun))  
+    }
+    if(nrow(out) > 1){
+      out <- data.frame(site=rownames(out), out)
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+      rownames(out) <- NULL
+    }else{
+      out <- data.frame(site="site.1", out)
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+    }
+    as.data.frame(out)
+  }else if(datatype == "incidence"){
+    if(class(x) == "numeric" | class(x) == "integer"){
+      out <- matrix(Fun.ince(x), nrow=1)
+    }else if(class(x) == "list"){
+      out <- do.call("rbind", lapply(x, Fun.ince))
+    } else if(class(x)[1] == "matrix" | class(x) == "data.frame"){
+      out <- t(apply(as.matrix(x), 2, Fun.ince))  
+    }
+    if(nrow(out) > 1){
+      out <- data.frame(site=rownames(out), out)
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+      rownames(out) <- NULL
+    }else{
+      out <- data.frame(site="site.1", out)
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+    }
+    as.data.frame(out)
+  }
+}
+
+
 # iNEXT -------------------------------------------------------------------
 #' iNterpolation and EXTrapolation of Hill number
 #' 
@@ -211,8 +306,6 @@ iNEXT <- function(x, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=
   }
 
 
-#
-#
 # estimateD -------------------------------------------------------------------
 #' Compute species diversity with a particular of sample size/coverage 
 #' 
@@ -281,8 +374,7 @@ estimateD <- function (x, q = c(0,1,2), datatype = "abundance", base = "size", l
 }
 
 
-
-# Asymptotic -------------------------------------------------------------------
+# AsyD -------------------------------------------------------------------
 #' Asymptotic diversity q profile 
 #' 
 #' \code{AsyD} The estimated and empirical diversity of order q 
@@ -391,8 +483,54 @@ AsyD <- function(x, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf
 }
 
 
-#
-#
+# ggiNEXT -------------------------------------------------------------------
+#' ggplot2 extension for an iNEXT object
+#' 
+#' \code{ggiNEXT}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+#' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
+#' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
+#' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).            
+#' @param se a logical variable to display confidence interval around the estimated sampling curve.
+#' @param facet.var create a separate plot for each value of a specified variable: 
+#'  no separation \cr (\code{facet.var="None"}); 
+#'  a separate plot for each diversity order (\code{facet.var="Order.q"}); 
+#'  a separate plot for each assemblage (\code{facet.var="Assemblage"}); 
+#'  a separate plot for each combination of order x assemblage (\code{facet.var="Both"}).              
+#' @param color.var create curves in different colors for values of a specified variable:
+#'  all curves are in the same color (\code{color.var="None"}); 
+#'  use different colors for diversity orders (\code{color.var="Order.q"}); 
+#'  use different colors for sites (\code{color.var="Assemblage"}); 
+#'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).  
+#' @param grey a logical variable to display grey and white ggplot2 theme. 
+#' @param ... other arguments passed on to methods. Not currently used.
+#' @return a ggplot2 object
+#' @examples
+#' data(spider)
+#' # single-assemblage abundance data
+#' out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
+#' ggiNEXT(x=out1, type=1)
+#' ggiNEXT(x=out1, type=2)
+#' ggiNEXT(x=out1, type=3)
+#' 
+#'\dontrun{
+#' # single-assemblage incidence data with three orders q
+#' data(ant)
+#' size <- round(seq(10, 500, length.out=20))
+#' y <- iNEXT(ant$h500m, q=c(0,1,2), datatype="incidence_freq", size=size, se=FALSE)
+#' ggiNEXT(y, se=FALSE, color.var="Order.q")
+#' 
+#' # multiple-assemblage abundance data with three orders q
+#' z <- iNEXT(spider, q=c(0,1,2), datatype="abundance")
+#' ggiNEXT(z, facet.var="Assemblage", color.var="Order.q")
+#' ggiNEXT(z, facet.var="Both", color.var="Both")
+#'}
+#' @export
+#' 
+ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage", grey=FALSE){  
+  UseMethod("ggiNEXT", x)
+}
+
+
 # ggAsyD -------------------------------------------------------------------
 #' ggplot for Asymptotic diversity
 #'
@@ -417,7 +555,6 @@ AsyD <- function(x, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf
 #' ggAsyD(out2)
 #'
 #' @export
-
 ggAsyD <- function(outcome){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
@@ -442,5 +579,10 @@ ggAsyD <- function(outcome){
           legend.margin=margin(0,0,0,0),
           legend.box.margin = margin(-10,-10,-5,-10))
 }
+
+
+#' @useDynLib iNEXT3D, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+NULL
 
 
