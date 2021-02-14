@@ -418,7 +418,9 @@ AA.inc <- function(data){
 
 
 # ggiNEXT.iNEXT -------------------------------------------------------------------
-# @rdname ggiNEXT
+
+#' @export
+#' @rdname ggiNEXT
 ggiNEXT.iNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage", grey=FALSE){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", "#330066", "#CC79A7",  "#0072B2", "#D55E00"))
   TYPE <-  c(1, 2, 3)
@@ -569,7 +571,8 @@ ggiNEXT.iNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assem
 
 
 # ggiNEXT.default -------------------------------------------------------------------
-# @rdname ggiNEXT
+#' @export
+#' @rdname ggiNEXT
 ggiNEXT.default <- function(x, ...){
   stop(
     "iNEXT doesn't know how to deal with data of class ",
@@ -580,19 +583,21 @@ ggiNEXT.default <- function(x, ...){
 
 
 # fortify.iNEXT -------------------------------------------------------------------
-# Fortify method for classes from the iNEXT package.
-#
-# @name fortify.iNEXT
-# @param model \code{iNEXT} to convert into a dataframe.
-# @param data not used by this method
-# @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
-# sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).
-# @param ... not used by this method
-# @examples
-# data(spider)
-# # single-assemblage abundance data
-# out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
-# ggplot2::fortify(out1, type=1)
+#' Fortify method for classes from the iNEXT package.
+#'
+#' @name fortify.iNEXT
+#' @param model \code{iNEXT} to convert into a dataframe.
+#' @param data not used by this method
+#' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
+#' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).
+#' @param ... not used by this method
+#' @import ggplot2
+#' @export
+#' @examples
+#' data(spider)
+#' # single-assemblage abundance data
+#' out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
+#' ggplot2::fortify(out1, type=1)
 fortify.iNEXT <- function(model, data = model$iNextEst, type = 1, ...) {
   datatype <- ifelse(names(model$DataInfo)[2]=="n","abundance","incidence")
   z <- data
@@ -685,24 +690,27 @@ fortify.iNEXT <- function(model, data = model$iNextEst, type = 1, ...) {
 
 
 # plot.iNEXT -------------------------------------------------------------------
-# Plotting iNEXT object
-# 
-# \code{plot.iNEXT}: Plotting method for objects inheriting from class "iNEXT"
-# @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
-# @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
-# sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).                 
-# @param se a logical variable to display confidence interval around the estimated sampling curve.
-# @param show.legend a logical variable to display legend.
-# @param show.main a logical variable to display title.
-# @param col a vector for plotting color
-# @param ... arguments to be passed to methods, such as graphical parameters (\code{\link{par}}).
-# @examples
-# data(spider)
-# # single-assemblage abundance data
-# out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
-# plot(x=out1, type=1)
-# plot(x=out1, type=2)
-# plot(x=out1, type=3)
+#' Plotting iNEXT object
+#' 
+#' \code{plot.iNEXT}: Plotting method for objects inheriting from class "iNEXT"
+#' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
+#' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
+#' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).                 
+#' @param se a logical variable to display confidence interval around the estimated sampling curve.
+#' @param show.legend a logical variable to display legend.
+#' @param show.main a logical variable to display title.
+#' @param col a vector for plotting color
+#' @param ... arguments to be passed to methods, such as graphical parameters (\code{\link{par}}).
+#' @examples
+#' data(spider)
+#' # single-assemblage abundance data
+#' out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
+#' plot(x=out1, type=1)
+#' plot(x=out1, type=2)
+#' plot(x=out1, type=3)
+#' 
+
+#' @export
 plot.iNEXT <- function(x, type=1, se=TRUE, show.legend=TRUE, show.main=TRUE, col=NULL,...){
   
   if(class(x) != "iNEXT")
@@ -838,11 +846,12 @@ plot.iNEXT <- function(x, type=1, se=TRUE, show.legend=TRUE, show.main=TRUE, col
 
 
 # print.iNEXT -------------------------------------------------------------------
-# Printing iNEXT object
-# 
-# \code{print.iNEXT}: Print method for objects inheriting from class "iNEXT"
-# @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
-# @param ... additional arguments.
+#' Printing iNEXT object
+#' 
+#' \code{print.iNEXT}: Print method for objects inheriting from class "iNEXT"
+#' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
+#' @param ... additional arguments.
+#' @export
 print.iNEXT <- function(x, ...){
   site.n <- nrow(x$DataInfo)
   order.n <- paste(unique(x$iNextEst$size_based$Order.q), collapse = ", ")
