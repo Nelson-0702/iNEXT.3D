@@ -129,11 +129,11 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       output
     }) %>% do.call(rbind,.)
   }
-  Output <- tibble(Assemblage = rep(nms, each=length(reft)*length(q)),
-                   Order.q = rep(rep(q, each=length(reft)),length(datalist)),
+  Output <- tibble(Order.q = rep(rep(q, each=length(reft)),length(datalist)),
                    qPD = out[,1],qPD.LCL = out[,2], qPD.UCL = out[,3],
-                   Reftime = rep(reft,length(q)*length(datalist)),
+                   Assemblage = rep(nms, each=length(reft)*length(q)),
                    Method='Empirical',
+                   Reftime = rep(reft,length(q)*length(datalist)),
                    Type=cal) %>%
     arrange(Reftime)
   return(Output)
@@ -299,8 +299,8 @@ Plotq <- function(out){
 }
 
 
-# AsyPD ------------------------------------------------------------------
-AsyPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change final list name
+# asymPD ------------------------------------------------------------------
+asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change final list name
   nms <- names(datalist)
   qtile <- qnorm(1-(1-conf)/2)
   tau_l <- length(reft)
@@ -377,8 +377,8 @@ AsyPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change 
   Estoutput <- do.call(rbind,Estoutput) %>%
     mutate(Assemblage = rep(names(datalist),each = length(q)*tau_l),Method = 'Asymptotic',
            Type=cal) %>%
-    select(Assemblage,Order.q,qPD,qPD.LCL, qPD.UCL, 
-           Reftime,Method, Type) %>%
+    select(Order.q,qPD,qPD.LCL,qPD.UCL,Assemblage, 
+           Method,Reftime,Type) %>%
     arrange(Reftime)
   Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
   return(Estoutput)
@@ -1136,14 +1136,13 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
     }) %>% do.call(rbind,.)
   }
   Assemblage = rep(names(datalist), each = length(q)*length(reft)*length(level))
-  out <- out %>% mutate(Assemblage = Assemblage,
-                        Type=cal)
+  out <- out %>% mutate(Assemblage = Assemblage, Type=cal)
   if(datatype=='abundance'){
     out <- out %>% select(Assemblage,goalSC,SC,m,Method,Order.q,qPD,qPD.LCL,qPD.UCL,
-                          Reftime,Type) %>% arrange(Reftime,goalSC,Order.q)
+                          Reftime,Type)
   }else if(datatype=='incidence_raw'){
     out <- out %>% select(Assemblage,goalSC,SC,nt,Method,Order.q,qPD,qPD.LCL,qPD.UCL,
-                          Reftime,Type) %>% arrange(Reftime,goalSC,Order.q)
+                          Reftime,Type)
   }
   out$qPD.LCL[out$qPD.LCL<0] <- 0
   rownames(out) <- NULL

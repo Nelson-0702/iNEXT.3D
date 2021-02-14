@@ -327,10 +327,10 @@ iNEXTPD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=NUL
 #' Use the function \code{iNEXTPD} to compute PD or meanPD for specified sample sizes.
 #' @param data a matrix/data.frame of species abundances (for abundance data) or species-by-site incidence raw matrix/data.frame (for incidence data). See the function \code{\link{iNEXTPD}} for details.
 #' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage.
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
 #' or species-by-site raw incidence matrix (\code{datatype = "incidence_raw"}). Default is \code{"abundance"}.
-#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage.
 #' @param q a nonnegative value or sequence specifying the diversity order. Default is \code{c(0,1,2)}.
 #' @param reftime a positive value or sequence specifying the reference times for diversity computation. If \code{NULL},
 #' then \code{reftime} is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
@@ -374,7 +374,7 @@ iNEXTPD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=NUL
 #' \emph{Biodiversity Conservation and Phylogenetic Systematics: Preserving our Evolutionary Heritage in an Extinction Crisis}, Springer. \cr\cr
 #' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
 #' @export
-estimatePD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=NULL,type = 'PD',level = NULL,nboot = 50,conf = 0.95){
+estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), reftime=NULL, type = 'PD', level = NULL, nboot = 50, conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   DATATYPE <- c("abundance", "incidence_raw")
@@ -440,16 +440,16 @@ estimatePD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=
     level <- min(level)
   }
   
-  out <- invChatPD(datalist = mydata, datatype = datatype,phylotr = mytree, q = q,
-                   reft = reftime, cal = type,level = level, nboot, conf)
+  out <- invChatPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q,
+                   reft = reftime, cal = type, level = level, nboot, conf)
   return(out)
 }
 
 
-# PhdAsy -------------------------------------------------------------------
+# AsyPD -------------------------------------------------------------------
 #' Computes asymptotic estimates for phylogenetic diversity and mean phylogenetic diversity (phylogenetic Hill numbers)
 #'
-#' Function \code{PhdAsy} computes asymptotic phylogenetic diversity estimates with respect to specified/default
+#' Function \code{AsyPD} computes asymptotic phylogenetic diversity estimates with respect to specified/default
 #' diversity order q and reference time to infer true phylogenetic diversity (PD) or phylogenetic Hill numbers (meanPD). See Chao et al. (2015) and Hsieh and Chao (2017) for the statistical estimation detail.
 #' @param data a matrix/data.frame of species abundances (for abundance data) or species-by-site incidence raw matrix/data.frame (for incidence data).
 #' See the function \code{\link{iNEXTPD}} for details.
@@ -483,7 +483,7 @@ estimatePD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out <- PhdAsy(data = data, datatype = "abundance", tree = tree,
+#' out <- AsyPD(data = data, datatype = "abundance", tree = tree,
 #' q = seq(0, 2, by = 0.25), nboot = 30)
 #' out
 #'
@@ -492,7 +492,7 @@ estimatePD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out <- PhdAsy(data = data, nT = nT, datatype = "incidence_raw",
+#' out <- AsyPD(data = data, nT = nT, datatype = "incidence_raw",
 #' tree = tree, q = seq(0, 2, by = 0.25))
 #' out
 #' 
@@ -500,7 +500,7 @@ estimatePD <- function(data,nT,datatype = "abundance",tree,q = c(0,1,2),reftime=
 #' Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388.\cr\cr
 #' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
 #' @export
-PhdAsy <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),reftime = NULL,type = 'PD',nboot = 50,conf = 0.95){
+AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),reftime = NULL,type = 'PD',nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   #if (length(q) == 1) stop("length of q should be greater than one", call. = FALSE)
@@ -549,15 +549,8 @@ PhdAsy <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),re
   if(sum(reftime<=0)>0) {stop("Reference time must be greater than 0. Use NULL to set it to pooled tree height.",call. = FALSE)
   }
   
-  # if(class(mydata) == "list"){
-  #   infos <- sapply(mydata, function(x){
-  #     datainf(data = x, datatype, phylotr = mytree,reft = reft)})
-  # }else{
-  #   return(NULL)
-  # }
-  
   FUN = function(e){
-    AsyPD(datalist = mydata,datatype = datatype,phylotr = mytree,q = q,reft = reftime,cal = type,nboot,conf)# mytree is pooled tree of class phylo
+    asymPD(datalist = mydata,datatype = datatype,phylotr = mytree,q = q,reft = reftime,cal = type,nboot,conf)# mytree is pooled tree of class phylo
   }
   #out <- FUN(3)
   ans <- tryCatch(FUN(e), error = function(e){return()})
@@ -565,10 +558,10 @@ PhdAsy <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),re
 }
 
 
-# PhdObs -------------------------------------------------------------------
+# ObsPD -------------------------------------------------------------------
 #' Computes observed phylogenetic diversity and phylogenetic Hill numbers
 #'
-#' Function \code{PhdObs} computes empirical or observed phylogenetic diversity (PD) and phylogenetic Hill
+#' Function \code{ObsPD} computes empirical or observed phylogenetic diversity (PD) and phylogenetic Hill
 #' numbers (meanPD, mean phylogenetic diversity) for specified/default order \code{q} and reference
 #' time specified in the argument \code{reftime}. See Chao et al. (2010) for details of PD and meanPD.
 #' @param data a matrix/data.frame of species abundances (for abundance data) or species-by-site incidence raw matrix/data.frame (for incidence data).
@@ -602,7 +595,7 @@ PhdAsy <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),re
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out <- PhdObs(data = data, datatype = "abundance", tree = tree,
+#' out <- ObsPD(data = data, datatype = "abundance", tree = tree,
 #' q = seq(0, 2, by = 0.25))
 #' out
 #'
@@ -611,14 +604,14 @@ PhdAsy <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),re
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out <- PhdObs(data = data, nT = nT, datatype = "incidence_raw",
+#' out <- ObsPD(data = data, nT = nT, datatype = "incidence_raw",
 #' tree = tree, q = seq(0, 2, by = 0.25))
 #' out
 #' 
 #' @references
 #' Chao, A., Chiu C.-H. and Jost, L. (2010). Phylogenetic diversity measures based on Hill numbers. \emph{Philosophical Transactions of the Royal Society B.}, 365, 3599-3609. \cr\cr
 #' @export
-PhdObs <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),reftime = NULL,type = "PD",
+ObsPD <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),reftime = NULL,type = "PD",
                    nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
@@ -674,58 +667,7 @@ PhdObs <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),
   reftime <- sort(unique(reftime))
   if(sum(reftime<=0)>0) {stop("Reference time must be greater than 0. Use NULL to set it to pooled tree height.",call. = FALSE)
   }
-  #=====old version=====
-  # FUN = function(e){
-  #   ###########data information
-  #   if(class(mydata) == "list"){
-  #     infos <- sapply(mydata, function(x){
-  #       datainf(data = x, datatype, phylotr = mytree,reft = reftime)})
-  #   }else{
-  #     return(NULL)
-  #   }
-  #
-  #   if(profile == "q") {
-  #
-  #     if(is.null(reft)){
-  #       if (datatype=="incidence_raw") {
-  #         da <- lapply(mydata, rowSums) %>% do.call(cbind, .) %>% rowSums()
-  #       }else if (datatype=="abundance") {
-  #         da <- do.call(cbind, mydata) %>% rowSums()
-  #       }
-  #       aL <- phyBranchAL_Abu(phylo = mytree,data = da,"abundance",
-  #                             refT = reftime)$treeNabu %>%
-  #         select(branch.abun,branch.length,tgroup)
-  #       PD2 <- PD.qprofile(aL,q = 2, cal =  "PD",nt = sum(da))
-  #       Q <- reftime-(reftime^2)/PD2
-  #       reft = sort(c('Q'= Q, 'reftime' = reftime))
-  #     }else{
-  #       names(reft) <- NULL
-  #       reft <- sort(reft)
-  #     }
-  #
-  #     temp <- Phdqtable(datalist = mydata, phylotr = mytree, q, cal = type, datatype, nboot, conf, reft)
-  #     ans <- list(summary = infos, forq_table = temp, forq_figure = Plotq(temp, type))
-  #     #class(ans) <- c("PhdObs")
-  #     return(ans)
-  #   }
-  #   if(profile == "time") {
-  #     if (is.null(tprofile_times)) {
-  #       tprofile_times <- seq(0.01, reftime, length.out = 15) %>% unique() %>% sort
-  #     } else {
-  #       tprofile_times <- c(tprofile_times, 0.01, reftime) %>% unique() %>% sort
-  #     }
-  #     temp <- Phdttable(datalist = mydata, phylotr = mytree, times = tprofile_times,cal = type, datatype, nboot, conf)
-  #     if (knots==0) {
-  #       ans <- list(summary = infos, fortime_table = temp[[1]], fortime_figure = Plott(temp[[1]], type, temp[[2]]))
-  #     } else {
-  #       AUC <- AUC_one_table(datalist = mydata,phylotr = mytree,knot = knots,cal = type,datatype = datatype,nboot, conf,reft_max = max(tprofile_times))
-  #       ans <- list(summary = infos, fortime_table = temp[[1]], fortime_figure = Plott(temp[[1]], type, temp[[2]]), AUC_table = AUC)
-  #     }
-  #     #class(ans) <- c("PhdObs")
-  #     return(ans)
-  #   }
-  # }
-  #=====new version=====
+  
   FUN <- function(e){
     EmpPD(datalist = mydata,datatype = datatype,phylotr = mytree,q = q,reft = reftime,cal = type,nboot,conf)
   }
@@ -784,12 +726,12 @@ ggiNEXTPD <- function(outcome,plot.type = 1:3){
 
 
 # ggtqplotPD -------------------------------------------------------------------
-#' Plots time-profile and q-profile based on the outcome of \code{PhdObs} or \code{PhdAsy} using the \code{ggplot2} package.
+#' Plots time-profile and q-profile based on the outcome of \code{ObsPD} or \code{AsyPD} using the \code{ggplot2} package.
 #'
 #' Function \code{ggtqplotPD} plots time-profile (depicting phylogenetic diversity as a function of time) and q-profile
 #' (depicting phylogenetic diversity as a function of order q) based on the outcome of the functions
-#' \code{PhdObs} or \code{PhdAsy} using the \code{ggplot2} package.
-#' @param outcome the outcome of the functions \code{PhdObs} or \code{PhdAsy}.
+#' \code{ObsPD} or \code{AsyPD} using the \code{ggplot2} package.
+#' @param outcome the outcome of the functions \code{ObsPD} or \code{AsyPD}.
 #' @param profile specifying the type of profile: \code{profile = "q"} for order q profile and \code{profile = "time"} for time profile.
 #' Default is \code{"q"}.
 #' @return plot of the PD or meanPD empirical or estimated asymptotic curves using the \code{ggplot2} package.
@@ -798,14 +740,14 @@ ggiNEXTPD <- function(outcome,plot.type = 1:3){
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out <- PhdObs(data = data, datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25))
+#' out <- ObsPD(data = data, datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25))
 #' ggtqplotPD(out, profile = "q")
 #'
 #' # Observed time-profile plot for abundance data
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out <- PhdObs(data = data, datatype = "abundance", tree = tree, q = c(0, 1, 2),
+#' out <- ObsPD(data = data, datatype = "abundance", tree = tree, q = c(0, 1, 2),
 #' reftime = seq(0.1, 325, length.out = 40))
 #' ggtqplotPD(out, profile = "time")
 #'
@@ -814,7 +756,7 @@ ggiNEXTPD <- function(outcome,plot.type = 1:3){
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out <- PhdAsy(data = data, datatype = "incidence_raw", nT = nT, tree = tree,
+#' out <- AsyPD(data = data, datatype = "incidence_raw", nT = nT, tree = tree,
 #' q = seq(0, 2, by = 0.25))
 #' ggtqplotPD(out, profile = "q")
 #'
@@ -823,7 +765,7 @@ ggiNEXTPD <- function(outcome,plot.type = 1:3){
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out <- PhdAsy(data = data, datatype = "incidence_raw", nT = nT, tree = tree,
+#' out <- AsyPD(data = data, datatype = "incidence_raw", nT = nT, tree = tree,
 #' q = c(0, 1, 2), reftime = seq(0.1, 82.8575, length.out = 40))
 #' ggtqplotPD(out, profile = "time")
 #' 
