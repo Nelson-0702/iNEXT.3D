@@ -665,17 +665,17 @@ ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage"
 ggAsyD <- function(outcome){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-  if (sum(unique(outcome$method) %in% c("Estimated", "Empirical")) == 0)
+  if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
     stop("Please use the outcome from specified function 'AsyD'")
-  ggplot(outcome, aes(x=Order.q, y=qD, colour=Assemblage, lty=method)) +
+  ggplot(outcome, aes(x=Order.q, y=qD, colour=Assemblage, lty=Method)) +
     geom_line(size=1.2) +
     scale_colour_manual(values = cbPalette) +
-    geom_ribbon(data = outcome[outcome$method=="Estimated",],
+    geom_ribbon(data = outcome[outcome$Method=="Asymptotic",],
                 aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
     # geom_ribbon(data = outcome[outcome$method=="Empirical",],
     #             aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
     scale_fill_manual(values = cbPalette) +
-    scale_linetype_manual(values = c("Estimated"=1, "Empirical"=2)) +
+    scale_linetype_manual(values = c("Asymptotic"=1, "Empirical"=2)) +
     labs(x="Order q", y="Species diversity") +
     # theme_bw(base_size = 18) +
     theme(text=element_text(size=18)) +
