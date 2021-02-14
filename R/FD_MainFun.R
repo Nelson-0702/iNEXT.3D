@@ -952,7 +952,7 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 }
 
 
-#' @useDynLib FunD
+#' @useDynLib iNEXT3D, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
 
