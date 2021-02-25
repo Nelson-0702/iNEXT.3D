@@ -208,7 +208,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
  
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(qAUC.LCL = qAUC - se * qtile,
                                                                                  qAUC.UCL = qAUC + se * qtile,
-                                                                                 Method = "Asymptotic") %>% 
+                                                                                 Method = "Empirical") %>% 
     select(-se)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   AUC = AUC %>% select(c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))

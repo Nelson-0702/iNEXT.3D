@@ -1,15 +1,14 @@
-# FDinfo -------------------------------------------------------------------
-#' Exhibit basic data information
-#' 
-#' \code{FDinfo}: exhibits basic data information
-#' 
-#' @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
-#' then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-#' @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
-#' @export
-FDinfo <- function(data, datatype){
+# FDInfo -------------------------------------------------------------------
+# Exhibit basic data information
+# 
+# \code{FDInfo}: exhibits basic data information
+# 
+# @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
+# then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+FDInfo <- function(data, datatype){
   if(datatype == "abundance"){
     f1_10 = sapply(1:10, function(i) sum(data==i))
     a1 <- c(sum(data), sum(data != 0), f1_10)
@@ -25,59 +24,56 @@ FDinfo <- function(data, datatype){
 
 
 # iNEXTFD -------------------------------------------------------------------
-#' Interpolation and extrapolation of functional diversity
-#'
-#' \code{iNEXTFD}: the seamless rarefaction and extrapolation sampling curves of functional diversity(FD) for q = 0, 1 and 2.
-#' See Chao et al. (2019) for pertinent background and methods.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr Type (1) abundance data: a S by N matrix/data.frame
-#' where N is the number of assemblages. The element in i-th row and k-th is the abundance of species i in assemblage k. Please note
-#' that the rownames of data must be the species names matching the species names in distance matrix and thus can't be empty.\cr
-#' Type (2) incidence frequency data: the sampling unit is quadrat or transect, the observed species was only recorded as presence(detection)/absence(non-detection)
-#' data in each sampling unit. Likewise, the rownames of data must be the species names matching the species names in phylogeny tree and thus can't be empty. \cr
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' @param endpoint an positive interger specifying the endpoint for rarefaction and
-#' extrapolation range. If \code{NULL}, \code{endpoint} = double of the maximum reference sample size. It will be ignored if \code{size} is given. \cr
-#' @param knots a positive integer specifying the number of knots between 1 and the \code{endpoint}. Default is 40.\cr
-#' @param size a sequence of positive integers specifying the sample sizes for which FD estimates will be calculated. If \code{NULL}, then FD estimates will be
-#' calculated for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}. \cr
-#' @param plot.type a positive integer vector specifying types of curves. Three types of plots: sample-size-based rarefaction and extrapolation curve (\code{plot.type = 1});
-#' coverage-based rarefaction and extrapolation curve (\code{plot.type = 2}); sample completeness curve (\code{plot.type = 3}). Default is \code{c(1,2,3)}. \cr
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold} = dmean/2. Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @return a table of FD estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- iNEXTFD(data = data, distM = dij,datatype = "abundance", nboot = 0)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- iNEXTFD(data = data, distM = dij,datatype = "incidence_freq")
-#' out
-#' }
-#' @references
-#' Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
-#' Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
-#' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-#' @export
+# Interpolation and extrapolation of functional diversity
+#
+# \code{iNEXTFD}: the seamless rarefaction and extrapolation sampling curves of functional diversity(FD) for q = 0, 1 and 2.
+# See Chao et al. (2019) for pertinent background and methods.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr Type (1) abundance data: a S by N matrix/data.frame
+# where N is the number of assemblages. The element in i-th row and k-th is the abundance of species i in assemblage k. Please note
+# that the rownames of data must be the species names matching the species names in distance matrix and thus can't be empty.\cr
+# Type (2) incidence frequency data: the sampling unit is quadrat or transect, the observed species was only recorded as presence(detection)/absence(non-detection)
+# data in each sampling unit. Likewise, the rownames of data must be the species names matching the species names in phylogeny tree and thus can't be empty. \cr
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# @param endpoint an positive interger specifying the endpoint for rarefaction and
+# extrapolation range. If \code{NULL}, \code{endpoint} = double of the maximum reference sample size. It will be ignored if \code{size} is given. \cr
+# @param knots a positive integer specifying the number of knots between 1 and the \code{endpoint}. Default is 40.\cr
+# @param size a sequence of positive integers specifying the sample sizes for which FD estimates will be calculated. If \code{NULL}, then FD estimates will be
+# calculated for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}. \cr
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold} = dmean/2. Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @return a table of FD estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- iNEXTFD(data = data, distM = dij, datatype = "abundance", nboot = 0)
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- iNEXTFD(data = data, distM = dij, datatype = "incidence_freq")
+# out
+# }
+# @references
+# Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
+# Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
+# Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
 iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                    knots = 40, size = NULL, plot.type = 1:3, conf = 0.95, nboot = 50, threshold = NULL) {
+                    knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL) {
 
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
@@ -177,68 +173,96 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
 
   FUN <- function(e){
     if(class(dat)=="list"){
-      temp = iNextFD(datalist = dat,dij = distM,q = q,datatype = datatype,tau = threshold,
-                     nboot = nboot,conf = conf,m = size)
-      temp$qFD.LCL[temp$qPD.LCL<0] <- 0;temp$SC.LCL[temp$SC.LCL<0] <- 0
-      temp$SC.UCL[temp$SC.UCL>1] <- 1
-      return(temp)
+      ## size-based
+      temp1 = iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype, tau = threshold,
+                     nboot = nboot, conf = conf, m = size)
+      temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0;temp1$SC.LCL[temp1$SC.LCL<0] <- 0
+      temp1$SC.UCL[temp1$SC.UCL>1] <- 1
+      
+      ## coverage-based
+      temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
+                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                           nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
+      temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
+      if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+      
+      ans <- list(size_based = temp1, coverage_based = temp2)
+      return(ans)
     }else{
       return(NULL)
     }
   }
-  RE.table <- tryCatch(FUN(e), error = function(e){return()})
-  RE.table
+  out <- tryCatch(FUN(e), error = function(e){return()})
   
+  ## AsyEst table ##
+  index <- rbind(AsyFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 30, conf = 0.95, threshold = NULL),
+                 ObsFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 30, conf = 0.95, threshold = NULL))
+  LCL <- index$qFD.LCL[index$Method=='Asymptotic']
+  UCL <- index$qFD.UCL[index$Method=='Asymptotic']
+  index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qFD')
+  index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
+  index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+  index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+  index[,3:4] = index[,4:3]
+  colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
+  
+  info <- DataInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
+  return(list("FDInfo" = info, "FDiNextEst" = out, "FDAsyEst" = index))
 }
 
 
 # estimateFD -------------------------------------------------------------------
-#' Compute functional diversity with particular sample coverages
-#'
-#'\code{estimateFD}: computes functional diversity(FD) with particular user-specified levels of sample coverages.
-#' See Chao et al. (2019) for pertinent background and methods.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' See \code{\link{iNEXTFD}} for data details.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
-#' @param level a positive sequence < 1 specifying a particular values of sample coverages.
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- estimateFD(data = data, distM = dij,datatype = "abundance")
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- estimateFD(data = data, distM = dij, datatype = "incidence_freq")
-#' out
-#' }
-#' @references
-#' Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
-#' Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
-#' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-#' @export
-estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), threshold = NULL, level = NULL, nboot = 50,conf = 0.95){
+# Compute functional diversity with particular sample coverages
+#
+# \code{estimateFD}: computes functional diversity(FD) with particular user-specified levels of sample coverages.
+# See Chao et al. (2019) for pertinent background and methods.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# See \code{\link{iNEXTFD}} for data details.
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
+# @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
+# @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
+# If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
+# If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out1 <- estimateFD(data = data, distM = dij, datatype = "abundance", base = "size")
+# out1
+# 
+# out2 <- estimateFD(data = data, distM = dij, datatype = "abundance", base = "coverage")
+# out2
+# 
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- estimateFD(data = data, distM = dij, datatype = "incidence_freq", base = "coverage")
+# out
+# }
+# @references
+# Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
+# Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
+# Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
+estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", threshold = NULL, level = NULL, nboot = 50, conf = 0.95) {
   
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
@@ -252,7 +276,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), thresh
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
-    data <- data[-1,,drop =FALSE]
+    data <- data[-1,,drop = FALSE]
   }
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
@@ -266,7 +290,14 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), thresh
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  BASE <- c("size", "coverage")
+  if (is.na(pmatch(base, BASE))) 
+    stop("invalid datatype")
+  if (pmatch(base, BASE) == -1) 
+    stop("ambiguous datatype")
+  base <- match.arg(base, BASE)
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
@@ -279,7 +310,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), thresh
     names(dat) = colnames(data)
   }
   
-  if(is.null(threshold)) {
+  if (is.null(threshold)) {
     if(datatype=='abundance') {
       tmp <- rowMeans(sapply(dat, function(x) x/sum(x)))
     }else if(datatype=='incidence_freq'){
@@ -294,70 +325,84 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), thresh
     stop("Threshold must be a number between 0 and 1. Use NULL to set it to (dmean+dmin)/2.",call. = FALSE)
   }
   
-  if(is.null(level)){
+  if (is.null(level) & base == "size") {
+    if(datatype == "abundance") {
+      level <- sapply(dat, function(x) 2*sum(x))
+    }else if(datatype == "incidence_freq"){
+      level <- sapply(dat, function(x) 2*x[1])
+    }
+    level <- lapply(dat, function(i) min(level))
+  } else if (is.null(level) & base == "coverage") {
     if(datatype=='abundance'){
       level <- sapply(dat,function(x){
         ni <- sum(x)
         CoverageFD(data = x,datatype = datatype,m = 2*ni)
       })
       
-    }else if(datatype=='incidence_freq'){
+    }else if(datatype == 'incidence_freq'){
       level <- sapply(dat,function(x){
         ni <- x[1]
         CoverageFD(data = x,datatype = datatype,m = 2*ni)
       })
     }
     level <- min(level)
-  }
+  } 
   
-  out <- invChatFD(datalist = dat, dij = distM, q = q, datatype = datatype,
-                   level=level, nboot = nboot, conf = conf, tau = threshold)
-  out$qFD.LCL[out$qFD.LCL<0] <- 0
-  if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
-  out
+  if (base == "size") {
+    out = iNextFD(datalist = dat,dij = distM,q = q,datatype = datatype,tau = threshold,
+                   nboot = nboot,conf = conf,m = level)
+    out$qFD.LCL[out$qFD.LCL<0] <- 0; out$SC.LCL[out$SC.LCL<0] <- 0
+    out$SC.UCL[out$SC.UCL>1] <- 1
+    if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+  } else if (base == "coverage") {
+    out <- invChatFD(datalist = dat, dij = distM, q = q, datatype = datatype,
+                     level = level, nboot = nboot, conf = conf, tau = threshold)
+    out$qFD.LCL[out$qFD.LCL<0] <- 0
+    if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+  }
+  return(out)
 }
 
 
 # AsyFD -------------------------------------------------------------------
-#' Asymptotic functional diversity q profile 
-#'
-#'\code{AsyFD}: computes asymptotic functional diversity(FD) under certain threshold.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' See \code{\link{AsyFD}} for data details.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- AsyFD(data = data, distM = dij, datatype = "abundance", q=seq(0,2,0.5), nboot=10)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- AsyFD(data = data, distM = dij, datatype = "incidence_freq")
-#' out
-#' }
-#' @export
+# Asymptotic functional diversity q profile 
+#
+# \code{AsyFD}: computes asymptotic functional diversity(FD) under certain threshold.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# See \code{\link{AsyFD}} for data details.
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- AsyFD(data = data, distM = dij, datatype = "abundance", q=seq(0,2,0.5), nboot=10)
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- AsyFD(data = data, distM = dij, datatype = "incidence_freq")
+# out
+# }
 AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL){
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -421,45 +466,44 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 
 
 # ObsFD -------------------------------------------------------------------
-#' Empirical functional diversity q profile 
-#'
-#'\code{ObsFD}: computes Empirical functional diversity(FD) under certain threshold.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' See \code{\link{ObsFD}} for data details.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- ObsFD(data = data, distM = dij, datatype = "abundance")
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- ObsFD(data = data, distM = dij, datatype = "incidence_freq")
-#' out
-#' }
-#' @export
+# Empirical functional diversity q profile 
+#
+#\code{ObsFD}: computes Empirical functional diversity(FD) under certain threshold.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# See \code{\link{ObsFD}} for data details.
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- ObsFD(data = data, distM = dij, datatype = "abundance")
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- ObsFD(data = data, distM = dij, datatype = "incidence_freq")
+# out
+# }
 ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL){
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -523,52 +567,51 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 
 
 # iNEXTAUC -------------------------------------------------------------------
-#' Interpolation and extrapolation of functional diversity by area under curve
-#'
-#' \code{iNEXTAUC}: the seamless rarefaction and extrapolation sampling curves of functional diversity(FD) by area under curve thorough several thresholds for q = 0, 1 and 2.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr Type (1) abundance data: a S by N matrix/data.frame
-#' where N is the number of assemblages. The element in i-th row and k-th is the abundance of species i in assemblage k. Please note
-#' that the rownames of data must be the species names matching the species names in distance matrix and thus can't be empty.\cr
-#' Type (2) incidence frequency data: the sampling unit is quadrat or transect, the observed species was only recorded as presence(detection)/absence(non-detection)
-#' data in each sampling unit. Likewise, the rownames of data must be the species names matching the species names in phylogeny tree and thus can't be empty. \cr
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' @param endpoint an positive interger specifying the endpoint for rarefaction and
-#' extrapolation range. If \code{NULL}, \code{endpoint} = double of the maximum reference sample size. It will be ignored if \code{size} is given. \cr
-#' @param knots a positive integer specifying the number of knots between 1 and the \code{endpoint}. Default is 40.\cr
-#' @param size a sequence of positive integers specifying the sample sizes for which FD estimates will be calculated. If \code{NULL}, then FD estimates will be
-#' calculated for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}. \cr
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @return a table of AUC estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- iNEXTAUC(data = data[,1], distM = dij, datatype = "abundance", nboot = 0)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- iNEXTAUC(data = data, distM = dij, datatype = "incidence_freq", nboot = 20)
-#' out
-#' }
-#' @export
+# Interpolation and extrapolation of functional diversity by area under curve
+#
+# \code{iNEXTAUC}: the seamless rarefaction and extrapolation sampling curves of functional diversity(FD) by area under curve thorough several thresholds for q = 0, 1 and 2.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr Type (1) abundance data: a S by N matrix/data.frame
+# where N is the number of assemblages. The element in i-th row and k-th is the abundance of species i in assemblage k. Please note
+# that the rownames of data must be the species names matching the species names in distance matrix and thus can't be empty.\cr
+# Type (2) incidence frequency data: the sampling unit is quadrat or transect, the observed species was only recorded as presence(detection)/absence(non-detection)
+# data in each sampling unit. Likewise, the rownames of data must be the species names matching the species names in phylogeny tree and thus can't be empty. \cr
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# @param endpoint an positive interger specifying the endpoint for rarefaction and
+# extrapolation range. If \code{NULL}, \code{endpoint} = double of the maximum reference sample size. It will be ignored if \code{size} is given. \cr
+# @param knots a positive integer specifying the number of knots between 1 and the \code{endpoint}. Default is 40.\cr
+# @param size a sequence of positive integers specifying the sample sizes for which FD estimates will be calculated. If \code{NULL}, then FD estimates will be
+# calculated for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}. \cr
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @return a table of AUC estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- iNEXTAUC(data = data[,1], distM = dij, datatype = "abundance", nboot = 0)
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- iNEXTAUC(data = data, distM = dij, datatype = "incidence_freq", nboot = 0)
+# out
+# }
 iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                     knots = 40, size = NULL, conf = 0.95, nboot = 50, tau = NULL) {
+                     knots = 20, size = NULL, conf = 0.95, nboot = 50) {
   
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
@@ -610,7 +653,6 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
     names(dat) = colnames(data)
   }
   
-  ############output2
   if(length(knots)!=length(dat)) knots <- rep(knots,length(dat))
   if(is.null(size)){
     if(is.null(endpoint)){
@@ -654,66 +696,93 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   
   FUN <- function(e){
     if(class(dat) == "list"){
-      temp = AUCtable_iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype,
-                              tau = tau, nboot = nboot, conf = conf, m = size)
-      temp$qAUC.LCL[temp$qAUC.LCL<0] <- 0; temp$SC.LCL[temp$SC.LCL<0] <- 0
-      temp$SC.UCL[temp$SC.UCL>1] <- 1
-      return(temp)
+      temp1 = AUCtable_iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype,
+                              tau = NULL, nboot = nboot, conf = conf, m = size)
+      temp1$qAUC.LCL[temp1$qAUC.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
+      temp1$SC.UCL[temp1$SC.UCL>1] <- 1
+      
+      ## coverage-based
+      temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
+                                                                level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                                nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
+      temp2$qAUC.LCL[temp2$qAUC.LCL<0] <- 0
+      if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+      
+      ans <- list(size_based = temp1, coverage_based = temp2)
+      return(ans)
     }else{
       return(NULL)
     }
   }
-  RE.table <- tryCatch(FUN(e), error = function(e){return()})
-  RE.table
+  out <- tryCatch(FUN(e), error = function(e){return()})
+  
+  ## AsyEst table ##
+  index <- rbind(AsyAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 20, conf = 0.95),
+                 ObsAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 20, conf = 0.95))
+  LCL <- index$qAUC.LCL[index$Method=='Asymptotic']
+  UCL <- index$qAUC.UCL[index$Method=='Asymptotic']
+  index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qAUC')
+  index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
+  index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+  index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+  index[,3:4] = index[,4:3]
+  colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
+  
+  return( list("AUCiNextEst" = out, "AUCAsyEst" = index) )
 }
 
 
 # estimateAUC -------------------------------------------------------------------
-#' Compute functional diversity by area under curve with particular sample coverages
-#'
-#'\code{estimateAUC}: computes functional diversity(FD) by area under curve thorough several thresholds with particular user-specified levels of sample coverages.
-#' See Chao et al. (2019) for pertinent background and methods.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
-#' @param level a positive sequence < 1 specifying a particular values of sample coverages.
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- estimateAUC(data = data, distM = dij, datatype = "abundance", nboot = 0)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- estimateAUC(data = data, distM = dij, datatype = "incidence_freq", nboot = 20)
-#' out
-#' }
-#' @references
-#' Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
-#' Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
-#' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-#' @export
-estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), level = NULL, nboot = 50, conf = 0.95, tau = NULL){
+# Compute functional diversity by area under curve with particular sample coverages
+#
+#\code{estimateAUC}: computes functional diversity(FD) by area under curve thorough several thresholds with particular user-specified levels of sample coverages.
+# See Chao et al. (2019) for pertinent background and methods.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. Default is \code{c(0,1,2)}. \cr
+# @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
+# @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
+# If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
+# If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out1 <- estimateAUC(data = data, distM = dij, datatype = "abundance", nboot = 0, base = "size")
+# out1
+# 
+# out2 <- estimateAUC(data = data, distM = dij, datatype = "abundance", nboot = 0, base = "coverage")
+# out2
+# 
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- estimateAUC(data = data, distM = dij, datatype = "incidence_freq", nboot = 20, base = "coverage")
+#out
+# }
+# @references
+# Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
+# Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
+# Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
+estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", level = NULL, nboot = 50, conf = 0.95, tau = NULL){
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
@@ -729,6 +798,13 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), level
     data <- data[-1,,drop =FALSE]
   }
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  BASE <- c("size", "coverage")
+  if (is.na(pmatch(base, BASE))) 
+    stop("invalid datatype")
+  if (pmatch(base, BASE) == -1) 
+    stop("ambiguous datatype")
+  base <- match.arg(base, BASE)
+  
   data <- data[rowSums(data)>0,,drop=FALSE]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
@@ -753,7 +829,14 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), level
     names(dat) = colnames(data)
   }
   
-  if(is.null(level)){
+  if (is.null(level) & base == "size") {
+    if(datatype == "abundance") {
+      level <- sapply(dat, function(x) 2*sum(x))
+    }else if(datatype == "incidence_freq"){
+      level <- sapply(dat, function(x) 2*x[1])
+    }
+    level <- lapply(dat, function(i) min(level))
+  } else if (is.null(level) & base == "coverage") {
     if(datatype=='abundance'){
       level <- sapply(dat,function(x){
         ni <- sum(x)
@@ -767,55 +850,61 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), level
       })
     }
     level <- min(level)
-  }
+  } 
   
-  out <- AUCtable_invFD(datalist = dat, dij = distM, q = q, datatype = datatype,
-                        level=level, nboot = nboot, conf = conf, tau = tau)
-  if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
-  out
+  if (base == 'size') {
+    out = AUCtable_iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype,
+                            tau = tau, nboot = nboot, conf = conf, m = level)
+    out$qAUC.LCL[out$qAUC.LCL<0] <- 0; out$SC.LCL[out$SC.LCL<0] <- 0
+    out$SC.UCL[out$SC.UCL>1] <- 1
+  } else if (base == 'coverage') {
+    out <- AUCtable_invFD(datalist = dat, dij = distM, q = q, datatype = datatype,
+                          level = level, nboot = nboot, conf = conf, tau = tau)
+    if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+  }
+  return(out)
 }
 
 
 # AsyAUC -------------------------------------------------------------------
-#' Asymptotic functional diversity q profile by area under curve
-#'
-#'\code{AsyAUC}: computes asymptotic functional diversity(FD) by area under curve thorough several thresholds.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' See \code{\link{AsyAUC}} for data details.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. \cr
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- AsyAUC(data = data[,2], distM = dij, datatype = "abundance", nboot=0)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- AsyAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
-#' out
-#' }
-#' @export
+# Asymptotic functional diversity q profile by area under curve
+#
+# \code{AsyAUC}: computes asymptotic functional diversity(FD) by area under curve thorough several thresholds.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# See \code{\link{AsyAUC}} for data details.
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. \cr
+# If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- AsyAUC(data = data[,2], distM = dij, datatype = "abundance", nboot=0)
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- AsyAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
+# out
+# }
 AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL){
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -865,45 +954,44 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 
 
 # ObsAUC -------------------------------------------------------------------
-#' Empirical functional diversity q profile 
-#'
-#'\code{ObsAUC}: computes Empirical functional diversity(FD) by area under curve thorough several thresholds.
-#' @param data a matrix/data.frame of species abundances/incidences data.\cr
-#' See \code{\link{ObsAUC}} for data details.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-#' or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
-#' @param q a sequence of nonnegative integers specifying the diversity orders of FD. \cr
-#' If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
-#' @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
-#' in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-#' @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom stats rmultinom
-#' @importFrom stats rbinom
-#' @importFrom stats qnorm
-#' @importFrom stats sd
-#' @importFrom stats optimize
-#' @return a table including the sample size, sample coverage,
-#' method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
-#' @examples
-#' \donttest{
-#' # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out <- ObsAUC(data = data, distM = dij, datatype = "abundance", nboot=20)
-#' out
-#' # Type (2) incidence frequency data 
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out <- ObsAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
-#' out
-#' }
-#' @export
+# Empirical functional diversity q profile 
+#
+# \code{ObsAUC}: computes Empirical functional diversity(FD) by area under curve thorough several thresholds.
+# @param data a matrix/data.frame of species abundances/incidences data.\cr
+# See \code{\link{ObsAUC}} for data details.
+# @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage.\cr
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
+# or species by sampling-units incidence frequencies (\code{datatype = "incidence_freq"}), default is \code{"abundance"}. \cr
+# @param q a sequence of nonnegative integers specifying the diversity orders of FD. \cr
+# If \code{NULL},then \code{level} will be chosen as the minimum coverage of all sites after extrapolating each site to its double sample size. Default is \code{NULL}.
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
+# @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
+# in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @import ggplot2
+# @import dplyr
+# @importFrom stats rmultinom
+# @importFrom stats rbinom
+# @importFrom stats qnorm
+# @importFrom stats sd
+# @importFrom stats optimize
+# @return a table including the sample size, sample coverage,
+# method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
+# @examples
+# \donttest{
+# # Type (1) abundance data (treat incidence frequencies as abundances to save computation time.)
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# dij <-  FunDdata.abu$dij
+# out <- ObsAUC(data = data, distM = dij, datatype = "abundance", nboot=20)
+# out
+# # Type (2) incidence frequency data 
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# dij <-  FunDdata.inc$dij
+# out <- ObsAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
+# out
+# }
 ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL){
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -951,8 +1039,4 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
 }
 
-
-#' @useDynLib iNEXT3D, .registration = TRUE
-#' @importFrom Rcpp sourceCpp
-NULL
 

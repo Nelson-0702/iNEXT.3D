@@ -1,17 +1,16 @@
 # DataInfo -------------------------------------------------------------------
-#' Exhibit basic data information
-#' 
-#' \code{DataInfo}: exhibits basic data information
-#' 
-#' @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
-#' then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-#' @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
-#' @examples 
-#' data(spider)
-#' DataInfo(spider, datatype="abundance")
-#' @export
+# Exhibit basic data information
+# 
+# \code{DataInfo}: exhibits basic data information
+# 
+# @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
+# then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+# @examples 
+# data(spider)
+# DataInfo(spider, datatype="abundance")
 DataInfo <- function(x, datatype="abundance"){
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -95,52 +94,56 @@ DataInfo <- function(x, datatype="abundance"){
 }
 
 
-# iNEXT -------------------------------------------------------------------
-#' iNterpolation and EXTrapolation of Hill number
-#' 
-#' \code{iNEXT}: Interpolation and extrapolation of Hill number with order q
-#' 
-#' @param data a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
-#' @param q a numerical vector of the order of Hill number.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-# @param rowsum a logical variable to check if the input object is raw data (species by sites matrix, \code{rowsum=FALSE}) or iNEXT default input (abundance counts or incidence frequencies, \code{rowsum=TRUE}).
-#' @param size an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
-#' If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots} .
-#' @param endpoint an integer specifying the sample size that is the \code{endpoint} for rarefaction/extrapolation. 
-#' If NULL, then \code{endpoint} \code{=} double reference sample size.
-#' @param knots an integer specifying the number of equally-spaced \code{knots} (say K, default is 40) between size 1 and the \code{endpoint};
-#' each knot represents a particular sample size for which diversity estimate will be calculated.  
-#' If the \code{endpoint} is smaller than the reference sample size, then \code{iNEXT()} computes only the rarefaction esimates for approximately K evenly spaced \code{knots}. 
-#' If the \code{endpoint} is larger than the reference sample size, then \code{iNEXT()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
-#' @param se a logical variable to calculate the bootstrap standard error and \code{conf} confidence interval.
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
-#' @param nboot an integer specifying the number of replications.
-#' @importFrom reshape2 dcast
-#' @return a list of three objects: \code{$DataInfo} for summarizing data information; 
-#' \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
-#' and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.  
-#' @examples
-#' ## example for abundance based data (list of vector)
-#' data(spider)
-#' out1 <- iNEXT(spider, q=c(0,1,2), datatype="abundance")
-#' out1$DataInfo # showing basic data information.
-#' out1$AsyEst # showing asymptotic diversity estimates.
-#' out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
-#' ## example for abundance based data (data.frame)
-#' data(bird)
-#' out2 <- iNEXT(bird, q=0, datatype="abundance")
-#' ggiNEXT(out2)
-#' \dontrun{
-#' ## example for incidence frequencies based data (list of data.frame)
-#' data(ant)
-#' t <- round(seq(10, 500, length.out=20))
-#' out3 <- iNEXT(ant$h500m, q=1, datatype="incidence_freq", size=t, se=FALSE)
-#' out3$iNextEst
-#' }
-#' @export
-#' 
-iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50)
+# iNEXTTD -------------------------------------------------------------------
+# iNterpolation and EXTrapolation of Hill number
+# 
+# \code{iNEXTTD}: Interpolation and extrapolation of Hill number with order q
+# 
+# @param data a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
+# @param q a numerical vector of the order of Hill number.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param rowsum a logical variable to check if the input object is raw data (species by sites matrix, \code{rowsum=FALSE}) or iNEXTTD default input (abundance counts or incidence frequencies, \code{rowsum=TRUE}).
+# @param size an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
+# If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots} .
+# @param endpoint an integer specifying the sample size that is the \code{endpoint} for rarefaction/extrapolation. 
+# If NULL, then \code{endpoint} \code{=} double reference sample size.
+# @param knots an integer specifying the number of equally-spaced \code{knots} (say K, default is 40) between size 1 and the \code{endpoint};
+# each knot represents a particular sample size for which diversity estimate will be calculated.  
+# If the \code{endpoint} is smaller than the reference sample size, then \code{iNEXTTD()} computes only the rarefaction esimates for approximately K evenly spaced \code{knots}. 
+# If the \code{endpoint} is larger than the reference sample size, then \code{iNEXTTD()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
+# @param se a logical variable to calculate the bootstrap standard error and \code{conf} confidence interval.
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+# @param nboot an integer specifying the number of replications.
+# @importFrom reshape2 dcast
+# @return a list of three objects: 
+# \code{$DataInfo} for summarizing data information; 
+# \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics:
+# \item{\code{$size_based}: size-based PD or meanPD estimates along with their confidence intervals
+# (if \code{nboot > 0}) and relevant statistics information.} \cr
+# \item{\code{$coverage_based}: coverage-based diversity estimates along with confidence intervals
+# (if \code{nboot > 0}) and relevant statistics information.}
+# and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.  
+# @examples
+# ## example for abundance based data (list of vector)
+# data(spider)
+# out1 <- iNEXTTD(spider, q=c(0,1,2), datatype="abundance")
+# out1$DataInfo # showing basic data information.
+# out1$AsyEst # showing asymptotic diversity estimates.
+# out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
+# ## example for abundance based data (data.frame)
+# data(bird)
+# out2 <- iNEXTTD(bird, q=0, datatype="abundance")
+# ggiNEXT(out2)
+# \dontrun{
+# ## example for incidence frequencies based data (list of data.frame)
+# data(ant)
+# t <- round(seq(10, 500, length.out=20))
+# out3 <- iNEXTTD(ant$h500m, q=1, datatype="incidence_freq", size=t, se=FALSE)
+# out3$iNextEst
+# }
+# 
+iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50)
 {
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -164,21 +167,6 @@ iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, kno
     }
     datatype <- "incidence"
   }
-  #   if(rowsum==FALSE){
-  #     if(datatype=="abundance"){
-  #       if(class_x =="list"){
-  #         data <- lapply(data, as.abucount)
-  #       }else{
-  #         data <- as.abucount(data)
-  #       }
-  #     }else if(datatype=="incidence"){
-  #       if(class_x =="list"){
-  #         data <- lapply(data, as.incfreq)
-  #       }else{
-  #         data <- as.incfreq(data)
-  #       }
-  #     }
-  #   }
   
   Fun <- function(x, q, assem_name){
     x <- as.numeric(unlist(x))
@@ -219,17 +207,15 @@ iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, kno
     out <- list(size_based = out[[1]],
                 coverage_based = out[[2]])
     
-    index <- rbind(AsyD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Order.q~Method,value.var = 'qD')
     index <- cbind(index[,-1],se = (UCL - index$Asymptotic)/z,LCL,UCL)
     index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    index[,1:2] = index[,2:1]
     colnames(index) <- c("Observed","Estimator","Est_s.e.","95% Lower","95% Upper")
-    # index <- rbind(as.matrix(ChaoSpecies(data, datatype, conf)), 
-    #                as.matrix(ChaoEntropy(data, datatype, transform=TRUE, conf)),
-    #                as.matrix(EstSimpson(data, datatype, transform=TRUE, conf)))
     rownames(index) <- c("Species Richness", "Shannon diversity", "Simpson diversity")
   
     
@@ -244,23 +230,15 @@ iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, kno
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
     index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
-    # arr <- array(0, dim = c(3, 5, ncol(data)))
-    # arr[1,,] <- t(as.matrix(ChaoSpecies(data, datatype, conf)))
-    # arr[2,,] <- t(as.matrix(ChaoEntropy(data, datatype, transform=TRUE, conf)))
-    # arr[3,,] <- t(as.matrix(EstSimpson(data, datatype, transform=TRUE, conf)))  
-    # dimnames(arr)[[3]] <- names(data)
-    # dimnames(arr)[[1]] <- c("Species richness", "Shannon diversity", "Simpson diversity")
-    # dimnames(arr)[[2]] <- c("Observed", "Estimator", "Est_s.e.", "Lower_CI", "Upper_CI")
-    # index <- ftable(arr, row.vars = c(3,1))
-    # index <- dcast(as.data.frame(index), formula = Var1+Var2~Var3, value.var = "Freq")
+    index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
     
     
@@ -276,23 +254,15 @@ iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, kno
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
     index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
-    # arr <- array(0, dim = c(3, 5, length(data)))
-    # arr[1,,] <- t(as.matrix(ChaoSpecies(data, datatype, conf)))
-    # arr[2,,] <- t(as.matrix(ChaoEntropy(data, datatype, transform=TRUE, conf)))
-    # arr[3,,] <- t(as.matrix(EstSimpson(data, datatype, transform=TRUE, conf)))  
-    # dimnames(arr)[[3]] <- names(data)
-    # dimnames(arr)[[1]] <- c("Species richness", "Shannon diversity", "Simpson diversity")
-    # dimnames(arr)[[2]] <- c("Observed", "Estimator", "Est_s.e.", "Lower_CI", "Upper_CI")
-    # index <- ftable(arr, row.vars = c(3,1))
-    # index <- dcast(as.data.frame(index), formula = Var1+Var2~Var3, value.var = "Freq")
+    index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
   }else{
     stop("invalid class of data, data should be a object of numeric, matrix, data.frame, or list")
@@ -308,48 +278,44 @@ iNEXT <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, kno
   }
 
 
-# estimateD -------------------------------------------------------------------
-#' Compute species diversity with a particular of sample size/coverage 
-#' 
-#' \code{estimateD}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
-#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-#' by species incidence frequencies in each column or list.
-#' @param q a numerical vector of the order of Hill number.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-#' @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
-#' @param nboot the number of bootstrap times to obtain confidence interval. If confidence interval is not desired, use 0 to skip this time-consuming step.
-#' @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
-#' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
-#' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
-#' @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
-#' method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
-#' @examples
-#' \dontrun{
-#' data(spider)
-#' out1 <- estimateD(spider, q = c(0,1,2), datatype = "abundance", base="size")
-#' out1
-#' out2 <- estimateD(spider, q = c(0,1,2), datatype = "abundance", base="coverage")
-#' out2
-#' }
-#' data(ant)
-#' out <- estimateD(ant, q = c(0,1,2), "incidence_freq", base="coverage", level=0.985, conf=0.95)
-#' out
-#' @export
-estimateD <- function (data, q = c(0,1,2), datatype = "abundance", base = "size", level = NULL, nboot=50,
+# estimateTD -------------------------------------------------------------------
+# Compute species diversity with a particular of sample size/coverage 
+# 
+# \code{estimateTD}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
+# @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
+# If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
+# by species incidence frequencies in each column or list.
+# @param q a numerical vector of the order of Hill number.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
+# @param nboot the number of bootstrap times to obtain confidence interval. If confidence interval is not desired, use 0 to skip this time-consuming step.
+# @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
+# If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
+# If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
+# @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+# @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
+# method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
+# @examples
+# \dontrun{
+# data(spider)
+# out1 <- estimateTD(spider, q = c(0,1,2), datatype = "abundance", base="size")
+# out1
+# out2 <- estimateTD(spider, q = c(0,1,2), datatype = "abundance", base="coverage")
+# out2
+# }
+# data(ant)
+# out <- estimateTD(ant, q = c(0,1,2), "incidence_freq", base="coverage", level=0.985, conf=0.95)
+# out
+estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
                        conf = 0.95) 
 {
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if (is.na(pmatch(datatype, TYPE))) 
     stop("invalid datatype")
   if (pmatch(datatype, TYPE) == -1) 
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  if (datatype == "incidence") {
-    stop("datatype=\"incidence\" was no longer supported after v2.0.8, \n         please try datatype=\"incidence_freq\".")
-  }
   if (datatype == "incidence_freq") 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
@@ -376,36 +342,35 @@ estimateD <- function (data, q = c(0,1,2), datatype = "abundance", base = "size"
 }
 
 
-# AsyD -------------------------------------------------------------------
-#' Asymptotic diversity q profile 
-#' 
-#' \code{AsyD} The estimated and empirical diversity of order q 
-#' 
-#' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
-#' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
-#' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @return a table of diversity q profile by 'Estimated' and 'Empirical'
-#' 
-#' @examples
-#' ## example for abundance based data (list of vector)
-#' # abundance data
-#' data(spider)
-#' out1 <- AsyD(spider, datatype = "abundance")
-#' out1
-#' 
-#' ## example for incidence frequencies based data (list of data.frame)
-#' data(ant)
-#' out2 <- AsyD(ant, datatype = "incidence_freq")
-#' out2
-#' 
-#' 
-#' @references
-#' Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
-#' @export
-AsyD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
+# AsyTD -------------------------------------------------------------------
+# Asymptotic diversity q profile 
+# 
+# \code{AsyTD} The estimated and empirical diversity of order q 
+# 
+# @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
+# @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
+# @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
+# @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
+# @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+# @return a table of diversity q profile by 'Estimated' and 'Empirical'
+# 
+# @examples
+# ## example for abundance based data (list of vector)
+# # abundance data
+# data(spider)
+# out1 <- AsyTD(spider, datatype = "abundance")
+# out1
+# 
+# ## example for incidence frequencies based data (list of data.frame)
+# data(ant)
+# out2 <- AsyTD(ant, datatype = "incidence_freq")
+# out2
+# 
+# 
+# @references
+# Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
+AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
   if(datatype == "incidence"){
     stop('datatype="incidence" was no longer supported, 
          please try datatype = "incidence_freq".')  
@@ -485,32 +450,31 @@ AsyD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, c
 }
 
 
-# ObsD -------------------------------------------------------------------
-#' Empirical diversity q profile 
-#' 
-#' \code{ObsD} The estimated and empirical diversity of order q 
-#' 
-#' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
-#' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
-#' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @return a table of diversity q profile by 'Estimated' and 'Empirical'
-#' 
-#' @examples
-#' ## example for abundance based data (list of vector)
-#' # abundance data
-#' data(spider)
-#' out1 <- ObsD(spider, datatype = "abundance")
-#' out1
-#' 
-#' ## example for incidence frequencies based data (list of data.frame)
-#' data(ant)
-#' out2 <- ObsD(ant, datatype = "incidence_freq")
-#' out2
-#' @export
-ObsD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
+# ObsTD -------------------------------------------------------------------
+# Empirical diversity q profile 
+# 
+# \code{ObsTD} The estimated and empirical diversity of order q 
+# 
+# @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
+# @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
+# @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
+# @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
+# @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+# @return a table of diversity q profile by 'Estimated' and 'Empirical'
+# 
+# @examples
+# ## example for abundance based data (list of vector)
+# # abundance data
+# data(spider)
+# out1 <- ObsTD(spider, datatype = "abundance")
+# out1
+# 
+# ## example for incidence frequencies based data (list of data.frame)
+# data(ant)
+# out2 <- ObsTD(ant, datatype = "incidence_freq")
+# out2
+ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
   if(datatype == "incidence"){
     stop('datatype="incidence" was no longer supported, 
          please try datatype = "incidence_freq".')  
@@ -588,108 +552,5 @@ ObsD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, c
   }
   return(out)
 }
-
-
-# ggiNEXT -------------------------------------------------------------------
-#' ggplot2 extension for an iNEXT object
-#' 
-#' \code{ggiNEXT}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
-#' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
-#' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
-#' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).            
-#' @param se a logical variable to display confidence interval around the estimated sampling curve.
-#' @param facet.var create a separate plot for each value of a specified variable: 
-#'  no separation \cr (\code{facet.var="None"}); 
-#'  a separate plot for each diversity order (\code{facet.var="Order.q"}); 
-#'  a separate plot for each assemblage (\code{facet.var="Assemblage"}); 
-#'  a separate plot for each combination of order x assemblage (\code{facet.var="Both"}).              
-#' @param color.var create curves in different colors for values of a specified variable:
-#'  all curves are in the same color (\code{color.var="None"}); 
-#'  use different colors for diversity orders (\code{color.var="Order.q"}); 
-#'  use different colors for sites (\code{color.var="Assemblage"}); 
-#'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).  
-#' @param grey a logical variable to display grey and white ggplot2 theme. 
-#' @param ... other arguments passed on to methods. Not currently used.
-#' @return a ggplot2 object
-#' @examples
-#' data(spider)
-#' # single-assemblage abundance data
-#' out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
-#' ggiNEXT(x=out1, type=1)
-#' ggiNEXT(x=out1, type=2)
-#' ggiNEXT(x=out1, type=3)
-#' 
-#'\dontrun{
-#' # single-assemblage incidence data with three orders q
-#' data(ant)
-#' size <- round(seq(10, 500, length.out=20))
-#' y <- iNEXT(ant$h500m, q=c(0,1,2), datatype="incidence_freq", size=size, se=FALSE)
-#' ggiNEXT(y, se=FALSE, color.var="Order.q")
-#' 
-#' # multiple-assemblage abundance data with three orders q
-#' z <- iNEXT(spider, q=c(0,1,2), datatype="abundance")
-#' ggiNEXT(z, facet.var="Assemblage", color.var="Order.q")
-#' ggiNEXT(z, facet.var="Both", color.var="Both")
-#'}
-#' @export
-#' 
-ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage", grey=FALSE){  
-  UseMethod("ggiNEXT", x)
-}
-
-
-# ggAsyD -------------------------------------------------------------------
-#' ggplot for Asymptotic diversity
-#'
-#' \code{ggAsyD} Plots q-profile based on the outcome of \code{AsyD} using the ggplot2 package.\cr
-#' It will only show the confidence interval of 'Estimated'.
-#'
-#' @param outcome the outcome of the functions \code{AsyD} .\cr
-#' @return a figure of estimated sample completeness with order q\cr\cr
-#'
-#' @examples
-#' ## Type (1) example for abundance-based data
-#' ## Ex.1
-#' data(spider)
-#' out1 <- AsyD(spider, datatype = "abundance")
-#' ggAsyD(out1)
-#' 
-#' ## Type (2) example for incidence-based data
-#'
-#' ## Ex.2
-#' data(ant)
-#' out2 <- AsyD(ant, datatype = "incidence_freq", nboot = 0)
-#' ggAsyD(out2)
-#'
-#' @export
-ggAsyD <- function(outcome){
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-  if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
-    stop("Please use the outcome from specified function 'AsyD'")
-  ggplot(outcome, aes(x=Order.q, y=qD, colour=Assemblage, lty=Method)) +
-    geom_line(size=1.2) +
-    scale_colour_manual(values = cbPalette) +
-    geom_ribbon(data = outcome[outcome$Method=="Asymptotic",],
-                aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
-    # geom_ribbon(data = outcome[outcome$method=="Empirical",],
-    #             aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
-    scale_fill_manual(values = cbPalette) +
-    scale_linetype_manual(values = c("Asymptotic"=1, "Empirical"=2)) +
-    labs(x="Order q", y="Species diversity") +
-    # theme_bw(base_size = 18) +
-    theme(text=element_text(size=18)) +
-    theme(legend.position="bottom", legend.box = "vertical",
-          legend.key.width = unit(1.2,"cm"),
-          # plot.margin = unit(c(1.5,0.3,1.2,0.3), "lines"),
-          legend.title=element_blank(),
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(-10,-10,-5,-10))
-}
-
-
-#' @useDynLib iNEXT3D, .registration = TRUE
-#' @importFrom Rcpp sourceCpp
-NULL
 
 
