@@ -439,23 +439,22 @@ ObsD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance",
 #' @examples
 #' data(spider)
 #' # single-assemblage abundance data
-#' out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
-#' ggiNEXT(x=out1, type=1)
-#' ggiNEXT(x=out1, type=2)
-#' ggiNEXT(x=out1, type=3)
+#' out1 <- iNEXT(spider$Girdled, class = 'TD', q = 0, datatype = "abundance")
+#' ggiNEXT(x = out1, type = 1)
+#' ggiNEXT(x = out1, type = 2)
+#' ggiNEXT(x = out1, type = 3)
 #' 
-#'\dontrun{
 #' # single-assemblage incidence data with three orders q
 #' data(ant)
 #' size <- round(seq(10, 500, length.out=20))
-#' y <- iNEXT(ant$h500m, q=c(0,1,2), datatype="incidence_freq", size=size, se=FALSE)
+#' y <- iNEXT(ant$h500m, class = 'TD', q = c(0,1,2), datatype = "incidence_freq", size = size)
 #' ggiNEXT(y, se=FALSE, color.var="Order.q")
 #' 
 #' # multiple-assemblage abundance data with three orders q
-#' z <- iNEXT(spider, q=c(0,1,2), datatype="abundance")
+#' data(spider)
+#' z <- iNEXT(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
 #' ggiNEXT(z, facet.var="Assemblage", color.var="Order.q")
 #' ggiNEXT(z, facet.var="Both", color.var="Both")
-#'}
 #' @export
 #' 
 ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage", grey=FALSE){  
@@ -476,14 +475,14 @@ ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage"
 #' ## Type (1) example for abundance-based data
 #' ## Ex.1
 #' data(spider)
-#' out1 <- AsyD(spider, datatype = "abundance")
+#' out1 <- AsyD(spider, class = 'TD', datatype = "abundance")
 #' ggAsyD(out1)
 #' 
 #' ## Type (2) example for incidence-based data
 #'
 #' ## Ex.2
 #' data(ant)
-#' out2 <- AsyD(ant, datatype = "incidence_freq", nboot = 0)
+#' out2 <- AsyD(ant, class = 'TD', datatype = "incidence_freq", nboot = 0)
 #' ggAsyD(out2)
 #'
 #' @export

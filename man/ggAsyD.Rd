@@ -20,14 +20,14 @@ It will only show the confidence interval of 'Estimated'.
 ## Type (1) example for abundance-based data
 ## Ex.1
 data(spider)
-out1 <- AsyD(spider, datatype = "abundance")
+out1 <- AsyD(spider, class = 'TD', datatype = "abundance")
 ggAsyD(out1)
 
 ## Type (2) example for incidence-based data
 
 ## Ex.2
 data(ant)
-out2 <- AsyD(ant, datatype = "incidence_freq", nboot = 0)
+out2 <- AsyD(ant, class = 'TD', datatype = "incidence_freq", nboot = 0)
 ggAsyD(out2)
 
 }

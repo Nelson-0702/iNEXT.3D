@@ -59,21 +59,20 @@ a ggplot2 object
 \examples{
 data(spider)
 # single-assemblage abundance data
-out1 <- iNEXT(spider$Girdled, q=0, datatype="abundance")
-ggiNEXT(x=out1, type=1)
-ggiNEXT(x=out1, type=2)
-ggiNEXT(x=out1, type=3)
+out1 <- iNEXT(spider$Girdled, class = 'TD', q = 0, datatype = "abundance")
+ggiNEXT(x = out1, type = 1)
+ggiNEXT(x = out1, type = 2)
+ggiNEXT(x = out1, type = 3)
 
-\dontrun{
 # single-assemblage incidence data with three orders q
 data(ant)
 size <- round(seq(10, 500, length.out=20))
-y <- iNEXT(ant$h500m, q=c(0,1,2), datatype="incidence_freq", size=size, se=FALSE)
+y <- iNEXT(ant$h500m, class = 'TD', q = c(0,1,2), datatype = "incidence_freq", size = size)
 ggiNEXT(y, se=FALSE, color.var="Order.q")
 
 # multiple-assemblage abundance data with three orders q
-z <- iNEXT(spider, q=c(0,1,2), datatype="abundance")
+data(spider)
+z <- iNEXT(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
 ggiNEXT(z, facet.var="Assemblage", color.var="Order.q")
 ggiNEXT(z, facet.var="Both", color.var="Both")
-}
 }
