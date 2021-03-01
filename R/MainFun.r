@@ -1,7 +1,7 @@
-# iNEXT -------------------------------------------------------------------
+# iNEXT3D -------------------------------------------------------------------
 #' iNterpolation and EXTrapolation of Hill number
 #' 
-#' \code{iNEXT}: Interpolation and extrapolation of Hill number with order q
+#' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
 #' 
 #' @param data a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
 #' @param q a numerical vector of the order of Hill number.
@@ -14,8 +14,8 @@
 #' If NULL, then \code{endpoint} \code{=} double reference sample size.
 #' @param knots an integer specifying the number of equally-spaced \code{knots} (say K, default is 40) between size 1 and the \code{endpoint};
 #' each knot represents a particular sample size for which diversity estimate will be calculated.  
-#' If the \code{endpoint} is smaller than the reference sample size, then \code{iNEXT()} computes only the rarefaction esimates for approximately K evenly spaced \code{knots}. 
-#' If the \code{endpoint} is larger than the reference sample size, then \code{iNEXT()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
+#' If the \code{endpoint} is smaller than the reference sample size, then \code{iNEXT3D()} computes only the rarefaction esimates for approximately K evenly spaced \code{knots}. 
+#' If the \code{endpoint} is larger than the reference sample size, then \code{iNEXT3D()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
 #' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
 #' @param nboot an integer specifying the number of replications.
 #' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{class = 'PD'}.
@@ -29,6 +29,17 @@
 #' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{class = 'FD' or 'AUC'}.
 #' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{class = 'FD'}.
 #' @importFrom reshape2 dcast
+#' @import ape
+#' @import ggplot2
+#' @import dplyr
+#' @import tidytree
+#' @importFrom stats rmultinom
+#' @importFrom stats rbinom
+#' @importFrom stats rbinom
+#' @importFrom stats qnorm
+#' @importFrom stats sd
+#' @importFrom phyclust get.rooted.tree.height
+#' @importFrom stats optimize
 #' @return a list of three objects: \code{$DataInfo} for summarizing data information; 
 #' \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
 #' and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.  
@@ -36,7 +47,7 @@
 #' ## example for abundance based data (list of vector)
 #' # class = 'TD'
 #' data(spider)
-#' out1 <- iNEXT(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
+#' out1 <- iNEXT3D(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
 #' out1$DataInfo # showing basic data information.
 #' out1$AsyEst # showing asymptotic diversity estimates.
 #' out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
@@ -45,28 +56,28 @@
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- iNEXT(data, class = 'PD', tree = tree, datatype = "abundance", q = c(0, 1, 2), nboot = 30)
+#' out2 <- iNEXT3D(data, class = 'PD', tree = tree, datatype = "abundance", q = c(0, 1, 2), nboot = 30)
 #' out2
 #' 
 #' # class = 'FD'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out3 <- iNEXT(data[,1], class = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+#' out3 <- iNEXT3D(data[,1], class = 'FD', distM = dij, datatype = "abundance", nboot = 0)
 #' out3
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out4 <- iNEXT(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0)
+#' out4 <- iNEXT3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # class = 'TD'
 #' data(ant)
 #' t <- round(seq(10, 500, length.out = 20))
-#' out5 <- iNEXT(ant$h500m, class = 'TD', q = 1, datatype = "incidence_freq", size = t)
+#' out5 <- iNEXT3D(ant$h500m, class = 'TD', q = 1, datatype = "incidence_freq", size = t)
 #' out5
 #' 
 #' # class = 'PD'
@@ -74,26 +85,26 @@
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- iNEXT(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+#' out6 <- iNEXT3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
 #' out6
 #' 
 #' # class = 'FD'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out7 <- iNEXT(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+#' out7 <- iNEXT3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
 #' out7
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out8 <- iNEXT(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 0)
+#' out8 <- iNEXT3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 0)
 #' out8
 #' 
 #' @export
 #' 
-iNEXT <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, conf = 0.95, nboot = 50, 
+iNEXT3D <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, conf = 0.95, nboot = 50, 
                   tree = NULL, nT = NULL, reftime=NULL, PDtype = 'PD', distM, threshold = NULL) {
   if ( !(class %in% c('TD', 'PD', 'FD', 'AUC')) ) 
     stop("Please select one of below class: 'TD', 'PD', 'FD', 'AUC'", call. = FALSE)
@@ -112,10 +123,10 @@ iNEXT <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NULL
 }
 
 
-# estimateD -------------------------------------------------------------------
+# estimate3D -------------------------------------------------------------------
 #' Compute species diversity with a particular of sample size/coverage 
 #' 
-#' \code{estimateD}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
+#' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 #' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
 #' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
 #' by species incidence frequencies in each column or list.
@@ -143,34 +154,34 @@ iNEXT <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NULL
 #' @examples
 #' # class = 'TD'
 #' data(spider)
-#' out1 <- estimateD(spider, class = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+#' out1 <- estimate3D(spider, class = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 #' out1
 #' 
 #' # class = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- estimateD(data, class = 'PD', tree = tree, datatype = "abundance", base = "coverage")
+#' out2 <- estimate3D(data, class = 'PD', tree = tree, datatype = "abundance", base = "coverage")
 #' out2
 #' 
 #' # class = 'FD'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out3 <- estimateD(data, class = 'FD', distM = dij, datatype = "abundance", base = "size")
+#' out3 <- estimate3D(data, class = 'FD', distM = dij, datatype = "abundance", base = "size")
 #' out3
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out4 <- estimateD(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0, base = "coverage")
+#' out4 <- estimate3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0, base = "coverage")
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # class = 'TD'
 #' data(ant)
-#' out5 <- estimateD(ant, class = 'TD', q = c(0,1,2), datatype = "incidence_freq", base="coverage", level=0.985)
+#' out5 <- estimate3D(ant, class = 'TD', q = c(0,1,2), datatype = "incidence_freq", base="coverage", level=0.985)
 #' out5
 #' 
 #' # class = 'PD'
@@ -178,25 +189,25 @@ iNEXT <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NULL
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- estimateD(data, class = 'PD', nT = nT, tree = tree, datatype = "incidence_raw", base = "size")
+#' out6 <- estimate3D(data, class = 'PD', nT = nT, tree = tree, datatype = "incidence_raw", base = "size")
 #' out6
 #' 
 #' # class = 'FD'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out7 <- estimateD(data, class = 'FD', distM = dij, datatype = "incidence_freq", base = "coverage")
+#' out7 <- estimate3D(data, class = 'FD', distM = dij, datatype = "incidence_freq", base = "coverage")
 #' out7
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out8 <- estimateD(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20, base = "size")
+#' out8 <- estimate3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20, base = "size")
 #' out8
 #' 
 #' @export
-estimateD <- function (data, class, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
+estimate3D <- function (data, class, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
                        conf = 0.95, tree, nT, reftime = NULL, PDtype = 'PD', distM, threshold = NULL) 
 {
   if ( !(class %in% c('TD', 'PD', 'FD', 'AUC')) ) 
@@ -216,10 +227,10 @@ estimateD <- function (data, class, q = c(0,1,2), datatype = "abundance", base =
 }
 
 
-# AsyD -------------------------------------------------------------------
+# Asy3D -------------------------------------------------------------------
 #' Asymptotic diversity q profile 
 #' 
-#' \code{AsyD} The estimated and empirical diversity of order q 
+#' \code{Asy3D} The estimated and empirical diversity of order q 
 #' 
 #' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param class a nomial selection which kind of diversity you want to calculate. You should choose one from below: 'TD', 'PD', 'FD', 'AUC'. Default is 'TD'.
@@ -243,34 +254,34 @@ estimateD <- function (data, class, q = c(0,1,2), datatype = "abundance", base =
 #' ## example for abundance-based data
 #' # class = 'TD'
 #' data(spider)
-#' out1 <- AsyD(spider, class = 'TD', datatype = "abundance")
+#' out1 <- Asy3D(spider, class = 'TD', datatype = "abundance")
 #' out1
 #' 
 #' # class = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- AsyD(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
+#' out2 <- Asy3D(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
 #' out2
 #' 
 #' # class = 'FD'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out3 <- AsyD(data, class = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' out3 <- Asy3D(data, class = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
 #' out3
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out4 <- AsyD(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' out4 <- Asy3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # class = 'TD'
 #' data(ant)
-#' out5 <- AsyD(ant, class = 'TD', datatype = "incidence_freq")
+#' out5 <- Asy3D(ant, class = 'TD', datatype = "incidence_freq")
 #' out5
 #' 
 #' # class = 'PD'
@@ -278,25 +289,25 @@ estimateD <- function (data, class, q = c(0,1,2), datatype = "abundance", base =
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- AsyD(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
+#' out6 <- Asy3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
 #' out6
 #' 
 #' # class = 'FD'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out7 <- AsyD(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+#' out7 <- Asy3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
 #' out7
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out8 <- AsyD(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
+#' out8 <- Asy3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
 #' out8
 #' 
 #' @export
-AsyD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, 
+Asy3D <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, 
                  tree, nT, reftime = NULL, PDtype = 'PD', distM, threshold = NULL) {
   if ( !(class %in% c('TD', 'PD', 'FD', 'AUC')) ) 
     stop("Please select one of below class: 'TD', 'PD', 'FD', 'AUC'", call. = FALSE)
@@ -315,10 +326,10 @@ AsyD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance",
 }
 
 
-# ObsD -------------------------------------------------------------------
+# Obs3D -------------------------------------------------------------------
 #' Empirical diversity q profile 
 #' 
-#' \code{ObsD} The estimated and empirical diversity of order q 
+#' \code{Obs3D} The estimated and empirical diversity of order q 
 #' 
 #' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
@@ -343,34 +354,34 @@ AsyD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance",
 #' ## example for abundance-based data
 #' # class = 'TD'
 #' data(spider)
-#' out1 <- ObsD(spider, class = 'TD', datatype = "abundance")
+#' out1 <- Obs3D(spider, class = 'TD', datatype = "abundance")
 #' out1
 #' 
 #' # class = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- ObsD(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
+#' out2 <- Obs3D(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
 #' out2
 #' 
 #' # class = 'FD'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out3 <- ObsD(data, class = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' out3 <- Obs3D(data, class = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
 #' out3
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' dij <-  FunDdata.abu$dij
-#' out4 <- ObsD(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' out4 <- Obs3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # class = 'TD'
 #' data(ant)
-#' out5 <- ObsD(ant, class = 'TD', datatype = "incidence_freq")
+#' out5 <- Obs3D(ant, class = 'TD', datatype = "incidence_freq")
 #' out5
 #' 
 #' # class = 'PD'
@@ -378,25 +389,25 @@ AsyD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance",
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- ObsD(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
+#' out6 <- Obs3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
 #' out6
 #' 
 #' # class = 'FD'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out7 <- ObsD(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+#' out7 <- Obs3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
 #' out7
 #' 
 #' # class = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' dij <-  FunDdata.inc$dij
-#' out8 <- ObsD(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
+#' out8 <- Obs3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
 #' out8
 #' 
 #' @export
-ObsD <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95,
+Obs3D <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95,
                  tree, nT, reftime = NULL, PDtype = 'PD', distM, threshold = NULL) {
   if ( !(class %in% c('TD', 'PD', 'FD', 'AUC')) ) 
     stop("Please select one of below class: 'TD', 'PD', 'FD', 'AUC'", call. = FALSE)
@@ -486,11 +497,63 @@ ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage"
 #' ggAsyD(out2)
 #'
 #' @export
-ggAsyD <- function(outcome){
+ggAsyD <- function(outcome, profile = 'q'){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  
   if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
     stop("Please use the outcome from specified function 'AsyD'")
+  
+  if (sum(colnames(outcome)[1:6] == c('Order.q', 'qD', 'qD.LCL', 'qD.UCL', 'Assemblage', 'Method')) == 6) {
+    class = 'TD'
+  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qPD', 'qPD.LCL', 'qPD.UCL', 'Assemblage', 'Method')) == 6) {
+    class = 'PD'
+  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qFD', 'qFD.LCL', 'qFD.UCL', 'Assemblage', 'Method')) == 6) {
+    class = 'FD'
+  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 6) {
+    class = 'AUC'
+  } 
+  
+  
+  if (class == 'TD') {
+    out = ggplot(outcome, aes(x = Order.q, y = qD, group = Assemblage, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
+    }
+    
+    out = out + theme_bw() + labs(x = 'Order q', y = 'Taxonomic Diversity')
+  }
+  
+    
+  
+  if (length(outcome$Assemblage) != 1) out = out + geom_line(aes(g)) + geom_ribbon(aes(group = Assemblage))
+  
+  forq$Reftime <- factor(paste0('Ref.time = ',as.character(round(forq$Reftime,4))),
+                         levels = unique(paste0('Ref.time = ',as.character(round(forq$Reftime,4)))))
+  
+  
+  q1 <- unique(forq$Order.q[(forq$Order.q %% 1)==0])
+  if(length(Assemblage)==1){
+    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Reftime)) + theme_bw() + geom_line(size=1.5)+
+      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Reftime),linetype = 0,alpha=0.2)
+    #lai 1006
+    p1 <-  p1 +xlab("Order q")+ylab(ylab_) + theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
+      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Reftime))
+  }else{
+    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Assemblage, linetype=Assemblage)) + theme_bw() + geom_line(size=1.5)  +
+      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Assemblage),linetype = 0,alpha=0.2)+
+      scale_color_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
+      scale_fill_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
+      theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
+      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Assemblage))+
+      facet_wrap(~Reftime, scales = "free")
+    p1 <-  p1 +xlab("Order q")+ylab(ylab_)
+  }
+  
   ggplot(outcome, aes(x=Order.q, y=qD, colour=Assemblage, lty=Method)) +
     geom_line(size=1.2) +
     scale_colour_manual(values = cbPalette) +

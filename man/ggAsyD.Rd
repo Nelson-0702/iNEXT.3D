@@ -4,7 +4,7 @@
 \alias{ggAsyD}
 \title{ggplot for Asymptotic diversity}
 \usage{
-ggAsyD(outcome)
+ggAsyD(outcome, profile = "q")
 }
 \arguments{
 \item{outcome}{the outcome of the functions \code{AsyD} .\cr}

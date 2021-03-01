@@ -46,12 +46,6 @@ FDInfo <- function(data, datatype){
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold} = dmean/2. Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
 # @return a table of FD estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
 # @examples
 # \donttest{
@@ -230,13 +224,6 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
 # @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -379,13 +366,6 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -480,13 +460,6 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -588,12 +561,6 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
 # @return a table of AUC estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
 # @examples
 # \donttest{
@@ -750,13 +717,6 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -881,13 +841,6 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -968,13 +921,6 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
-# @import ggplot2
-# @import dplyr
-# @importFrom stats rmultinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples

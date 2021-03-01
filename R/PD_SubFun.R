@@ -271,34 +271,6 @@ Plott <- function(out){
 }
 
 
-# Plotq ------------------------------------------------------------------
-Plotq <- function(out){
-  forq <- out
-  forq$Reftime <- factor(paste0('Ref.time = ',as.character(round(forq$Reftime,4))),
-                                levels = unique(paste0('Ref.time = ',as.character(round(forq$Reftime,4)))))
-  Assemblage <- unique(forq$Assemblage)
-  ylab_ <- paste0(unique(forq$Method)," ",unique(forq$Type))
-  q1 <- unique(forq$Order.q[(forq$Order.q %% 1)==0])
-  if(length(Assemblage)==1){
-    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Reftime)) + theme_bw() + geom_line(size=1.5)+
-      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Reftime),linetype = 0,alpha=0.2)
-    #lai 1006
-    p1 <-  p1 +xlab("Order q")+ylab(ylab_) + theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
-      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Reftime))
-  }else{
-    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Assemblage, linetype=Assemblage)) + theme_bw() + geom_line(size=1.5)  +
-      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Assemblage),linetype = 0,alpha=0.2)+
-      scale_color_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
-      scale_fill_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
-      theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
-      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Assemblage))+
-      facet_wrap(~Reftime, scales = "free")
-    p1 <-  p1 +xlab("Order q")+ylab(ylab_)
-  }
-  return(p1)
-}
-
-
 # asymPD ------------------------------------------------------------------
 asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change final list name
   nms <- names(datalist)

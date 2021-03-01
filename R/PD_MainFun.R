@@ -130,15 +130,7 @@ PDInfo <- function(data,nT,datatype = "abundance", tree,reftime=NULL){
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals.
 # Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-# @import ape
-# @import ggplot2
-# @import dplyr
-# @import tidytree
-# @importFrom stats rbinom
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom phyclust get.rooted.tree.height
+
 # @return a list of three objects: 
 # \code{$DataInfo} for summarizing data information; 
 # \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics:
@@ -320,13 +312,6 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals.
 # Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-# @import ape
-# @import dplyr
-# @import tidytree
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom stats optimize
-# @importFrom phyclust get.rooted.tree.height
 # @return Returns a table of the computed phylogenetic diversity (PD or meanPD) for specified/default diversity orders \code{q} and reference times
 # for the user-specified values of sample coverage. The corresponding sample sizes and sample coverage values are also provided.
 # @examples
@@ -466,14 +451,6 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals.
 # Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-# @import ape
-# @import ggplot2
-# @import dplyr
-# @import tidytree
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom phyclust get.rooted.tree.height
 # @return Returns a table of estimated asymptotic phylogenetic diversity estimates (\code{type = "PD"}) or
 # phylogenetic Hill numbers (\code{type = "meanPD"}) with respect to specified/default order \code{q} and
 # reference time specified in the argument \code{reftime}.
@@ -578,14 +555,6 @@ AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),ref
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals.
 # Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-# @import ape
-# @import ggplot2
-# @import dplyr
-# @import tidytree
-# @importFrom stats rbinom
-# @importFrom stats qnorm
-# @importFrom stats sd
-# @importFrom phyclust get.rooted.tree.height
 # @return Returns a table of empirical (observed) phylogenetic diversity (\code{type = "PD"}) or phylogenetic Hill number (\code{type= "meanPD"})
 # for specified/default order q and reference time.
 # @examples
