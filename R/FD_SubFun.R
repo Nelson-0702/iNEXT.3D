@@ -3,8 +3,6 @@ FD_mle <- function(ai_vi, q){
   v_bar <- round(sum(ai_vi$ai[,1]*ai_vi$vi[,1]))
   out <- sapply(1:ncol(ai_vi$ai), function(i){
     a <- ai_vi$ai[,i]
-    a[a<1] <- 1
-    a <- round(a)
     v = ai_vi$vi[,i]
     sapply(q,function(qq){
       if(qq==1){
