@@ -4,6 +4,8 @@
 #' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
 #' 
 #' @param data a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
+#' @param class a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+#' integrates several threshold functional diversity to get diversity.
 #' @param q a numerical vector of the order of Hill number.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 #' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
@@ -131,6 +133,8 @@ iNEXT3D <- function(data, class, q = c(0,1,2), datatype = "abundance", size = NU
 #' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
 #' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
 #' by species incidence frequencies in each column or list.
+#' @param class a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+#' integrates several threshold functional diversity to get diversity.
 #' @param q a numerical vector of the order of Hill number.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 #' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
@@ -234,7 +238,8 @@ estimate3D <- function (data, class, q = c(0,1,2), datatype = "abundance", base 
 #' \code{Asy3D} The estimated and empirical diversity of order q 
 #' 
 #' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
-#' @param class a nomial selection which kind of diversity you want to calculate. You should choose one from below: 'TD', 'PD', 'FD', 'AUC'. Default is 'TD'.
+#' @param class a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+#' integrates several threshold functional diversity to get diversity.
 #' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
 #' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 #' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
@@ -333,6 +338,8 @@ Asy3D <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance"
 #' \code{Obs3D} The estimated and empirical diversity of order q 
 #' 
 #' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
+#' @param class a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+#' integrates several threshold functional diversity to get diversity.
 #' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
 #' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 #' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
