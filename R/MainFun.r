@@ -43,6 +43,7 @@
 #' @return a list of three objects: \code{$DataInfo} for summarizing data information; 
 #' \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
 #' and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.  
+#' 
 #' @examples
 #' ## example for abundance based data (list of vector)
 #' # class = 'TD'
@@ -426,14 +427,13 @@ Obs3D <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance"
 }
 
 
-# ggiNEXT -------------------------------------------------------------------
+# ggiNEXT3D -------------------------------------------------------------------
 #' ggplot2 extension for an iNEXT object
 #' 
-#' \code{ggiNEXT}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+#' \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 #' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
 #' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
 #' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).            
-#' @param se a logical variable to display confidence interval around the estimated sampling curve.
 #' @param facet.var create a separate plot for each value of a specified variable: 
 #'  no separation \cr (\code{facet.var="None"}); 
 #'  a separate plot for each diversity order (\code{facet.var="Order.q"}); 
@@ -444,65 +444,397 @@ Obs3D <- function(data, class = 'TD', q = seq(0, 2, 0.2), datatype = "abundance"
 #'  use different colors for diversity orders (\code{color.var="Order.q"}); 
 #'  use different colors for sites (\code{color.var="Assemblage"}); 
 #'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).  
-#' @param grey a logical variable to display grey and white ggplot2 theme. 
 #' @param ... other arguments passed on to methods. Not currently used.
 #' @return a ggplot2 object
+#' 
 #' @examples
+#' ## example for abundance based data (list of vector)
+#' # class = 'TD'
 #' data(spider)
-#' # single-assemblage abundance data
-#' out1 <- iNEXT(spider$Girdled, class = 'TD', q = 0, datatype = "abundance")
-#' ggiNEXT(x = out1, type = 1)
-#' ggiNEXT(x = out1, type = 2)
-#' ggiNEXT(x = out1, type = 3)
+#' out1 <- iNEXT3D(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
+#' ggiNEXT3D(out1, facet.var = "Assemblage")
 #' 
-#' # single-assemblage incidence data with three orders q
+#' # class = 'PD'
+#' data(data.abu)
+#' data <- data.abu$data
+#' tree <- data.abu$tree
+#' out2 <- iNEXT3D(data, class = 'PD', tree = tree, datatype = "abundance", q = 0, nboot = 30)
+#' ggiNEXT3D(out2, type = c(1, 3))
+#' 
+#' # class = 'FD'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' dij <-  FunDdata.abu$dij
+#' out3 <- iNEXT3D(data[,1], class = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+#' ggiNEXT3D(out3)
+#' 
+#' # class = 'AUC'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' dij <-  FunDdata.abu$dij
+#' out4 <- iNEXT3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0)
+#' ggiNEXT3D(out4)
+#' 
+#' ## example for incidence-based data
+#' # class = 'TD'
 #' data(ant)
-#' size <- round(seq(10, 500, length.out=20))
-#' y <- iNEXT(ant$h500m, class = 'TD', q = c(0,1,2), datatype = "incidence_freq", size = size)
-#' ggiNEXT(y, se=FALSE, color.var="Order.q")
+#' t <- round(seq(10, 500, length.out = 20))
+#' out5 <- iNEXT3D(ant$h500m, class = 'TD', q = 1, datatype = "incidence_freq", size = t)
+#' ggiNEXT3D(out5)
 #' 
-#' # multiple-assemblage abundance data with three orders q
-#' data(spider)
-#' z <- iNEXT(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
-#' ggiNEXT(z, facet.var="Assemblage", color.var="Order.q")
-#' ggiNEXT(z, facet.var="Both", color.var="Both")
+#' # class = 'PD'
+#' data(data.inc)
+#' data <- data.inc$data
+#' tree <- data.inc$tree
+#' nT <- data.inc$nT
+#' out6 <- iNEXT3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+#' ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
+#' 
+#' # class = 'FD'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' dij <-  FunDdata.inc$dij
+#' out7 <- iNEXT3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+#' ggiNEXT3D(out7)
+#' 
+#' # class = 'AUC'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' dij <-  FunDdata.inc$dij
+#' out8 <- iNEXT3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 0)
+#' ggiNEXT3D(out8)
+#' 
 #' @export
 #' 
-ggiNEXT <- function(x, type=1, se=TRUE, facet.var="None", color.var="Assemblage", grey=FALSE){  
-  UseMethod("ggiNEXT", x)
+#' 
+#' 
+ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
+  if (sum(names(outcome) %in% c('DataInfo', 'iNextEst', 'AsyEst')) == 3) {
+    class = 'TD'
+    plottable = outcome$iNextEst
+  } else if (sum(names(outcome) %in% c('PDInfo', 'PDiNextEst', 'PDAsyEst')) == 3) {
+    class = 'PD'
+    plottable = outcome$PDiNextEst
+    plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+    
+  } else if (sum(names(outcome) %in% c('FDInfo', 'FDiNextEst', 'FDAsyEst')) == 3) {
+    class = 'FD'
+    plottable = outcome$FDiNextEst
+    plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+    
+  } else if (sum(names(outcome) %in% c('AUCiNextEst', 'AUCAsyEst')) == 2) {
+    class = 'AUC'
+    plottable = outcome$AUCiNextEst
+    plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+    
+  } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+  
+  SPLIT <- c("None", "Order.q", "Assemblage", "Both")
+  if(is.na(pmatch(facet.var, SPLIT)) | pmatch(facet.var, SPLIT) == -1)
+    stop("invalid facet variable")
+  if(is.na(pmatch(color.var, SPLIT)) | pmatch(color.var, SPLIT) == -1)
+    stop("invalid color variable")
+  
+  TYPE <-  c(1, 2, 3)
+  if(sum(!(type %in% TYPE)) >= 1)
+    stop("invalid plot type")
+  type <- pmatch(type, 1:3)
+  facet.var <- match.arg(facet.var, SPLIT)
+  color.var <- match.arg(color.var, SPLIT)
+  
+  if(facet.var == "Order.q") color.var <- "Assemblage"
+  if(facet.var == "Assemblage") color.var <- "Order.q"
+  
+  if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
+  if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+  
+  
+  out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var))
+
+  return(out)
 }
 
 
-# ggAsyD -------------------------------------------------------------------
+# type_plot -------------------------------------------------------------------
+type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
+  x_name <- colnames(x_list$size_based)[2]
+  xlab_name <- ifelse(datatype == "incidence", "sampling units", "individuals")
+  
+  if (class == 'TD') {
+    ylab_name = "Species Diversity"
+  } else if (class == 'FD') {
+    ylab_name = "Functional Diversity"
+  } else if (class == 'AUC') {
+    ylab_name = "Functional Diversity (AUC)"
+  } else if (class == 'PD' & unique(x_list$size_based$Type) == 'PD') {
+    ylab_name = "Phylogenetic Diversity"
+  } else if (class == 'PD' & unique(x_list$size_based$Type) == 'meanPD') {
+    ylab_name = "Phylogenetic Hill Diversity"
+  } 
+  
+  
+  if (type == 1) {
+    output <- x_list$size_based
+    output$y.lwr <- output$qD.LCL
+    output$y.upr <- output$qD.UCL
+    id <- match(c(x_name, "Method", "qD", "qD.LCL", "qD.UCL", "Assemblage", "Order.q"), names(output), nomatch = 0)
+    output[,1:7] <- output[, id]
+    
+    xlab_name <- paste0("Number of ", xlab_name)
+    
+  } else if (type == 2) {
+    output <- x_list$size_based
+    if (length(unique(output$Order.q)) > 1) output <- subset(output, Order.q == unique(output$Order.q)[1])
+    output$y.lwr <- output$SC.LCL
+    output$y.upr <- output$SC.UCL
+    id <- match(c(x_name, "Method", "SC", "SC.LCL", "SC.UCL", "Assemblage", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(output), nomatch = 0)
+    output[,1:10] <- output[, id]
+    
+    xlab_name <- paste0("Number of ", xlab_name)
+    ylab_name <- "Sample Coverage"
+    
+  } else if (type == 3) {
+    output <- x_list$coverage_based
+    output$y.lwr <- output$qD.LCL
+    output$y.upr <- output$qD.UCL
+    id <- match(c("goalSC", "Method", "qD", "qD.LCL", "qD.UCL", "Assemblage", "Order.q", "SC", x_name), names(output), nomatch = 0)
+    output[,1:9] <- output[, id]
+    
+    xlab_name <- "Sample Coverage"
+    
+  }
+  
+  if (facet.var == "None" & color.var == "None" & length(unique(output$Order.q)) > 1 & length(unique(output$Assemblage)) > 1) {
+    color.var <- "Order.q"
+    facet.var <- "Assemblage"
+    warning ("invalid color.var and facet.var setting, the iNEXT3D object consists multiple orders and assemblage, change setting as Order.q and Assemblage")
+  } else if (facet.var == "None" & color.var == "None" & length(unique(output$Order.q)) > 1) {
+    color.var <- "Order.q"
+    warning ("invalid color.var setting, the iNEXT3D object consists multiple orders, change setting as Order.q")
+  } else if (facet.var == "None" & color.var == "None" & length(unique(output$Assemblage)) > 1) { 
+    color.var <- "Assemblage" 
+    warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblage, change setting as Assemblage")
+    }
+    
+  
+  
+  title <- c("Sample-size-based sampling curve", "Sample completeness curve", "Coverage-based sampling curve")[type]
+  colnames(output)[1:7] <- c("x", "Method", "y", "LCL", "UCL", "Assemblage", "Order.q")
+  
+  if (class == 'PD') {
+    output$Reftime <- round(output$Reftime, 3)
+    output$Reftime <- factor(paste0("Ref.time = ", output$Reftime), levels = paste0("Ref.time = ", unique(output$Reftime)))
+  }
+  if (class == 'FD') {
+    output$threshold <- round(output$threshold, 3)
+    output$threshold <- factor(paste0("tau = ", output$threshold), levels = paste0("tau = ", unique(output$threshold)))
+  }
+  
+  if (color.var == "None") {
+    if (levels(factor(output$Order.q)) > 1 & length(unique(output$Assemblage)) > 1) {
+      warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblages and orders, change setting as Both")
+      color.var <- "Both"
+      output$col <- output$shape <- paste(output$Assemblage, output$Order.q, sep="-")
+      
+    } else if (length(unique(output$Assemblage)) > 1) {
+      warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblages, change setting as Assemblage")
+      color.var <- "Assemblage"
+      output$col <- output$shape <- output$Assemblage
+    } else if (levels(factor(output$Order.q)) > 1){
+      warning ("invalid color.var setting, the iNEXT3D object consists multiple orders, change setting as Order.q")
+      color.var <- "Order.q"
+      output$col <- output$shape <- factor(output$Order.q)
+    } else {
+      output$col <- output$shape <- rep(1, nrow(output))
+    }
+  } else if (color.var == "Order.q") {     
+    output$col <- output$shape <- factor(output$Order.q)
+  } else if (color.var == "Assemblage") {
+    if (length(unique(output$Assemblage)) == 1) {
+      warning ("invalid color.var setting, the iNEXT3D object do not consist multiple assemblages, change setting as Order.q")
+      output$col <- output$shape <- factor(output$Order.q)
+    }
+    output$col <- output$shape <- output$Assemblage
+  } else if (color.var == "Both") {
+    if (length(unique(output$Assemblage)) == 1) {
+      warning ("invalid color.var setting, the iNEXT3D object do not consist multiple assemblages, change setting as Order.q")
+      output$col <- output$shape <- factor(output$Order.q)
+    }
+    output$col <- output$shape <- paste(output$Assemblage, output$Order.q, sep="-")
+  }
+  
+  if (type == 2) output$col = output$shape = output$Assemblage
+  
+  data.sub = output
+  output$Method[output$Method == "Observed"] = "Rarefaction"
+  output$lty <- factor(output$Method, levels = c("Rarefaction", "Extrapolation"))
+  output$col <- factor(output$col)
+  data.sub <- data.sub[which(data.sub$Method == "Observed"),]
+  
+  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", "#330066", "#CC79A7",  "#0072B2", "#D55E00"))
+  
+  g <- ggplot(output, aes_string(x = "x", y = "y", colour = "col")) + 
+    geom_line(aes_string(linetype = "lty"), lwd=1.5) +
+    geom_point(aes_string(shape = "shape"), size=5, data = data.sub) +
+    geom_ribbon(aes_string(ymin = "y.lwr", ymax = "y.upr", fill = "factor(col)", colour = "NULL"), alpha = 0.2) +
+    scale_fill_manual(values = cbPalette) +
+    scale_colour_manual(values = cbPalette) +
+    guides(linetype = guide_legend(title = "Method"),
+           colour = guide_legend(title = "Guides"), 
+           fill = guide_legend(title = "Guides"), 
+           shape = guide_legend(title = "Guides"))
+  
+  g = g + theme_bw() + 
+    labs(x = xlab_name, y = ylab_name) + 
+    ggtitle(title) + 
+    theme(legend.position = "bottom", legend.box = "vertical",
+          legend.key.width = unit(1.2, "cm"),
+          legend.title = element_blank(),
+          legend.margin = margin(0, 0, 0, 0),
+          legend.box.margin = margin(0, 0, 0, 0),
+          text = element_text(size = 16),
+          plot.margin = unit(c(5.5, 5.5, 5.5, 5.5), "pt")) +
+    guides(linetype = guide_legend(keywidth = 2.5))
+  
+  
+  if (facet.var == "Order.q") {
+    if(length(levels(factor(output$Order.q))) == 1 & type != 2){
+      warning("invalid facet.var setting, the iNEXT3D object do not consist multiple orders.")      
+    } else {
+      odr_grp <- labeller(Order.q = c(`0` = "q = 0", `1` = "q = 1",`2` = "q = 2")) 
+      
+      if (class == 'PD') {
+        g <- g + facet_wrap(Reftime ~ Order.q, nrow = 1, labeller = odr_grp)
+      } else if (class == 'FD') {
+        g <- g + facet_wrap(threshold ~ Order.q, nrow = 1, labeller = odr_grp)
+      } else {g <- g + facet_wrap( ~ Order.q, nrow = 1, labeller = odr_grp)}
+      
+      if (color.var == "Both") {
+        g <- g + guides(colour = guide_legend(title = "Guides", ncol = length(levels(factor(output$Order.q))), byrow = TRUE),
+                        fill = guide_legend(title = "Guides"))
+      }
+      if(type == 2){
+        g <- g + theme(strip.background = element_blank(), strip.text.x = element_blank())
+        
+      }
+    }
+  }
+  
+  if(facet.var == "Assemblage"){
+    if(length(unique(output$Assemblage)) == 1) {
+      warning("invalid facet.var setting, the iNEXT3D object do not consist multiple assemblages")
+    }else{
+      if (class == 'PD') {
+        g <- g + facet_wrap(Reftime ~ Assemblage, nrow = 1)
+      } else if (class == 'FD') {
+        g <- g + facet_wrap(threshold ~ Assemblage, nrow = 1)
+      } else {g <- g + facet_wrap( ~ Assemblage, nrow = 1)}
+      
+      if(color.var == "Both"){
+        g <- g + guides(colour = guide_legend(title = "Guides", nrow = length(levels(factor(output$Order.q)))),
+                        fill = guide_legend(title = "Guides"))
+      }
+    }
+  }
+  
+  if(facet.var == "Both"){
+    if(length(levels(factor(output$Order.q))) == 1 | length(unique(output$Assemblage)) == 1){
+      warning("invalid facet.var setting, the iNEXT3D object do not consist multiple assemblages or orders.")
+    }else{
+      odr_grp <- labeller(Order.q = c(`0` = "q = 0", `1` = "q = 1",`2` = "q = 2")) 
+      
+      if (class == 'PD') {
+        g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp)
+      } else if (class == 'FD') {
+        g <- g + facet_wrap(Assemblage + threshold ~ Order.q, labeller = odr_grp)
+      } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp)}
+      
+      if(color.var == "both"){
+        g <- g +  guides(colour = guide_legend(title = "Guides", nrow = length(levels(factor(output$Assemblage))), byrow = TRUE),
+                         fill = guide_legend(title = "Guides"))
+      }
+    }
+  }
+  
+  return(g)
+}
+
+
+# ggAsy3D -------------------------------------------------------------------
 #' ggplot for Asymptotic diversity
 #'
-#' \code{ggAsyD} Plots q-profile based on the outcome of \code{AsyD} using the ggplot2 package.\cr
+#' \code{ggAsy3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{Asy3D} using the ggplot2 package.\cr
 #' It will only show the confidence interval of 'Estimated'.
 #'
-#' @param outcome the outcome of the functions \code{AsyD} .\cr
-#' @return a figure of estimated sample completeness with order q\cr\cr
+#' @param outcome the outcome of the functions \code{Asy3D} .\cr
+#' @return a figure of asymptotic of empirical three-divrsity\cr\cr
 #'
 #' @examples
-#' ## Type (1) example for abundance-based data
-#' ## Ex.1
+#' ## example for abundance-based data
+#' # class = 'TD'
 #' data(spider)
-#' out1 <- AsyD(spider, class = 'TD', datatype = "abundance")
-#' ggAsyD(out1)
+#' out1 <- rbind(Asy3D(spider, class = 'TD', datatype = "abundance"), Obs3D(spider, class = 'TD', datatype = "abundance"))
+#' ggAsy3D(out1)
 #' 
-#' ## Type (2) example for incidence-based data
-#'
-#' ## Ex.2
+#' # class = 'PD'
+#' data(data.abu)
+#' data <- data.abu$data
+#' tree <- data.abu$tree
+#' out2 <- Asy3D(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30, PDtype = "meanPD")
+#' ggAsy3D(out2, profile = "q")
+#' 
+#' # class = 'FD'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' dij <-  FunDdata.abu$dij
+#' out3 <- Asy3D(data, class = 'FD', distM = dij, datatype = "abundance", q = c(0, 1, 2), threshold = seq(0, 0.6, 0.1), nboot = 0)
+#' ggAsy3D(out3, profile = "tau")
+#' 
+#' # class = 'AUC'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' dij <-  FunDdata.abu$dij
+#' out4 <- Asy3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' ggAsy3D(out4)
+#' 
+#' ## example for incidence-based data
+#' # class = 'TD'
 #' data(ant)
-#' out2 <- AsyD(ant, class = 'TD', datatype = "incidence_freq", nboot = 0)
-#' ggAsyD(out2)
+#' out5 <- rbind(Asy3D(ant, class = 'TD', datatype = "incidence_freq"), Obs3D(ant, class = 'TD', datatype = "incidence_freq"))
+#' ggAsy3D(out5)
+#' 
+#' # class = 'PD'
+#' data(data.inc)
+#' data <- data.inc$data
+#' tree <- data.inc$tree
+#' nT <- data.inc$nT
+#' out6 <- Asy3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2), reftime = seq(0.1, 82.8575, length.out = 40))
+#' ggAsy3D(out6, profile = "time")
+#' 
+#' # class = 'FD'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' dij <-  FunDdata.inc$dij
+#' out7 <- Asy3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+#' ggAsy3D(out7)
+#' 
+#' # class = 'AUC'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' dij <-  FunDdata.inc$dij
+#' out8 <- Asy3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
+#' ggAsy3D(out8)
 #'
 #' @export
-ggAsyD <- function(outcome, profile = 'q'){
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-  
+ggAsy3D <- function(outcome, profile = 'q'){
   if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
-    stop("Please use the outcome from specified function 'AsyD'")
+    stop("Please use the outcome from specified function 'Asy3D'")
+  
+  if (!(profile %in% c('q', 'time', 'tau')))
+    stop("Please select one of 'q', 'time', 'tau' profile.")
   
   if (sum(colnames(outcome)[1:6] == c('Order.q', 'qD', 'qD.LCL', 'qD.UCL', 'Assemblage', 'Method')) == 6) {
     class = 'TD'
@@ -512,71 +844,146 @@ ggAsyD <- function(outcome, profile = 'q'){
     class = 'FD'
   } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 6) {
     class = 'AUC'
-  } 
+  } else {stop("Please use the outcome from specified function 'Asy3D'")}
   
-  
+  ## TD & q-profile ##
   if (class == 'TD') {
-    out = ggplot(outcome, aes(x = Order.q, y = qD, group = Assemblage, colour = Assemblage, fill = Assemblage))
+    out = ggplot(outcome, aes(x = Order.q, y = qD, colour = Assemblage, fill = Assemblage))
     
     if (length(unique(outcome$Method)) == 1) {
-      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qD.LCL, ymax = qD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method == 'Asymptotic')) out = out + labs(x = 'Order q', y = 'Asymptotic Taxonomic Diversity')
+      if (unique(outcome$Method == 'Empirical')) out = out + labs(x = 'Order q', y = 'Empirical Taxonomic Diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
+      
+      out = out + labs(x = 'Order q', y = 'Taxonomic Diversity')
     }
-    
-    out = out + theme_bw() + labs(x = 'Order q', y = 'Taxonomic Diversity')
   }
   
+  ## PD & q-profile ##
+  if (class == 'PD' & profile == 'q') {
+    outcome$Reftime = paste('Reftime = ', round(outcome$Reftime, 3), sep = '')
+    out = ggplot(outcome, aes(x = Order.q, y = qPD, colour = Assemblage, fill = Assemblage))
     
-  
-  if (length(outcome$Assemblage) != 1) out = out + geom_line(aes(g)) + geom_ribbon(aes(group = Assemblage))
-  
-  forq$Reftime <- factor(paste0('Ref.time = ',as.character(round(forq$Reftime,4))),
-                         levels = unique(paste0('Ref.time = ',as.character(round(forq$Reftime,4)))))
-  
-  
-  q1 <- unique(forq$Order.q[(forq$Order.q %% 1)==0])
-  if(length(Assemblage)==1){
-    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Reftime)) + theme_bw() + geom_line(size=1.5)+
-      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Reftime),linetype = 0,alpha=0.2)
-    #lai 1006
-    p1 <-  p1 +xlab("Order q")+ylab(ylab_) + theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
-      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Reftime))
-  }else{
-    p1 <- ggplot(forq, aes(x=Order.q, y=qPD, color=Assemblage, linetype=Assemblage)) + theme_bw() + geom_line(size=1.5)  +
-      geom_ribbon(aes(ymin=qPD.LCL,ymax=qPD.UCL,fill=Assemblage),linetype = 0,alpha=0.2)+
-      scale_color_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
-      scale_fill_manual(values = color_nogreen(length(unique(forq$Assemblage))))+
-      theme(text=element_text(size=20),legend.position="bottom",legend.key.width = unit(2,"cm"))+
-      geom_point(size=5, data=subset(forq, Order.q%in%q1), aes(x=Order.q, y=qPD, color=Assemblage))+
-      facet_wrap(~Reftime, scales = "free")
-    p1 <-  p1 +xlab("Order q")+ylab(ylab_)
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic Diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic Diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic Hill Diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic Hill Diversity')
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Phylogenetic Diversity')
+      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Phylogenetic Hill Diversity')
+    }
+    out = out + facet_grid(.~Reftime, scales = "free_y")
   }
   
-  ggplot(outcome, aes(x=Order.q, y=qD, colour=Assemblage, lty=Method)) +
-    geom_line(size=1.2) +
-    scale_colour_manual(values = cbPalette) +
-    geom_ribbon(data = outcome[outcome$Method=="Asymptotic",],
-                aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
-    # geom_ribbon(data = outcome[outcome$method=="Empirical",],
-    #             aes(ymin=qD.LCL, ymax=qD.UCL, fill=Assemblage), alpha=0.2, linetype=0) +
+  ## PD & time-profile ##
+  if (class == 'PD' & profile == 'time') {
+    outcome$Order.q = paste('q = ', outcome$Order.q, sep = '')
+    out = ggplot(outcome, aes(x = Reftime, y = qPD, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic Diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic Diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic Hill Diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic Hill Diversity')
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Phylogenetic Diversity')
+      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Phylogenetic Hill Diversity')
+    }
+    out = out + facet_grid(.~Order.q, scales = "free_y")
+  }
+  
+  ## FD & q-profile ##
+  if (class == 'FD' & profile == 'q') {
+    outcome$tau = paste('Tau = ', round(outcome$tau, 3), sep = '')
+    out = ggplot(outcome, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional Diversity')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical Functional Diversity')
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
+      
+      out = out + labs(x = 'Order q', y = 'Functional Diversity')
+    }
+    out = out + facet_grid(.~tau, scales = "free_y")
+  }
+  
+  ## FD & tau-profile ##
+  if (class == 'FD' & profile == 'tau') {
+    outcome$Order.q = paste('Order q = ', outcome$Order.q, sep = '')
+    out = ggplot(outcome, aes(x = tau, y = qFD, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'tau', y = 'Asymptotic Functional Diversity')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'tau', y = 'Empirical Functional Diversity')
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
+      
+      out = out + labs(x = 'tau', y = 'Functional Diversity')
+    }
+    out = out + facet_grid(.~Order.q, scales = "free_y")
+  }
+  
+  ## AUC & q-profile ##
+  if (class == 'AUC') {
+    out = ggplot(outcome, aes(x = Order.q, y = qAUC, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(outcome$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qAUC.LCL, ymax = qAUC.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+      
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional Diversity (AUC)')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical Functional Diversity (AUC)')
+    } else {
+      out = out + geom_line(aes(lty = Method), size = 1.5) + 
+        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qAUC.LCL, ymax = qAUC.UCL), linetype = 0, alpha = 0.2)
+      
+      out = out + labs(x = 'Order q', y = 'Functional Diversity (AUC)')
+    }
+  }
+  
+  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
+                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  
+  out = out +
+    scale_colour_manual(values = cbPalette) + theme_bw() + 
     scale_fill_manual(values = cbPalette) +
-    scale_linetype_manual(values = c("Asymptotic"=1, "Empirical"=2)) +
-    labs(x="Order q", y="Species diversity") +
-    # theme_bw(base_size = 18) +
-    theme(text=element_text(size=18)) +
-    theme(legend.position="bottom", legend.box = "vertical",
-          legend.key.width = unit(1.2,"cm"),
-          # plot.margin = unit(c(1.5,0.3,1.2,0.3), "lines"),
-          legend.title=element_blank(),
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(-10,-10,-5,-10))
+    theme(legend.position = "bottom", legend.box = "vertical",
+          legend.key.width = unit(1.2, "cm"),
+          legend.title = element_blank(),
+          legend.margin = margin(0, 0, 0, 0),
+          legend.box.margin = margin(-10, -10, -5, -10),
+          text = element_text(size = 16),
+          plot.margin = unit(c(5.5, 5.5, 5.5, 5.5), "pt")) +
+    guides(linetype = guide_legend(keywidth = 2.5))
+  
+  return(out)
 }
 
 
 #' @useDynLib iNEXT3D, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
+
 
 

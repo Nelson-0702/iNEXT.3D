@@ -120,7 +120,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
     #dmax <- max(distM)
     #threshold <- (dmean+dmin)/2
     threshold <- dmean
-  }else if(sum(threshold<0)>0|sum(threshold>1)>0) {
+  } else if(sum(threshold<0)>0|sum(threshold>1)>0) {
     stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
@@ -172,6 +172,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
                      nboot = nboot, conf = conf, m = size)
       temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0;temp1$SC.LCL[temp1$SC.LCL<0] <- 0
       temp1$SC.UCL[temp1$SC.UCL>1] <- 1
+      if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
@@ -663,10 +664,12 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   
   FUN <- function(e){
     if(class(dat) == "list"){
+      ## size-based
       temp1 = AUCtable_iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype,
                               tau = NULL, nboot = nboot, conf = conf, m = size)
       temp1$qAUC.LCL[temp1$qAUC.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
       temp1$SC.UCL[temp1$SC.UCL>1] <- 1
+      if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,

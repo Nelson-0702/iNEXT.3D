@@ -490,13 +490,14 @@ FD.m.est = function(ai_vi, m, q, nT){
     ai[ai<1] <- 1
     av = cbind(ai = round(ai), vi = ai_vi$vi[,i])
     # av = cbind(ai = ceiling(ai_vi$ai[,i]), vi =  ai_vi$vi[,i])
-    RFD_m = RFD(av, nT, nT-1, q,V_bar)
+    RFD_m = RFD(av, nT, nT-1, q, V_bar)
     beta <- rep(0,length(q))
     #asymptotic value; observed value
     asy_i <- asy[,i];obs_i <- obs[,i]
     asy_i <- sapply(1:length(q), function(j){
       max(asy_i[j],obs_i[j])
     })
+    RFD_m[RFD_m > obs_i] = obs_i[RFD_m > obs_i]
     beta0plus <- which( asy_i != obs_i)
     beta[beta0plus] <- (obs_i[beta0plus]-RFD_m[beta0plus])/(asy_i[beta0plus]-RFD_m[beta0plus])
     sapply(m, function(mm){
@@ -750,7 +751,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   SC <- CoverageFD(data_, 'abundance', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
-  method <- ifelse(mm>n,'Extrapolated',ifelse(mm<n,'Interpolated','Observed'))
+  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,length(q)*length(tau))
   m <- rep(mm,length(q)*length(tau))
   order <- rep(rep(q,each = length(mm)),length(tau))
@@ -798,7 +799,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   SC <- CoverageFD(data_, 'incidence_freq', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
-  method <- ifelse(mm>n,'Extrapolated',ifelse(mm<n,'Interpolated','Observed'))
+  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,length(q)*length(tau))
   m <- rep(mm,length(q)*length(tau))
   order <- rep(rep(q,each = length(mm)),length(tau))

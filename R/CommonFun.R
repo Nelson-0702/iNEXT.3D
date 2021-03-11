@@ -475,7 +475,7 @@ invChat.Sam <- function (x, q, C) {
   m <- rep(mm,length(q))
   order <- rep(q,each = length(mm))
   SC <- rep(SC,length(q))
-  data.frame(t = m,Method = method,Order.q = order,
+  data.frame(nt = m,Method = method,Order.q = order,
              SC=SC,qD = out,goalSC = rep(C,length(q)))
   
   # if (nboot==0|is.null(conf)) {
