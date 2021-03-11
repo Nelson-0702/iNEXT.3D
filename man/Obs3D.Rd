@@ -22,6 +22,9 @@ Obs3D(
 \arguments{
 \item{data}{a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.}
 
+\item{class}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+integrates several threshold functional diversity to get diversity.}
+
 \item{q}{a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).}
 
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}),

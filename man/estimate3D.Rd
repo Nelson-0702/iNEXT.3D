@@ -26,6 +26,9 @@ estimate3D(
 If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
 by species incidence frequencies in each column or list.}
 
+\item{class}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+integrates several threshold functional diversity to get diversity.}
+
 \item{q}{a numerical vector of the order of Hill number.}
 
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
