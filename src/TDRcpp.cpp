@@ -19,7 +19,7 @@ double TD1_2nd(double n, double f1, double f2) {
     for(int r = 1; r < n; r++){
       q1 = q1 + pow((1-A),r)/r;
     }
-    h2 = (f1/n)*(pow(1-A,(-n+1)))*(-log(A)-q1);
+    h2 = (f1/n)*(pow(1-A,(-n+1)))*round((-log(A)-q1)*pow(10,12))/pow(10,12);
   }
   return(h2);
 }
@@ -34,7 +34,7 @@ double TDq_2nd(double n, double f1, double A, double q) {
       qq = qq + Rf_choose(q-1,r)*pow((A-1),r);
       //Rcpp::Rcout << "qq: " << qq << std::endl;
     }
-    ans = (f1/n)*(pow(1-A,(-n+1)))*(pow(A,q-1)-qq);
+    ans = (f1/n)*(pow(1-A,(-n+1)))*round((pow(A,q-1)-qq)*pow(10,12))/pow(10,12);
   }
   return(ans);
 }

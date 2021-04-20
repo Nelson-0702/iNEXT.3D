@@ -42,25 +42,25 @@ color_nogreen <- function(n) {
   all <- c("red", "blue", "orange", "purple", "pink", "cyan", "brown", "yellow")
   all[1:n]
 }
-PD.Tprofile=function(ai,Lis, q, cal, nt) {
+PD.Tprofile=function(ai,Lis, q, reft, cal, nt) {
   isn0 <- ai>0
   ai <- ai[isn0]
   Lis <- Lis[isn0,,drop=F]
   #q can be a vector
   t_bars <- as.numeric(ai %*% Lis/nt)
   
-  
-  bL <- sapply(1:length(t_bars), function(i) Lis[,i]/t_bars[i])
   pAbun <- ai/nt
   
-  out <- sapply(q, function(j){
-    if(j==1) as.numeric(-(pAbun*log(pAbun)) %*% bL) %>% exp()
-    else as.numeric((pAbun)^j %*% bL) %>% .^(1/(1-j))
-  }) %>% matrix(.,ncol = length(q))
-  if(cal=="PD"){
-    out <- sapply(1:length(t_bars), function(i){
-      out[i,]*t_bars[i]
-    }) %>% matrix(.,ncol = length(t_bars)) %>% t()
+  out <- sapply(1:length(t_bars), function(i) {
+    sapply(q, function(j){
+      if(j==1) as.numeric(-(pAbun/t_bars[i]*log(pAbun/t_bars[i])) %*% Lis[,i]) %>% exp()
+      else as.numeric((pAbun/t_bars[i])^j %*% Lis[,i]) %>% .^(1/(1-j))
+    }) %>% matrix(.,ncol = length(q))
+  }) %>% t()
+  if(cal=="meanPD"){
+    out <- sapply(1:length(reft), function(i){
+      out[i,]/reft[i]
+    }) %>% matrix(.,ncol = length(reft)) %>% t()
   }
   out
 }
@@ -72,7 +72,7 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       aL <- phyBranchAL_Abu(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
       x <- datalist[[i]] %>% .[.>0]
       n <- sum(x)
-      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,cal = cal,nt = n) %>%
+      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>%
         c()
       
       if(nboot!=0){
@@ -87,7 +87,7 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,cal = cal, nt = n) %>% c()
+          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal, nt = n) %>% c()
           out_b
         }) %>% apply(., 1, sd)
       }else{
@@ -102,7 +102,7 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       aL <- phyBranchAL_Inc(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
       x <- datalist[[i]] %>% .[rowSums(.)>0,]
       n <- ncol(x)
-      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT,q=q,cal = cal,nt = n) %>%
+      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT,q=q,reft = reft,cal = cal,nt = n) %>%
         c()
       
       if(nboot!=0){
@@ -118,7 +118,7 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,cal = cal,nt = n) %>% c()
+          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal,nt = n) %>% c()
           out_b
         }) %>% apply(., 1, sd)
       }else{
@@ -284,7 +284,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       aL <- phyBranchAL_Abu(phylo = phylotr,data = x,datatype,refT = reft)
       #aL$treeNabu$branch.length <- aL$BLbyT[,1]
       #aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,cal = cal)
+      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft, BLs = aL$BLbyT )
         Li_b <- Boots$Li
@@ -299,7 +299,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,cal = cal)
+          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
           return(outb)
         }) %>% apply(., 1, sd)
       }else{
@@ -318,7 +318,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       aL <- phyBranchAL_Inc(phylo = phylotr,data = x,datatype,refT = reft)
       # aL$treeNabu$branch.length <- aL$BLbyT[,1]
       # aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,cal = cal)
+      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype = datatype,nboot = nboot,
                            splunits = n,reft = reft, BLs = aL$BLbyT )
@@ -334,7 +334,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,cal = cal)
+          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
           return(outb)
         }) %>% apply(., 1, sd)
       }else{
@@ -355,119 +355,10 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
   Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
   return(Estoutput)
 }
-AsyPD2 <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change final list name
-  nms <- names(datalist)
-  qtile <- qnorm(1-(1-conf)/2)
-  tau_l <- length(reft)
-  reft_complete <- reft
-  if(datatype=="abundance"){
-    Estoutput <- lapply(datalist,function(x){
-      #atime <- Sys.time()
-      x <- x[x>0]
-      n <- sum(x)
-      aL <- phyBranchAL_Abu(phylo = phylotr,data = x,datatype,refT = reft)
-      #divide reference time into two parts.
-      first_parent <- aL$treeNabu %>% filter(tgroup=='Tip') %>% select(branch.length) %>% min
-      reft_taxo <- reft[reft <= first_parent]
-      reft <- reft[reft > first_parent]
-      if(length(reft_taxo)>0) {
-        aL$BLbyT <- aL$BLbyT[,-(1:length(reft_taxo))]
-        ans_taxo <- TD.q.est(x=x,q=q,datatype=datatype,nboot=nboot,conf=conf,cal=cal,reft_taxo=reft_taxo)
-        ans_taxo <- tibble(Order.q = rep(q, each=length(reft_taxo)),qPD = ans_taxo[,1],
-                           qPD.LCL = ans_taxo[,2], qPD.UCL = ans_taxo[,3],Reftime = rep(reft_taxo,length(q)))
-      }
-      #aL$treeNabu$branch.length <- aL$BLbyT[,1]
-      #aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,cal = cal)
-      if(nboot!=0){
-        Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft, BLs = aL$BLbyT )
-        Li_b <- Boots$Li
-        Li_b <- sapply(1:length(reft),function(l){
-          tmp <- Li_b[,l]
-          tmp[tmp>reft[l]] <- reft[l]
-          tmp
-        })
-        f0 <- Boots$f0
-        # tgroup_B <- c(rep("Tip",length(x)+f0),rep("Inode",nrow(Li_b)-length(x)-f0))
-        # aL_table_b <- tibble(branch.abun = 0, branch.length= Li_b[,1],tgroup = tgroup_B)
-        ses <- sapply(1:nboot, function(B){
-          ai_B <- Boots$boot_data[,B]
-          isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,cal = cal)
-          return(outb)
-        }) %>% apply(., 1, sd)
-      }else{
-        ses <- rep(NA,length(est))
-      }
-      est <- tibble(Order.q = rep(q,length(reft)), qPD = est,
-                    qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
-                    Reftime = rep(reft,each = length(q)))
-      if(length(reft_taxo)>0) {
-        est <- rbind(ans_taxo,est) %>% arrange(Order.q,Reftime)
-      }
-      est
-    })
-  }else if(datatype=="incidence_raw"){
-    Estoutput <- lapply(datalist,function(x){
-      #atime <- Sys.time()
-      x <- x[rowSums(x)>0,colSums(x)>0]
-      n <- ncol(x)
-      aL <- phyBranchAL_Inc(phylo = phylotr,data = x,datatype,refT = reft)
-      #divide reference time into two parts.
-      first_parent <- aL$treeNabu %>% filter(tgroup=='Tip') %>% select(branch.length) %>% min
-      reft_taxo <- reft[reft <= first_parent]
-      reft <- reft[reft > first_parent]
-      if(length(reft_taxo)>0) {
-        aL$BLbyT <- aL$BLbyT[,-(1:length(reft_taxo))]
-        ans_taxo <- TD.q.est(x=x,q=q,datatype=datatype,nboot=nboot,conf=conf,cal=cal,reft_taxo=reft_taxo)
-        ans_taxo <- tibble(Order.q = rep(q, each=length(reft_taxo)),qPD = ans_taxo[,1],
-                           qPD.LCL = ans_taxo[,2], qPD.UCL = ans_taxo[,3],Reftime = rep(reft_taxo,length(q)))
-      }
-      
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,cal = cal)
-      if(nboot!=0){
-        Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype = datatype,nboot = nboot,
-                           splunits = n,reft = reft, BLs = aL$BLbyT )
-        Li_b <- Boots$Li
-        Li_b <- sapply(1:length(reft),function(l){
-          tmp <- Li_b[,l]
-          tmp[tmp>reft[l]] <- reft[l]
-          tmp
-        })
-        f0 <- Boots$f0
-        # tgroup_B <- c(rep("Tip",nrow(x)+f0),rep("Inode",nrow(Li_b)-nrow(x)-f0))
-        # aL_table_b <- tibble(branch.abun = 0, branch.length= Li_b[,1],tgroup = tgroup_B)
-        ses <- sapply(1:nboot, function(B){
-          ai_B <- Boots$boot_data[,B]
-          isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,cal = cal)
-          return(outb)
-        }) %>% apply(., 1, sd)
-      }else{
-        ses <- rep(NA,length(est))
-      }
-      est <- tibble(Order.q = rep(q,length(reft)), qPD = est,
-                    qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
-                    Reftime = rep(reft,each = length(q)))
-      if(length(reft_taxo)>0) {
-        est <- rbind(ans_taxo,est) %>% arrange(Order.q,Reftime)
-      }
-      est
-    })
-  }
-  Estoutput <- do.call(rbind,Estoutput) %>%
-    mutate(Assemblage = rep(names(datalist),each = length(q)*tau_l),Method = 'Asymptotic',
-           Type=cal) %>%
-    select(Assemblage,Order.q,qPD,qPD.LCL, qPD.UCL, 
-           Reftime,Method, Type) %>%
-    arrange(Order.q,Reftime)
-  Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
-  return(Estoutput)
-}
 
 
 # PhD.q.est ------------------------------------------------------------------
-PhD.q.est = function(ai,Lis, q, nt, cal){
+PhD.q.est = function(ai,Lis, q, nt, reft, cal){
   t_bars <- as.numeric(t(ai) %*% Lis/nt)
   S <- length(ai)
   if(1 %in% q){
@@ -525,8 +416,8 @@ PhD.q.est = function(ai,Lis, q, nt, cal){
   if(cal=='PD'){
     est <- as.numeric(est)
   }else if (cal=='meanPD'){
-    est <- as.numeric(sapply(1:length(t_bars), function(i){
-      est[,i]/t_bars[i]
+    est <- as.numeric(sapply(1:length(reft), function(i){
+      est[,i]/reft[i]
     }))
   }
   return(est)
@@ -625,13 +516,13 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       n <- sum(x)
       #====conditional on m====
       qPDm <- PhD.m.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,m = m[[i]],
-                        q = q,nt = n,cal = cal) %>% as.numeric()
+                        q = q,nt = n,reft = reft,cal = cal) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]],n)
       #====unconditional====
       if(unconditional_var){
         goalSC <- unique(covm)
         qPD_unc <- unique(invChatPD_abu(x = x,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                                        q = q,Cs = goalSC,n = n,cal = cal))
+                                        q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT)
@@ -652,11 +543,11 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             ai_B <- Boots$boot_data[,B]
             isn0 <- ai_B>0
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                 m=m[[i]],q=q,nt = n,cal = cal) %>% as.numeric()
+                                 m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b <- Coverage(ai_B[isn0&tgroup_B=="Tip"], datatype, m[[i]],n)
             qPD_unc_b <- unique(invChatPD_abu(x = ai_B[isn0&tgroup_B=="Tip"],
                                               ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                              q = q,Cs = goalSC,n = n,cal = cal))$qPD
+                                              q = q,Cs = goalSC,n = n,reft = reft,cal = cal))$qPD
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
             return(c(qPDm_b,covm_b,qPD_unc_b))
@@ -667,7 +558,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             ai_B <- Boots$boot_data[,B]
             isn0 <- ai_B>0
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                 m=m[[i]],q=q,nt = n,cal = cal) %>% as.numeric()
+                                 m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b <- Coverage(ai_B[isn0&tgroup_B=="Tip"], datatype, m[[i]],n)
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
@@ -721,13 +612,13 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       n <- ncol(x)
       #====conditional on m====
       qPDm <- PhD.m.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,m = m[[i]],
-                        q = q,nt = n,cal = cal) %>% as.numeric()
+                        q = q,nt = n,reft = reft,cal = cal) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]], n)
       #====unconditional====
       if(unconditional_var){
         goalSC <- unique(covm)
         qPD_unc <- unique(invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                                        q = q,Cs = goalSC,n = n,cal = cal))
+                                        q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
         #colnames(qPD_unc)[which(colnames(qPD_unc)=='t')] <- 'm'
       }
       if(nboot>1){
@@ -748,11 +639,11 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             ai_B <- Boots$boot_data[,B]
             isn0 <- ai_B>0
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                 m=m[[i]],q=q,nt = n,cal = cal) %>% as.numeric()
+                                 m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b = Coverage(ai_B[isn0&tgroup_B=="Tip"], datatype, m[[i]],n)
             qPD_unc_b <- unique(invChatPD_inc(x = ai_B[isn0&tgroup_B=="Tip"],
                                               ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                              q = q,Cs = goalSC,n = n,cal = cal))$qPD
+                                              q = q,Cs = goalSC,n = n,reft = reft,cal = cal))$qPD
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
             return(c(qPDm_b,covm_b,qPD_unc_b))
@@ -763,7 +654,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             ai_B <- Boots$boot_data[,B]
             isn0 <- ai_B>0
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                 m=m[[i]],q=q,nt = n,cal = cal) %>% as.numeric()
+                                 m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b = Coverage(ai_B[isn0&tgroup_B=="Tip"], datatype, m[[i]],n)
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
@@ -821,7 +712,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
 
 
 # PhD.m.est ------------------------------------------------------------------
-PhD.m.est = function(ai,Lis, m, q, nt, cal){
+PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   t_bars <- as.numeric(t(ai) %*% Lis/nt)
   if(sum(m>nt)>0){
     #Extrapolation
@@ -851,7 +742,7 @@ PhD.m.est = function(ai,Lis, m, q, nt, cal){
     }
     # obs <- PD.qprofile(aL = aL, q = Q, cal="PD" ,datatype = datatype , nforboot = nforboot, splunits = splunits)
     #asymptotic value
-    asy <- matrix(PhD.q.est(ai = ai,Lis = Lis,q = q, nt = nt,cal = 'PD'),nrow = length(q),ncol = length(t_bars))
+    asy <- matrix(PhD.q.est(ai = ai,Lis = Lis,q = q, nt = nt, reft = reft, cal = 'PD'),nrow = length(q),ncol = length(t_bars))
   }else if (sum(m==nt)>0){
     obs <- RPD(ai, Lis, nt,nt, q)
   }
@@ -879,8 +770,8 @@ PhD.m.est = function(ai,Lis, m, q, nt, cal){
       }else{
         ans <- EPD(m = mm,obs = obs,asy = asy)
       }
-      ans <- sapply(1:length(t_bars), function(i){
-        ans[,i]/t_bars[i]
+      ans <- sapply(1:length(reft), function(i){
+        ans[,i]/reft[i]
       })
       as.numeric(ans)
     })
@@ -1035,7 +926,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       n <- sum(x_)
       #n_sp_samp <- sum(aL_table$tgroup=='Tip')
       est <- invChatPD_abu(x = x_,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                           q = q,Cs = level, n = n,cal = cal)
+                           q = q,Cs = level, n = n, reft = reft, cal = cal)
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT,n)
         Li_b <- Boots$Li
@@ -1058,7 +949,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
           # aL_table_b <- aL_table_b[isn0,]
           est_b <- invChatPD_abu(x = ai_B[isn0&tgroup_B=="Tip"],ai = ai_B[isn0],
                                  Lis = Li_b[isn0,,drop=F],q = q,Cs = level,
-                                 n = n,cal = cal)$qPD
+                                 n = n, reft = reft, cal = cal)$qPD
           
           return(est_b)
         }) %>% matrix(.,nrow = length(q)*length(reft)*length(level)) %>% apply(., 1, sd)
@@ -1075,7 +966,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       x_ <- x_[rowSums(x_)>0,colSums(x_)>0]
       n <- ncol(x_)
       est <- invChatPD_inc(x = rowSums(x_),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                           q = q,Cs = level, n = n,cal = cal)
+                           q = q,Cs = level, n = n, reft = reft, cal = cal)
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT,n)
         Li_b <- Boots$Li
@@ -1098,7 +989,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
           # aL_table_b <- aL_table_b[isn0,]
           est_b <- invChatPD_inc(x = ai_B[isn0&tgroup_B=="Tip"],ai = ai_B[isn0],
                                  Lis = Li_b[isn0,,drop=F],q = q,Cs = level,
-                                 n = n,cal = cal)$qPD
+                                 n = n, reft = reft, cal = cal)$qPD
           return(est_b)
         }) %>% matrix(.,nrow = length(q)*length(reft)*length(level)) %>% apply(., 1, sd)
       }else{
@@ -1123,7 +1014,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
 
 
 # invChatPD_abu ------------------------------------------------------------------
-invChatPD_abu <- function(x,ai,Lis, q, Cs, n,cal){
+invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
   #x <- unlist(aL_table$branch.abun[aL_table$tgroup=="Tip"])
   refC = Coverage(x, 'abundance', n, n)
   f <- function(m, C) abs(Coverage(x, 'abundance', m, n) - C)
@@ -1152,7 +1043,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n,cal){
   })
   mm[mm==0] <- 1
   SC <- Coverage(x, 'abundance', mm, n)
-  out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,cal = cal))
+  out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,each = length(q)*ncol(Lis))
   m <- rep(mm,each = length(q)*ncol(Lis))
@@ -1167,7 +1058,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n,cal){
 
 
 # invChatPD_inc ------------------------------------------------------------------
-invChatPD_inc <- function(x,ai,Lis, q, Cs, n,cal){ # x is a matrix
+invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){ # x is a matrix
   #x <- unlist(aL_table$branch.abun[aL_table$tgroup=="Tip"])
   refC = Coverage(x, 'incidence', n, n)
   f <- function(m, C) abs(Coverage(x, 'incidence', m, n) - C)
@@ -1197,7 +1088,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n,cal){ # x is a matrix
   })
   mm[mm==0] <- 1
   SC <- Coverage(x, 'incidence', mm, n)
-  out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,cal = cal))
+  out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,each = length(q)*ncol(Lis))
   m <- rep(mm,each = length(q)*ncol(Lis))
