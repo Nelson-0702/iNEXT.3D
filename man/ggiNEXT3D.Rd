@@ -34,59 +34,59 @@ a ggplot2 object
 }
 \examples{
 ## example for abundance based data (list of vector)
-# class = 'TD'
+# diversity = 'TD'
 data(spider)
-out1 <- iNEXT3D(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
+out1 <- iNEXT3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 ggiNEXT3D(out1, facet.var = "Assemblage")
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- iNEXT3D(data, class = 'PD', tree = tree, datatype = "abundance", q = 0, nboot = 30)
+out2 <- iNEXT3D(data, diversity = 'PD', tree = tree, datatype = "abundance", q = 0, nboot = 30)
 ggiNEXT3D(out2, type = c(1, 3))
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out3 <- iNEXT3D(data[,1], class = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+out3 <- iNEXT3D(data[,1], diversity = 'FD', distM = dij, datatype = "abundance", FDtype = 'single', nboot = 0)
 ggiNEXT3D(out3)
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out4 <- iNEXT3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0)
+out4 <- iNEXT3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0)
 ggiNEXT3D(out4)
 
 ## example for incidence-based data
-# class = 'TD'
+# diversity = 'TD'
 data(ant)
 t <- round(seq(10, 500, length.out = 20))
-out5 <- iNEXT3D(ant$h500m, class = 'TD', q = 1, datatype = "incidence_freq", size = t)
+out5 <- iNEXT3D(ant$h500m, diversity = 'TD', q = 1, datatype = "incidence_freq", size = t)
 ggiNEXT3D(out5)
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- iNEXT3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+out6 <- iNEXT3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
 ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out7 <- iNEXT3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+out7 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
 ggiNEXT3D(out7)
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out8 <- iNEXT3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 0)
+out8 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 0)
 ggiNEXT3D(out8)
 
 }

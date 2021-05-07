@@ -6,7 +6,7 @@
 \usage{
 iNEXT3D(
   data,
-  class,
+  diversity = "TD",
   q = c(0, 1, 2),
   datatype = "abundance",
   size = NULL,
@@ -19,14 +19,14 @@ iNEXT3D(
   reftime = NULL,
   PDtype = "PD",
   distM,
+  FDtype = "AUC",
   threshold = NULL
 )
 }
 \arguments{
 \item{data}{a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.}
 
-\item{class}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
-integrates several threshold functional diversity to get diversity.}
+\item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.}
 
 \item{q}{a numerical vector of the order of Hill number.}
 
@@ -48,21 +48,24 @@ If the \code{endpoint} is larger than the reference sample size, then \code{iNEX
 
 \item{nboot}{an integer specifying the number of replications.}
 
-\item{tree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{class = 'PD'}.}
+\item{tree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
 
 \item{nT}{needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
 If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
-It is necessary when \code{class = 'PD'} and \code{datatype = "incidence_raw"}.}
+It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.}
 
 \item{reftime}{is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-the pooled assemblage. Default is \code{NULL}. It will be use when \code{class = 'PD'}.}
+the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.}
 
 \item{PDtype}{desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{class = 'PD'}. Default is \code{"PD"}.}
+and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.}
 
-\item{distM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{class = 'FD' or 'AUC'}.}
+\item{distM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.}
 
-\item{threshold}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{class = 'FD'}.}
+\item{FDtype}{a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
+integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}}
+
+\item{threshold}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.}
 }
 \value{
 a list of three objects: \code{$DataInfo} for summarizing data information; 
@@ -74,61 +77,61 @@ and \code{$AsyEst} for showing asymptotic diversity estimates along with related
 }
 \examples{
 ## example for abundance based data (list of vector)
-# class = 'TD'
+# diversity = 'TD'
 data(spider)
-out1 <- iNEXT3D(spider, class = 'TD', q = c(0,1,2), datatype = "abundance")
+out1 <- iNEXT3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 out1$DataInfo # showing basic data information.
 out1$AsyEst # showing asymptotic diversity estimates.
 out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- iNEXT3D(data, class = 'PD', tree = tree, datatype = "abundance", q = c(0, 1, 2), nboot = 30)
+out2 <- iNEXT3D(data, diversity = 'PD', tree = tree, datatype = "abundance", q = c(0, 1, 2), nboot = 30)
 out2
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out3 <- iNEXT3D(data[,1], class = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+out3 <- iNEXT3D(data[,1], diversity = 'FD', distM = dij, datatype = "abundance", FDtype = 'single', nboot = 0)
 out3
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out4 <- iNEXT3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", nboot = 0)
+out4 <- iNEXT3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0)
 out4
 
 ## example for incidence-based data
-# class = 'TD'
+# diversity = 'TD'
 data(ant)
 t <- round(seq(10, 500, length.out = 20))
-out5 <- iNEXT3D(ant$h500m, class = 'TD', q = 1, datatype = "incidence_freq", size = t)
+out5 <- iNEXT3D(ant$h500m, diversity = 'TD', q = 1, datatype = "incidence_freq", size = t)
 out5
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- iNEXT3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+out6 <- iNEXT3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
 out6
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out7 <- iNEXT3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+out7 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
 out7
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out8 <- iNEXT3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 0)
+out8 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 0)
 out8
 
 }

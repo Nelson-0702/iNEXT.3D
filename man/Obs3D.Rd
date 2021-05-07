@@ -6,7 +6,7 @@
 \usage{
 Obs3D(
   data,
-  class = "TD",
+  diversity = "TD",
   q = seq(0, 2, 0.2),
   datatype = "abundance",
   nboot = 50,
@@ -16,14 +16,14 @@ Obs3D(
   reftime = NULL,
   PDtype = "PD",
   distM,
+  FDtype = "AUC",
   threshold = NULL
 )
 }
 \arguments{
 \item{data}{a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.}
 
-\item{class}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
-integrates several threshold functional diversity to get diversity.}
+\item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.}
 
 \item{q}{a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).}
 
@@ -34,82 +34,85 @@ or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{tree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{class = 'PD'}.}
+\item{tree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
 
 \item{nT}{needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
 If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
-It is necessary when \code{class = 'PD'} and \code{datatype = "incidence_raw"}.}
+It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.}
 
 \item{reftime}{is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-the pooled assemblage. Default is \code{NULL}. It will be use when \code{class = 'PD'}.}
+the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.}
 
 \item{PDtype}{desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{class = 'PD'}. Default is \code{"PD"}.}
+and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.}
 
-\item{distM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{class = 'FD' or 'AUC'}.}
+\item{distM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.}
 
-\item{threshold}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{class = 'FD'}.}
+\item{FDtype}{a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
+integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}}
+
+\item{threshold}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.}
 }
 \value{
 a table of diversity q profile by 'Empirical'
 }
 \description{
-\code{Obs3D} The estimated and empirical diversity of order q
+\code{Obs3D} The empirical diversity of order q
 }
 \examples{
 ## example for abundance-based data
-# class = 'TD'
+# diversity = 'TD'
 data(spider)
-out1 <- Obs3D(spider, class = 'TD', datatype = "abundance")
+out1 <- Obs3D(spider, diversity = 'TD', datatype = "abundance")
 out1
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- Obs3D(data, class = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
+out2 <- Obs3D(data, diversity = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
 out2
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out3 <- Obs3D(data, class = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+out3 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), FDtype = 'single', nboot = 0)
 out3
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 dij <-  FunDdata.abu$dij
-out4 <- Obs3D(data = data[,2], class = 'AUC', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+out4 <- Obs3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
 out4
 
 ## example for incidence-based data
-# class = 'TD'
+# diversity = 'TD'
 data(ant)
-out5 <- Obs3D(ant, class = 'TD', datatype = "incidence_freq")
+out5 <- Obs3D(ant, diversity = 'TD', datatype = "incidence_freq")
 out5
 
-# class = 'PD'
+# diversity = 'PD'
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- Obs3D(data, class = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
+out6 <- Obs3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
 out6
 
-# class = 'FD'
+# diversity = 'FD' & FDtype = 'single'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out7 <- Obs3D(data, class = 'FD', distM = dij, datatype = "incidence_freq")
+out7 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
 out7
 
-# class = 'AUC'
+# diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 dij <-  FunDdata.inc$dij
-out8 <- Obs3D(data, class = 'AUC', distM = dij, datatype = "incidence_freq", nboot = 20)
+out8 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20)
 out8
 
 }
