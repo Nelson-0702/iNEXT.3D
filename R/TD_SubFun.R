@@ -14,15 +14,10 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
   ifi <- table(x);ifi <- cbind(i = as.numeric(names(ifi)),fi = ifi)
   obs <- Diversity_profile_MLE(x,qs)
   RFD_m <- RTD(ifi, n, n-1, qs)
-  # RFD_m2 <- RTD(ifi, n, n-2, qs)
-  # whincr <- which(RFD_m != RFD_m2)
-  # Dn1 <- obs; Dn1[whincr] <- obs + (obs - RFD_m)^2/(RFD_m - RFD_m2)
   #asymptotic value
   asy <- Diversity_profile(x,qs)
   #beta
   beta <- rep(0,length(qs))
-  # beta0plus <- which(asy != obs)
-  # beta[beta0plus] <- (Dn1[beta0plus]-obs[beta0plus])/(asy[beta0plus]-obs[beta0plus])
   beta0plus <- which(asy != RFD_m)
   beta[beta0plus] <- (obs[beta0plus]-RFD_m[beta0plus])/(asy[beta0plus]-RFD_m[beta0plus])
   #Extrapolation, 
@@ -39,8 +34,8 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
   }
   Sub = function(m){
     if(m<n){
-      if(m == round(m)) { mRTD[-1,mRTD[1,]==m] 
-      } else { (ceiling(m)-m)*mRTD[-1,mRTD[1,]==floor(m)]+(m-floor(m))*mRTD[-1,mRTD[1,]==ceiling(m)] }
+      if(m == round(m)) { mRTD[-1,mRTD[1,] == m] 
+      } else { (ceiling(m) - m)*mRTD[-1, mRTD[1,] == floor(m)] + (m - floor(m))*mRTD[-1, mRTD[1,] == ceiling(m)] }
     }else if(m==n){
       obs
     }else{
@@ -247,16 +242,10 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE
   #====conditional on m====
   Dq.hat <- TD.m.est_inc(Spec,t,q)
   C.hat <- Chat.Sam(Spec, t)
-  #====unconditional====
-  # if(unconditional_var){
-  #   goalSC <- unique(round(C.hat,4))
-  #   goalSC[goalSC==1] <- 0.9999
-  #   Dq.hat_unc <- unique(invChat.Sam(x = Spec,q = q,C = goalSC))
-  # }
   if(unconditional_var){
     goalSC <- unique(C.hat)
     Dq.hat_unc <- unique(invChat.Sam(x = Spec,q = q,C = goalSC))
-    Dq.hat_unc$Method[Dq.hat_unc$nt == nT] = "Observed"
+    Dq.hat_unc$Method[round(Dq.hat_unc$nt) == nT] = "Observed"
   }
   
   if(se==TRUE & nboot > 1 & length(Spec) > 2){
@@ -357,7 +346,7 @@ Diversity_profile.inc <- function(data,q){
   Sobs <- length(Yi)
   A <- AA.inc(data)
   Q0hat <- ifelse(Q2 == 0, (nT - 1) / nT * Q1 * (Q1 - 1) / 2, (nT - 1) / nT * Q1 ^ 2/ 2 / Q2)
-  B <- sapply(q,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*(A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r)))))
+  B <- sapply(q,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12)))
   qD <- (U/nT)^(q/(q-1))*(qTDFUN(q,Yi,nT) + B)^(1/(1-q))
   qD[which(q==0)] = Sobs+Q0hat
   yi <- Yi[Yi>=1 & Yi<=(nT-1)]

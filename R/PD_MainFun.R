@@ -207,9 +207,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   mytree <- drop.tip(tree,tip)
   H_max <- get.rooted.tree.height(mytree)
   
-  # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
-  #reftime <- ifelse(is.null(reftime),H_max,reftime)
   reftime <- sort(unique(reftime))
   if(sum(reftime<=0)>0) {stop("Reference time must be greater than 0. Use NULL to set it to pooled tree height.",call. = FALSE)
   }

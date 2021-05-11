@@ -109,7 +109,7 @@
 #' @export
 #' 
 iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, conf = 0.95, nboot = 50, 
-                  tree = NULL, nT = NULL, reftime=NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
+                  tree = NULL, nT = NULL, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   

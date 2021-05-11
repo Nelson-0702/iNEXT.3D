@@ -84,7 +84,7 @@ double FDq1_1(double n, double h1, double A) {
     for(int r = 1; r < n; r++){
       q1 = q1 + pow((1-A),r)/r;
     }
-    h_est_2 = (h1/n)*(pow(1-A,(-n+1)))*(-log(A)-q1);
+    h_est_2 = (h1/n)*(pow(1-A,(-n+1)))*round((-log(A)-q1)*pow(10,12))/pow(10,12);
   }
   return(h_est_2);
 }

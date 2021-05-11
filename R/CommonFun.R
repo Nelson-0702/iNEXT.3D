@@ -242,7 +242,6 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
         est
       })
       out <- do.call(rbind,out)
-      #out <- do.call(rbind, lapply(x, function(x) invChat.Ind(x, q, C)))
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
@@ -328,7 +327,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
         est
       })
       out <- do.call(rbind,out)
-      #out <- do.call(rbind, lapply(x, function(x) invChat.Ind(x, q, C)))
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-1)))]
       rownames(out) <- NULL
@@ -360,7 +358,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
         est <- cbind(est,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
       })
       out <- do.call(rbind,out)
-      #out <- do.call(rbind, lapply(x, function(x) invChat.Sam(x,q,C,nboot, conf)))
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-1)))]
       rownames(out) <- NULL
@@ -385,7 +382,6 @@ invChat.Ind <- function (x, q, C) {
     }else if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = sum(x))
       mm <- opt$minimum
-      # mm <- round(mm)
     }else if (refC < cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -402,7 +398,6 @@ invChat.Ind <- function (x, q, C) {
       }
       mm <- ifelse(A==0,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
-      # mm <- round(mm)
     }
     mm
   })
@@ -419,16 +414,6 @@ invChat.Ind <- function (x, q, C) {
   SC <- rep(SC,length(q))
   data.frame(m = m,Method = method,Order.q = order,
              SC=SC,qD = out,goalSC = rep(C,length(q)))
-  # if (nboot==0|is.null(conf)) {
-  #   out <- TD.m.est(x = x,m = mm,qs = q)
-  #   out <- subset(iNEXT.Ind(x,q,m = c(1,mm),se = FALSE),m==mm)
-  #   out <- out[,c(1,2,3,5,4)]
-  # }else {
-  #   out <- subset(iNEXT.Ind(x,q,m = c(1,mm),se = TRUE,conf = conf,nboot = nboot), m==mm)
-  #   out <- out[,c(1, 2, 3, 7, 4, 5, 6)]
-  # }
-  # out <- out[!duplicated(out), ]
-  # out
 }
 
 
@@ -445,7 +430,6 @@ invChat.Sam <- function (x, q, C) {
     }else if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = max(x))
       mm <- opt$minimum
-      # mm <- round(mm)
     }else if (refC < cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -461,7 +445,6 @@ invChat.Sam <- function (x, q, C) {
       }
       mm <- ifelse(A==0,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
-      # mm <- round(mm)
     }
     mm
   })
@@ -478,15 +461,6 @@ invChat.Sam <- function (x, q, C) {
   data.frame(nt = m,Method = method,Order.q = order,
              SC=SC,qD = out,goalSC = rep(C,length(q)))
   
-  # if (nboot==0|is.null(conf)) {
-  #   out <- subset(iNEXT.Sam(x,q,t = c(1,mm),se = FALSE), t==mm)
-  #   out <- out[,c(1,2,3,5,4)]
-  # }else {
-  #   out <- subset(iNEXT.Sam(x,q,t = c(1,mm),se = TRUE,conf = conf,nboot = nboot), t==mm)
-  #   out <- out[, c(1, 2, 3, 7, 4, 5, 6)]
-  # }
-  # out <- out[!duplicated(out), ]
-  # out
 }
 
 

@@ -395,7 +395,7 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
       k <- 0:(nt-1)
       deltas <- as.numeric(deltas_pt2 %*% Li)
       a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
-      b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-sum(choose(q-1,k)*(A-1)^k)))
+      b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
       ans <- ((a+b)/(t_bar^q))^(1/(1-q))
       # timeb <- Sys.time()
       # print(timeb-timea)
@@ -523,6 +523,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         goalSC <- unique(covm)
         qPD_unc <- unique(invChatPD_abu(x = x,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                                         q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
+        qPD_unc$Method[round(qPD_unc$m) == n] = "Observed"
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT)
@@ -619,7 +620,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         goalSC <- unique(covm)
         qPD_unc <- unique(invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                                         q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
-        #colnames(qPD_unc)[which(colnames(qPD_unc)=='t')] <- 'm'
+        qPD_unc$Method[round(qPD_unc$nt) == n] = "Observed"
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT,n)
@@ -746,10 +747,17 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   }else if (sum(m==nt)>0){
     obs <- RPD(ai, Lis, nt,nt, q)
   }
-  if(cal=='PD'){
+  
+  if (sum(m < nt) != 0) {
+    int.m = sort(unique(c(floor(m[m<nt]), ceiling(m[m<nt]))))
+    mRPD = rbind(int.m, sapply(int.m, function(k) RPD(ai = ai,Lis = Lis,n = nt,m = k,q = q)))
+  }
+  
+  if (cal == 'PD'){
     out <- sapply(m, function(mm){
       if(mm<nt){
-        ans <- RPD(ai = ai,Lis = Lis,n = nt,m = mm,q = q)
+        if(mm == round(mm)) { ans <- mRPD[-1,mRPD[1,] == mm] 
+        } else { ans <- (ceiling(mm) - mm)*mRPD[-1, mRPD[1,] == floor(mm)] + (mm - floor(mm))*mRPD[-1, mRPD[1,] == ceiling(mm)] }
       }else if(mm==nt){
         ans <- obs
       }else if(mm==Inf){
@@ -759,10 +767,11 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
       }
       return(as.numeric(ans))
     })
-  }else if (cal=='meanPD'){
+  } else if (cal == 'meanPD') {
     out <- sapply(m, function(mm){
       if(mm<nt){
-        ans <- RPD(ai = ai,Lis = Lis,n = nt,m = mm,q = q)
+        if(mm == round(mm)) { ans <- mRPD[-1,mRPD[1,] == mm] 
+        } else { ans <- (ceiling(mm) - mm)*mRPD[-1, mRPD[1,] == floor(mm)] + (mm - floor(mm))*mRPD[-1, mRPD[1,] == ceiling(mm)] }
       }else if(mm==nt){
         ans <- obs
       }else if(mm==Inf){
@@ -793,7 +802,6 @@ Coverage = function(data, datatype, m, nt){
   f0.hat <- ifelse(f2 == 0, (nt - 1) / nt * f1 * (f1 - 1) / 2, (nt - 1) / nt * f1 ^ 2/ 2 / f2)  #estimation of unseen species via Chao1
   A <- ifelse(f1>0, nt*f0.hat/(nt*f0.hat+f1), 1)
   Sub <- function(m){
-    #if(m < n) out <- 1-sum(x / n * exp(lchoose(n - x, m)-lchoose(n - 1, m)))
     if(m < nt) {
       xx <- x[(nt-x)>=m]
       out <- 1-sum(xx / nt * exp(lgamma(nt-xx+1)-lgamma(nt-xx-m+1)-lgamma(nt)+lgamma(nt-m)))
@@ -803,7 +811,6 @@ Coverage = function(data, datatype, m, nt){
     out
   }
   Sub2 <- function(m){
-    #if(m < n) out <- 1-sum(x / n * exp(lchoose(n - x, m)-lchoose(n - 1, m)))
     if(m < nt) {
       xx <- x[(nt-x)>=m]
       out <- 1-sum(xx / u * exp(lgamma(nt-xx+1)-lgamma(nt-xx-m+1)-lgamma(nt)+lgamma(nt-m)))
@@ -911,20 +918,11 @@ RE_plot = function(data, type){
 # invChatPD ------------------------------------------------------------------
 invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, conf){
   qtile <- qnorm(1-(1-conf)/2)
-  # datalist <- lapply(1:ncol(x), function(i) {tmp = x[, i];names(tmp) = rownames(x);tmp})
-  # if (is.null(colnames(x))) {
-  #   names(datalist) <- paste0("data", 1:ncol(x))
-  # } else {names(datalist) <- colnames(x)}
-  # x <- datalist
-  # refT <- max(ape::node.depth.edgelength(phylotr))
   if(datatype=='abundance'){
     out <- lapply(datalist,function(x_){
       aL <- phyBranchAL_Abu(phylo = phylotr,data = x_,'abundance',refT = reft)
-      # aL$treeNabu$branch.length <- aL$BLbyT[,1]
-      # aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
       x_ <- x_[x_>0]
       n <- sum(x_)
-      #n_sp_samp <- sum(aL_table$tgroup=='Tip')
       est <- invChatPD_abu(x = x_,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                            q = q,Cs = level, n = n, reft = reft, cal = cal)
       if(nboot>1){
@@ -1022,7 +1020,6 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
     if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
-      mm <- round(mm)
     }else if (refC <= cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -1037,11 +1034,10 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
       }
       mm <- ifelse(A==1,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
-      mm <- round(mm)
     }
     mm
   })
-  mm[mm==0] <- 1
+  mm[mm < 1] <- 1
   SC <- Coverage(x, 'abundance', mm, n)
   out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
@@ -1066,7 +1062,6 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){ # x is a matrix
     if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
-      mm <- round(mm)
     }else if (refC <= cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -1082,11 +1077,10 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){ # x is a matrix
       }
       mm <- ifelse(A==1,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
-      mm <- round(mm)
     }
     mm
   })
-  mm[mm==0] <- 1
+  mm[mm < 1] <- 1
   SC <- Coverage(x, 'incidence', mm, n)
   out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))

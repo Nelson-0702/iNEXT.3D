@@ -296,7 +296,7 @@ FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai an
     }else{
       k <- 0:(nT-1)
       a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
-      b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(A^(q-1)-sum(choose(q-1,k)*(A-1)^k)))
+      b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k),12)))
       ans <- ((a+b)/(V_bar^q))^(1/(1-q))
     }
     return(ans)
@@ -500,9 +500,16 @@ FD.m.est = function(ai_vi, m, q, nT){
     RFD_m[RFD_m > obs_i] = obs_i[RFD_m > obs_i]
     beta0plus <- which( asy_i != obs_i)
     beta[beta0plus] <- (obs_i[beta0plus]-RFD_m[beta0plus])/(asy_i[beta0plus]-RFD_m[beta0plus])
+    
+    if (sum(m < nT) != 0) {
+      int.m = sort(unique(c(floor(m[m<nT]), ceiling(m[m<nT]))))
+      mRFD = rbind(int.m, sapply(int.m, function(k) RFD(av,nT,k,q,V_bar)))
+    }
+    
     sapply(m, function(mm){
       if(mm<nT){
-        RFD(av,nT,mm,q,V_bar) 
+        if(mm == round(mm)) { mRFD[-1,mRFD[1,] == mm] 
+        } else { (ceiling(mm) - mm)*mRFD[-1, mRFD[1,] == floor(mm)] + (mm - floor(mm))*mRFD[-1, mRFD[1,] == ceiling(mm)] }
       }else if(mm==nT){
         obs_i
       }else if(mm==Inf){
@@ -725,7 +732,6 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
     if (refC > cvrg) {
       opt <- optimize(f, cvrg = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
-      mm <- round(mm)
     }else if (refC <= cvrg) {
       f1 <- sum(data_ == 1)
       f2 <- sum(data_ == 2)
@@ -743,11 +749,10 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
       }
       mm <- (log(n/f1) + log(1 - cvrg))/log(A) - 1
       mm <- n + mm
-      mm <- round(mm)
     }
     mm
   })
-  mm[mm==0] <- 1
+  mm[mm < 1] <- 1
   SC <- CoverageFD(data_, 'abundance', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
@@ -758,6 +763,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   SC <- rep(SC,length(q)*length(tau))
   goalSC <- rep(Cs,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
+  method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
          qFD = out,SC=SC,goalSC = goalSC, threshold = threshold)
 }
@@ -772,7 +778,6 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
     if (refC > cvrg) {
       opt <- optimize(f, cvrg = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
-      mm <- round(mm)
     }else if (refC <= cvrg) {
       f1 <- sum(data_ == 1)
       f2 <- sum(data_ == 2)
@@ -791,11 +796,10 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
       }
       mm <- (log(U/f1) + log(1 - cvrg))/log(A) - 1
       mm <- n + mm
-      mm <- round(mm)
     }
     mm
   })
-  mm[mm==0] <- 1
+  mm[mm < 1] <- 1
   SC <- CoverageFD(data_, 'incidence_freq', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
@@ -806,6 +810,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   SC <- rep(SC,length(q)*length(tau))
   goalSC <- rep(Cs,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
+  method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
          qFD = out,SC=SC,goalSC = goalSC, threshold = threshold)
 }
@@ -818,7 +823,6 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   if(datatype=='abundance'){
     out <- lapply(datalist,function(x_){
       data_aivi <- data_transform(data = x_,dij = dij,tau = tau,datatype = datatype)
-      #n_sp_samp <- sum(aL_table$tgroup=='Tip')
       est <- invChatFD_abu(ai_vi = data_aivi,data_ = x_,q = q,Cs = level,tau = tau)
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x_,distance = dij,datatype = datatype)
