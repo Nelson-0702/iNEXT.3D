@@ -1038,6 +1038,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
     mm
   })
   mm[mm < 1] <- 1
+  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- Coverage(x, 'abundance', mm, n)
   out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
@@ -1081,6 +1082,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){ # x is a matrix
     mm
   })
   mm[mm < 1] <- 1
+  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- Coverage(x, 'incidence', mm, n)
   out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))

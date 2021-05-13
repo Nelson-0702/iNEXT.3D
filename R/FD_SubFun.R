@@ -1,4 +1,4 @@
-# iNEXTFD -------------------------------------------------------------------
+# FD_mle -------------------------------------------------------------------
 FD_mle <- function(ai_vi, q){
   v_bar <- round(sum(ai_vi$ai[,1]*ai_vi$vi[,1]))
   out <- sapply(1:ncol(ai_vi$ai), function(i){
@@ -568,8 +568,6 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   length_tau <- length(tau)
-  #if(datatype=="abundance") ns <- sapply(datalist, sum)
-  #if(datatype=='incidence_freq') ns <- sapply(datalist, function(y) y[1])
   if(datatype=="abundance"){
     out <- lapply(1:length(datalist), function(i){
       x <- datalist[[i]]
@@ -753,6 +751,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
+  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- CoverageFD(data_, 'abundance', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
@@ -800,6 +799,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
+  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- CoverageFD(data_, 'incidence_freq', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
