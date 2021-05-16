@@ -750,14 +750,15 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   
   if (sum(m < nt) != 0) {
     int.m = sort(unique(c(floor(m[m<nt]), ceiling(m[m<nt]))))
-    mRPD = rbind(int.m, sapply(int.m, function(k) RPD(ai = ai,Lis = Lis,n = nt,m = k,q = q)))
+    mRPD = lapply(int.m, function(k) RPD(ai = ai,Lis = Lis,n = nt,m = k,q = q))
+    names(mRPD) = int.m
   }
   
   if (cal == 'PD'){
     out <- sapply(m, function(mm){
       if(mm<nt){
-        if(mm == round(mm)) { ans <- mRPD[-1,mRPD[1,] == mm] 
-        } else { ans <- (ceiling(mm) - mm)*mRPD[-1, mRPD[1,] == floor(mm)] + (mm - floor(mm))*mRPD[-1, mRPD[1,] == ceiling(mm)] }
+        if(mm == round(mm)) { ans <- mRPD[names(mRPD) == mm][[1]]
+        } else { ans <- (ceiling(mm) - mm)*mRPD[names(mRPD) == floor(mm)][[1]] + (mm - floor(mm))*mRPD[names(mRPD) == ceiling(mm)][[1]] }
       }else if(mm==nt){
         ans <- obs
       }else if(mm==Inf){
@@ -770,8 +771,8 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   } else if (cal == 'meanPD') {
     out <- sapply(m, function(mm){
       if(mm<nt){
-        if(mm == round(mm)) { ans <- mRPD[-1,mRPD[1,] == mm] 
-        } else { ans <- (ceiling(mm) - mm)*mRPD[-1, mRPD[1,] == floor(mm)] + (mm - floor(mm))*mRPD[-1, mRPD[1,] == ceiling(mm)] }
+        if(mm == round(mm)) { ans <- mRPD[names(mRPD) == mm][[1]]
+        } else { ans <- (ceiling(mm) - mm)*mRPD[names(mRPD) == floor(mm)][[1]] + (mm - floor(mm))*mRPD[names(mRPD) == ceiling(mm)][[1]] }
       }else if(mm==nt){
         ans <- obs
       }else if(mm==Inf){
@@ -788,7 +789,6 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   out <- matrix(out,ncol = length(m))
   return(out)
 }
-
 
 # Coverage ------------------------------------------------------------------
 Coverage = function(data, datatype, m, nt){
