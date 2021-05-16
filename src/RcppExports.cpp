@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // rcpp_hello_world
 List rcpp_hello_world();
-RcppExport SEXP _iNEXT3D_rcpp_hello_world() {
+RcppExport SEXP _iNEXT_3D_rcpp_hello_world() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,7 +17,7 @@ END_RCPP
 }
 // RFD
 NumericVector RFD(NumericMatrix x, int n, double m, NumericVector q, double V_bar);
-RcppExport SEXP _iNEXT3D_RFD(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP, SEXP V_barSEXP) {
+RcppExport SEXP _iNEXT_3D_RFD(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP, SEXP V_barSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,7 @@ END_RCPP
 }
 // FDq0
 double FDq0(double n, double f1, double f2, double h1, double h2, double A);
-RcppExport SEXP _iNEXT3D_FDq0(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP, SEXP h1SEXP, SEXP h2SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_FDq0(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP, SEXP h1SEXP, SEXP h2SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -48,7 +48,7 @@ END_RCPP
 }
 // FDq1_1
 double FDq1_1(double n, double h1, double A);
-RcppExport SEXP _iNEXT3D_FDq1_1(SEXP nSEXP, SEXP h1SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_FDq1_1(SEXP nSEXP, SEXP h1SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,7 +61,7 @@ END_RCPP
 }
 // FDq2
 double FDq2(NumericMatrix tmpxv, double n);
-RcppExport SEXP _iNEXT3D_FDq2(SEXP tmpxvSEXP, SEXP nSEXP) {
+RcppExport SEXP _iNEXT_3D_FDq2(SEXP tmpxvSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -73,7 +73,7 @@ END_RCPP
 }
 // PDq0
 double PDq0(double n, double f1, double f2, double g1, double g2);
-RcppExport SEXP _iNEXT3D_PDq0(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP, SEXP g1SEXP, SEXP g2SEXP) {
+RcppExport SEXP _iNEXT_3D_PDq0(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP, SEXP g1SEXP, SEXP g2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +88,7 @@ END_RCPP
 }
 // PDq1_2
 double PDq1_2(double n, double g1, double A);
-RcppExport SEXP _iNEXT3D_PDq1_2(SEXP nSEXP, SEXP g1SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_PDq1_2(SEXP nSEXP, SEXP g1SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -101,7 +101,7 @@ END_RCPP
 }
 // PDq2
 double PDq2(NumericMatrix tmpaL, double n, double t_bar);
-RcppExport SEXP _iNEXT3D_PDq2(SEXP tmpaLSEXP, SEXP nSEXP, SEXP t_barSEXP) {
+RcppExport SEXP _iNEXT_3D_PDq2(SEXP tmpaLSEXP, SEXP nSEXP, SEXP t_barSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -114,7 +114,7 @@ END_RCPP
 }
 // PDq_2nd
 double PDq_2nd(double n, double g1, double A, double q);
-RcppExport SEXP _iNEXT3D_PDq_2nd(SEXP nSEXP, SEXP g1SEXP, SEXP ASEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_PDq_2nd(SEXP nSEXP, SEXP g1SEXP, SEXP ASEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -128,7 +128,7 @@ END_RCPP
 }
 // PDq
 NumericVector PDq(NumericMatrix tmpaL, int n, NumericVector qs, double g1, double A, double t_bar);
-RcppExport SEXP _iNEXT3D_PDq(SEXP tmpaLSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP g1SEXP, SEXP ASEXP, SEXP t_barSEXP) {
+RcppExport SEXP _iNEXT_3D_PDq(SEXP tmpaLSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP g1SEXP, SEXP ASEXP, SEXP t_barSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -144,7 +144,7 @@ END_RCPP
 }
 // delta
 double delta(NumericMatrix del_tmpaL, double k, double n);
-RcppExport SEXP _iNEXT3D_delta(SEXP del_tmpaLSEXP, SEXP kSEXP, SEXP nSEXP) {
+RcppExport SEXP _iNEXT_3D_delta(SEXP del_tmpaLSEXP, SEXP kSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -157,7 +157,7 @@ END_RCPP
 }
 // delta_part2
 NumericVector delta_part2(NumericVector ai, double k, double n);
-RcppExport SEXP _iNEXT3D_delta_part2(SEXP aiSEXP, SEXP kSEXP, SEXP nSEXP) {
+RcppExport SEXP _iNEXT_3D_delta_part2(SEXP aiSEXP, SEXP kSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -170,7 +170,7 @@ END_RCPP
 }
 // RPD_old
 NumericVector RPD_old(NumericMatrix x, int n, int m, NumericVector q);
-RcppExport SEXP _iNEXT3D_RPD_old(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_RPD_old(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -184,7 +184,7 @@ END_RCPP
 }
 // RPD
 NumericMatrix RPD(NumericVector ai, NumericMatrix Lis, int n, int m, NumericVector q);
-RcppExport SEXP _iNEXT3D_RPD(SEXP aiSEXP, SEXP LisSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_RPD(SEXP aiSEXP, SEXP LisSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -199,7 +199,7 @@ END_RCPP
 }
 // ghat_pt2
 NumericMatrix ghat_pt2(NumericVector ai, int n, int mmax);
-RcppExport SEXP _iNEXT3D_ghat_pt2(SEXP aiSEXP, SEXP nSEXP, SEXP mmaxSEXP) {
+RcppExport SEXP _iNEXT_3D_ghat_pt2(SEXP aiSEXP, SEXP nSEXP, SEXP mmaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -212,7 +212,7 @@ END_RCPP
 }
 // PD1_2nd
 double PD1_2nd(double n, double f1, double A);
-RcppExport SEXP _iNEXT3D_PD1_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_PD1_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -225,7 +225,7 @@ END_RCPP
 }
 // Dq_TD
 NumericVector Dq_TD(NumericMatrix ifi, int n, NumericVector qs, double f1, double A);
-RcppExport SEXP _iNEXT3D_Dq_TD(SEXP ifiSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP f1SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_Dq_TD(SEXP ifiSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP f1SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -240,7 +240,7 @@ END_RCPP
 }
 // qPDFUN
 NumericVector qPDFUN(NumericVector q, NumericVector Xi, const int n);
-RcppExport SEXP _iNEXT3D_qPDFUN(SEXP qSEXP, SEXP XiSEXP, SEXP nSEXP) {
+RcppExport SEXP _iNEXT_3D_qPDFUN(SEXP qSEXP, SEXP XiSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -253,7 +253,7 @@ END_RCPP
 }
 // TD1_2nd
 double TD1_2nd(double n, double f1, double f2);
-RcppExport SEXP _iNEXT3D_TD1_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP) {
+RcppExport SEXP _iNEXT_3D_TD1_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP f2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -266,7 +266,7 @@ END_RCPP
 }
 // TDq_2nd
 double TDq_2nd(double n, double f1, double A, double q);
-RcppExport SEXP _iNEXT3D_TDq_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP ASEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_TDq_2nd(SEXP nSEXP, SEXP f1SEXP, SEXP ASEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -280,7 +280,7 @@ END_RCPP
 }
 // TDq
 NumericVector TDq(NumericMatrix ifi, int n, NumericVector qs, double f1, double A);
-RcppExport SEXP _iNEXT3D_TDq(SEXP ifiSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP f1SEXP, SEXP ASEXP) {
+RcppExport SEXP _iNEXT_3D_TDq(SEXP ifiSEXP, SEXP nSEXP, SEXP qsSEXP, SEXP f1SEXP, SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -295,7 +295,7 @@ END_RCPP
 }
 // qTDFUN
 NumericVector qTDFUN(NumericVector q, NumericVector Xi, const int n);
-RcppExport SEXP _iNEXT3D_qTDFUN(SEXP qSEXP, SEXP XiSEXP, SEXP nSEXP) {
+RcppExport SEXP _iNEXT_3D_qTDFUN(SEXP qSEXP, SEXP XiSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -308,7 +308,7 @@ END_RCPP
 }
 // qTD_MLE
 NumericVector qTD_MLE(NumericVector q, NumericVector ai);
-RcppExport SEXP _iNEXT3D_qTD_MLE(SEXP qSEXP, SEXP aiSEXP) {
+RcppExport SEXP _iNEXT_3D_qTD_MLE(SEXP qSEXP, SEXP aiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -320,7 +320,7 @@ END_RCPP
 }
 // RTD
 NumericVector RTD(NumericMatrix x, int n, double m, NumericVector q);
-RcppExport SEXP _iNEXT3D_RTD(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_RTD(SEXP xSEXP, SEXP nSEXP, SEXP mSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -334,7 +334,7 @@ END_RCPP
 }
 // RTD_inc
 NumericVector RTD_inc(NumericMatrix y, int nT, double t_, NumericVector q);
-RcppExport SEXP _iNEXT3D_RTD_inc(SEXP ySEXP, SEXP nTSEXP, SEXP t_SEXP, SEXP qSEXP) {
+RcppExport SEXP _iNEXT_3D_RTD_inc(SEXP ySEXP, SEXP nTSEXP, SEXP t_SEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -348,35 +348,35 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_iNEXT3D_rcpp_hello_world", (DL_FUNC) &_iNEXT3D_rcpp_hello_world, 0},
-    {"_iNEXT3D_RFD", (DL_FUNC) &_iNEXT3D_RFD, 5},
-    {"_iNEXT3D_FDq0", (DL_FUNC) &_iNEXT3D_FDq0, 6},
-    {"_iNEXT3D_FDq1_1", (DL_FUNC) &_iNEXT3D_FDq1_1, 3},
-    {"_iNEXT3D_FDq2", (DL_FUNC) &_iNEXT3D_FDq2, 2},
-    {"_iNEXT3D_PDq0", (DL_FUNC) &_iNEXT3D_PDq0, 5},
-    {"_iNEXT3D_PDq1_2", (DL_FUNC) &_iNEXT3D_PDq1_2, 3},
-    {"_iNEXT3D_PDq2", (DL_FUNC) &_iNEXT3D_PDq2, 3},
-    {"_iNEXT3D_PDq_2nd", (DL_FUNC) &_iNEXT3D_PDq_2nd, 4},
-    {"_iNEXT3D_PDq", (DL_FUNC) &_iNEXT3D_PDq, 6},
-    {"_iNEXT3D_delta", (DL_FUNC) &_iNEXT3D_delta, 3},
-    {"_iNEXT3D_delta_part2", (DL_FUNC) &_iNEXT3D_delta_part2, 3},
-    {"_iNEXT3D_RPD_old", (DL_FUNC) &_iNEXT3D_RPD_old, 4},
-    {"_iNEXT3D_RPD", (DL_FUNC) &_iNEXT3D_RPD, 5},
-    {"_iNEXT3D_ghat_pt2", (DL_FUNC) &_iNEXT3D_ghat_pt2, 3},
-    {"_iNEXT3D_PD1_2nd", (DL_FUNC) &_iNEXT3D_PD1_2nd, 3},
-    {"_iNEXT3D_Dq_TD", (DL_FUNC) &_iNEXT3D_Dq_TD, 5},
-    {"_iNEXT3D_qPDFUN", (DL_FUNC) &_iNEXT3D_qPDFUN, 3},
-    {"_iNEXT3D_TD1_2nd", (DL_FUNC) &_iNEXT3D_TD1_2nd, 3},
-    {"_iNEXT3D_TDq_2nd", (DL_FUNC) &_iNEXT3D_TDq_2nd, 4},
-    {"_iNEXT3D_TDq", (DL_FUNC) &_iNEXT3D_TDq, 5},
-    {"_iNEXT3D_qTDFUN", (DL_FUNC) &_iNEXT3D_qTDFUN, 3},
-    {"_iNEXT3D_qTD_MLE", (DL_FUNC) &_iNEXT3D_qTD_MLE, 2},
-    {"_iNEXT3D_RTD", (DL_FUNC) &_iNEXT3D_RTD, 4},
-    {"_iNEXT3D_RTD_inc", (DL_FUNC) &_iNEXT3D_RTD_inc, 4},
+    {"_iNEXT_3D_rcpp_hello_world", (DL_FUNC) &_iNEXT_3D_rcpp_hello_world, 0},
+    {"_iNEXT_3D_RFD", (DL_FUNC) &_iNEXT_3D_RFD, 5},
+    {"_iNEXT_3D_FDq0", (DL_FUNC) &_iNEXT_3D_FDq0, 6},
+    {"_iNEXT_3D_FDq1_1", (DL_FUNC) &_iNEXT_3D_FDq1_1, 3},
+    {"_iNEXT_3D_FDq2", (DL_FUNC) &_iNEXT_3D_FDq2, 2},
+    {"_iNEXT_3D_PDq0", (DL_FUNC) &_iNEXT_3D_PDq0, 5},
+    {"_iNEXT_3D_PDq1_2", (DL_FUNC) &_iNEXT_3D_PDq1_2, 3},
+    {"_iNEXT_3D_PDq2", (DL_FUNC) &_iNEXT_3D_PDq2, 3},
+    {"_iNEXT_3D_PDq_2nd", (DL_FUNC) &_iNEXT_3D_PDq_2nd, 4},
+    {"_iNEXT_3D_PDq", (DL_FUNC) &_iNEXT_3D_PDq, 6},
+    {"_iNEXT_3D_delta", (DL_FUNC) &_iNEXT_3D_delta, 3},
+    {"_iNEXT_3D_delta_part2", (DL_FUNC) &_iNEXT_3D_delta_part2, 3},
+    {"_iNEXT_3D_RPD_old", (DL_FUNC) &_iNEXT_3D_RPD_old, 4},
+    {"_iNEXT_3D_RPD", (DL_FUNC) &_iNEXT_3D_RPD, 5},
+    {"_iNEXT_3D_ghat_pt2", (DL_FUNC) &_iNEXT_3D_ghat_pt2, 3},
+    {"_iNEXT_3D_PD1_2nd", (DL_FUNC) &_iNEXT_3D_PD1_2nd, 3},
+    {"_iNEXT_3D_Dq_TD", (DL_FUNC) &_iNEXT_3D_Dq_TD, 5},
+    {"_iNEXT_3D_qPDFUN", (DL_FUNC) &_iNEXT_3D_qPDFUN, 3},
+    {"_iNEXT_3D_TD1_2nd", (DL_FUNC) &_iNEXT_3D_TD1_2nd, 3},
+    {"_iNEXT_3D_TDq_2nd", (DL_FUNC) &_iNEXT_3D_TDq_2nd, 4},
+    {"_iNEXT_3D_TDq", (DL_FUNC) &_iNEXT_3D_TDq, 5},
+    {"_iNEXT_3D_qTDFUN", (DL_FUNC) &_iNEXT_3D_qTDFUN, 3},
+    {"_iNEXT_3D_qTD_MLE", (DL_FUNC) &_iNEXT_3D_qTD_MLE, 2},
+    {"_iNEXT_3D_RTD", (DL_FUNC) &_iNEXT_3D_RTD, 4},
+    {"_iNEXT_3D_RTD_inc", (DL_FUNC) &_iNEXT_3D_RTD_inc, 4},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_iNEXT3D(DllInfo *dll) {
+RcppExport void R_init_iNEXT_3D(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

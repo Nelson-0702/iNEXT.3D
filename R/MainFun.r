@@ -1162,7 +1162,7 @@ ggAsy3D <- function(outcome, profile = 'q'){
 }
 
 
-#' @useDynLib iNEXT3D, .registration = TRUE
+#' @useDynLib iNEXT.3D, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
 

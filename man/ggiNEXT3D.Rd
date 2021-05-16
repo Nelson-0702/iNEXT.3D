@@ -4,7 +4,13 @@
 \alias{ggiNEXT3D}
 \title{ggplot2 extension for an iNEXT object}
 \usage{
-ggiNEXT3D(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")
+ggiNEXT3D(
+  outcome,
+  type = 1:3,
+  se = TRUE,
+  facet.var = "Assemblage",
+  color.var = "Order.q"
+)
 }
 \arguments{
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 

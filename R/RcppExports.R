@@ -2,102 +2,102 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 rcpp_hello_world <- function() {
-    .Call(`_iNEXT3D_rcpp_hello_world`)
+    .Call(`_iNEXT_3D_rcpp_hello_world`)
 }
 
 RFD <- function(x, n, m, q, V_bar) {
-    .Call(`_iNEXT3D_RFD`, x, n, m, q, V_bar)
+    .Call(`_iNEXT_3D_RFD`, x, n, m, q, V_bar)
 }
 
 FDq0 <- function(n, f1, f2, h1, h2, A) {
-    .Call(`_iNEXT3D_FDq0`, n, f1, f2, h1, h2, A)
+    .Call(`_iNEXT_3D_FDq0`, n, f1, f2, h1, h2, A)
 }
 
 FDq1_1 <- function(n, h1, A) {
-    .Call(`_iNEXT3D_FDq1_1`, n, h1, A)
+    .Call(`_iNEXT_3D_FDq1_1`, n, h1, A)
 }
 
 FDq2 <- function(tmpxv, n) {
-    .Call(`_iNEXT3D_FDq2`, tmpxv, n)
+    .Call(`_iNEXT_3D_FDq2`, tmpxv, n)
 }
 
 PDq0 <- function(n, f1, f2, g1, g2) {
-    .Call(`_iNEXT3D_PDq0`, n, f1, f2, g1, g2)
+    .Call(`_iNEXT_3D_PDq0`, n, f1, f2, g1, g2)
 }
 
 PDq1_2 <- function(n, g1, A) {
-    .Call(`_iNEXT3D_PDq1_2`, n, g1, A)
+    .Call(`_iNEXT_3D_PDq1_2`, n, g1, A)
 }
 
 PDq2 <- function(tmpaL, n, t_bar) {
-    .Call(`_iNEXT3D_PDq2`, tmpaL, n, t_bar)
+    .Call(`_iNEXT_3D_PDq2`, tmpaL, n, t_bar)
 }
 
 PDq_2nd <- function(n, g1, A, q) {
-    .Call(`_iNEXT3D_PDq_2nd`, n, g1, A, q)
+    .Call(`_iNEXT_3D_PDq_2nd`, n, g1, A, q)
 }
 
 PDq <- function(tmpaL, n, qs, g1, A, t_bar) {
-    .Call(`_iNEXT3D_PDq`, tmpaL, n, qs, g1, A, t_bar)
+    .Call(`_iNEXT_3D_PDq`, tmpaL, n, qs, g1, A, t_bar)
 }
 
 delta <- function(del_tmpaL, k, n) {
-    .Call(`_iNEXT3D_delta`, del_tmpaL, k, n)
+    .Call(`_iNEXT_3D_delta`, del_tmpaL, k, n)
 }
 
 delta_part2 <- function(ai, k, n) {
-    .Call(`_iNEXT3D_delta_part2`, ai, k, n)
+    .Call(`_iNEXT_3D_delta_part2`, ai, k, n)
 }
 
 RPD_old <- function(x, n, m, q) {
-    .Call(`_iNEXT3D_RPD_old`, x, n, m, q)
+    .Call(`_iNEXT_3D_RPD_old`, x, n, m, q)
 }
 
 RPD <- function(ai, Lis, n, m, q) {
-    .Call(`_iNEXT3D_RPD`, ai, Lis, n, m, q)
+    .Call(`_iNEXT_3D_RPD`, ai, Lis, n, m, q)
 }
 
 ghat_pt2 <- function(ai, n, mmax) {
-    .Call(`_iNEXT3D_ghat_pt2`, ai, n, mmax)
+    .Call(`_iNEXT_3D_ghat_pt2`, ai, n, mmax)
 }
 
 PD1_2nd <- function(n, f1, A) {
-    .Call(`_iNEXT3D_PD1_2nd`, n, f1, A)
+    .Call(`_iNEXT_3D_PD1_2nd`, n, f1, A)
 }
 
 Dq_TD <- function(ifi, n, qs, f1, A) {
-    .Call(`_iNEXT3D_Dq_TD`, ifi, n, qs, f1, A)
+    .Call(`_iNEXT_3D_Dq_TD`, ifi, n, qs, f1, A)
 }
 
 qPDFUN <- function(q, Xi, n) {
-    .Call(`_iNEXT3D_qPDFUN`, q, Xi, n)
+    .Call(`_iNEXT_3D_qPDFUN`, q, Xi, n)
 }
 
 TD1_2nd <- function(n, f1, f2) {
-    .Call(`_iNEXT3D_TD1_2nd`, n, f1, f2)
+    .Call(`_iNEXT_3D_TD1_2nd`, n, f1, f2)
 }
 
 TDq_2nd <- function(n, f1, A, q) {
-    .Call(`_iNEXT3D_TDq_2nd`, n, f1, A, q)
+    .Call(`_iNEXT_3D_TDq_2nd`, n, f1, A, q)
 }
 
 TDq <- function(ifi, n, qs, f1, A) {
-    .Call(`_iNEXT3D_TDq`, ifi, n, qs, f1, A)
+    .Call(`_iNEXT_3D_TDq`, ifi, n, qs, f1, A)
 }
 
 qTDFUN <- function(q, Xi, n) {
-    .Call(`_iNEXT3D_qTDFUN`, q, Xi, n)
+    .Call(`_iNEXT_3D_qTDFUN`, q, Xi, n)
 }
 
 qTD_MLE <- function(q, ai) {
-    .Call(`_iNEXT3D_qTD_MLE`, q, ai)
+    .Call(`_iNEXT_3D_qTD_MLE`, q, ai)
 }
 
 RTD <- function(x, n, m, q) {
-    .Call(`_iNEXT3D_RTD`, x, n, m, q)
+    .Call(`_iNEXT_3D_RTD`, x, n, m, q)
 }
 
 RTD_inc <- function(y, nT, t_, q) {
-    .Call(`_iNEXT3D_RTD_inc`, y, nT, t_, q)
+    .Call(`_iNEXT_3D_RTD_inc`, y, nT, t_, q)
 }
 
