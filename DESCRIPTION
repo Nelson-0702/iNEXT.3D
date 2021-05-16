@@ -1,6 +1,6 @@
-Package: iNEXT3D
+Package: iNEXT.3D
 Type: Package
-Title: Interpolation and Extrapolation for Species Diversity in three classes
+Title: Interpolation and Extrapolation for Species Diversity in three dimensions
 Version: 0.0.1
 Author: K. S. Hu and Anne Chao
 Description: 
@@ -15,7 +15,7 @@ Imports:
     ggplot2,
     reshape2,
     Rcpp
-BugReports: https://github.com/KaiHsiangHu/iNEXT3D/issues
+BugReports: https://github.com/KaiHsiangHu/iNEXT.3D/issues
 LazyLoad: yes
 RoxygenNote: 7.1.1
 Suggests: testthat,
