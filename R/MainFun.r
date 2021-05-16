@@ -670,28 +670,67 @@ ggiNEXT3D = function(outcome, type = 1:3, se = TRUE, facet.var = "Assemblage", c
     plot_list = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var, se))
     
   }else{
-    plot = lapply(outcome, function(out){
-      if(unique(out[[2]]$size_based$Type) == "TD"){
+    
+    # plot = lapply(outcome, function(out){
+    #   if(unique(out[[2]]$size_based$Type) == "TD"){
+    #     class = 'TD'
+    #     plottable = out[[2]]
+    #   }else if(unique(out[[2]]$size_based$Type) %in% c("PD", "meanPD")){
+    #     class = 'PD'
+    #     plottable = out[[2]]
+    #     plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+    #     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+    #   }else if(unique(out[[2]]$size_based$Type) == "FD"){
+    #     class = 'FD'
+    #     plottable = out[[2]]
+    #     plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+    #     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+    #     
+    #   }else if (unique(out[[2]]$size_based$Type) == "AUC") {
+    #     class = 'AUC'
+    #     plottable = out[[2]]
+    #     plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+    #     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+    #     
+    #   } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+    #   if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
+    #   if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+    #   
+    #   
+    #   out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var, se))
+    #   
+    # })
+    
+    
+    plot = lapply(1:length(outcome), function(i){
+      out = outcome[[i]]
+      if(names(outcome)[i] == "TD"){
         class = 'TD'
         plottable = out[[2]]
-      }else if(unique(out[[2]]$size_based$Type) %in% c("PD", "meanPD")){
+      }else if(names(outcome)[i] == "PD"){
         class = 'PD'
         plottable = out[[2]]
         plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
         plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
-      }else if(unique(out[[2]]$size_based$Type) == "FD"){
+      }else if(names(outcome)[i] == "FD"){
         class = 'FD'
         plottable = out[[2]]
-        plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
-        plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
         
-      }else if (unique(out[[2]]$size_based$Type) == "AUC") {
-        class = 'AUC'
-        plottable = out[[2]]
-        plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-        plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-        
-      } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+        if(colnames(plottable$size_based) %in% "qFD"){
+          class = 'FD'
+          
+          plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+          plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+          
+        }else{
+          class = 'AUC'
+          
+          plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+          plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+          
+        }
+       
+      }else {stop("Please use the outcome from specified function 'iNEXT3D'")}
       if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
       if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
       
@@ -729,6 +768,10 @@ ggiNEXT3D = function(outcome, type = 1:3, se = TRUE, facet.var = "Assemblage", c
     
     
   }
+  
+  if(length(plot_list[[1]][[1]]) == 1) plot_list[[1]] = plot_list[[1]][[1]][[1]]
+  
+  if(length(plot_list[[3]][[1]]) == 1) plot_list[[3]] = plot_list[[3]][[1]][[1]]
   
   return(plot_list)
 }
