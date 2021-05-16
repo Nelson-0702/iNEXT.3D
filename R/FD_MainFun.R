@@ -8,19 +8,113 @@
 # @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 # sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
 # @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
-FDInfo <- function(data, datatype){
-  if(datatype == "abundance"){
-    f1_10 = sapply(1:10, function(i) sum(data==i))
-    a1 <- c(sum(data), sum(data != 0), f1_10)
-    names(a1) <- c("n", "S.obs", paste0("f", 1:10))
-    return(a1)
-  }else if(datatype == 'incidence_freq'){
-    f1_10 = sapply(1:10, function(i) sum(data[-1]==i))
-    a1 <- matrix(c(data[1], sum(data[-1] != 0), f1_10), ncol = 1)
-    names(a1) <- c("T", "S.obs", paste0("Q", 1:10))
-    return(a1)
+FDInfo <- function(data, datatype, distM, threshold){
+  distM = as.matrix(distM)
+  
+  
+  if(datatype == "incidence_raw"){
+    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
+      #nT=ncol(data)
+      data = data.frame(inc = as.incfreq(data))
+    }else{
+      data = lapply(data, function(i){
+        out = data.frame(inc = as.incfreq(i))
+        return(out)
+      })
+    }
+    datatype = "incidence_freq"
   }
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      data = data[[1]]
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i){
+        i$species = rownames(i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+    
+  }
+  
+  DATATYPE <- c("abundance", "incidence_freq")
+  if(is.na(pmatch(datatype, DATATYPE)) == T)
+    stop("invalid datatype", call. = FALSE)
+  
+  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
+  
+  if(datatype=='incidence_freq'){
+    nT <- data[1,]
+    data <- data[-1,,drop =FALSE]
+  }
+  
+  if(nrow(data)!=nrow(distM))
+    stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
+  if(is.null(rownames(data))|is.null(rownames(distM))){
+    warning('The species names are not provided in data or distance matrix.', call. = FALSE)
+    rownames(data) <- rownames(distM) <- colnames(distM) <-  paste0('sp',1:nrow(data))
+  }else{
+    if(sum(rownames(data) %in% rownames(distM))!=nrow(distM))
+      stop("Data and distance matrix contain unmatched species", call. = FALSE)
+  }
+  order_sp <- match(rownames(data),rownames(distM))
+  
+  distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
+  
+  if(datatype=='incidence_freq'){
+    data <- rbind(nT,data)
+  }
+  
+  name_sp <- rownames(data)
+  dat <- lapply(1:ncol(data), function(k)  {x <- data[,k];names(x) <- name_sp;x})
+  if(is.null(colnames(data))) {
+    names(dat) <- paste0("site",1:length(dat))
+  }else{
+    names(dat) = colnames(data)
+  }
+  
+  if(is.null(threshold)) {
+    if(datatype=='abundance') {
+      tmp <- rowMeans(matrix(sapply(dat, function(x) x/sum(x)),ncol = length(dat)))  
+    }else if(datatype=='incidence_freq'){
+      tmp <- rowMeans(matrix(sapply(dat, function(x) x[-1]/sum(x[-1])), ncol = length(dat)))
+    }
+    dmean <- sum ( (tmp %*% t(tmp) ) * distM)
+    dmin <- min(distM[distM>0])
+    #dmax <- max(distM)
+    #threshold <- (dmean+dmin)/2
+    threshold <- dmean
+  } else if(sum(threshold<0)>0|sum(threshold>1)>0) {
+    stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
+  }
+  
+  info <- DataInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
+  info$n =lapply(dat, function(x) sum(x))
+  info$SC = lapply(dat, function(x) {
+    n = sum(x)
+    f1 = sum(x==1)
+    f2 = sum(x==2)
+    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2) 
+    A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
+    Chat <- round(1 - f1/n*A, 4)
+  })
+  colnames(info)[colnames(info) %in% paste0("f",1:10)] = paste0("a",1:10,"'")
+  info$threshold = threshold
+  return(info)
 }
+
 
 
 # iNEXTFD -------------------------------------------------------------------
@@ -68,7 +162,44 @@ FDInfo <- function(data, datatype){
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
 iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
                     knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL) {
-
+  distM = as.matrix(distM)
+  
+  
+  if(datatype == "incidence_raw"){
+    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
+      #nT=ncol(data)
+      data = data.frame(inc = as.incfreq(data))
+    }else{
+      data = lapply(data, function(i){
+        out = data.frame(inc = as.incfreq(i))
+        return(out)
+      })
+    }
+    datatype = "incidence_freq"
+  }
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      data = data[[1]]
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i){
+        i$species = rownames(i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+    
+  }
+  
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
@@ -83,6 +214,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
     nT <- data[1,]
     data <- data[-1,,drop =FALSE]
   }
+  
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -93,10 +225,11 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
-
+  
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
   }
@@ -108,7 +241,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   }else{
     names(dat) = colnames(data)
   }
-
+  
   if(is.null(threshold)) {
     if(datatype=='abundance') {
       tmp <- rowMeans(matrix(sapply(dat, function(x) x/sum(x)),ncol = length(dat)))  
@@ -143,7 +276,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       }else if(datatype == "incidence_freq"){
         ni <- dat[[i]][1]
       }
-     
+      
       if(endpoint[i] <= ni){
         mi <- floor(seq(1,endpoint[i],length.out = knots[i]))
       }else{
@@ -156,31 +289,47 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
     if(class(size)=="numeric"|class(size)=="integer"|class(size)=="double"){
       size <- list(size = size)
     } 
-    if(length(size)!=length(dat)) lapply(1:length(dat), function(x) size[[1]])
+    if(length(size)!=length(dat)) size = lapply(1:length(dat), function(x) size[[1]])
     size <- lapply(1:length(dat),function(i){
-      ni <- sum(dat[[i]])
-      if( sum(size[[i]] == ni) == 0 ) mi <- sort(c(ni,size[[i]]))
-      else mi <- size[[i]]
+      if(datatype == "abundance") ni <- sum(dat[[i]]) else ni <- (dat[[i]])[1]
+      
+      if( sum(size[[i]] == ni) == 0 ) mi <- sort(c(ni,size[[i]])) else mi <- size[[i]]
       unique(mi)
     })
   }
-
+  
   FUN <- function(e){
     if(class(dat)=="list"){
       ## size-based
       temp1 = iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype, tau = threshold,
-                     nboot = nboot, conf = conf, m = size)
+                      nboot = nboot, conf = conf, m = size)
       temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0;temp1$SC.LCL[temp1$SC.LCL<0] <- 0
       temp1$SC.UCL[temp1$SC.UCL>1] <- 1
+      obs = filter(temp1, Method == "Observed")
+      obs$goalSC = rep(sapply(1:length(dat), 
+                              function(i)CoverageFD(data = dat[[i]], datatype = datatype,
+                                                    m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))),
+                       each = length(q))
+      obs$m = rep(sapply(1:length(dat),
+                         function(i) ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]]))),
+                  each = length(q))
+      obs = obs[!colnames(obs) %in% c("SC.LCL", "SC.UCL")]
       if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, 
+                                                                              m = size[[i]]), 
                                                            nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
+      # obs_cov = CoverageFD(data = dat[[i]], datatype = datatype, 
+      #                  m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))
+      #temp2$Method[temp2$goalSC == obs_cov] = "Observed"
       temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
-      if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+      temp2 = bind_rows(temp2, obs)
       
+      if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+      temp1$Type = "FD"
+      temp2$Type = "FD"
       ans <- list(size_based = temp1, coverage_based = temp2)
       return(ans)
     }else{
@@ -202,6 +351,16 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
   
   info <- DataInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
+  info$n =lapply(dat, function(x) sum(x))
+  info$SC = lapply(dat, function(x) {
+    n = sum(x)
+    f1 = sum(x==1)
+    f2 = sum(x==2)
+    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2) 
+    A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
+    Chat <- round(1 - f1/n*A, 4)
+  })
+  colnames(info)[colnames(info) %in% paste0("f",1:10)] = paste0("f",1:10,"'")
   return(list("FDInfo" = info, "FDiNextEst" = out, "FDAsyEst" = index))
 }
 
@@ -539,6 +698,115 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   out
 }
 
+# AUCInfo -------------------------------------------------------------------
+# Exhibit basic data information
+# 
+# \code{FDInfo}: exhibits basic data information
+# 
+# @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
+# then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+AUCInfo <- function(data, datatype, distM){
+  distM = as.matrix(distM)
+  
+  
+  if(datatype == "incidence_raw"){
+    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
+      #nT=ncol(data)
+      data = data.frame(inc = as.incfreq(data))
+    }else{
+      data = lapply(data, function(i){
+        out = data.frame(inc = as.incfreq(i))
+        return(out)
+      })
+    }
+    datatype = "incidence_freq"
+  }
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      data = data[[1]]
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i){
+        i = data.frame(i)
+        i$species = rownames(i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+    
+  }
+  
+  DATATYPE <- c("abundance", "incidence_freq")
+  if(is.na(pmatch(datatype, DATATYPE)) == T)
+    stop("invalid datatype", call. = FALSE)
+  
+  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
+  
+  if(datatype=='incidence_freq'){
+    nT <- data[1,]
+    data <- data[-1,,drop =FALSE]
+  }
+  
+  if(nrow(data)!=nrow(distM))
+    stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
+  if(is.null(rownames(data))|is.null(rownames(distM))){
+    warning('The species names are not provided in data or distance matrix.', call. = FALSE)
+    rownames(data) <- rownames(distM) <- colnames(distM) <-  paste0('sp',1:nrow(data))
+  }else{
+    if(sum(rownames(data) %in% rownames(distM))!=nrow(distM))
+      stop("Data and distance matrix contain unmatched species", call. = FALSE)
+  }
+  order_sp <- match(rownames(data),rownames(distM))
+  
+  distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
+  
+  if(datatype=='incidence_freq'){
+    data <- rbind(nT,data)
+  }
+  
+  name_sp <- rownames(data)
+  dat <- lapply(1:ncol(data), function(k)  {x <- data[,k];names(x) <- name_sp;x})
+  if(is.null(colnames(data))) {
+    names(dat) <- paste0("site",1:length(dat))
+  }else{
+    names(dat) = colnames(data)
+  }
+  threshold = t(sapply(dat, function(i){
+    
+    #index = i>0
+    
+    
+    if(datatype=='abundance') {
+      tmp <- matrix(i/sum(i),ncol =1)
+    }else if(datatype=='incidence_freq'){
+      tmp <- matrix(i[-1]/sum(i[-1]), ncol = 1)
+    }
+    dmean <- sum ( (tmp %*% t(tmp) ) * distM)
+    distM <- distM[tmp>0,tmp>0]
+    dmin <- min(distM[distM>0])
+    dmax <- max(distM[distM>0])
+    c(dmin, dmean, dmax)
+  }))
+  
+  
+  info <- cbind(DataInfo(dat, datatype)[,1:4], threshold)
+  colnames(info)[5:7] = c("dmin", "dmean", "dmax")
+  return(info)
+}
 
 # iNEXTAUC -------------------------------------------------------------------
 # Interpolation and extrapolation of functional diversity by area under curve

@@ -36,16 +36,37 @@
 # Chao, A., Chiu C.-H. and Jost, L. (2010). Phylogenetic diversity measures based on Hill numbers. \emph{Philosophical Transactions of the Royal Society B.}, 365, 3599-3609. \cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-PDInfo <- function(data,nT,datatype = "abundance", tree,reftime=NULL){
+PDInfo <- function(data, nT, datatype = "abundance", tree, reftime=NULL){
+  
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("Invalid datatype", call. = FALSE)
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
+  
+  if(class(data)[1] == "list" & datatype == "incidence_raw"){
+    
+    data = lapply(data, function(i) data.frame(i))
+    data2 = lapply(data, function(i) {
+      i$species = rownames(i)
+      return(i)
+    })
+    nT = as.vector(sapply(data, ncol))
+    names(nT) = if(is.null(data)) paste0("assemblage", 1:length(data)) else names(data)
+    
+    data = data2[[1]]
+    for(i in 2:length(data2)){
+      data = full_join(data, data2[[i]], by = "species")
+    }
+    data[is.na(data)] = 0
+    rownames(data) = data$species
+    data = data[, colnames(data)!="species"]
+    
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
-  
   data <- data[rowSums(data)>0,,drop=FALSE]
   pool.name <- rownames(data)
   mydata = list()
@@ -90,7 +111,7 @@ PDInfo <- function(data,nT,datatype = "abundance", tree,reftime=NULL){
       select(Assemblage,`nT`,S.obs,PD.obs,`Q1*`,`Q2*`,R1,R2,Reftime)
   }
   
-  return(infos)
+  return(data.frame(infos))
   
 }
 
@@ -164,6 +185,7 @@ PDInfo <- function(data,nT,datatype = "abundance", tree,reftime=NULL){
 # \emph{Biodiversity Conservation and Phylogenetic Systematics: Preserving our Evolutionary Heritage in an Extinction Crisis}, Springer. \cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
 iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftime=NULL, type = 'PD', endpoint = NULL, knots = 40, size = NULL, nboot = 50, conf = 0.95) {
+  
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   DATATYPE <- c("abundance", "incidence_raw")
@@ -178,14 +200,37 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   # if(is.na(pmatch(q, qq) == T) == T) stop("invalid order of q, we only compute q = 0, 1 or 2", call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
+  if(class(data)[1] == "list" & datatype == "incidence_raw"){
+    
+    data = lapply(data, function(i) data.frame(i))
+    data2 = lapply(data, function(i) {
+      i$species = rownames(i)
+      return(i)
+    })
+    nT = as.vector(sapply(data, ncol))
+    names(nT) = if(is.null(data)) paste0("assemblage", 1:length(data)) else names(data)
+    
+    data = data2[[1]]
+    for(i in 2:length(data2)){
+      data = full_join(data, data2[[i]], by = "species")
+    }
+    data[is.na(data)] = 0
+    rownames(data) = data$species
+    data = data[, colnames(data)!="species"]
+    
+  }
+  
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   
+  
   data <- data[rowSums(data)>0,,drop=FALSE]
   pool.name <- rownames(data)
   mydata = list()
+  
   if(datatype=="incidence_raw"){
+    
     if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of key in sampling units", call. = FALSE)
     n <- 0
     for(i in 1:length(nT)){
@@ -197,6 +242,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
     }else{
       names(mydata) = names(nT)
     }
+    
   }else{
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
     mydata <- lapply(1:ncol(data), function(i)  {x <- data[,i];names(x) <- pool.name;x})
@@ -207,7 +253,9 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   mytree <- drop.tip(tree,tip)
   H_max <- get.rooted.tree.height(mytree)
   
+  # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
+  #reftime <- ifelse(is.null(reftime),H_max,reftime)
   reftime <- sort(unique(reftime))
   if(sum(reftime<=0)>0) {stop("Reference time must be greater than 0. Use NULL to set it to pooled tree height.",call. = FALSE)
   }
@@ -268,8 +316,8 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   out <- tryCatch(FUN(e), error = function(e){return()})
   
   ## AsyEst table ##
-  index <- rbind(AsyPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), type = type, nboot = 30,conf = 0.95),
-                 ObsPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), type = type, nboot = 30,conf = 0.95))
+  index <- rbind(AsyPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95),
+                 ObsPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95))
   LCL <- index$qPD.LCL[index$Method=='Asymptotic']
   UCL <- index$qPD.UCL[index$Method=='Asymptotic']
   index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qPD')
@@ -282,7 +330,6 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   info <- PDInfo(data, nT, tree = tree, datatype)
   return( list("PDInfo"=info, "PDiNextEst"=out, "PDAsyEst"=index) )
 }
-
 
 # estimatePD -------------------------------------------------------------------
 # Computes phylogenetic diversity for specified values of sample coverage

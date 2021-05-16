@@ -1,3 +1,94 @@
+# DataInfo3D ----------------------------------------------------------------
+#'Exhibit basic data information for three diversity class
+#'
+#' \code{dataInfo}: Exhibit basic data information for three diversity class
+#' 
+#' @param data a matrix, data.frame (species by sites if \code{datatype = "abundance" or "incidence_freq"}, 
+#' species by subplot if \code {datatype = "incidence_raw"}), or list of species abundances or incidence frequencies/raw. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
+#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which 
+#' integrates several threshold functional diversity to get diversity.
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
+#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{class = 'PD'}.
+#' @param nT needed only for the matrix or data.frame which \code{datatype = "incidence_raw"} , a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{class = 'FD' or 'AUC'}.
+#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{class = 'FD'}.
+#' @importFrom reshape2 dcast
+#' @import ape
+#' @import ggplot2
+#' @import dplyr
+#' @import tidytree
+#' @importFrom stats rmultinom
+#' @importFrom stats rbinom
+#' @importFrom stats rbinom
+#' @importFrom stats qnorm
+#' @importFrom stats sd
+#' @importFrom phyclust get.rooted.tree.height
+#' @importFrom stats optimize
+#' @return a data.frame or lists of objects containing data.frame (depending on the number of diversity class required) for summarizing data information.
+#' @examples
+#' ## example for abundance based data (matrix)
+#' # diversity = 'TD'
+#' data(beetles)
+#' DataInfo3D(data =beetles.abu$data,"TD", "abundance")
+#' 
+#' # diversity = 'PD'
+#' data(beetles)
+#' DataInfo3D(data =beetles.abu$data,"PD", "abundance", tree = beetles.abu$tree)
+#' 
+#' # diversity = 'FD'
+#' data(beetles)
+#' DataInfo3D(data = beetles.abu$data, diversity = "FD", datatype = "abundance", distM = beetles.abu$distance.matrix)
+#' 
+#' # multiple diversity classes required
+#' DataInfo3D(data = beetles.abu$data, diversity = c("TD","PD","FD"), datatype = "abundance", tree = beetles.abu$tree, distM = beetles.abu$distance.matrix)
+#' 
+#' ## example for incidence-freq datatype (matrix of incidence frequency, 'datatype' = 'incidence_freq' is not accepted in 'class' = 'PD')  
+#' # diversity = c('TD', 'FD')
+#' data(fish)
+#' DataInfo3D(data = fish$incidence_freq, diversity = c('TD', 'FD'), datatype = "incidence_freq", distM = fish$dis)
+#' 
+#' ## example for incidence-raw datatype (lists of incidence-raw data)
+#' # diversity = c('TD', 'PD','FD')
+#' data(fish)
+#' data(fish.raw)
+#' DataInfo3D(data = fish.raw, diversity = c('TD', 'PD','FD'), datatype = "incidence_raw", distM = fish$dis)
+#' 
+#' @export
+#' 
+DataInfo3D <-  function(data, diversity, datatype, 
+                        tree = NULL, nT = NULL, reftime = NULL,
+                        distM = NULL, FDtype = "AUC", threshold = NULL){
+  if ( sum(!(diversity %in% c('TD', 'PD', 'FD')))>0 ) 
+    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
+  
+  order_class = diversity[setdiff(match(c("TD", "PD", "FD"), diversity), NA)]
+  
+  out = lapply(order_class, function(class){
+    if (class == 'TD') {
+      out = DataInfo(data,  datatype = datatype)
+    } else if (class == 'PD') {
+      out = PDInfo(data,nT,datatype = datatype, tree,reftime=reftime)
+    } else if (class == 'FD' & FDtype == 'single') {
+      out = FDInfo(data, datatype = datatype,
+                   distM = distM, threshold = threshold)
+    }else if (class == 'FD'& FDtype == 'AUC') {
+      out = AUCInfo(data, datatype = datatype,
+                    distM = distM)
+    }
+    return(out)
+  })
+  
+  
+  
+  names(out) = order_class
+  
+  if(length(out) == 1){
+    out = out[[1]]
+  }
+  return(out)
+}
+
 # iNEXT3D -------------------------------------------------------------------
 #' iNterpolation and EXTrapolation of Hill number
 #' 
@@ -110,19 +201,31 @@
 #' 
 iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, conf = 0.95, nboot = 50, 
                   tree = NULL, nT = NULL, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
-  if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
-    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
+  if ( sum(!(diversity %in% c('TD', 'PD', 'FD')))>0 ) 
+    stop("Please select one of below class: 'TD', 'PD', 'FD'", call. = FALSE)
   
-  if (diversity == 'TD') {
-    out = iNEXTTD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot)
-  } else if (diversity == 'PD') {
-    out = iNEXTPD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, tree = tree, reftime = reftime, type = PDtype, nT = nT)
-  } else if (diversity == 'FD' & FDtype == 'single') {
-    out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM, threshold = threshold)
-  } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM)
-  }
+  order_class = diversity[setdiff(match(c("TD", "PD", "FD"), diversity), NA)]
   
+  out = lapply(order_class, function(class){
+    if (class == 'TD') {
+      out = iNEXTTD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot)
+    } else if (class == 'PD') {
+      out = iNEXTPD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, tree = tree, reftime = reftime, type = PDtype, nT = nT)
+    } else if (class == 'FD' & FDtype == "single") {
+      out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM, threshold = threshold)
+    } else if (class == 'FD' & FDtype == 'AUC') {
+      out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM)
+    }
+    return(out)
+  })
+  
+  
+  
+  names(out) = order_class
+  
+  # if(length(out) == 1){
+  #   out = out[[1]]
+  # }
   return(out)
 }
 
@@ -519,29 +622,7 @@ Obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' 
 #' 
 #' 
-ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
-  if (sum(names(outcome) %in% c('DataInfo', 'iNextEst', 'AsyEst')) == 3) {
-    class = 'TD'
-    plottable = outcome$iNextEst
-  } else if (sum(names(outcome) %in% c('PDInfo', 'PDiNextEst', 'PDAsyEst')) == 3) {
-    class = 'PD'
-    plottable = outcome$PDiNextEst
-    plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
-    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
-    
-  } else if (sum(names(outcome) %in% c('FDInfo', 'FDiNextEst', 'FDAsyEst')) == 3) {
-    class = 'FD'
-    plottable = outcome$FDiNextEst
-    plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
-    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
-    
-  } else if (sum(names(outcome) %in% c('AUCiNextEst', 'AUCAsyEst')) == 2) {
-    class = 'AUC'
-    plottable = outcome$AUCiNextEst
-    plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-    
-  } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+ggiNEXT3D = function(outcome, type = 1:3, se = TRUE, facet.var = "Assemblage", color.var = "Order.q"){
   
   SPLIT <- c("None", "Order.q", "Assemblage", "Both")
   if(is.na(pmatch(facet.var, SPLIT)) | pmatch(facet.var, SPLIT) == -1)
@@ -559,18 +640,102 @@ ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = 
   if(facet.var == "Order.q") color.var <- "Assemblage"
   if(facet.var == "Assemblage") color.var <- "Order.q"
   
-  if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
-  if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
   
+  if(sum(!names(outcome)  %in% c("TD", "PD", "FD", "AUC"))>0){
+    if(unique(outcome[[2]]$size_based$Type) == "TD"){
+      class = 'TD'
+      plottable = outcome[[2]]
+    }else if(unique(outcome[[2]]$size_based$Type) %in% c("PD", "meanPD")){
+      class = 'PD'
+      plottable = outcome[[2]]
+      plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+      plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+    }else if(unique(outcome[[2]]$size_based$Type) == "FD"){
+      class = 'FD'
+      plottable = outcome[[2]]
+      plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+      plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+      
+    }else if (unique(outcome[[2]]$size_based$Type) == "AUC") {
+      class = 'AUC'
+      plottable = outcome[[2]]
+      plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+      plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+      
+    } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+    if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
+    if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+    
+    
+    plot_list = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var, se))
+    
+  }else{
+    plot = lapply(outcome, function(out){
+      if(unique(out[[2]]$size_based$Type) == "TD"){
+        class = 'TD'
+        plottable = out[[2]]
+      }else if(unique(out[[2]]$size_based$Type) %in% c("PD", "meanPD")){
+        class = 'PD'
+        plottable = out[[2]]
+        plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+        plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
+      }else if(unique(out[[2]]$size_based$Type) == "FD"){
+        class = 'FD'
+        plottable = out[[2]]
+        plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+        plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
+        
+      }else if (unique(out[[2]]$size_based$Type) == "AUC") {
+        class = 'AUC'
+        plottable = out[[2]]
+        plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+        plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
+        
+      } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+      if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
+      if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+      
+      
+      out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var, se))
+      
+    })
+    
+    if(length(type) == 1){
+      if(type == 2){
+        plot_list=plot[[1]]
+      }else{
+        plot_list=lapply(plot, function(i) i[[1]])
+      }
+    }else if(length(type) == 2){
+      if(sum(type %in% c(1,2))==2){
+        plot_list=list(lapply(plot, function(i) i[[1]]),
+                       plot[[1]][[2]])
+      }
+      if(sum(type %in% c(2,3))==2){
+        plot_list=list(plot[[1]][[1]],
+                       lapply(plot, function(i) i[[2]]))
+        
+      }
+      if(sum(type %in% c(1,3))==2){
+        plot_list=list(lapply(plot, function(i) i[[1]]),
+                       lapply(plot, function(i) i[[2]]))
+      }
+      
+    }else{
+      plot_list=list(lapply(plot, function(i) i[[1]]),
+                     plot[[1]][[2]],
+                     lapply(plot, function(i) i[[3]]))
+    }
+    
+    
+  }
   
-  out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var))
-
-  return(out)
+  return(plot_list)
 }
 
 
 # type_plot -------------------------------------------------------------------
-type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
+type_plot = function(x_list, type, class, datatype, facet.var, color.var, se) {
   x_name <- colnames(x_list$size_based)[2]
   xlab_name <- ifelse(datatype == "incidence", "sampling units", "individuals")
   
@@ -628,8 +793,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   } else if (facet.var == "None" & color.var == "None" & length(unique(output$Assemblage)) > 1) { 
     color.var <- "Assemblage" 
     warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblage, change setting as Assemblage")
-    }
-    
+  }
+  
   
   
   title <- c("Sample-size-based sampling curve", "Sample completeness curve", "Coverage-based sampling curve")[type]
@@ -689,16 +854,21 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   
   g <- ggplot(output, aes_string(x = "x", y = "y", colour = "col")) + 
     geom_line(aes_string(linetype = "lty"), lwd=1.5) +
-    geom_point(aes_string(shape = "shape"), size=5, data = data.sub) +
-    geom_ribbon(aes_string(ymin = "y.lwr", ymax = "y.upr", fill = "factor(col)", colour = "NULL"), alpha = 0.2) +
+    geom_point(aes_string(shape = "shape"), size=5, data = data.sub) 
+  
+  if(se == TRUE){
+    g = g + 
+      geom_ribbon(aes_string(ymin = "y.lwr", ymax = "y.upr", fill = "factor(col)", colour = "NULL"), alpha = 0.2) 
+  }
+  
+  g = g +
     scale_fill_manual(values = cbPalette) +
     scale_colour_manual(values = cbPalette) +
     guides(linetype = guide_legend(title = "Method"),
            colour = guide_legend(title = "Guides"), 
            fill = guide_legend(title = "Guides"), 
-           shape = guide_legend(title = "Guides"))
-  
-  g = g + theme_bw() + 
+           shape = guide_legend(title = "Guides"))+ 
+    theme_bw() + 
     labs(x = xlab_name, y = ylab_name) + 
     ggtitle(title) + 
     theme(legend.position = "bottom", legend.box = "vertical",
@@ -718,10 +888,10 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       odr_grp <- labeller(Order.q = c(`0` = "q = 0", `1` = "q = 1",`2` = "q = 2")) 
       
       if (class == 'PD') {
-        g <- g + facet_wrap(Reftime ~ Order.q, nrow = 1, labeller = odr_grp)
+        g <- g + facet_wrap(Reftime ~ Order.q, nrow = 1, labeller = odr_grp, scale = "free")
       } else if (class == 'FD') {
-        g <- g + facet_wrap(threshold ~ Order.q, nrow = 1, labeller = odr_grp)
-      } else {g <- g + facet_wrap( ~ Order.q, nrow = 1, labeller = odr_grp)}
+        g <- g + facet_wrap(threshold ~ Order.q, nrow = 1, labeller = odr_grp, scale = "free")
+      } else {g <- g + facet_wrap( ~ Order.q, nrow = 1, labeller = odr_grp, scale = "free")}
       
       if (color.var == "Both") {
         g <- g + guides(colour = guide_legend(title = "Guides", ncol = length(levels(factor(output$Order.q))), byrow = TRUE),
@@ -739,10 +909,10 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       warning("invalid facet.var setting, the iNEXT3D object do not consist multiple assemblages")
     }else{
       if (class == 'PD') {
-        g <- g + facet_wrap(Reftime ~ Assemblage, nrow = 1)
+        g <- g + facet_wrap(Reftime ~ Assemblage, nrow = 1, scale = "free")
       } else if (class == 'FD') {
-        g <- g + facet_wrap(threshold ~ Assemblage, nrow = 1)
-      } else {g <- g + facet_wrap( ~ Assemblage, nrow = 1)}
+        g <- g + facet_wrap(threshold ~ Assemblage, nrow = 1, scale = "free")
+      } else {g <- g + facet_wrap( ~ Assemblage, nrow = 1, scale = "free")}
       
       if(color.var == "Both"){
         g <- g + guides(colour = guide_legend(title = "Guides", nrow = length(levels(factor(output$Order.q)))),
@@ -758,10 +928,10 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       odr_grp <- labeller(Order.q = c(`0` = "q = 0", `1` = "q = 1",`2` = "q = 2")) 
       
       if (class == 'PD') {
-        g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp)
+        g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp, scale = "free")
       } else if (class == 'FD') {
-        g <- g + facet_wrap(Assemblage + threshold ~ Order.q, labeller = odr_grp)
-      } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp)}
+        g <- g + facet_wrap(Assemblage + threshold ~ Order.q, labeller = odr_grp, scale = "free")
+      } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp, scale = "free")}
       
       if(color.var == "both"){
         g <- g +  guides(colour = guide_legend(title = "Guides", nrow = length(levels(factor(output$Assemblage))), byrow = TRUE),
