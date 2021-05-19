@@ -318,6 +318,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   ## AsyEst table ##
   index <- rbind(AsyPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95),
                  ObsPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95))
+  index = index[order(index$Assemblage),]
   LCL <- index$qPD.LCL[index$Method=='Asymptotic']
   UCL <- index$qPD.UCL[index$Method=='Asymptotic']
   index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qPD')

@@ -154,11 +154,9 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   class_x <- class(data)[1]
   
   if(datatype == "incidence"){
-    stop('datatype="incidence" was no longer supported after v2.0.8, 
-         please try datatype="incidence_freq".')  
+    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   }
   if(datatype=="incidence_freq") datatype <- "incidence"
-  
   if(datatype=="incidence_raw"){
     if(class_x=="list"){
       data <- lapply(data, as.incfreq)
@@ -209,14 +207,15 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     
     index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
                    ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
-    index <- dcast(index,formula = Order.q~Method,value.var = 'qD')
-    index <- cbind(index[,-1],se = (UCL - index$Asymptotic)/z,LCL,UCL)
+    index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
+    index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
     index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
-    index[,1:2] = index[,2:1]
-    colnames(index) <- c("Observed","Estimator","Est_s.e.","95% Lower","95% Upper")
-    rownames(index) <- c("Species Richness", "Shannon diversity", "Simpson diversity")
+    index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+    index[,3:4] = index[,4:3]
+    colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
   
     
   }else if(class_x=="matrix" | class_x=="data.frame"){
@@ -232,6 +231,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     
     index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
                    ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
@@ -256,6 +256,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     
     index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
                    ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
@@ -310,12 +311,17 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
 estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
                        conf = 0.95) 
 {
-  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
-  if (is.na(pmatch(datatype, TYPE))) 
+  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
-  if (pmatch(datatype, TYPE) == -1) 
+  if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
+  class_x <- class(data)[1]
+  
+  if(datatype == "incidence"){
+    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  }
   if (datatype == "incidence_freq") 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
@@ -371,20 +377,27 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
 # @references
 # Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
 AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
-  if(datatype == "incidence"){
-    stop('datatype="incidence" was no longer supported, 
-         please try datatype = "incidence_freq".')  
-  }
-  if(datatype == "incidence_raw"){
-    stop('datatype="incidence_raw" was no longer supported, 
-         please try datatype = "incidence_freq".')  
-  }
-  TYPE <- c("abundance", "incidence_freq")
+  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
+  class_x <- class(data)[1]
+  
+  if(datatype == "incidence"){
+    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  }
+  if (datatype == "incidence_freq") 
+    datatype <- "incidence"
+  if (datatype == "incidence_raw") {
+    if (class(data) == "data.frame" | class(data) == "matrix") 
+      data <- as.incfreq(data)
+    else if (class(data) == "list") 
+      data <- lapply(data, as.incfreq)
+    datatype <- "incidence"
+  }
+  
   if(class(q) != "numeric")
     stop("invlid class of order q, q should be a postive value/vector of numeric object")
   if(min(q) < 0){
@@ -421,7 +434,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       out
     })
     out <- do.call(rbind,out)
-  }else if(datatype=="incidence_freq"){
+  }else if(datatype=="incidence"){
     out <- lapply(1:length(data),function(i){
       dq <- Diversity_profile.inc(data[[i]],q)
       if(nboot > 1){
@@ -475,20 +488,26 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
 # out2 <- ObsTD(ant, datatype = "incidence_freq")
 # out2
 ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
-  if(datatype == "incidence"){
-    stop('datatype="incidence" was no longer supported, 
-         please try datatype = "incidence_freq".')  
-  }
-  if(datatype == "incidence_raw"){
-    stop('datatype="incidence_raw" was no longer supported, 
-         please try datatype = "incidence_freq".')  
-  }
-  TYPE <- c("abundance", "incidence_freq")
+  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
+  class_x <- class(data)[1]
+  
+  if(datatype == "incidence"){
+    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  }
+  if (datatype == "incidence_freq") 
+    datatype <- "incidence"
+  if (datatype == "incidence_raw") {
+    if (class(data) == "data.frame" | class(data) == "matrix") 
+      data <- as.incfreq(data)
+    else if (class(data) == "list") 
+      data <- lapply(data, as.incfreq)
+    datatype <- "incidence"
+  }
   if(class(q) != "numeric")
     stop("invlid class of order q, q should be a postive value/vector of numeric object")
   if(min(q) < 0){
@@ -525,7 +544,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       out
     })
     out <- do.call(rbind,out)
-  }else if(datatype=="incidence_freq"){
+  }else if(datatype=="incidence"){
     out <- lapply(1:length(data),function(i){
       dq <- Diversity_profile_MLE.inc(data[[i]],q)
       if(nboot > 1){

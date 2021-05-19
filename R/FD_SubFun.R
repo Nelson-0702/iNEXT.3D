@@ -64,21 +64,24 @@ EstiBootComm.Func = function(data, distance, datatype){
   if (f0.hat==0) {
     d=dij
   } else if (f0.hat==1) {
-    random_dij = as.vector(rmultinom(1, 1000, rep(1/(length(X)*f0.hat), length(X)*f0.hat) ) )/1000
-    d.0bar <- matrix(random_dij*F.0hat, length(X), f0.hat, byrow = T)
+    # random_dij = as.vector(rmultinom(1, 1000, rep(1/(length(X)*f0.hat), length(X)*f0.hat) ) )/1000
+    # d.0bar <- matrix(random_dij*F.0hat, length(X), f0.hat, byrow = T)
+    d.0bar <- matrix(rep(F.0hat/length(X)/f0.hat, length(X)*f0.hat), length(X), f0.hat)
+    
     d00 = matrix(0, f0.hat, f0.hat)
     d <- cbind(dij, d.0bar )
     aa <- cbind(t(d.0bar), d00 )
     d <- rbind(d, aa)
     diag(d) = 0
   } else {
-    random_dij = as.vector(rmultinom(1, 1000, rep(1/(length(X)*f0.hat), length(X)*f0.hat) ) )/1000
-    d.0bar <- matrix(random_dij*F.0hat, length(X), f0.hat, byrow = T)
+    # random_dij = as.vector(rmultinom(1, 1000, rep(1/(length(X)*f0.hat), length(X)*f0.hat) ) )/1000
+    # d.0bar <- matrix(random_dij*F.0hat, length(X), f0.hat, byrow = T)
+    d.0bar <- matrix(rep(F.0hat/length(X)/f0.hat, length(X)*f0.hat), length(X), f0.hat)
     
     fo.num = (f0.hat * (f0.hat-1) )/2
-    random_d00 = as.vector(rmultinom(1, 1000, rep(1/fo.num, fo.num) ) )/1000
+    # random_d00 = as.vector(rmultinom(1, 1000, rep(1/fo.num, fo.num) ) )/1000
     d00 = matrix(0, f0.hat, f0.hat)
-    d00[upper.tri(d00)] = (F00hat/2)*random_d00
+    d00[upper.tri(d00)] = (F00hat/2)/fo.num
     d00 <- pmax(d00, t(d00))###signmatrix
     d <- cbind(dij, d.0bar )
     aa <- cbind(t(d.0bar), d00 )
@@ -296,7 +299,7 @@ FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai an
     }else{
       k <- 0:(nT-1)
       a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
-      b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k),12)))
+      b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(round(A^(q-1)-sum(choose(q-1,k)*(A-1)^k),12)))
       ans <- ((a+b)/(V_bar^q))^(1/(1-q))
     }
     return(ans)
