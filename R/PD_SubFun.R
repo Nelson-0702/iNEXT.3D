@@ -282,8 +282,13 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       x <- x[x>0]
       n <- sum(x)
       aL <- phyBranchAL_Abu(phylo = phylotr,data = x,datatype,refT = reft)
-      #aL$treeNabu$branch.length <- aL$BLbyT[,1]
-      #aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
+      
+      # first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
+      # if (sum(first.Inode > reft) != 0) {
+      #   TDq = Diversity_profile(x, q)
+      #   est <- c(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
+      #            PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT[,first.Inode < reft],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
+      # } else est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
       est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft, BLs = aL$BLbyT )

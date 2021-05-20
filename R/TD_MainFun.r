@@ -145,7 +145,8 @@ DataInfo <- function(x, datatype="abundance"){
 # 
 iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50)
 {
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
@@ -153,16 +154,13 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if(datatype == "incidence"){
-    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
-  }
-  if(datatype=="incidence_freq") datatype <- "incidence"
-  if(datatype=="incidence_raw"){
-    if(class_x=="list"){
-      data <- lapply(data, as.incfreq)
-    }else{
+  if (datatype == "incidence_freq") 
+    datatype <- "incidence"
+  if (datatype == "incidence_raw") {
+    if (class(data) == "data.frame" | class(data) == "matrix") 
       data <- as.incfreq(data)
-    }
+    else if (class(data) == "list") 
+      data <- lapply(data, as.incfreq)
     datatype <- "incidence"
   }
   
@@ -311,7 +309,8 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
 estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
                        conf = 0.95) 
 {
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
@@ -319,9 +318,6 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if(datatype == "incidence"){
-    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
-  }
   if (datatype == "incidence_freq") 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
@@ -331,6 +327,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
       data <- lapply(data, as.incfreq)
     datatype <- "incidence"
   }
+  
   BASE <- c("size", "coverage")
   if (is.na(pmatch(base, BASE))) 
     stop("invalid datatype")
@@ -377,7 +374,8 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
 # @references
 # Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
 AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
@@ -385,9 +383,6 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if(datatype == "incidence"){
-    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
-  }
   if (datatype == "incidence_freq") 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
@@ -396,6 +391,14 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
     else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
     datatype <- "incidence"
+  }
+  
+  if (class(data) == "data.frame" | class(data) ==  "matrix"){
+    datalist <- lapply(1:ncol(data), function(i) data[,i])
+    if(is.null(colnames(data))) names(datalist) <-  paste0("data",1:ncol(data)) else names(datalist) <- colnames(data)
+    data <- datalist
+  } else if (class(data) == "numeric" | class(data) == "integer" | class(data) == "double") {
+    data <- list(data = data)
   }
   
   if(class(q) != "numeric")
@@ -409,13 +412,6 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   if(conf < 0 | conf > 1)
     stop("Please enter value between zero and one for confident interval.")
   
-  if (class(data) == "data.frame" | class(data) ==  "matrix"){
-    datalist <- lapply(1:ncol(data), function(i) data[,i])
-    if(is.null(colnames(data))) names(datalist) <-  paste0("data",1:ncol(data)) else names(datalist) <- colnames(data)
-    data <- datalist
-  } else if (class(data) == "numeric" | class(data) == "integer" | class(data) == "double") {
-    data <- list(data = data)
-  }
   
   if(datatype=="abundance"){
     out <- lapply(1:length(data),function(i){
@@ -488,7 +484,8 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
 # out2 <- ObsTD(ant, datatype = "incidence_freq")
 # out2
 ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
@@ -496,9 +493,6 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if(datatype == "incidence"){
-    stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
-  }
   if (datatype == "incidence_freq") 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
@@ -508,6 +502,15 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       data <- lapply(data, as.incfreq)
     datatype <- "incidence"
   }
+  
+  if (class(data) == "data.frame" | class(data) ==  "matrix"){
+    datalist <- lapply(1:ncol(data), function(i) data[,i])
+    if(is.null(colnames(data))) names(datalist) <-  paste0("data",1:ncol(data)) else names(datalist) <- colnames(data)
+    data <- datalist
+  } else if (class(data) == "numeric" | class(data) == "integer" | class(data) == "double") {
+    data <- list(data = data)
+  }
+  
   if(class(q) != "numeric")
     stop("invlid class of order q, q should be a postive value/vector of numeric object")
   if(min(q) < 0){
@@ -518,14 +521,6 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
     stop("Please enter non-negative integer for nboot.")
   if(conf < 0 | conf > 1)
     stop("Please enter value between zero and one for confident interval.")
-  
-  if (class(data) == "data.frame" | class(data) ==  "matrix"){
-    datalist <- lapply(1:ncol(data), function(i) data[,i])
-    if(is.null(colnames(data))) names(datalist) <-  paste0("data",1:ncol(data)) else names(datalist) <- colnames(data)
-    data <- datalist
-  } else if (class(data) == "numeric" | class(data) == "integer" | class(data) == "double") {
-    data <- list(data = data)
-  }
   
   if(datatype=="abundance"){
     out <- lapply(1:length(data),function(i){

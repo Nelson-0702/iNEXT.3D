@@ -40,6 +40,7 @@ PDInfo <- function(data, nT, datatype = "abundance", tree, reftime=NULL){
   
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("Invalid datatype", call. = FALSE)
@@ -71,16 +72,21 @@ PDInfo <- function(data, nT, datatype = "abundance", tree, reftime=NULL){
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of key(nT) in sampling units", call. = FALSE)
-    ntmp <- 0
-    for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-      ntmp <- ntmp+nT[i]
-    }
-    if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
-    }else{
-      names(mydata) = names(nT)
+    if(class(data) == "list") {
+      mydata = data
+      if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
+    } else {
+      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+      ntmp <- 0
+      for(i in 1:length(nT)){
+        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+        ntmp <- ntmp+nT[i]
+      }
+      if(is.null(names(nT))) {
+        names(mydata) <- paste0("assemblage",1:length(nT))
+      }else{
+        names(mydata) = names(nT)
+      }
     }
   }else if (datatype == "abundance"){
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
@@ -188,6 +194,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("Invalid datatype", call. = FALSE)
@@ -230,19 +237,22 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   mydata = list()
   
   if(datatype=="incidence_raw"){
-    
-    if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of key in sampling units", call. = FALSE)
-    n <- 0
-    for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(n+1):(n+nT[i])]
-      n <- n+nT[i]
+    if(class(data) == "list") {
+      mydata = data
+      if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
+    } else {
+      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+      ntmp <- 0
+      for(i in 1:length(nT)){
+        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+        ntmp <- ntmp+nT[i]
+      }
+      if(is.null(names(nT))) {
+        names(mydata) <- paste0("assemblage",1:length(nT))
+      }else{
+        names(mydata) = names(nT)
+      }
     }
-    if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
-    }else{
-      names(mydata) = names(nT)
-    }
-    
   }else{
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
     mydata <- lapply(1:ncol(data), function(i)  {x <- data[,i];names(x) <- pool.name;x})
@@ -388,6 +398,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
 estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), reftime=NULL, type = 'PD', base = "coverage", level = NULL, nboot = 50, conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  if(datatype == "incidence_freq") stop("The PD can only accept 'datatype = incidence_raw'.")
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("Invalid datatype", call. = FALSE)
@@ -412,16 +423,21 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-    ntmp <- 0
-    for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-      ntmp <- ntmp+nT[i]
-    }
-    if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
-    }else{
-      names(mydata) = names(nT)
+    if(class(data) == "list") {
+      mydata = data
+      if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
+    } else {
+      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+      ntmp <- 0
+      for(i in 1:length(nT)){
+        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+        ntmp <- ntmp+nT[i]
+      }
+      if(is.null(names(nT))) {
+        names(mydata) <- paste0("assemblage",1:length(nT))
+      }else{
+        names(mydata) = names(nT)
+      }
     }
   }else if (datatype == "abundance"){
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
@@ -524,6 +540,7 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
 AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),reftime = NULL,type = 'PD',nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
   #if (length(q) == 1) stop("length of q should be greater than one", call. = FALSE)
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
@@ -542,16 +559,21 @@ AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),ref
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of key(nT) in sampling units", call. = FALSE)
-    ntmp <- 0
-    for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-      ntmp <- ntmp+nT[i]
-    }
-    if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
-    }else{
-      names(mydata) = names(nT)
+    if(class(data) == "list") {
+      mydata = data
+      if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
+    } else {
+      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+      ntmp <- 0
+      for(i in 1:length(nT)){
+        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+        ntmp <- ntmp+nT[i]
+      }
+      if(is.null(names(nT))) {
+        names(mydata) <- paste0("assemblage",1:length(nT))
+      }else{
+        names(mydata) = names(nT)
+      }
     }
   }else if (datatype == "abundance"){
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
@@ -627,6 +649,7 @@ ObsPD <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),r
                    nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
   DATATYPE <- c("abundance", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("Invalid datatype", call. = FALSE)
@@ -651,16 +674,21 @@ ObsPD <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),r
   mydata = list()
   
   if(datatype=="incidence_raw"){
-    if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of key(nT) in sampling units", call. = FALSE)
-    ntmp <- 0
-    for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-      ntmp <- ntmp+nT[i]
-    }
-    if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
-    }else{
-      names(mydata) = names(nT)
+    if(class(data) == "list") {
+      mydata = data
+      if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
+    } else {
+      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+      ntmp <- 0
+      for(i in 1:length(nT)){
+        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+        ntmp <- ntmp+nT[i]
+      }
+      if(is.null(names(nT))) {
+        names(mydata) <- paste0("assemblage",1:length(nT))
+      }else{
+        names(mydata) = names(nT)
+      }
     }
   }else if (datatype == "abundance"){
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
