@@ -3,11 +3,12 @@
 #' 
 #' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
 #' 
-#' @param data a matrix, data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list. 
-#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.
-#' @param q a numerical vector of the order of Hill number.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
+#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
+#' by species incidence frequencies in each column or list.
+#' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders.
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
 # @param rowsum a logical variable to check if the input object is raw data (species by sites matrix, \code{rowsum=FALSE}) or iNEXT default input (abundance counts or incidence frequencies, \code{rowsum=TRUE}).
 #' @param size an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
 #' If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots} .
@@ -19,18 +20,16 @@
 #' If the \code{endpoint} is larger than the reference sample size, then \code{iNEXT3D()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
 #' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
 #' @param nboot an integer specifying the number of replications.
-#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
+#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
-#' @param reftime is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-#' the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.
-#' @param PDtype desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-#' and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
-#' @param FDtype a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
-#' integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.
+#' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
+#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
+#' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
+#' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+#' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
+#' 
 #' @importFrom reshape2 dcast
 #' @import ape
 #' @import ggplot2
@@ -43,6 +42,7 @@
 #' @importFrom stats sd
 #' @importFrom phyclust get.rooted.tree.height
 #' @importFrom stats optimize
+#' 
 #' @return a list of three objects: \code{$DataInfo} for summarizing data information; 
 #' \code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
 #' and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.  
@@ -60,21 +60,21 @@
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- iNEXT3D(data, diversity = 'PD', tree = tree, datatype = "abundance", q = c(0, 1, 2), nboot = 30)
+#' out2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- iNEXT3D(data[,1], diversity = 'FD', distM = dij, datatype = "abundance", FDtype = 'single', nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out3 <- iNEXT3D(data[,1], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- iNEXT3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out4 <- iNEXT3D(data = data[,2], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
@@ -89,38 +89,38 @@
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- iNEXT3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+#' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
+#' distM <- FunDdata.inc$dij
+#' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 0)
+#' distM <-  FunDdata.inc$dij
+#' out8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_freq", nboot = 0)
 #' out8
 #' 
 #' @export
 #' 
-iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, conf = 0.95, nboot = 50, 
-                  tree = NULL, nT = NULL, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
+iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
+                    PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
     out = iNEXTTD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot)
   } else if (diversity == 'PD') {
-    out = iNEXTPD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, tree = tree, reftime = reftime, type = PDtype, nT = nT)
-  } else if (diversity == 'FD' & FDtype == 'single') {
-    out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM, threshold = threshold)
+    out = iNEXTPD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
+  } else if (diversity == 'FD' & FDtype == 'tau_values') {
+    out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = distM)
+    out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = FDdistM)
   }
   
   return(out)
@@ -134,28 +134,25 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
 #' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
 #' by species incidence frequencies in each column or list.
-#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.
-#' @param q a numerical vector of the order of Hill number.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-#' @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
-#' @param nboot the number of bootstrap times to obtain confidence interval. If confidence interval is not desired, use 0 to skip this time-consuming step.
-#' @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
-#' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
-#' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
+#' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders.
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @param base Selection of sample-size-based (\code{base="size"}) or coverage-based (\code{base="coverage"}) rarefaction and extrapolation.
+#' @param level a sequence specifying the particular sample sizes or sample coverages (between 0 and 1). \cr
+#' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.  \cr
+#' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.
+#' @param nboot an integer specifying the number of replications. If confidence interval is not desired, use 0 to skip this time-consuming step.
 #' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
-#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
+#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
-#' @param reftime is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-#' the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.
-#' @param PDtype desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-#' and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
-#' @param FDtype a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
-#' integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.
+#' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
+#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
+#' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
+#' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+#' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
+#' 
 #' @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
 #' method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
 #' @examples
@@ -168,27 +165,27 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- estimate3D(data, diversity = 'PD', tree = tree, datatype = "abundance", base = "coverage")
+#' out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "abundance", base = "size", FDtype = 'single')
+#' distM <-  FunDdata.abu$dij
+#' out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- estimate3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0, base = "coverage")
+#' distM <-  FunDdata.abu$dij
+#' out4 <- estimate3D(data = data[,2], diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base="coverage", level=0.985)
+#' out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base = "coverage", level=0.985)
 #' out5
 #' 
 #' # diversity = 'PD'
@@ -196,101 +193,100 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- estimate3D(data, diversity = 'PD', nT = nT, tree = tree, datatype = "incidence_raw", base = "size")
+#' out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", base = "coverage", FDtype = 'single')
+#' distM <-  FunDdata.inc$dij
+#' out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20, base = "size")
+#' distM <-  FunDdata.inc$dij
+#' out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "size", nboot = 20, FDdistM = distM)
 #' out8
 #' 
 #' @export
-estimate3D <- function (data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
-                       conf = 0.95, tree, nT, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) 
+estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT, 
+                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) 
 {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
-    out = estimateTD(data, q = q, datatype = datatype, base = base, nboot = nboot, conf = conf, level = level)
+    out = estimateTD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf)
   } else if (diversity == 'PD') {
-    out = estimatePD(data, q = q, datatype = datatype, base = base, nboot = nboot, conf = conf, level = level, tree = tree, reftime = reftime, type = PDtype, nT = nT)
-  } else if (diversity == 'FD' & FDtype == 'single') {
-    out = estimateFD(data, q = q, datatype = datatype, base = base, nboot = nboot, conf = conf, level = level, distM = distM, threshold = threshold)
+    out = estimatePD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
+  } else if (diversity == 'FD' & FDtype == 'tau_values') {
+    out = estimateFD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = estimateAUC(data, q = q, datatype = datatype, base = base, nboot = nboot, conf = conf, level = level, distM = distM, tau = NULL)
+    out = estimateAUC(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
   }
   
   return(out)
 }
 
 
-# Asy3D -------------------------------------------------------------------
+# asy3D -------------------------------------------------------------------
 #' Asymptotic diversity q profile 
 #' 
-#' \code{Asy3D} The estimated diversity of order q 
+#' \code{asy3D} The estimated diversity of order q 
 #' 
-#' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
-#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.
-#' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
-#' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
+#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
+#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
+#' by species incidence frequencies in each column or list.
+#' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
+#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
-#' @param reftime is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-#' the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.
-#' @param PDtype desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-#' and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
-#' @param FDtype a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
-#' integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.
+#' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
+#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
+#' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
+#' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+#' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
+#' 
 #' @return a table of diversity q profile by 'Estimated'.
 #' @examples
 #' ## example for abundance-based data
 #' # diversity = 'TD'
 #' data(spider)
-#' out1 <- Asy3D(spider, diversity = 'TD', datatype = "abundance")
+#' out1 <- asy3D(spider, diversity = 'TD', datatype = "abundance")
 #' out1
 #' 
 #' # diversity = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- Asy3D(data, diversity = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
+#' out2 <- asy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), FDtype = 'single', nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out3 <- asy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- Asy3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out4 <- asy3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- Asy3D(ant, diversity = 'TD', datatype = "incidence_freq")
+#' out5 <- asy3D(ant, diversity = 'TD', datatype = "incidence_freq")
 #' out5
 #' 
 #' # diversity = 'PD'
@@ -298,67 +294,65 @@ estimate3D <- function (data, diversity = 'TD', q = c(0,1,2), datatype = "abunda
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- Asy3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
+#' out6 <- asy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
+#' distM <-  FunDdata.inc$dij
+#' out7 <- asy3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20)
+#' distM <-  FunDdata.inc$dij
+#' out8 <- asy3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, FDdistM = distM)
 #' out8
 #' 
 #' @export
-Asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, 
-                 tree, nT, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
+asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT, 
+                  PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
     out = AsyTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf)
   } else if (diversity == 'PD') {
-    out = AsyPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = tree, reftime = reftime, type = PDtype, nT = nT)
-  } else if (diversity == 'FD' & FDtype == 'single') {
-    out = AsyFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = distM, threshold = threshold)
+    out = AsyPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = PDtree, reftime = PDreftime, type = PDtype, nT = nT)
+  } else if (diversity == 'FD' & FDtype == 'tau_values') {
+    out = AsyFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = AsyAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = distM, tau = NULL)
+    out = AsyAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
   }
   
   return(out)
 }
 
 
-# Obs3D -------------------------------------------------------------------
+# obs3D -------------------------------------------------------------------
 #' Empirical diversity q profile 
 #' 
-#' \code{Obs3D} The empirical diversity of order q 
+#' \code{obs3D} The empirical diversity of order q 
 #' 
-#' @param data a matrix/data.frame (species by sites), or list of species abundances or incidence frequencies. If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
-#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.
-#' @param q a nonnegative value or sequence specifying the diversity order. Default is seq(0, 2, by = 0.2).
-#' @param datatype  data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-#' or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
+#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
+#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
+#' by species incidence frequencies in each column or list.
+#' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param tree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
+#' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+#' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
-#' @param reftime is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-#' the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.
-#' @param PDtype desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-#' and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.
-#' @param distM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
-#' @param FDtype a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
-#' integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}
-#' @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.
+#' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
+#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
+#' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
+#' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+#' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
 #' 
 #' @return a table of diversity q profile by 'Empirical'
 #' 
@@ -366,34 +360,34 @@ Asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' ## example for abundance-based data
 #' # diversity = 'TD'
 #' data(spider)
-#' out1 <- Obs3D(spider, diversity = 'TD', datatype = "abundance")
+#' out1 <- obs3D(spider, diversity = 'TD', datatype = "abundance")
 #' out1
 #' 
 #' # diversity = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- Obs3D(data, diversity = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30)
+#' out2 <- obs3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), FDtype = 'single', nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out3 <- obs3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- Obs3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out4 <- obs3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- Obs3D(ant, diversity = 'TD', datatype = "incidence_freq")
+#' out5 <- obs3D(ant, diversity = 'TD', datatype = "incidence_freq")
 #' out5
 #' 
 #' # diversity = 'PD'
@@ -401,37 +395,37 @@ Asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- Obs3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = seq(0, 2, by = 0.25))
+#' out6 <- obs3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
+#' distM <-  FunDdata.inc$dij
+#' out7 <- obs3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- Obs3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20)
+#' distM <-  FunDdata.inc$dij
+#' out8 <- obs3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, FDdistM = distM)
 #' out8
 #' 
 #' @export
-Obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95,
-                 tree, nT, reftime = NULL, PDtype = 'PD', distM, FDtype = 'AUC', threshold = NULL) {
+obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95,
+                  nT, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
     out = ObsTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf)
   } else if (diversity == 'PD') {
-    out = ObsPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = tree, reftime = reftime, type = PDtype, nT = nT)
-  } else if (diversity == 'FD' & FDtype == 'single') {
-    out = ObsFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = distM, threshold = threshold)
+    out = ObsPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = PDtree, reftime = PDreftime, type = PDtype, nT = nT)
+  } else if (diversity == 'FD' & FDtype == 'tau_values') {
+    out = ObsFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = ObsAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = distM, tau = NULL)
+    out = ObsAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
   }
   
   return(out)
@@ -469,21 +463,21 @@ Obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- iNEXT3D(data, diversity = 'PD', tree = tree, datatype = "abundance", q = 0, nboot = 30)
+#' out2 <- iNEXT3D(data, diversity = 'PD', q = 0, datatype = "abundance", nboot = 30, PDtree = tree)
 #' ggiNEXT3D(out2, type = c(1, 3))
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- iNEXT3D(data[,1], diversity = 'FD', distM = dij, datatype = "abundance", FDtype = 'single', nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out3 <- iNEXT3D(data[,1], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(out3)
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- iNEXT3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+#' distM <-  FunDdata.abu$dij
+#' out4 <- iNEXT3D(data = data[,2], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggiNEXT3D(out4)
 #' 
 #' ## example for incidence-based data
@@ -498,21 +492,21 @@ Obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- iNEXT3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+#' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
+#' distM <-  FunDdata.inc$dij
+#' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(out7)
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 0)
+#' distM <-  FunDdata.inc$dij
+#' out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 0, FDdistM = distM)
 #' ggiNEXT3D(out8)
 #' 
 #' @export
@@ -535,7 +529,7 @@ ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = 
     plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
     
-  } else if (sum(names(outcome) %in% c('AUCiNextEst', 'AUCAsyEst')) == 2) {
+  } else if (sum(names(outcome) %in% c("AUCInfo", 'AUCiNextEst', 'AUCAsyEst')) == 3) {
     class = 'AUC'
     plottable = outcome$AUCiNextEst
     plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
@@ -775,75 +769,75 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 }
 
 
-# ggAsy3D -------------------------------------------------------------------
+# ggasy3D -------------------------------------------------------------------
 #' ggplot for Asymptotic diversity
 #'
-#' \code{ggAsy3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{Asy3D} using the ggplot2 package.\cr
+#' \code{ggasy3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{asy3D} using the ggplot2 package.\cr
 #' It will only show the confidence interval of 'Estimated'.
 #'
-#' @param outcome the outcome of the functions \code{Asy3D} .\cr
+#' @param outcome the outcome of the functions \code{asy3D} .\cr
 #' @return a figure of asymptotic of empirical three-divrsity\cr\cr
 #'
 #' @examples
 #' ## example for abundance-based data
 #' # diversity = 'TD'
 #' data(spider)
-#' out1 <- rbind(Asy3D(spider, diversity = 'TD', datatype = "abundance"), Obs3D(spider, diversity = 'TD', datatype = "abundance"))
-#' ggAsy3D(out1)
+#' out1 <- rbind(asy3D(spider, diversity = 'TD', datatype = "abundance"), obs3D(spider, diversity = 'TD', datatype = "abundance"))
+#' ggasy3D(out1)
 #' 
 #' # diversity = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- Asy3D(data, diversity = 'PD', datatype = "abundance", tree = tree, q = seq(0, 2, by = 0.25), nboot = 30, PDtype = "meanPD")
-#' ggAsy3D(out2, profile = "q")
+#' out2 <- asy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, PDtree = tree, PDtype = "meanPD")
+#' ggasy3D(out2, profile = "q")
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out3 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "abundance", q = c(0, 1, 2), threshold = seq(0, 0.6, 0.1), FDtype = 'single', nboot = 0)
-#' ggAsy3D(out3, profile = "tau")
+#' distM <-  FunDdata.abu$dij
+#' out3 <- asy3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+#' ggasy3D(out3, profile = "tau")
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
-#' dij <-  FunDdata.abu$dij
-#' out4 <- Asy3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", q = seq(0, 2, 0.5), nboot = 0)
-#' ggAsy3D(out4)
+#' distM <-  FunDdata.abu$dij
+#' out4 <- asy3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+#' ggasy3D(out4)
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- rbind(Asy3D(ant, diversity = 'TD', datatype = "incidence_freq"), Obs3D(ant, diversity = 'TD', datatype = "incidence_freq"))
-#' ggAsy3D(out5)
+#' out5 <- rbind(asy3D(ant, diversity = 'TD', datatype = "incidence_freq"), obs3D(ant, diversity = 'TD', datatype = "incidence_freq"))
+#' ggasy3D(out5)
 #' 
 #' # diversity = 'PD'
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- Asy3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2), reftime = seq(0.1, 82.8575, length.out = 40))
-#' ggAsy3D(out6, profile = "time")
+#' out6 <- asy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+#' ggasy3D(out6, profile = "time")
 #' 
-#' # diversity = 'FD' & FDtype = 'single'
+#' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out7 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
-#' ggAsy3D(out7)
+#' distM <-  FunDdata.inc$dij
+#' out7 <- asy3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
+#' ggasy3D(out7)
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
-#' dij <-  FunDdata.inc$dij
-#' out8 <- Asy3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20)
-#' ggAsy3D(out8)
+#' distM <-  FunDdata.inc$dij
+#' out8 <- asy3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, FDdistM = distM)
+#' ggasy3D(out8)
 #'
 #' @export
-ggAsy3D <- function(outcome, profile = 'q'){
+ggasy3D <- function(outcome, profile = 'q'){
   if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
-    stop("Please use the outcome from specified function 'Asy3D'")
+    stop("Please use the outcome from specified function 'asy3D'")
   
   if (!(profile %in% c('q', 'time', 'tau')))
     stop("Please select one of 'q', 'time', 'tau' profile.")
@@ -856,7 +850,7 @@ ggAsy3D <- function(outcome, profile = 'q'){
     class = 'FD'
   } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 6) {
     class = 'AUC'
-  } else {stop("Please use the outcome from specified function 'Asy3D'")}
+  } else {stop("Please use the outcome from specified function 'asy3D'")}
   
   ## TD & q-profile ##
   if (class == 'TD') {

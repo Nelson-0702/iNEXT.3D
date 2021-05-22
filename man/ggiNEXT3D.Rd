@@ -43,21 +43,21 @@ ggiNEXT3D(out1, facet.var = "Assemblage")
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- iNEXT3D(data, diversity = 'PD', tree = tree, datatype = "abundance", q = 0, nboot = 30)
+out2 <- iNEXT3D(data, diversity = 'PD', q = 0, datatype = "abundance", nboot = 30, PDtree = tree)
 ggiNEXT3D(out2, type = c(1, 3))
 
-# diversity = 'FD' & FDtype = 'single'
+# diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
-dij <-  FunDdata.abu$dij
-out3 <- iNEXT3D(data[,1], diversity = 'FD', distM = dij, datatype = "abundance", FDtype = 'single', nboot = 0)
+distM <-  FunDdata.abu$dij
+out3 <- iNEXT3D(data[,1], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out3)
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
-dij <-  FunDdata.abu$dij
-out4 <- iNEXT3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0)
+distM <-  FunDdata.abu$dij
+out4 <- iNEXT3D(data = data[,2], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 ggiNEXT3D(out4)
 
 ## example for incidence-based data
@@ -72,21 +72,21 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- iNEXT3D(data, diversity = 'PD', nT = nT, datatype = "incidence_raw", tree = tree, q = c(0, 1, 2))
+out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 
-# diversity = 'FD' & FDtype = 'single'
+# diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
-dij <-  FunDdata.inc$dij
-out7 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", FDtype = 'single')
+distM <-  FunDdata.inc$dij
+out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out7)
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
-dij <-  FunDdata.inc$dij
-out8 <- iNEXT3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 0)
+distM <-  FunDdata.inc$dij
+out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 0, FDdistM = distM)
 ggiNEXT3D(out8)
 
 }

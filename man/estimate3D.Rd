@@ -13,13 +13,13 @@ estimate3D(
   level = NULL,
   nboot = 50,
   conf = 0.95,
-  tree,
   nT,
-  reftime = NULL,
-  PDtype = "PD",
-  distM,
+  PDtree,
+  PDreftime = NULL,
+  PDtype = "meanPD",
+  FDdistM,
   FDtype = "AUC",
-  threshold = NULL
+  FDtau = NULL
 )
 }
 \arguments{
@@ -27,41 +27,37 @@ estimate3D(
 If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
 by species incidence frequencies in each column or list.}
 
-\item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional'.}
+\item{diversity}{selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.}
 
-\item{q}{a numerical vector of the order of Hill number.}
+\item{q}{a numerical vector specifying the diversity orders.}
 
-\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}),
-sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).}
+\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).}
 
-\item{base}{comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).}
+\item{base}{Selection of sample-size-based (\code{base="size"}) or coverage-based (\code{base="coverage"}) rarefaction and extrapolation.}
 
-\item{level}{a sequence specifying the particular sample sizes or sample coverages(between 0 and 1). 
-If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
+\item{level}{a sequence specifying the particular sample sizes or sample coverages (between 0 and 1). \cr
+If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.  \cr
 If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.}
 
-\item{nboot}{the number of bootstrap times to obtain confidence interval. If confidence interval is not desired, use 0 to skip this time-consuming step.}
+\item{nboot}{an integer specifying the number of replications. If confidence interval is not desired, use 0 to skip this time-consuming step.}
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval, default is 0.95.}
 
-\item{tree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
-
-\item{nT}{needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc.
+\item{nT}{needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.}
 
-\item{reftime}{is set to be the tree depth of the phylogenetic tree, which is spanned by all the observed species in
-the pooled assemblage. Default is \code{NULL}. It will be use when \code{diversity = 'PD'}.}
+\item{PDtree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
 
-\item{PDtype}{desired phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity
-and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"PD"}.}
+\item{PDreftime}{Select a reference time point for \code{diversity = 'PD'}. Default is NULL.}
 
-\item{distM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.}
+\item{PDtype}{Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.}
 
-\item{FDtype}{a binary selection for functional type. \code{FDtype = "single"} computes diversity under certain threshold. \code{FDtype = "AUC"} computes diversity which 
-integrates several threshold between zero and one to get diversity. Default is \code{"AUC"}}
+\item{FDdistM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.}
 
-\item{threshold}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'}.}
+\item{FDtype}{a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+
+\item{FDtau}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.}
 }
 \value{
 a \code{data.frame} of species diversity table including the sample size, sample coverage,
@@ -80,27 +76,27 @@ out1
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- estimate3D(data, diversity = 'PD', tree = tree, datatype = "abundance", base = "coverage")
+out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 out2
 
-# diversity = 'FD' & FDtype = 'single'
+# diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
-dij <-  FunDdata.abu$dij
-out3 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "abundance", base = "size", FDtype = 'single')
+distM <-  FunDdata.abu$dij
+out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
 out3
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
-dij <-  FunDdata.abu$dij
-out4 <- estimate3D(data = data[,2], diversity = 'FD', distM = dij, datatype = "abundance", nboot = 0, base = "coverage")
+distM <-  FunDdata.abu$dij
+out4 <- estimate3D(data = data[,2], diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
 out4
 
 ## example for incidence-based data
 # diversity = 'TD'
 data(ant)
-out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base="coverage", level=0.985)
+out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base = "coverage", level=0.985)
 out5
 
 # diversity = 'PD'
@@ -108,21 +104,21 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- estimate3D(data, diversity = 'PD', nT = nT, tree = tree, datatype = "incidence_raw", base = "size")
+out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
 out6
 
-# diversity = 'FD' & FDtype = 'single'
+# diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
-dij <-  FunDdata.inc$dij
-out7 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", base = "coverage", FDtype = 'single')
+distM <-  FunDdata.inc$dij
+out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
 out7
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
-dij <-  FunDdata.inc$dij
-out8 <- estimate3D(data, diversity = 'FD', distM = dij, datatype = "incidence_freq", nboot = 20, base = "size")
+distM <-  FunDdata.inc$dij
+out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "size", nboot = 20, FDdistM = distM)
 out8
 
 }
