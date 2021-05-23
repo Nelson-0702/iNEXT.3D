@@ -7,11 +7,13 @@
 # then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
 # @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 # sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
 # @examples 
 # data(spider)
 # DataInfo(spider, datatype="abundance")
-DataInfo <- function(x, datatype="abundance"){
+DataInfo <- function(x, datatype="abundance", nT){
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
@@ -32,6 +34,7 @@ DataInfo <- function(x, datatype="abundance"){
   
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -138,6 +141,8 @@ DataInfo <- function(x, datatype="abundance"){
 # @param se a logical variable to calculate the bootstrap standard error and \code{conf} confidence interval.
 # @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
 # @param nboot an integer specifying the number of replications.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @importFrom reshape2 dcast
 # @return a list of three objects: 
 # \code{$DataInfo} for summarizing data information; 
@@ -166,7 +171,7 @@ DataInfo <- function(x, datatype="abundance"){
 # out3$iNextEst
 # }
 # 
-iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50)
+iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50, nT)
 {
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
@@ -189,6 +194,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -339,6 +345,8 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
 # If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes. 
 # If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes. 
 # @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
 # method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
 # @examples
@@ -353,7 +361,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
 # out <- estimateTD(ant, q = c(0,1,2), "incidence_freq", base="coverage", level=0.985, conf=0.95)
 # out
 estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
-                       conf = 0.95) 
+                       conf = 0.95, nT) 
 {
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
@@ -376,6 +384,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
   
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -425,6 +434,8 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
 # or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table of diversity q profile by 'Estimated' and 'Empirical'
 # 
 # @examples
@@ -442,7 +453,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
 # 
 # @references
 # Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
-AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
+AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT){
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -456,6 +467,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
     datatype <- "incidence"
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -554,6 +566,8 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
 # or species-by-site incidence frequencies data (\code{datatype = "incidence_freq"}). Default is "abundance".
 # @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 # @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table of diversity q profile by 'Estimated' and 'Empirical'
 # 
 # @examples
@@ -567,7 +581,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
 # data(ant)
 # out2 <- ObsTD(ant, datatype = "incidence_freq")
 # out2
-ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95){
+ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT){
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -589,6 +603,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0

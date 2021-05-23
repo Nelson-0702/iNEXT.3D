@@ -7,6 +7,8 @@
 # then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
 # @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 # sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
 # @examples
 # \donttest{
@@ -21,7 +23,7 @@
 # dij <- FunDdata.inc$dij
 # FDInfo(data = data, distM = dij, datatype = "incidence_freq")
 # }
-FDInfo <- function(data, datatype, distM, threshold = NULL){
+FDInfo <- function(data, datatype, distM, threshold = NULL, nT){
   distM = as.matrix(distM)
   
   if(datatype == "incidence_raw"){
@@ -29,6 +31,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL){
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -169,6 +172,8 @@ FDInfo <- function(data, datatype, distM, threshold = NULL){
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold} = dmean/2. Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table of FD estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
 # @examples
 # \donttest{
@@ -190,7 +195,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL){
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
 iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                    knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL) {
+                    knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL, nT) {
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -211,6 +216,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -442,6 +448,8 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
 # @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95. \cr
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -467,7 +475,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
 # Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", threshold = NULL, level = NULL, nboot = 50, conf = 0.95) {
+estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", threshold = NULL, level = NULL, nboot = 50, conf = 0.95, nT) {
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -488,6 +496,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -649,6 +658,8 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -666,7 +677,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
 # out <- AsyFD(data = data, distM = dij, datatype = "incidence_freq")
 # out
 # }
-AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL){
+AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -687,6 +698,7 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -808,6 +820,8 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param threshold a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -825,7 +839,7 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # out <- ObsFD(data = data, distM = dij, datatype = "incidence_freq")
 # out
 # }
-ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL){
+ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -846,6 +860,7 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -960,6 +975,8 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
 # @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
 # sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
 # @examples
 # \donttest{
@@ -974,7 +991,7 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # dij <- FunDdata.inc$dij
 # AUCInfo(data = data, distM = dij, datatype = "incidence_freq")
 # }
-AUCInfo <- function(data, datatype, distM){
+AUCInfo <- function(data, datatype, distM, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -995,6 +1012,7 @@ AUCInfo <- function(data, datatype, distM){
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -1123,6 +1141,8 @@ AUCInfo <- function(data, datatype, distM){
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table of AUC estimates and sample completeness for interpolated or extrapolated sample sizes along with their confidence intervals (if \code{nboot > 0}). \cr\cr
 # @examples
 # \donttest{
@@ -1140,7 +1160,7 @@ AUCInfo <- function(data, datatype, distM){
 # out
 # }
 iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                     knots = 20, size = NULL, conf = 0.95, nboot = 50) {
+                     knots = 20, size = NULL, conf = 0.95, nboot = 50, nT) {
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -1161,6 +1181,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -1348,6 +1369,8 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -1373,7 +1396,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
 # Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", level = NULL, nboot = 50, conf = 0.95, tau = NULL){
+estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", level = NULL, nboot = 50, conf = 0.95, tau = NULL, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -1394,6 +1417,7 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -1538,6 +1562,8 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -1555,7 +1581,7 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
 # out <- AsyAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
 # out
 # }
-AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL){
+AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -1576,6 +1602,7 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
@@ -1683,6 +1710,8 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 # @param nboot a positive integer specifying the number of bootstrap replications. Enter 0 to skip bootstrap;
 # in this case, the caculation of standard errors and confidence intervals will be skipped. Default is 50.
 # @param tau a sequence between 0 and 1 specifying tau for integrating area under curve. If \code{NULL}, \code{tau} = (0, 0.01, 0.02,..., 0.99, 1). Default is \code{NULL}.
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
 # @return a table including the sample size, sample coverage,
 # method (Interpolated or Extrapolated), and diversity estimates by area under curve with each \code{q} for the user-specified sample coverages. \cr\cr
 # @examples
@@ -1700,7 +1729,7 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 # out <- ObsAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
 # out
 # }
-ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL){
+ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT){
   distM = as.matrix(distM)
   
   # if(datatype == "incidence_raw"){
@@ -1721,6 +1750,7 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       #nT=ncol(data)
       # data = data.frame(inc = as.incfreq(data))
       
+      if(class(nT) == 'data.frame') nT = unlist(nT)
       mydata = list()
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
