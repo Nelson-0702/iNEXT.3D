@@ -46,9 +46,8 @@ PDInfo <- function(data, nT, datatype = "abundance", tree, reftime=NULL){
     stop("Invalid datatype", call. = FALSE)
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
-  
   if(class(data)[1] == "list" & datatype == "incidence_raw"){
+    if(class(nT) == 'data.frame') nT = unlist(nT)
     
     data = lapply(data, function(i) data.frame(i))
     data2 = lapply(data, function(i) {
@@ -231,8 +230,6 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
-  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   
@@ -246,6 +243,8 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
+      
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
       for(i in 1:length(nT)){
@@ -424,8 +423,6 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
     stop("ambiguous datatype")
   base <- match.arg(base, BASE)
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
-  
   data <- data[rowSums(data)>0,,drop=FALSE]
   pool.name <- rownames(data)
   mydata = list()
@@ -434,6 +431,8 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
+      
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
       for(i in 1:length(nT)){
@@ -562,8 +561,6 @@ AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),ref
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
-  
   data <- data[rowSums(data)>0,,drop=FALSE]
   pool.name <- rownames(data)
   mydata = list()
@@ -572,6 +569,8 @@ AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),ref
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
+      
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
       for(i in 1:length(nT)){
@@ -682,13 +681,13 @@ ObsPD <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),r
   pool.name <- rownames(data)
   mydata = list()
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
-  
   if(datatype=="incidence_raw"){
     if(class(data) == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
+      if(class(nT) == 'data.frame') nT = unlist(nT)
+      
       if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
       ntmp <- 0
       for(i in 1:length(nT)){
