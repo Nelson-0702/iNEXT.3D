@@ -113,13 +113,13 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
-    out = iNEXTTD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot)
+    out = iNEXTTD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, nT = nT)
   } else if (diversity == 'PD') {
     out = iNEXTPD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
   } else if (diversity == 'FD' & FDtype == 'tau_values') {
-    out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = FDdistM, threshold = FDtau)
+    out = iNEXTFD(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, nT = nT, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, distM = FDdistM)
+    out = iNEXTAUC(data, q = q, datatype = datatype, size = size, endpoint = endpoint, knots = knots, conf = conf, nboot = nboot, nT = nT, distM = FDdistM)
   }
   
   return(out)
@@ -216,13 +216,13 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
-    out = estimateTD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf)
+    out = estimateTD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, nT = nT)
   } else if (diversity == 'PD') {
     out = estimatePD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
   } else if (diversity == 'FD' & FDtype == 'tau_values') {
-    out = estimateFD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
+    out = estimateFD(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = estimateAUC(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
+    out = estimateAUC(data, q = q, datatype = datatype, base = base, level = level, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, tau = NULL)
   }
   
   return(out)
@@ -315,13 +315,13 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
-    out = AsyTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf)
+    out = AsyTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT)
   } else if (diversity == 'PD') {
-    out = AsyPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = PDtree, reftime = PDreftime, type = PDtype, nT = nT)
+    out = AsyPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
   } else if (diversity == 'FD' & FDtype == 'tau_values') {
-    out = AsyFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
+    out = AsyFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = AsyAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
+    out = AsyAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, tau = NULL)
   }
   
   return(out)
@@ -415,13 +415,13 @@ obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == 'TD') {
-    out = ObsTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf)
+    out = ObsTD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT)
   } else if (diversity == 'PD') {
-    out = ObsPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, tree = PDtree, reftime = PDreftime, type = PDtype, nT = nT)
+    out = ObsPD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, tree = PDtree, reftime = PDreftime, type = PDtype)
   } else if (diversity == 'FD' & FDtype == 'tau_values') {
-    out = ObsFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, threshold = FDtau)
+    out = ObsFD(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, threshold = FDtau)
   } else if (diversity == 'FD' & FDtype == 'AUC') {
-    out = ObsAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, distM = FDdistM, tau = NULL)
+    out = ObsAUC(data, q = q, datatype = datatype, nboot = nboot, conf = conf, nT = nT, distM = FDdistM, tau = NULL)
   }
   
   return(out)
