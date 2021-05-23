@@ -3,9 +3,8 @@
 #' 
 #' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
 #' 
-#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-#' by species incidence frequencies in each column or list.
+#' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+#' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
@@ -131,9 +130,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' Compute species diversity with a particular of sample size/coverage 
 #' 
 #' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
-#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-#' by species incidence frequencies in each column or list.
+#' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+#' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
@@ -236,9 +234,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' \code{asy3D} The estimated diversity of order q 
 #' 
-#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-#' by species incidence frequencies in each column or list.
+#' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+#' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
@@ -336,9 +333,8 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' 
 #' \code{obs3D} The empirical diversity of order q 
 #' 
-#' @param data a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-#' If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-#' by species incidence frequencies in each column or list.
+#' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+#' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
 #' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).

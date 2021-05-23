@@ -159,7 +159,7 @@ Chat.Ind <- function(x, m){
 # \code{Chat.Sam} Estimation of incidence-based sample coverage function
 # 
 # @param x a vector of species incidence-based frequency, the first entry is the total number of sampling units, followed by the speceis incidences abundances.
-# @param t a integer vector of rarefaction/extrapolation sample size
+# @param t a integer vector of rarefaction/extrapolation sample units
 # @return a vector of estimated sample coverage function
 # @export
 Chat.Sam <- function(x, t){
