@@ -175,22 +175,23 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE
       ses_C <- rep(NA,nrow(Dq.hat_unc))
     }
   }
-  out_m <- cbind("m"=rep(m,length(q)), "qD"=Dq.hat, "qD.LCL"=Dq.hat-qtile*ses_m,
-                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+  out_m <- cbind("m"=rep(m,length(q)), "qD"=Dq.hat, 
+                 "s.e."=ses_m, "qD.LCL"=Dq.hat-qtile*ses_m,
+                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.s.e." = ses_C_on_m,
                  "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
   out_m <- data.frame(out_m)
   out_m$Method <- ifelse(out_m$m<n, "Rarefaction", ifelse(out_m$m==n, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(m))
-  id_m <- match(c("m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("m", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL", "SC", "SC.s.e.", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
   out_m$qD.LCL[out_m$qD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- cbind(Dq.hat_unc,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
+    out_C <- cbind(Dq.hat_unc, 's.e.' = ses_C,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
                    'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("goalSC","SC","m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    id_C <- match(c("goalSC","SC","m", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qD.LCL[out_C$qD.LCL<0] <- 0
   }else{
@@ -276,22 +277,23 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE
     }
   }
   
-  out_m <- cbind("nt"=rep(t,length(q)), "qD"=Dq.hat, "qD.LCL"=Dq.hat-qtile*ses_m,
-                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+  out_m <- cbind("nt"=rep(t,length(q)), "qD"=Dq.hat, 
+                 "s.e."=ses_m, "qD.LCL"=Dq.hat-qtile*ses_m,
+                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.s.e." = ses_C_on_m,
                  "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
   out_m <- data.frame(out_m)
   out_m$Method <- ifelse(out_m$nt<nT, "Rarefaction", ifelse(out_m$nt==nT, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(t))
-  id_m <- match(c("nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("nt", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL", "SC", "SC.s.e.", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
   out_m$qD.LCL[out_m$qD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- cbind(Dq.hat_unc,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
+    out_C <- cbind(Dq.hat_unc,'s.e.'=ses_C,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
                    'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("goalSC","SC","nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    id_C <- match(c("goalSC","SC","nt", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qD.LCL[out_C$qD.LCL<0] <- 0
   }else{

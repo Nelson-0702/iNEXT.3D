@@ -321,7 +321,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   
   FUN <- function(e){
     if(class(mydata)=="list"){
-      inextPD(datalist = mydata, datatype = datatype,phylotr = mytree, q = q, reft = reftime, m=size,
+      inextPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q, reft = reftime, m=size,
               cal = type, nboot=nboot, conf = conf, unconditional_var = TRUE)
     }else{
       return(NULL)
@@ -488,7 +488,8 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
   
   if (base == "size") {
     tmp <- inextPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                   reft = reftime,m = level, cal = type, nboot=nboot, conf = conf, unconditional_var = FALSE)$size_based
+                   reft = reftime,m = level, cal = type, nboot=nboot, conf = conf, unconditional_var = FALSE)$size_based %>% 
+      select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
   } else if (base == "coverage") {
     tmp <- invChatPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q,
                      reft = reftime, cal = type, level = level, nboot, conf)

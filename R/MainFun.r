@@ -23,7 +23,7 @@
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
 #' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
 #' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
 #' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
 #' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
@@ -145,7 +145,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
 #' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
 #' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
 #' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
 #' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
@@ -245,7 +245,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
 #' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
 #' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
 #' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
 #' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
@@ -344,7 +344,7 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
 #' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param PDreftime Select a reference time point for \code{diversity = 'PD'}. Default is NULL.  
+#' @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
 #' @param PDtype Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.
 #' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
 #' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
@@ -370,14 +370,14 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out3 <- obs3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
+#' out3 <- obs3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 30, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out4 <- obs3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+#' out4 <- obs3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 30, FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
@@ -405,7 +405,7 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' distM <-  FunDdata.inc$dij
-#' out8 <- obs3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, FDdistM = distM)
+#' out8 <- obs3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 30, FDdistM = distM)
 #' out8
 #' 
 #' @export
@@ -838,13 +838,13 @@ ggasy3D <- function(outcome, profile = 'q'){
   if (!(profile %in% c('q', 'time', 'tau')))
     stop("Please select one of 'q', 'time', 'tau' profile.")
   
-  if (sum(colnames(outcome)[1:6] == c('Order.q', 'qD', 'qD.LCL', 'qD.UCL', 'Assemblage', 'Method')) == 6) {
+  if (sum(colnames(outcome)[1:7] == c('Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL', 'Assemblage', 'Method')) == 7) {
     class = 'TD'
-  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qPD', 'qPD.LCL', 'qPD.UCL', 'Assemblage', 'Method')) == 6) {
+  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL', 'Assemblage', 'Method')) == 7) {
     class = 'PD'
-  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qFD', 'qFD.LCL', 'qFD.UCL', 'Assemblage', 'Method')) == 6) {
+  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Assemblage', 'Method')) == 7) {
     class = 'FD'
-  } else if (sum(colnames(outcome)[1:6] == c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 6) {
+  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 7) {
     class = 'AUC'
   } else {stop("Please use the outcome from specified function 'asy3D'")}
   

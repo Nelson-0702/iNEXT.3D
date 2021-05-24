@@ -520,7 +520,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
           apply(apply(Abun.Mat, 2, function(xb) Diversity_profile(xb, q)), 1, sd, na.rm=TRUE)
         
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq,"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
                         "Assemblage" = names(data)[i], "Method" = "Asymptotic")
       out$qD.LCL[out$qD.LCL<0] <- 0
       out
@@ -544,7 +544,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
             apply(apply(Abun.Mat, 2, function(yb) Diversity_profile.inc(yb, q)), 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq,"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
                         "Assemblage" = names(data)[i],"Method" = "Asymptotic")
       out$qD.LCL[out$qD.LCL<0] <- 0
       out
@@ -655,7 +655,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
           apply(apply(Abun.Mat, 2, function(xb) Diversity_profile_MLE(xb,q)), 1, sd, na.rm=TRUE)
         
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq,"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
                         "Assemblage" = names(data)[i], "Method" = "Empirical")
       out$qD.LCL[out$qD.LCL<0] <- 0
       out
@@ -679,7 +679,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
             apply(apply(Abun.Mat, 2, function(yb) Diversity_profile_MLE.inc(yb,q)), 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq,"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
                         "Assemblage" = names(data)[i],"Method" = "Empirical")
       out$qD.LCL[out$qD.LCL<0] <- 0
       out

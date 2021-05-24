@@ -21,9 +21,8 @@ asy3D(
 )
 }
 \arguments{
-\item{data}{a \code{data.frame} or \code{list} of species abundances or incidence frequencies.\cr 
-If \code{datatype = "incidence"}, then the first entry of the input data must be total number of sampling units, followed 
-by species incidence frequencies in each column or list.}
+\item{data}{a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.}
 
 \item{diversity}{selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.}
 
@@ -41,7 +40,7 @@ It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw
 
 \item{PDtree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
 
-\item{PDreftime}{Select a reference time point for \code{diversity = 'PD'}. Default is NULL.}
+\item{PDreftime}{Select several reference time points for \code{diversity = 'PD'}. Default is NULL.}
 
 \item{PDtype}{Select phylogenetic diversity type: \code{PDtype = "PD"} for Chao et al. (2010) phylogenetic diversity and \code{PDtype = "meanPD"} for mean phylogenetic diversity (phylogenetic Hill number). It will be use when \code{diversity = 'PD'}. Default is \code{"meanPD"}.}
 

@@ -81,6 +81,7 @@ EstiBootComm.Func = function(data, distance, datatype){
     fo.num = (f0.hat * (f0.hat-1) )/2
     # random_d00 = as.vector(rmultinom(1, 1000, rep(1/fo.num, fo.num) ) )/1000
     d00 = matrix(0, f0.hat, f0.hat)
+    # d00[upper.tri(d00)] = (F00hat/2)*random_d00
     d00[upper.tri(d00)] = (F00hat/2)/fo.num
     d00 <- pmax(d00, t(d00))###signmatrix
     d <- cbind(dij, d.0bar )
@@ -114,7 +115,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       }else{
         ses <- rep(NA,length(emp))
       }
-      output <- cbind(emp,emp-qtile*ses,emp+qtile*ses)
+      output <- cbind(emp,ses,emp-qtile*ses,emp+qtile*ses)
       output[output[,2]<0,2] <- 0
       output
     }) %>% do.call(rbind,.)
@@ -135,7 +136,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       }else{
         ses <- rep(NA,length(emp))
       }
-      output <- cbind(emp,emp-qtile*ses,emp+qtile*ses)
+      output <- cbind(emp,ses,emp-qtile*ses,emp+qtile*ses)
       output[output[,2]<0,2] <- 0
       output
     }) %>% do.call(rbind,.)
@@ -144,7 +145,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Output <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
-                   qFD.LCL = out[,2], qFD.UCL = out[,3],
+                   s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
                    Assemblage = sites_tmp, Method='Empirical', tau = tau_tmp)
   Output
 }
@@ -207,12 +208,13 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     }
   }
  
-  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(qAUC.LCL = qAUC - se * qtile,
-                                                                                 qAUC.UCL = qAUC + se * qtile,
-                                                                                 Method = "Empirical") %>% 
+  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
+                                                                                qAUC.LCL = qAUC - se * qtile,
+                                                                                qAUC.UCL = qAUC + se * qtile,
+                                                                                Method = "Empirical") %>% 
     select(-se)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
-  AUC = AUC %>% select(c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
+  AUC = AUC %>% select(c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
   AUC
 }
 
@@ -360,7 +362,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       }else{
         ses <- rep(NA,length(est))
       }
-      output <- cbind(est,est-qtile*ses,est+qtile*ses)
+      output <- cbind(est,ses,est-qtile*ses,est+qtile*ses)
       output[output[,2]<0,2] <- 0
       list(estimates = output,info = est_info$info)
     }) 
@@ -382,7 +384,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       }else{
         ses <- rep(NA,length(est))
       }
-      output <- cbind(est,est-qtile*ses,est+qtile*ses)
+      output <- cbind(est,ses,est-qtile*ses,est+qtile*ses)
       output[output[,2]<0,2] <- 0
       list(estimates = output,info = est_info$info)
     })
@@ -399,7 +401,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Estoutput <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = Estoutput[,1],
-                      qFD.LCL = Estoutput[,2], qFD.UCL = Estoutput[,3],
+                      s.e. = Estoutput[,2], qFD.LCL = Estoutput[,3], qFD.UCL = Estoutput[,4],
                       Assemblage = sites_tmp, Method = "Asymptotic", tau = tau_tmp)
   Estoutput$qFD.LCL[Estoutput$qFD.LCL<0] = 0
   # return(list(Estoutput = Estoutput, info = info))
@@ -462,12 +464,13 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
       ses <- tibble(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
     }
   }
-  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(qAUC.LCL = qAUC - se * qtile,
+  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
+                                                                                qAUC.LCL = qAUC - se * qtile,
                                                                                 qAUC.UCL = qAUC + se * qtile,
                                                                                 Method = "Asymptotic") %>% 
     select(-se)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
-  AUC = AUC %>% select(c('Order.q', 'qAUC', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
+  AUC = AUC %>% select(c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
   return(AUC)
 }
 
@@ -603,8 +606,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
       tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
-             Order.q=orderq, qFD=qFDm, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
-             SC=covm, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
+             Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+             SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
              threshold = threshold) %>% 
       arrange(threshold, Order.q)
     }) %>% do.call(rbind, .)
@@ -641,8 +644,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
       tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
-             Order.q=orderq, qFD=qFDm, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
-             SC=covm, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
+             Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+             SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
              threshold = threshold) %>% 
         arrange(threshold,Order.q)
     }) %>% do.call(rbind, .)
@@ -715,9 +718,9 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
   }
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','m')) %>% mutate(
-    qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
-    SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage,m,Method,Order.q,qAUC,qAUC.LCL,qAUC.UCL,SC,SC.LCL,SC.UCL)
+    s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
+    SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
+    select(Assemblage,m,Method,Order.q,qAUC,s.e.,qAUC.LCL,qAUC.UCL,SC,SC.s.e.,SC.LCL,SC.UCL)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   AUC$SC.LCL[AUC$SC.LCL<0] <- 0
   AUC
@@ -840,7 +843,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(qFD.LCL=qFD-qtile*ses,qFD.UCL=qFD+qtile*ses) 
+      est <- est %>% mutate(s.e.=ses,qFD.LCL=qFD-qtile*ses,qFD.UCL=qFD+qtile*ses) 
     }) %>% do.call(rbind,.)
   }else if(datatype=='incidence_freq'){
     out <- lapply(datalist,function(x_){
@@ -859,12 +862,12 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(qFD.LCL=qFD-qtile*ses,qFD.UCL=qFD+qtile*ses) 
+      est <- est %>% mutate(s.e.=ses,qFD.LCL=qFD-qtile*ses,qFD.UCL=qFD+qtile*ses) 
     }) %>% do.call(rbind,.)
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, goalSC, SC, m, Method, Order.q, qFD, qFD.LCL, qFD.UCL, threshold
+    Assemblage, goalSC, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, threshold
   )
   rownames(out) <- NULL
   out
@@ -927,9 +930,9 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   }
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','goalSC')) %>% mutate(
-    qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
-    SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage, goalSC, SC, m, Method, Order.q, qAUC, qAUC.LCL, qAUC.UCL)
+    s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
+    SC.s.e. = , SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
+    select(Assemblage, goalSC, SC, m, Method, Order.q, qAUC, s.e., qAUC.LCL, qAUC.UCL)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   # AUC$SC.LCL[AUC$SC.LCL<0] <- 0
   AUC

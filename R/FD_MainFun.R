@@ -376,13 +376,12 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       obs$m = rep(sapply(1:length(dat),
                          function(i) ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]]))),
                   each = length(q))
-      obs = obs[!colnames(obs) %in% c("SC.LCL", "SC.UCL")]
+      obs = obs[!colnames(obs) %in% c("SC.s.e.", "SC.LCL", "SC.UCL")]
       if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, 
-                                                                              m = size[[i]]), 
+                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
                                                            nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
       # obs_cov = CoverageFD(data = dat[[i]], datatype = datatype, 
       #                  m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))
@@ -629,9 +628,11 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   
   if (base == "size") {
     out = iNextFD(datalist = dat,dij = distM,q = q,datatype = datatype,tau = threshold,
-                   nboot = nboot,conf = conf,m = level)
-    out$qFD.LCL[out$qFD.LCL<0] <- 0; out$SC.LCL[out$SC.LCL<0] <- 0
-    out$SC.UCL[out$SC.UCL>1] <- 1
+                   nboot = nboot,conf = conf,m = level) %>% 
+      select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
+    out$qFD.LCL[out$qFD.LCL<0] <- 0
+    # out$SC.LCL[out$SC.LCL<0] <- 0
+    # out$SC.UCL[out$SC.UCL>1] <- 1
     if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
   } else if (base == "coverage") {
     out <- invChatFD(datalist = dat, dij = distM, q = q, datatype = datatype,
@@ -1535,9 +1536,11 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
   
   if (base == 'size') {
     out = AUCtable_iNextFD(datalist = dat, dij = distM, q = q, datatype = datatype,
-                            tau = tau, nboot = nboot, conf = conf, m = level)
-    out$qAUC.LCL[out$qAUC.LCL<0] <- 0; out$SC.LCL[out$SC.LCL<0] <- 0
-    out$SC.UCL[out$SC.UCL>1] <- 1
+                            tau = tau, nboot = nboot, conf = conf, m = level) %>% 
+      select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
+    out$qAUC.LCL[out$qAUC.LCL<0] <- 0
+    # out$SC.LCL[out$SC.LCL<0] <- 0
+    # out$SC.UCL[out$SC.UCL>1] <- 1
   } else if (base == 'coverage') {
     out <- AUCtable_invFD(datalist = dat, dij = distM, q = q, datatype = datatype,
                           level = level, nboot = nboot, conf = conf, tau = tau)

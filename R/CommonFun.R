@@ -238,14 +238,14 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
         est
       })
       out <- do.call(rbind,out)
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'm', 'Method', 'Order.q', 'qD', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'm', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
@@ -273,14 +273,13 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
       })
       out <- do.call(rbind,out)
-      #out <- do.call(rbind, lapply(x, function(x) invChat.Sam(x,q,C,nboot, conf)))
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'nt', 'Method', 'Order.q', 'qD', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'nt', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
@@ -323,7 +322,7 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
         est
       })
       out <- do.call(rbind,out)
@@ -355,7 +354,7 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
       })
       out <- do.call(rbind,out)
       out$Assemblage <- Community

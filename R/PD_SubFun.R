@@ -93,7 +93,7 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       }else{
         ses <- rep(NA,length(emp))
       }
-      output <- cbind(emp,emp-qtile*ses,emp+qtile*ses)
+      output <- cbind(emp,ses,emp-qtile*ses,emp+qtile*ses)
       output[output[,2]<0,2] <- 0
       output
     }) %>% do.call(rbind,.)
@@ -124,13 +124,13 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       }else{
         ses <- rep(NA,length(emp))
       }
-      output <- cbind(emp,emp-qtile*ses,emp+qtile*ses)
+      output <- cbind(emp,ses,emp-qtile*ses,emp+qtile*ses)
       output[output[,2]<0,2] <- 0
       output
     }) %>% do.call(rbind,.)
   }
   Output <- tibble(Order.q = rep(rep(q, each=length(reft)),length(datalist)),
-                   qPD = out[,1],qPD.LCL = out[,2], qPD.UCL = out[,3],
+                   qPD = out[,1], s.e. = out[,2],qPD.LCL = out[,3], qPD.UCL = out[,4],
                    Assemblage = rep(nms, each=length(reft)*length(q)),
                    Method='Empirical',
                    Reftime = rep(reft,length(q)*length(datalist)),
@@ -310,7 +310,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       }else{
         ses <- rep(NA,length(est))
       }
-      est <- tibble(Order.q = rep(q,tau_l), qPD = est,
+      est <- tibble(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
                     qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
                     Reftime = rep(reft,each = length(q)))
       est
@@ -345,7 +345,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       }else{
         ses <- rep(NA,length(est))
       }
-      est <- tibble(Order.q = rep(q,tau_l), qPD = est,
+      est <- tibble(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
                     qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
                     Reftime = rep(reft,each = length(q)))
       est
@@ -354,7 +354,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
   Estoutput <- do.call(rbind,Estoutput) %>%
     mutate(Assemblage = rep(names(datalist),each = length(q)*tau_l),Method = 'Asymptotic',
            Type=cal) %>%
-    select(Order.q,qPD,qPD.LCL,qPD.UCL,Assemblage, 
+    select(Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,Assemblage, 
            Method,Reftime,Type) %>%
     arrange(Reftime)
   Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
@@ -586,12 +586,13 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       method <- rep(method,each = length(q)*length(reft))
       orderq <- rep(q,length(reft)*length(m[[i]]))
       SC_ <- rep(covm,each = length(q)*length(reft))
+      SC.se <- rep(ses_cov,each = length(q)*length(reft))
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ <- rep(rep(reft,each = length(q)),length(m[[i]]))
       out_m <- tibble(Assemblage = nms[i], m=m_,Method=method,Order.q=orderq,
-                      qPD=qPDm,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                      SC=SC_,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+                      qPD=qPDm,s.e. = ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
+                      SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
                       Reftime = reft_,
                       Type=cal) %>%
         arrange(Reftime,Order.q,m)
@@ -600,9 +601,9 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       if(unconditional_var){
         ses_pd_unc <- ses[-(1:(length(qPDm)+length(covm)))]
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
-                                    Type=cal,
+                                    s.e.=ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','goalSC','SC','m', 'Method', 'Order.q', 'qPD', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage','goalSC','SC','m', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,m)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -681,12 +682,13 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       method <- rep(method,each = length(q)*length(reft))
       orderq <- rep(q,length(reft)*length(m[[i]]))
       SC_ <- rep(covm,each = length(q)*length(reft))
+      SC.se <- rep(ses_cov,each = length(q)*length(reft))
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ = rep(rep(reft,each = length(q)),length(m[[i]]))
       out_m <- tibble(Assemblage = nms[i], nt=m_,Method=method,Order.q=orderq,
-                      qPD=qPDm,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                      SC=SC_,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+                      qPD=qPDm,s.e.=ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
+                      SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
                       Reftime = reft_,
                       Type=cal) %>%
         arrange(Reftime,Order.q,nt)
@@ -695,9 +697,9 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       if(unconditional_var){
         ses_pd_unc <- ses[-(1:(length(qPDm)+length(covm)))]
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
-                                    Type=cal,
+                                    s.e. = ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','goalSC','SC','nt', 'Method', 'Order.q', 'qPD', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage','goalSC','SC','nt', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,nt)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -785,6 +787,7 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
       }else{
         ans <- EPD(m = mm,obs = obs,asy = asy)
       }
+      if (class(ans) == 'numeric' | class(ans) == 'integer') ans = matrix(ans, ncol = length(reft))
       ans <- sapply(1:length(reft), function(i){
         ans[,i]/reft[i]
       })
@@ -959,7 +962,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
+      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
     }) %>% do.call(rbind,.)
   }else if(datatype=='incidence_raw'){
     out <- lapply(datalist,function(x_){
@@ -998,16 +1001,16 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
+      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
     }) %>% do.call(rbind,.)
   }
   Assemblage = rep(names(datalist), each = length(q)*length(reft)*length(level))
   out <- out %>% mutate(Assemblage = Assemblage, Type=cal)
   if(datatype=='abundance'){
-    out <- out %>% select(Assemblage,goalSC,SC,m,Method,Order.q,qPD,qPD.LCL,qPD.UCL,
+    out <- out %>% select(Assemblage,goalSC,SC,m,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
                           Reftime,Type)
   }else if(datatype=='incidence_raw'){
-    out <- out %>% select(Assemblage,goalSC,SC,nt,Method,Order.q,qPD,qPD.LCL,qPD.UCL,
+    out <- out %>% select(Assemblage,goalSC,SC,nt,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
                           Reftime,Type)
   }
   out$qPD.LCL[out$qPD.LCL<0] <- 0
