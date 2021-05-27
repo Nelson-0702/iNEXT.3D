@@ -1,5 +1,5 @@
 # TDInfo -------------------------------------------------------------------
-TDInfo = function(x, datatype) {
+TDInfo = function(data, datatype, nT) {
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
@@ -59,12 +59,12 @@ TDInfo = function(x, datatype) {
   }
   
   if(datatype == "abundance"){
-    if(class(x) == "numeric" | class(x) == "integer"){
-      out <- matrix(Fun.abun(x), nrow=1)
-    }else if(class(x) == "list"){
-      out <- do.call("rbind", lapply(x, Fun.abun))
-    } else if(class(x)[1] == "matrix" | class(x) == "data.frame"){
-      out <- t(apply(as.matrix(x), 2, Fun.abun))  
+    if(class(data) == "numeric" | class(data) == "integer"){
+      out <- matrix(Fun.abun(data), nrow=1)
+    }else if(class(data) == "list"){
+      out <- do.call("rbind", lapply(data, Fun.abun))
+    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+      out <- t(apply(as.matrix(data), 2, Fun.abun))  
     }
     if(nrow(out) > 1){
       out <- data.frame(site=rownames(out), out)
@@ -76,12 +76,12 @@ TDInfo = function(x, datatype) {
     }
     as.data.frame(out)
   }else if(datatype == "incidence_freq"){
-    if(class(x) == "numeric" | class(x) == "integer"){
-      out <- matrix(Fun.ince(x), nrow=1)
-    }else if(class(x) == "list"){
-      out <- do.call("rbind", lapply(x, Fun.ince))
-    } else if(class(x)[1] == "matrix" | class(x) == "data.frame"){
-      out <- t(apply(as.matrix(x), 2, Fun.ince))  
+    if(class(data) == "numeric" | class(data) == "integer"){
+      out <- matrix(Fun.ince(data), nrow=1)
+    }else if(class(data) == "list"){
+      out <- do.call("rbind", lapply(data, Fun.ince))
+    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+      out <- t(apply(as.matrix(data), 2, Fun.ince))  
     }
     if(nrow(out) > 1){
       out <- data.frame(site=rownames(out), out)

@@ -1051,7 +1051,7 @@ ggasy3D <- function(outcome, profile = 'q'){
 # @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
 DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT, PDtree, PDreftime = NULL, FDdistM, FDtype, FDtau = NULL){
   if (diversity == 'TD') {
-    TDInfo(data, datatype)
+    TDInfo(data, datatype, nT)
   } else if (diversity == 'PD') {
     PDInfo(data, datatype, tree = PDtree, reftime = PDreftime, nT)
   } else if (diversity == 'FD' & FDtype == 'tau_values') {
