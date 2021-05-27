@@ -750,6 +750,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       
       if (class == 'PD') {
         g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp)
+        # if(length(unique(output$Reftime)) == 1) outp <- outp + theme(strip.background = element_blank(), strip.text.x = element_blank())
       } else if (class == 'FD') {
         g <- g + facet_wrap(Assemblage + threshold ~ Order.q, labeller = odr_grp)
       } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp)}
@@ -980,6 +981,84 @@ ggasy3D <- function(outcome, profile = 'q'){
     guides(linetype = guide_legend(keywidth = 2.5))
   
   return(out)
+}
+
+
+# DataInfo3D -------------------------------------------------------------------
+# \code{DataInfo3D} Exhibit basic data information
+# 
+# @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
+# If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
+# @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
+# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
+# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
+# It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
+# @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
+# @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
+# @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
+# @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+# @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
+# 
+# @examples
+# ## example for abundance-based data
+# # diversity = 'TD'
+# data(spider)
+# DataInfo3D(spider, diversity = 'TD', datatype = "abundance")
+# 
+# # diversity = 'PD'
+# data(data.abu)
+# data <- data.abu$data
+# tree <- data.abu$tree
+# DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
+# 
+# # diversity = 'FD' & FDtype = 'tau_values'
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# distM <-  FunDdata.abu$dij
+# DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
+# 
+# # diversity = 'FD' & FDtype = 'AUC'
+# data(FunDdata.abu)
+# data <- FunDdata.abu$data
+# distM <-  FunDdata.abu$dij
+# DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
+# 
+# ## example for incidence-based data
+# # diversity = 'TD'
+# data(ant)
+# DataInfo3D(ant, diversity = 'TD', datatype = "incidence_freq")
+# 
+# # diversity = 'PD'
+# data(data.inc)
+# data <- data.inc$data
+# tree <- data.inc$tree
+# nT <- data.inc$nT
+# DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
+# 
+# # diversity = 'FD' & FDtype = 'tau_values'
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# distM <-  FunDdata.inc$dij
+# DataInfo3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
+# 
+# # diversity = 'FD' & FDtype = 'AUC'
+# data(FunDdata.inc)
+# data <- FunDdata.inc$data
+# distM <-  FunDdata.inc$dij
+# DataInfo3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'AUC')
+# 
+# @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT, PDtree, PDreftime = NULL, FDdistM, FDtype, FDtau = NULL){
+  if (diversity == 'TD') {
+    TDInfo(data, datatype)
+  } else if (diversity == 'PD') {
+    PDInfo(data, datatype, tree = PDtree, reftime = PDreftime, nT)
+  } else if (diversity == 'FD' & FDtype == 'tau_values') {
+    FDInfo(data, datatype, FDdistM, threshold = FDtau, nT)
+  } else if (diversity == 'FD' & FDtype == 'AUC') {
+    AUCInfo(data, datatype, FDdistM, nT)
+  }
 }
 
 

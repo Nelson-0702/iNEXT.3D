@@ -1,36 +1,12 @@
-# DataInfo -------------------------------------------------------------------
-# Exhibit basic data information
-# 
-# \code{DataInfo}: exhibits basic data information
-# 
-# @param x a vector/matrix/list of species abundances or incidence frequencies.\cr If \code{datatype = "incidence"}, 
-# then the first entry of the input data must be total number of sampling units, followed by species incidence frequencies.
-# @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}),  
-# sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
-# @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
-# If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. Ignored if \code{datatype = "abundance"}.
-# @return a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
-# @examples 
-# data(spider)
-# DataInfo(spider, datatype="abundance")
-DataInfo <- function(x, datatype="abundance", nT){
-  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+# TDInfo -------------------------------------------------------------------
+TDInfo = function(x, datatype) {
+  TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
   
-  if(datatype=="incidence_freq") datatype <- "incidence"
-  
-  # if(datatype=="incidence_raw"){
-  #   if(class(x)=="list"){
-  #     x <- lapply(x, as.incfreq)
-  #   }else{
-  #     x <- as.incfreq(x)
-  #   }
-  #   datatype <- "incidence"
-  # }
   
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
@@ -53,7 +29,7 @@ DataInfo <- function(x, datatype="abundance", nT){
       })
     } else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
-    datatype <- "incidence"
+    datatype <- "incidence_freq"
   }
   
   Fun.abun <- function(x){
@@ -62,7 +38,7 @@ DataInfo <- function(x, datatype="abundance", nT){
     f1 <- fk[1]
     f2 <- fk[2]
     Sobs <- sum(x>0)
-    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)  #estimation of unseen species via Chao1
+    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)
     A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
     Chat <- round(1 - f1/n*A, 4)
     c(n, Sobs, Chat, fk)
@@ -76,7 +52,7 @@ DataInfo <- function(x, datatype="abundance", nT){
     Q1 <- Qk[1]
     Q2 <- Qk[2]
     Sobs <- sum(x>0)
-    Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)  #estimation of unseen species via Chao2
+    Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)
     A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
     Chat <- round(1 - Q1/U*A,4)
     out <- c(nT, U, Sobs, Chat, Qk)
@@ -99,7 +75,7 @@ DataInfo <- function(x, datatype="abundance", nT){
       colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
     }
     as.data.frame(out)
-  }else if(datatype == "incidence"){
+  }else if(datatype == "incidence_freq"){
     if(class(x) == "numeric" | class(x) == "integer"){
       out <- matrix(Fun.ince(x), nrow=1)
     }else if(class(x) == "list"){
@@ -182,16 +158,6 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_freq") 
-    datatype <- "incidence"
-  # if (datatype == "incidence_raw") {
-  #   if (class(data) == "data.frame" | class(data) == "matrix") 
-  #     data <- as.incfreq(data)
-  #   else if (class(data) == "list") 
-  #     data <- lapply(data, as.incfreq)
-  #   datatype <- "incidence"
-  # }
-  
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
       if(class(nT) == 'data.frame') nT = unlist(nT)
@@ -213,7 +179,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
       })
     } else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
-    datatype <- "incidence"
+    datatype <- "incidence_freq"
   }
   
   Fun <- function(x, q, assem_name){
@@ -223,7 +189,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
       if(sum(x)==0) stop("Zero abundance counts in one or more sample sites")
       out <- iNEXT.Ind(Spec=x, q=q, m=size, endpoint=ifelse(is.null(endpoint), 2*sum(x), endpoint), knots=knots, se=se, nboot=nboot, conf=conf,unconditional_var)
     }
-    if(datatype == "incidence"){
+    if(datatype == "incidence_freq"){
       t <- x[1]
       y <- x[-1]
       if(t>sum(y)){
@@ -255,8 +221,8 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = out[[1]],
                 coverage_based = out[[2]])
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
@@ -279,8 +245,8 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
@@ -304,8 +270,8 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = ifelse(datatype=='abundance','abundance','incidence_freq'),nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
@@ -320,7 +286,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   }
   out$size_based$Assemblage <- as.character(out$size_based$Assemblage)
   out$coverage_based$Assemblage <- as.character(out$coverage_based$Assemblage)
-  info <- DataInfo(data, datatype)
+  info <- DataInfo3D(data, diversity = 'TD', datatype, nT)
   
   
   z <- list("DataInfo"=info, "iNextEst"=out, "AsyEst"=index)
@@ -372,16 +338,6 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_freq") 
-    datatype <- "incidence"
-  # if (datatype == "incidence_raw") {
-  #   if (class(data) == "data.frame" | class(data) == "matrix") 
-  #     data <- as.incfreq(data)
-  #   else if (class(data) == "list") 
-  #     data <- lapply(data, as.incfreq)
-  #   datatype <- "incidence"
-  # }
-  
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
       if(class(nT) == 'data.frame') nT = unlist(nT)
@@ -403,7 +359,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
       })
     } else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
-    datatype <- "incidence"
+    datatype <- "incidence_freq"
   }
   
   BASE <- c("size", "coverage")
@@ -463,8 +419,6 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_freq") 
-    datatype <- "incidence"
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
       if(class(nT) == 'data.frame') nT = unlist(nT)
@@ -486,7 +440,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       })
     } else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
-    datatype <- "incidence"
+    datatype <- "incidence_freq"
   }
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
@@ -526,7 +480,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       out
     })
     out <- do.call(rbind,out)
-  }else if(datatype=="incidence"){
+  }else if(datatype=="incidence_freq"){
     out <- lapply(1:length(data),function(i){
       dq <- Diversity_profile.inc(data[[i]],q)
       if(nboot > 1){
@@ -591,16 +545,6 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_freq") 
-    datatype <- "incidence"
-  # if (datatype == "incidence_raw") {
-  #   if (class(data) == "data.frame" | class(data) == "matrix") 
-  #     data <- as.incfreq(data)
-  #   else if (class(data) == "list") 
-  #     data <- lapply(data, as.incfreq)
-  #   datatype <- "incidence"
-  # }
-  
   if (datatype == "incidence_raw") {
     if (class(data) == "data.frame" | class(data) == "matrix") {
       if(class(nT) == 'data.frame') nT = unlist(nT)
@@ -622,7 +566,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       })
     } else if (class(data) == "list") 
       data <- lapply(data, as.incfreq)
-    datatype <- "incidence"
+    datatype <- "incidence_freq"
   }
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
@@ -661,7 +605,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
       out
     })
     out <- do.call(rbind,out)
-  }else if(datatype=="incidence"){
+  }else if(datatype=="incidence_freq"){
     out <- lapply(1:length(data),function(i){
       dq <- Diversity_profile_MLE.inc(data[[i]],q)
       if(nboot > 1){

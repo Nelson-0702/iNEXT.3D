@@ -132,7 +132,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT){
     stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
-  info <- DataInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
+  info <- TDInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
   info$n =lapply(dat, function(x) sum(x))
   info$SC = lapply(dat, function(x) {
     n = sum(x)
@@ -413,8 +413,8 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
   
-  info <- DataInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
-  info$n =lapply(dat, function(x) sum(x))
+  info <- DataInfo3D(data, diversity = 'FD', datatype = datatype, FDdistM = distM, FDtype = 'tau_values', FDtau = threshold, nT = nT)
+  info$n = lapply(dat, function(x) sum(x))
   info$SC = lapply(dat, function(x) {
     n = sum(x)
     f1 = sum(x==1)
@@ -1115,7 +1115,7 @@ AUCInfo <- function(data, datatype, distM, nT){
   }))
   
   
-  info <- cbind(DataInfo(dat, datatype)[,1:4], threshold)
+  info <- cbind(TDInfo(dat, datatype)[,1:4], threshold)
   colnames(info)[5:7] = c("dmin", "dmean", "dmax")
   return(info)
 }
@@ -1347,7 +1347,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
   
-  info <- AUCInfo(data, datatype, distM)
+  info <- DataInfo3D(data, diversity = 'FD', datatype = datatype, FDdistM = distM, FDtype = 'AUC', nT = nT)
   return( list("AUCInfo" = info, "AUCiNextEst" = out, "AUCAsyEst" = index) )
 }
 

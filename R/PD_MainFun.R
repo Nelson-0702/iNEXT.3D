@@ -36,7 +36,7 @@
 # Chao, A., Chiu C.-H. and Jost, L. (2010). Phylogenetic diversity measures based on Hill numbers. \emph{Philosophical Transactions of the Royal Society B.}, 365, 3599-3609. \cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-PDInfo <- function(data, nT, datatype = "abundance", tree, reftime=NULL){
+PDInfo <- function(data, datatype = "abundance", tree, reftime=NULL, nT){
   
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
@@ -341,8 +341,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
   index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Phylogenetic Diversity", "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.", "LCL", "UCL")
-  
-  info <- PDInfo(data, nT, tree = tree, datatype)
+  info <- DataInfo3D(data, diversity = 'PD', datatype = datatype, nT, PDtree = tree, PDreftime = reftime)
   return( list("PDInfo"=info, "PDiNextEst"=out, "PDAsyEst"=index) )
 }
 
