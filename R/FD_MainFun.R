@@ -119,9 +119,11 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT){
   
   if(is.null(threshold)) {
     if(datatype=='abundance') {
-      tmp <- rowMeans(matrix(sapply(dat, function(x) x/sum(x)),ncol = length(dat)))  
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }else if(datatype=='incidence_freq'){
-      tmp <- rowMeans(matrix(sapply(dat, function(x) x[-1]/sum(x[-1])), ncol = length(dat)))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum ( (tmp %*% t(tmp) ) * distM)
     dmin <- min(distM[distM>0])
@@ -307,9 +309,11 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   
   if(is.null(threshold)) {
     if(datatype=='abundance') {
-      tmp <- rowMeans(matrix(sapply(dat, function(x) x/sum(x)),ncol = length(dat)))  
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }else if(datatype=='incidence_freq'){
-      tmp <- rowMeans(matrix(sapply(dat, function(x) x[-1]/sum(x[-1])), ncol = length(dat)))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum ( (tmp %*% t(tmp) ) * distM)
     dmin <- min(distM[distM>0])
@@ -588,19 +592,21 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
     names(dat) = colnames(data)
   }
   
-  if (is.null(threshold)) {
+  if(is.null(threshold)) {
     if(datatype=='abundance') {
-      tmp <- rowMeans(sapply(dat, function(x) x/sum(x)))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }else if(datatype=='incidence_freq'){
-      tmp <- rowMeans(sapply(dat, function(x) x[-1]/sum(x[-1])))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum ( (tmp %*% t(tmp) ) * distM)
     dmin <- min(distM[distM>0])
     #dmax <- max(distM)
     #threshold <- (dmean+dmin)/2
     threshold <- dmean
-  }else if(sum(threshold<0)>0|sum(threshold>1)>0) {
-    stop("Threshold must be a number between 0 and 1. Use NULL to set it to (dmean+dmin)/2.",call. = FALSE)
+  } else if(sum(threshold<0)>0|sum(threshold>1)>0) {
+    stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
   if (is.null(level) & base == "size") {
@@ -787,17 +793,19 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if(is.null(threshold)) {
     if(datatype=='abundance') {
-      tmp <- rowMeans(sapply(dat, function(x) x/sum(x)))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }else if(datatype=='incidence_freq'){
-      tmp <- rowMeans(sapply(dat, function(x) x[-1]/sum(x[-1])))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum ( (tmp %*% t(tmp) ) * distM)
     dmin <- min(distM[distM>0])
     #dmax <- max(distM)
     #threshold <- (dmean+dmin)/2
     threshold <- dmean
-  }else if(sum(threshold<0)>0|sum(threshold>1)>0) {
-    stop("Threshold must be a number between 0 and 1. Use NULL to set it to (dmean+dmin)/2.",call. = FALSE)
+  } else if(sum(threshold<0)>0|sum(threshold>1)>0) {
+    stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
   out <- FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
@@ -949,17 +957,19 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if(is.null(threshold)) {
     if(datatype=='abundance') {
-      tmp <- rowMeans(sapply(dat, function(x) x/sum(x)))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }else if(datatype=='incidence_freq'){
-      tmp <- rowMeans(sapply(dat, function(x) x[-1]/sum(x[-1])))
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
+      tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum ( (tmp %*% t(tmp) ) * distM)
     dmin <- min(distM[distM>0])
     #dmax <- max(distM)
     #threshold <- (dmean+dmin)/2
     threshold <- dmean
-  }else if(sum(threshold<0)>0|sum(threshold>1)>0) {
-    stop("Threshold must be a number between 0 and 1. Use NULL to set it to (dmean+dmin)/2.",call. = FALSE)
+  } else if(sum(threshold<0)>0|sum(threshold>1)>0) {
+    stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
   out <- FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
