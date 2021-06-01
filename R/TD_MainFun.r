@@ -1,5 +1,5 @@
 # TDInfo -------------------------------------------------------------------
-TDInfo = function(data, datatype, nT) {
+TDInfo = function(data, datatype, nT = NULL) {
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
     stop("invalid datatype")
@@ -7,30 +7,7 @@ TDInfo = function(data, datatype, nT) {
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
   
-  
-  if (datatype == "incidence_raw") {
-    if (class(data) == "data.frame" | class(data) == "matrix") {
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = as.incfreq(i)
-        return(out)
-      })
-    } else if (class(data) == "list") 
-      data <- lapply(data, as.incfreq)
-    datatype <- "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   Fun.abun <- function(x){
     n <- sum(x)
@@ -114,7 +91,6 @@ TDInfo = function(data, datatype, nT) {
 # each knot represents a particular sample size for which diversity estimate will be calculated.  
 # If the \code{endpoint} is smaller than the reference sample size, then \code{iNEXTTD()} computes only the rarefaction esimates for approximately K evenly spaced \code{knots}. 
 # If the \code{endpoint} is larger than the reference sample size, then \code{iNEXTTD()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
-# @param se a logical variable to calculate the bootstrap standard error and \code{conf} confidence interval.
 # @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
 # @param nboot an integer specifying the number of replications.
 # @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage.
@@ -143,11 +119,11 @@ TDInfo = function(data, datatype, nT) {
 # ## example for incidence frequencies based data (list of data.frame)
 # data(ant)
 # t <- round(seq(10, 500, length.out=20))
-# out3 <- iNEXTTD(ant$h500m, q=1, datatype="incidence_freq", size=t, se=FALSE)
+# out3 <- iNEXTTD(ant$h500m, q=1, datatype="incidence_freq", size=t)
 # out3$iNextEst
 # }
 # 
-iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, se=TRUE, conf=0.95, nboot=50, nT)
+iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, knots=40, conf=0.95, nboot=50, nT = NULL)
 {
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
@@ -158,36 +134,14 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_raw") {
-    if (class(data) == "data.frame" | class(data) == "matrix") {
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = as.incfreq(i)
-        return(out)
-      })
-    } else if (class(data) == "list") 
-      data <- lapply(data, as.incfreq)
-    datatype <- "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   Fun <- function(x, q, assem_name){
     x <- as.numeric(unlist(x))
     unconditional_var <- TRUE
     if(datatype == "abundance"){
       if(sum(x)==0) stop("Zero abundance counts in one or more sample sites")
-      out <- iNEXT.Ind(Spec=x, q=q, m=size, endpoint=ifelse(is.null(endpoint), 2*sum(x), endpoint), knots=knots, se=se, nboot=nboot, conf=conf,unconditional_var)
+      out <- iNEXT.Ind(Spec=x, q=q, m=size, endpoint=ifelse(is.null(endpoint), 2*sum(x), endpoint), knots=knots, nboot=nboot, conf=conf,unconditional_var)
     }
     if(datatype == "incidence_freq"){
       t <- x[1]
@@ -197,7 +151,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
       }
       if(sum(x)==0) stop("Zero incidence frequencies in one or more sample sites")
       
-      out <- iNEXT.Sam(Spec=x, q=q, t=size, endpoint=ifelse(is.null(endpoint), 2*max(x), endpoint), knots=knots, se=se, nboot=nboot, conf=conf)  
+      out <- iNEXT.Sam(Spec=x, q=q, t=size, endpoint=ifelse(is.null(endpoint), 2*max(x), endpoint), knots=knots, nboot=nboot, conf=conf)  
     }
     if(unconditional_var){
       out <- lapply(out, function(out_) cbind(Assemblage = assem_name, out_))
@@ -327,7 +281,7 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
 # out <- estimateTD(ant, q = c(0,1,2), "incidence_freq", base="coverage", level=0.985, conf=0.95)
 # out
 estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot=50,
-                       conf = 0.95, nT) 
+                       conf = 0.95, nT = NULL) 
 {
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
@@ -338,29 +292,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_raw") {
-    if (class(data) == "data.frame" | class(data) == "matrix") {
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = as.incfreq(i)
-        return(out)
-      })
-    } else if (class(data) == "list") 
-      data <- lapply(data, as.incfreq)
-    datatype <- "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   BASE <- c("size", "coverage")
   if (is.na(pmatch(base, BASE))) 
@@ -409,7 +341,7 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
 # 
 # @references
 # Chao,A. and Jost,L.(2015).Estimating diversity and entropy profiles via discovery rates of new species.
-AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT){
+AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL){
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -419,29 +351,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_raw") {
-    if (class(data) == "data.frame" | class(data) == "matrix") {
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = as.incfreq(i)
-        return(out)
-      })
-    } else if (class(data) == "list") 
-      data <- lapply(data, as.incfreq)
-    datatype <- "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
     datalist <- lapply(1:ncol(data), function(i) data[,i])
@@ -535,7 +445,7 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
 # data(ant)
 # out2 <- ObsTD(ant, datatype = "incidence_freq")
 # out2
-ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT){
+ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL){
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   TYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -545,29 +455,7 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   datatype <- match.arg(datatype, TYPE)
   class_x <- class(data)[1]
   
-  if (datatype == "incidence_raw") {
-    if (class(data) == "data.frame" | class(data) == "matrix") {
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = as.incfreq(i)
-        return(out)
-      })
-    } else if (class(data) == "list") 
-      data <- lapply(data, as.incfreq)
-    datatype <- "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
     datalist <- lapply(1:ncol(data), function(i) data[,i])

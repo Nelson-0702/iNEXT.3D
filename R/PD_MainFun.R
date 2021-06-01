@@ -36,7 +36,7 @@
 # Chao, A., Chiu C.-H. and Jost, L. (2010). Phylogenetic diversity measures based on Hill numbers. \emph{Philosophical Transactions of the Royal Society B.}, 365, 3599-3609. \cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-PDInfo <- function(data, datatype = "abundance", tree, reftime=NULL, nT){
+PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL){
   
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
@@ -89,6 +89,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime=NULL, nT){
         names(mydata) = names(nT)
       }
     }
+    
   }else if (datatype == "abundance"){
     if(is.null(colnames(data))) {colnames(data) <- paste0("assemblage",1:ncol(data))}
     mydata <- lapply(1:ncol(data), function(i)  {x <- data[,i];names(x) <- pool.name;x})
@@ -119,6 +120,48 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime=NULL, nT){
   }
   
   return(data.frame(infos))
+  
+}
+
+
+# datainf ------------------------------------------------------------------
+datainf <- function(data, datatype, phylotr, reft){
+  if(datatype == "abundance"){
+    new <- phyBranchAL_Abu(phylotr,data,datatype,reft)
+    #new$treeNabu$branch.length <- new$BLbyT[,1]
+    data <- data[data>0]
+    ai <- new$treeNabu$branch.abun
+    Lis <- new$BLbyT
+    a1 <- sapply(1:ncol(Lis),function(i){
+      Li = Lis[,i]
+      I1 <- which(ai==1&Li>0);I2 <- which(ai==2&Li>0)
+      f1 <- length(I1);f2 <- length(I2)
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      c(f1,f2,PD_obs,g1,g2)
+    }) %>% matrix(nrow = 5) %>% t()
+    a1 <- tibble('n' = sum(data),'S.obs' = length(data),'PD.obs' = a1[,3],
+                 'f1*' = a1[,1],'f2*' = a1[,2], 'g1' = a1[,4],'g2' = a1[,5])
+  }else if(datatype == 'incidence_raw'){
+    new <- phyBranchAL_Inc(phylotr,data,datatype,reft)
+    #new$treeNabu$branch.length <- new$BLbyT[,1]
+    data <- data[rowSums(data)>0,colSums(data)>0,drop=F]
+    ai <- new$treeNabu$branch.abun
+    Lis <- new$BLbyT
+    a1 <- sapply(1:ncol(Lis),function(i){
+      Li = Lis[,i]
+      I1 <- which(ai==1);I2 <- which(ai==2)
+      f1 <- length(I1);f2 <- length(I2)
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      c(f1,f2,PD_obs, g1, g2)
+    }) %>% matrix(nrow = 5) %>% t()
+    a1 <- tibble('nT' = ncol(data),'S.obs' = nrow(data),'PD.obs' = a1[,3],
+                 'Q1*' = a1[,1],'Q2*' = a1[,2], 'R1' = a1[,4],'R2' = a1[,5])
+  }
+  return(a1)
   
 }
 
@@ -191,7 +234,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime=NULL, nT){
 # Chao, A., Chiu C.-H. and Jost L. (2016). Phylogenetic diversity measures and their decomposition: a framework based on Hill numbers. pp. 141-172 in Pellens R. and Grandcolas P. (eds)
 # \emph{Biodiversity Conservation and Phylogenetic Systematics: Preserving our Evolutionary Heritage in an Extinction Crisis}, Springer. \cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftime=NULL, type = 'PD', endpoint = NULL, knots = 40, size = NULL, nboot = 50, conf = 0.95) {
+iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2), reftime=NULL, type = 'meanPD', endpoint = NULL, knots = 40, size = NULL, nboot = 50, conf = 0.95) {
   
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
@@ -398,7 +441,7 @@ iNEXTPD <- function(data, nT, datatype = "abundance", tree, q = c(0,1,2), reftim
 # Chao, A., Chiu C.-H. and Jost L. (2016). Phylogenetic diversity measures and their decomposition: a framework based on Hill numbers. pp. 141-172 in Pellens R. and Grandcolas P. (eds)
 # \emph{Biodiversity Conservation and Phylogenetic Systematics: Preserving our Evolutionary Heritage in an Extinction Crisis}, Springer. \cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), reftime=NULL, type = 'PD', base = "coverage", level = NULL, nboot = 50, conf = 0.95){
+estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,2), reftime=NULL, type = 'meanPD', base = "coverage", level = NULL, nboot = 50, conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   if(datatype == "incidence_freq") stop("The PD can only accept 'datatype = incidence_raw'.")
@@ -473,13 +516,13 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
     if(datatype=='abundance'){
       level <- sapply(mydata,function(x){
         ni <- sum(x)
-        Coverage(data = x,datatype = datatype,m = 2*ni,nt = ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
       
     }else if(datatype=='incidence_raw'){
       level <- sapply(mydata,function(x){
         ni <- ncol(x)
-        Coverage(data = x,datatype = datatype,m = 2*ni,nt = ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
     }
     level <- min(level)
@@ -543,7 +586,7 @@ estimatePD <- function(data, nT, tree, datatype = "abundance", q = c(0,1,2), ref
 # @references
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
-AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),reftime = NULL,type = 'PD',nboot = 50,conf = 0.95){
+AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.25),reftime = NULL,type = 'meanPD',nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
   if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
@@ -653,7 +696,7 @@ AsyPD <- function(data,nT,datatype = "abundance",tree,q = seq(0,2,by = 0.25),ref
 # 
 # @references
 # Chao, A., Chiu C.-H. and Jost, L. (2010). Phylogenetic diversity measures based on Hill numbers. \emph{Philosophical Transactions of the Royal Society B.}, 365, 3599-3609. \cr\cr
-ObsPD <- function(data,nT,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),reftime = NULL,type = "PD",
+ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 0.25),reftime = NULL,type = "meanPD",
                    nboot = 50,conf = 0.95){
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
     stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)

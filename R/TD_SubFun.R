@@ -119,7 +119,6 @@ TD.m.est_inc <- function(y, t_, qs){
 # @param m a integer vector of rarefaction/extrapolation sample size, default is NULL. If m is not be specified, then the program will compute sample units due to endpoint and knots.
 # @param endpoint a integer of sample size that is the endpoint for rarefaction/extrapolation. Default is double the original sample size.
 # @param knots a number of knots of computation, default is 40
-# @param se calculate bootstrap standard error and 95% confidence interval; default is TRUE
 # @param nboot the number of bootstrap resampling times, default is 200
 # @return a list of interpolation and extrapolation Hill number with specific order q (qD) and sample coverage (SC)
 # @seealso \code{\link{iNEXT.Sam}}
@@ -128,8 +127,8 @@ TD.m.est_inc <- function(y, t_, qs){
 # # q = 0 with specific endpoint
 # iNEXT.Ind(spider$Girdled, q=0, endpoint=500)
 # # q = 1 with specific sample size m and don't calculate standard error
-# iNEXT.Ind(spider$Girdled, q=1, m=c(1, 10, 20, 50, 100, 200, 400, 600), se=FALSE)
-iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE, nboot=200, conf=0.95, unconditional_var = TRUE)
+# iNEXT.Ind(spider$Girdled, q=1, m=c(1, 10, 20, 50, 100, 200, 400, 600))
+iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=200, conf=0.95, unconditional_var = TRUE)
 {
   qtile <- qnorm(1-(1-conf)/2)
   n <- sum(Spec)		  	#sample size
@@ -147,7 +146,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE
   m <- unique(m)
   #====conditional on m====
   Dq.hat <- TD.m.est(Spec,m,q)
-  C.hat <- Chat.Ind(Spec, m)
+  C.hat <- Coverage(Spec, 'abundance', m)
   #====unconditional====
   if(unconditional_var){
     goalSC <- unique(C.hat)
@@ -155,14 +154,14 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE
     Dq.hat_unc$Method[round(Dq.hat_unc$m) == n] = "Observed"
   }
   
-  if(se==TRUE & nboot > 1 & length(Spec) > 1) {
+  if(nboot > 1 & length(Spec) > 1) {
     Prob.hat <- EstiBootComm.Ind(Spec)
     Abun.Mat <- rmultinom(nboot, n, Prob.hat)
     
     ses_m <- apply(matrix(apply(Abun.Mat,2 ,function(x) TD.m.est(x, m, q)),
                           nrow = length(Dq.hat)),1,sd, na.rm=TRUE)
     
-    ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(x) Chat.Ind(x, m)),nrow = length(m)),
+    ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(x) Coverage(x, 'abundance', m)),nrow = length(m)),
                         1, sd, na.rm=TRUE)
     if(unconditional_var){
       ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(x) invChat.Ind(x, q,unique(Dq.hat_unc$goalSC))$qD),
@@ -211,7 +210,6 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE
 # @param t a integer vector of rarefaction/extrapolation sample size, default is NULL. If m is not be specified, then the program will compute sample units due to endpoint and knots.
 # @param endpoint a integer of sample size that is the endpoint for rarefaction/extrapolation. Default is double the original sample size.
 # @param knots a number of knots of computation, default is 40
-# @param se calculate bootstrap standard error and 95% confidence interval; default is TRUE
 # @param nboot the number of bootstrap resampling times, default is 200
 # @return a list of interpolation and extrapolation Hill number with specific order q (qD) and sample coverage (SC)
 # @seealso \code{\link{iNEXT.Ind}}
@@ -220,8 +218,8 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, se=TRUE
 # # q = 0 with specific endpoint
 # iNEXT.Sam(ant$h50m, q=0, endpoint=100)
 # # q = 1 with specific sample size m and don't calculate standard error
-# iNEXT.Sam(ant$h500m, q=1, t=round(seq(10, 500, length.out=20)), se=FALSE)
-iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE, nboot=200, conf=0.95, unconditional_var = TRUE)
+# iNEXT.Sam(ant$h500m, q=1, t=round(seq(10, 500, length.out=20)))
+iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=200, conf=0.95, unconditional_var = TRUE)
 {
   qtile <- qnorm(1-(1-conf)/2)
   if(which.max(Spec)!=1) 
@@ -242,14 +240,14 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE
   t <- unique(t)
   #====conditional on m====
   Dq.hat <- TD.m.est_inc(Spec,t,q)
-  C.hat <- Chat.Sam(Spec, t)
+  C.hat <- Coverage(Spec, "incidence_freq", t)
   if(unconditional_var){
     goalSC <- unique(C.hat)
     Dq.hat_unc <- unique(invChat.Sam(x = Spec,q = q,C = goalSC))
     Dq.hat_unc$Method[round(Dq.hat_unc$nt) == nT] = "Observed"
   }
   
-  if(se==TRUE & nboot > 1 & length(Spec) > 2){
+  if(nboot > 1 & length(Spec) > 2){
     Prob.hat <- EstiBootComm.Sam(Spec)
     Abun.Mat <- t(sapply(Prob.hat, function(p) rbinom(nboot, nT, p)))
     Abun.Mat <- matrix(c(rbind(nT, Abun.Mat)),ncol=nboot)
@@ -262,7 +260,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE
       ses_m <- apply(matrix(apply(Abun.Mat,2 ,function(y) TD.m.est_inc(y, t, q)),
                             nrow = length(Dq.hat)),1,sd, na.rm=TRUE)
       
-      ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(y) Chat.Sam(y, t)),nrow = length(t)),
+      ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(y) Coverage(y, "incidence_freq", t)),nrow = length(t)),
                           1, sd, na.rm=TRUE)
       if(unconditional_var){
         ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(y) invChat.Sam(y, q,unique(Dq.hat_unc$goalSC))$qD),
@@ -303,111 +301,6 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, se=TRUE
 }
 
 
-# Diversity_profile -------------------------------------------------------------------
-Diversity_profile <- function(x,q){
-  x = x[x>0]
-  n = sum(x)
-  f1 = sum(x==1)
-  f2 = sum(x==2)
-  p1 = ifelse(f2>0,2*f2/((n-1)*f1+2*f2),ifelse(f1>0,2/((n-1)*(f1-1)+2),1))
-  sortx = sort(unique(x))
-  tab = table(x)
-  Sub_q012 <- function(q){
-    if(q==0){
-      length(x) + (n-1)/n*ifelse(f2>0, f1^2/2/f2, f1*(f1-1)/2)
-    }else if(q==1){
-      A <- sum(tab*sortx/n*(digamma(n)-digamma(sortx)))
-      B <- TD1_2nd(n,f1,f2)
-      exp(A+B)
-    }else if(abs(q-round(q))==0){
-      A <- sum(tab[sortx>=q]*exp(lchoose(sortx[sortx>=q],q)-lchoose(n,q)))
-      A^(1/(1-q))
-    }
-  }
-  ans <- rep(0,length(q))
-  q_part1 = which(abs(q-round(q))==0)
-  if(length(q_part1)>0){
-    ans[q_part1] <- sapply(q[q_part1], Sub_q012)
-  }
-  q_part2 <- which(!abs(q-round(q))==0)
-  if(length(q_part2)>0){
-    ans[q_part2] <- TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = q[q_part2],f1 = f1,A = p1)
-  }
-  ans
-}
-
-
-# Diversity_profile.inc -------------------------------------------------------------------
-Diversity_profile.inc <- function(data,q){
-  nT = data[1]
-  Yi = data[-1]
-  Yi <- Yi[Yi!=0]
-  U <- sum(Yi)
-  Q1 <- sum(Yi==1)
-  Q2 <- sum(Yi==2)
-  Sobs <- length(Yi)
-  A <- AA.inc(data)
-  Q0hat <- ifelse(Q2 == 0, (nT - 1) / nT * Q1 * (Q1 - 1) / 2, (nT - 1) / nT * Q1 ^ 2/ 2 / Q2)
-  B <- sapply(q,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12)))
-  qD <- (U/nT)^(q/(q-1))*(qTDFUN(q,Yi,nT) + B)^(1/(1-q))
-  qD[which(q==0)] = Sobs+Q0hat
-  yi <- Yi[Yi>=1 & Yi<=(nT-1)]
-  delta <- function(i){
-    (yi[i]/nT)*sum(1/c(yi[i]:(nT-1)))
-  }
-  if(sum(q %in% 1)>0){
-    C_ <- ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*(-log(A)-sum(sapply(c(1:(nT-1)),function(r) (1-A)^r/r))))
-    qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT))
-  }
-  return(qD)
-}
-
-
-# Diversity_profile_MLE -------------------------------------------------------------------
-Diversity_profile_MLE <- function(x,q){
-  p <- x[x>0]/sum(x)
-  Sub <- function(q){
-    if(q==0) sum(p>0)
-    else if(q==1) exp(-sum(p*log(p)))
-    else exp(1/(1-q)*log(sum(p^q)))
-  }
-  sapply(q, Sub)
-}
-
-
-# Diversity_profile_MLE.inc -------------------------------------------------------------------
-Diversity_profile_MLE.inc <- function(data,q){
-  Yi = data[-1]
-  U = sum(Yi)
-  Yi <- Yi[Yi!=0]
-  ai <- Yi/U
-  qD = qTD_MLE(q,ai)
-  qD[which(q==1)] <- exp(-sum(ai*log(ai)))
-  return(qD)
-}
-
-
-# AA.inc -------------------------------------------------------------------
-AA.inc <- function(data){
-  nT = data[1]
-  U <- sum(data[-1])
-  data = data[-1]
-  Yi = data[data!=0]
-  Q1 <- sum(Yi==1)
-  Q2 <- sum(Yi==2)
-  if(Q2>0 & Q1>0){
-    A <- 2*Q2/((nT-1)*Q1+2*Q2)
-  }
-  else if(Q2==0 & Q1>1){
-    A <- 2/((nT-1)*(Q1-1)+2)
-  }
-  else{
-    A <- 1
-  }
-  return(A)
-}
-
-
 # invChat -------------------------------------------------------------------
 # Compute species diversity with fixed sample coverage
 # 
@@ -445,7 +338,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
   if (datatype == "abundance") {
     if (class(x) == "list") {
       if (is.null(C)) {
-        C <- min(unlist(lapply(x, function(x) Chat.Ind(x,2*sum(x)))))
+        C <- min(unlist(lapply(x, function(x) Coverage(x,'abundance',2*sum(x)))))
       }
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
@@ -475,7 +368,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
   }else if (datatype == "incidence_freq") {
     if (class(x) == "list") {
       if (is.null(C)) {
-        C <- min(unlist(lapply(x, function(x) Chat.Sam(x,2*max(x)))))
+        C <- min(unlist(lapply(x, function(x) Coverage(x,"incidence_freq",2*max(x)))))
       }
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
@@ -508,6 +401,101 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
     }
   }
   out
+}
+
+
+# invChat.Ind -------------------------------------------------------------------
+invChat.Ind <- function (x, q, C) {
+  x <- x[x>0] ####added by yhc
+  m <- NULL
+  n <- sum(x)
+  refC <- Coverage(x, 'abundance', n)
+  f <- function(m, C) abs(Coverage(x, 'abundance', m) - C)
+  mm <- sapply(C, function(cvrg){
+    if (refC == cvrg) {
+      mm <- n
+    }else if (refC > cvrg) {
+      opt <- optimize(f, C = cvrg, lower = 0, upper = sum(x))
+      mm <- opt$minimum
+    }else if (refC < cvrg) {
+      f1 <- sum(x == 1)
+      f2 <- sum(x == 2)
+      if (f1 > 0 & f2 > 0) {
+        A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
+      }else if (f1 > 1 & f2 == 0) {
+        A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
+      }else if (f1 == 0 & f2 > 0) {
+        A <- 0
+      }else if(f1 == 1 & f2 == 0) {
+        A <- 0
+      }else if(f1 == 0 & f2 == 0) {
+        A <- 0
+      }
+      mm <- ifelse(A==0,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
+      mm <- n + mm
+    }
+    mm
+  })
+  mm[mm < 1] <- 1
+  SC <- Coverage(x, 'abundance',mm)
+  # if (sum(round(mm) > 2 * n)>0) 
+  #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
+  
+  out <- TD.m.est(x = x,m = mm,qs = q)
+  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
+  method <- rep(method,length(q))
+  m <- rep(mm,length(q))
+  order <- rep(q,each = length(mm))
+  SC <- rep(SC,length(q))
+  data.frame(m = m,Method = method,Order.q = order,
+             SC=SC,qD = out,goalSC = rep(C,length(q)))
+}
+
+
+# invChat.Sam -------------------------------------------------------------------
+invChat.Sam <- function (x, q, C) {
+  x <- x[x>0] ####added by yhc
+  m <- NULL
+  n <- max(x)
+  refC <- Coverage(x, "incidence_freq", n)
+  f <- function(m, C) abs(Coverage(x, "incidence_freq", m) - C)
+  mm <- sapply(C, function(cvrg){
+    if (refC == cvrg) {
+      mm <- n
+    }else if (refC > cvrg) {
+      opt <- optimize(f, C = cvrg, lower = 0, upper = max(x))
+      mm <- opt$minimum
+    }else if (refC < cvrg) {
+      f1 <- sum(x == 1)
+      f2 <- sum(x == 2)
+      U <- sum(x) - max(x)
+      if (f1 > 0 & f2 > 0) {
+        A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
+      }else if(f1 > 1 & f2 == 0) {
+        A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
+      }else if(f1 == 0) {
+        A <- 0
+      }else if(f1 == 1 & f2 == 0) {
+        A <- 0
+      }
+      mm <- ifelse(A==0,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
+      mm <- n + mm
+    }
+    mm
+  })
+  mm[mm < 1] <- 1
+  SC <- Coverage(x,"incidence_freq",mm)
+  # if (sum(round(mm) > 2 * n)>0) 
+  #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
+  out <- TD.m.est_inc(y = x,t_ = mm,qs = q)
+  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
+  method <- rep(method,length(q))
+  m <- rep(mm,length(q))
+  order <- rep(q,each = length(mm))
+  SC <- rep(SC,length(q))
+  data.frame(nt = m,Method = method,Order.q = order,
+             SC=SC,qD = out,goalSC = rep(C,length(q)))
+  
 }
 
 
@@ -591,101 +579,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
 }
 
 
-# invChat.Ind -------------------------------------------------------------------
-invChat.Ind <- function (x, q, C) {
-  x <- x[x>0] ####added by yhc
-  m <- NULL
-  n <- sum(x)
-  refC <- Chat.Ind(x, n)
-  f <- function(m, C) abs(Chat.Ind(x, m) - C)
-  mm <- sapply(C, function(cvrg){
-    if (refC == cvrg) {
-      mm <- n
-    }else if (refC > cvrg) {
-      opt <- optimize(f, C = cvrg, lower = 0, upper = sum(x))
-      mm <- opt$minimum
-    }else if (refC < cvrg) {
-      f1 <- sum(x == 1)
-      f2 <- sum(x == 2)
-      if (f1 > 0 & f2 > 0) {
-        A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
-      }else if (f1 > 1 & f2 == 0) {
-        A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
-      }else if (f1 == 0 & f2 > 0) {
-        A <- 0
-      }else if(f1 == 1 & f2 == 0) {
-        A <- 0
-      }else if(f1 == 0 & f2 == 0) {
-        A <- 0
-      }
-      mm <- ifelse(A==0,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
-      mm <- n + mm
-    }
-    mm
-  })
-  mm[mm < 1] <- 1
-  SC <- Chat.Ind(x,mm)
-  # if (sum(round(mm) > 2 * n)>0) 
-  #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
-  
-  out <- TD.m.est(x = x,m = mm,qs = q)
-  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
-  method <- rep(method,length(q))
-  m <- rep(mm,length(q))
-  order <- rep(q,each = length(mm))
-  SC <- rep(SC,length(q))
-  data.frame(m = m,Method = method,Order.q = order,
-             SC=SC,qD = out,goalSC = rep(C,length(q)))
-}
-
-
-# invChat.Sam -------------------------------------------------------------------
-invChat.Sam <- function (x, q, C) {
-  x <- x[x>0] ####added by yhc
-  m <- NULL
-  n <- max(x)
-  refC <- Chat.Sam(x, n)
-  f <- function(m, C) abs(Chat.Sam(x, m) - C)
-  mm <- sapply(C, function(cvrg){
-    if (refC == cvrg) {
-      mm <- n
-    }else if (refC > cvrg) {
-      opt <- optimize(f, C = cvrg, lower = 0, upper = max(x))
-      mm <- opt$minimum
-    }else if (refC < cvrg) {
-      f1 <- sum(x == 1)
-      f2 <- sum(x == 2)
-      U <- sum(x) - max(x)
-      if (f1 > 0 & f2 > 0) {
-        A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
-      }else if(f1 > 1 & f2 == 0) {
-        A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
-      }else if(f1 == 0) {
-        A <- 0
-      }else if(f1 == 1 & f2 == 0) {
-        A <- 0
-      }
-      mm <- ifelse(A==0,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
-      mm <- n + mm
-    }
-    mm
-  })
-  mm[mm < 1] <- 1
-  SC <- Chat.Sam(x,mm)
-  # if (sum(round(mm) > 2 * n)>0) 
-  #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
-  out <- TD.m.est_inc(y = x,t_ = mm,qs = q)
-  method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
-  method <- rep(method,length(q))
-  m <- rep(mm,length(q))
-  order <- rep(q,each = length(mm))
-  SC <- rep(SC,length(q))
-  data.frame(nt = m,Method = method,Order.q = order,
-             SC=SC,qD = out,goalSC = rep(C,length(q)))
-  
-}
-
-
 # invSize.Ind -------------------------------------------------------------------
 invSize.Ind <- function(x, q, size){
   m <- NULL # no visible binding for global variable 'm'
@@ -695,29 +588,13 @@ invSize.Ind <- function(x, q, size){
     size <- sum(x)
   }
   out <- TD.m.est(x = x,m = size,qs = q)
-  SC <- Chat.Ind(x,size)
+  SC <- Coverage(x,'abundance',size)
   method <- ifelse(size>n,'Extrapolation',ifelse(size<n,'Rarefaction','Observed'))
   method <- rep(method,length(q))
   m <- rep(size,length(q))
   order <- rep(q,each = length(size))
   SC <- rep(SC,length(q))
   data.frame(m = m,Method = method,Order.q = order,SC=SC,qD = out)
-  # if(nboot==0|is.null(conf)){
-  #   method <- ifelse(size<sum(x), "interpolated", ifelse(size==sum(x), "observed", "extrapolated"))
-  #   out <- subset(iNEXT.Ind(x,q,m = c(1,size),se = FALSE), m==size)
-  #   out <- out[,c(1,2,3,5,4)]
-  #   # out <- data.frame(m=size, method=method, 
-  #   #                   SamCov=round(Chat.Ind(x,size),3),
-  #   #                   SpeRic=round(Dqhat.Ind(x,0,size),3),
-  #   #                   ShaDiv=round(Dqhat.Ind(x,1,size),3),
-  #   #                   SimDiv=round(Dqhat.Ind(x,2,size),3))
-  #   # colnames(out) <- c("m", "method", "SC", "q = 0", "q = 1", "q = 2")
-  # }else{
-  #   out <- subset(iNEXT.Ind(x,q,m = c(1,size),se = TRUE,conf = conf,nboot = nboot), m==size)
-  #   out <- out[,c(1, 2, 3, 7, 4, 5, 6)]
-  # }
-  # out <- out[!duplicated(out), ]
-  # out
 }
 
 
@@ -730,24 +607,179 @@ invSize.Sam <- function(x, q, size){
     size <- max(x)
   }
   out <- TD.m.est_inc(y = x,t_ = size,qs = q)
-  SC <- Chat.Sam(x,size)
+  SC <- Coverage(x,"incidence_freq",size)
   method <- ifelse(size>n,'Extrapolation',ifelse(size<n,'Rarefaction','Observed'))
   method <- rep(method,length(q))
   m <- rep(size,length(q))
   order <- rep(q,each = length(size))
   SC <- rep(SC,length(q))
   data.frame(t = m,Method = method,Order.q = order,SC=SC,qD = out)
-  # if(nboot==0|is.null(conf)){
-  #   method <- ifelse(size<max(x), "interpolated", ifelse(size==max(x), "observed", "extrapolated"))
-  #   out <- subset(iNEXT.Sam(x,q,t = c(1,size),se = FALSE), t==size)
-  #   out <- out[,c(1,2,3,5,4)]
-  # }else{
-  #   out <- subset(iNEXT.Sam(x,q,t = c(1,size),se = TRUE,conf = conf,nboot = nboot), t==size)
-  #   out <- out[, c(1, 2, 3, 7, 4, 5, 6)]
-  # }
-  # out <- out[!duplicated(out), ]
-  # out
 }
 
 
+
+
+# Diversity_profile -------------------------------------------------------------------
+Diversity_profile <- function(x,q){
+  x = x[x>0]
+  n = sum(x)
+  f1 = sum(x==1)
+  f2 = sum(x==2)
+  p1 = ifelse(f2>0,2*f2/((n-1)*f1+2*f2),ifelse(f1>0,2/((n-1)*(f1-1)+2),1))
+  sortx = sort(unique(x))
+  tab = table(x)
+  Sub_q012 <- function(q){
+    if(q==0){
+      length(x) + (n-1)/n*ifelse(f2>0, f1^2/2/f2, f1*(f1-1)/2)
+    }else if(q==1){
+      A <- sum(tab*sortx/n*(digamma(n)-digamma(sortx)))
+      B <- TD1_2nd(n,f1,f2)
+      exp(A+B)
+    }else if(abs(q-round(q))==0){
+      A <- sum(tab[sortx>=q]*exp(lchoose(sortx[sortx>=q],q)-lchoose(n,q)))
+      A^(1/(1-q))
+    }
+  }
+  ans <- rep(0,length(q))
+  q_part1 = which(abs(q-round(q))==0)
+  if(length(q_part1)>0){
+    ans[q_part1] <- sapply(q[q_part1], Sub_q012)
+  }
+  q_part2 <- which(!abs(q-round(q))==0)
+  if(length(q_part2)>0){
+    ans[q_part2] <- TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = q[q_part2],f1 = f1,A = p1)
+  }
+  ans
+}
+
+
+# Diversity_profile.inc -------------------------------------------------------------------
+Diversity_profile.inc <- function(data,q){
+  nT = data[1]
+  Yi = data[-1]
+  Yi <- Yi[Yi!=0]
+  U <- sum(Yi)
+  Q1 <- sum(Yi==1)
+  Q2 <- sum(Yi==2)
+  Sobs <- length(Yi)
+  
+  if(Q2>0 & Q1>0){
+    A <- 2*Q2/((nT-1)*Q1+2*Q2)
+  }
+  else if(Q2==0 & Q1>1){
+    A <- 2/((nT-1)*(Q1-1)+2)
+  }
+  else{
+    A <- 1
+  }
+  
+  Q0hat <- ifelse(Q2 == 0, (nT - 1) / nT * Q1 * (Q1 - 1) / 2, (nT - 1) / nT * Q1 ^ 2/ 2 / Q2)
+  B <- sapply(q,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12)))
+  qD <- (U/nT)^(q/(q-1))*(qTDFUN(q,Yi,nT) + B)^(1/(1-q))
+  qD[which(q==0)] = Sobs+Q0hat
+  yi <- Yi[Yi>=1 & Yi<=(nT-1)]
+  delta <- function(i){
+    (yi[i]/nT)*sum(1/c(yi[i]:(nT-1)))
+  }
+  if(sum(q %in% 1)>0){
+    C_ <- ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*(-log(A)-sum(sapply(c(1:(nT-1)),function(r) (1-A)^r/r))))
+    qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT))
+  }
+  return(qD)
+}
+
+
+# Diversity_profile_MLE -------------------------------------------------------------------
+Diversity_profile_MLE <- function(x,q){
+  p <- x[x>0]/sum(x)
+  Sub <- function(q){
+    if(q==0) sum(p>0)
+    else if(q==1) exp(-sum(p*log(p)))
+    else exp(1/(1-q)*log(sum(p^q)))
+  }
+  sapply(q, Sub)
+}
+
+
+# Diversity_profile_MLE.inc -------------------------------------------------------------------
+Diversity_profile_MLE.inc <- function(data,q){
+  Yi = data[-1]
+  U = sum(Yi)
+  Yi <- Yi[Yi!=0]
+  ai <- Yi/U
+  qD = qTD_MLE(q,ai)
+  qD[which(q==1)] <- exp(-sum(ai*log(ai)))
+  return(qD)
+}
+
+
+# EstiBootComm.Ind -------------------------------------------------------------------
+# Estimation of species relative abundance distribution
+# 
+# \code{EstiBootComm.Ind} Estimation of species reletive abundance distribution to obtain bootstrap s.e.
+# 
+# @param Spec a vector of species abundances
+# @return a vector of reltavie abundance
+# @seealso \code{\link{EstiBootComm.Sam}}
+# @examples 
+# data(spider)
+# EstiBootComm.Ind(spider$Girdled)
+EstiBootComm.Ind <- function(Spec){
+  Sobs <- sum(Spec > 0)   #observed species
+  n <- sum(Spec)        #sample size
+  f1 <- sum(Spec == 1)   #singleton 
+  f2 <- sum(Spec == 2)   #doubleton
+  f0.hat <- ifelse(f2 == 0, (n - 1) / n * f1 * (f1 - 1) / 2, (n - 1) / n * f1 ^ 2/ 2 / f2)  #estimation of unseen species via Chao1
+  A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
+  a <- f1/n*A
+  b <- sum(Spec / n * (1 - Spec / n) ^ n)
+  if(f0.hat==0){
+    w <- 0
+    if(sum(Spec>0)==1){
+      warning("This site has only one species. Estimation is not robust.")
+    }
+  }else{
+    w <- a / b      	#adjusted factor for rare species in the sample
+  }
+  Prob.hat <- Spec / n * (1 - w * (1 - Spec / n) ^ n)					#estimation of relative abundance of observed species in the sample
+  Prob.hat.Unse <- rep(a/ceiling(f0.hat), ceiling(f0.hat))  	#estimation of relative abundance of unseen species in the sample
+  return(c(Prob.hat, Prob.hat.Unse))		  							#Output: a vector of estimated relative abundance
+}
+
+
+# EstiBootComm.Sam -------------------------------------------------------------------
+# Estimation of species detection distribution
+# 
+# \code{EstiBootComm.Sam} Estimation of species detection distribution to obtain bootstrap s.e.
+# 
+# @param Spec a vector of species incidence, the first entry is the total number of sampling units, followed by the speceis incidences abundances.
+# @return a vector of estimated detection probability
+# @seealso \code{\link{EstiBootComm.Sam}}
+# @examples 
+# data(ant)
+# EstiBootComm.Sam(ant$h50m)
+EstiBootComm.Sam <- function(Spec){
+  nT <- Spec[1]
+  Spec <- Spec[-1]
+  Sobs <- sum(Spec > 0)   #observed species
+  Q1 <- sum(Spec == 1) 	#singleton 
+  Q2 <- sum(Spec == 2) 	#doubleton
+  Q0.hat <- ifelse(Q2 == 0, (nT - 1) / nT * Q1 * (Q1 - 1) / 2, (nT - 1) / nT * Q1 ^ 2/ 2 / Q2)	#estimation of unseen species via Chao2
+  A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
+  a <- Q1/nT*A
+  b <- sum(Spec / nT * (1 - Spec / nT) ^ nT)
+  
+  if(Q0.hat==0){
+    w <- 0
+    if(sum(Spec>0)==1){
+      warning("This site has only one species. Estimation is not robust.")
+    }
+  }else{
+    w <- a / b      	#adjusted factor for rare species in the sample
+  }
+  
+  Prob.hat <- Spec / nT * (1 - w * (1 - Spec / nT) ^ nT)					#estimation of detection probability of observed species in the sample
+  Prob.hat.Unse <- rep(a/ceiling(Q0.hat), ceiling(Q0.hat))  	#estimation of detection probability of unseen species in the sample
+  return(c(Prob.hat, Prob.hat.Unse))									#Output: a vector of estimated detection probability
+}
 

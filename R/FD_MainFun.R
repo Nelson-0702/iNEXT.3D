@@ -23,40 +23,10 @@
 # dij <- FunDdata.inc$dij
 # FDInfo(data = data, distM = dij, datatype = "incidence_freq")
 # }
-FDInfo <- function(data, datatype, distM, threshold = NULL, nT){
+FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
-  
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -197,52 +167,10 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT){
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
 iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                    knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL, nT) {
+                    knots = 40, size = NULL, conf = 0.95, nboot = 50, threshold = NULL, nT = NULL) {
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -374,7 +302,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       temp1$SC.UCL[temp1$SC.UCL>1] <- 1
       obs = filter(temp1, Method == "Observed")
       obs$goalSC = rep(sapply(1:length(dat), 
-                              function(i)CoverageFD(data = dat[[i]], datatype = datatype,
+                              function(i)Coverage(data = dat[[i]], datatype = datatype,
                                                     m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))),
                        each = length(q))
       obs$m = rep(sapply(1:length(dat),
@@ -385,9 +313,9 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                           level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                           level = Coverage(data = dat[[i]], datatype = datatype, m = size[[i]]), 
                                                            nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
-      # obs_cov = CoverageFD(data = dat[[i]], datatype = datatype, 
+      # obs_cov = Coverage(data = dat[[i]], datatype = datatype, 
       #                  m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))
       #temp2$Method[temp2$goalSC == obs_cov] = "Observed"
       temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
@@ -478,52 +406,10 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
 # Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", threshold = NULL, level = NULL, nboot = 50, conf = 0.95, nT) {
+estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", threshold = NULL, level = NULL, nboot = 50, conf = 0.95, nT = NULL) {
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -620,13 +506,13 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
     if(datatype=='abundance'){
       level <- sapply(dat,function(x){
         ni <- sum(x)
-        CoverageFD(data = x,datatype = datatype,m = 2*ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
       
     }else if(datatype == 'incidence_freq'){
       level <- sapply(dat,function(x){
         ni <- x[1]
-        CoverageFD(data = x,datatype = datatype,m = 2*ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
     }
     level <- min(level)
@@ -684,52 +570,10 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
 # out <- AsyFD(data = data, distM = dij, datatype = "incidence_freq")
 # out
 # }
-AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT){
+AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -848,52 +692,10 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # out <- ObsFD(data = data, distM = dij, datatype = "incidence_freq")
 # out
 # }
-ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT){
+ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -1002,52 +804,10 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
 # dij <- FunDdata.inc$dij
 # AUCInfo(data = data, distM = dij, datatype = "incidence_freq")
 # }
-AUCInfo <- function(data, datatype, distM, nT){
+AUCInfo <- function(data, datatype, distM, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -1171,52 +931,10 @@ AUCInfo <- function(data, datatype, distM, nT){
 # out
 # }
 iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint = NULL, 
-                     knots = 20, size = NULL, conf = 0.95, nboot = 50, nT) {
+                     knots = 20, size = NULL, conf = 0.95, nboot = 50, nT = NULL) {
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -1331,7 +1049,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                                level = CoverageFD(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                                level = Coverage(data = dat[[i]], datatype = datatype, m = size[[i]]), 
                                                                 nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
       temp2$qAUC.LCL[temp2$qAUC.LCL<0] <- 0
       if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
@@ -1407,52 +1125,10 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
 # Chao, A., Chiu C.-H. and Jost, L. (2010). functional diversity measures based on Hill numbers. Philosophical Transactions of the Royal Society B., 365, 3599-3609.\cr\cr
 # Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015) Rarefaction and extrapolation of functional diversity. Methods in Ecology and Evolution, 6, 380-388.\cr\cr
 # Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive functional diversity among multiple assemblages. Systematic Biology 66, 100-111.
-estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", level = NULL, nboot = 50, conf = 0.95, tau = NULL, nT){
+estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base = "coverage", level = NULL, nboot = 50, conf = 0.95, tau = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -1532,13 +1208,13 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
     if(datatype=='abundance'){
       level <- sapply(dat,function(x){
         ni <- sum(x)
-        CoverageFD(data = x,datatype = datatype,m = 2*ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
       
     }else if(datatype=='incidence_freq'){
       level <- sapply(dat,function(x){
         ni <- x[1]
-        CoverageFD(data = x,datatype = datatype,m = 2*ni)
+        Coverage(data = x,datatype = datatype,m = 2*ni)
       })
     }
     level <- min(level)
@@ -1594,52 +1270,10 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
 # out <- AsyAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
 # out
 # }
-AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT){
+AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){
@@ -1742,53 +1376,10 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
 # out <- ObsAUC(data = data, distM = dij, datatype = "incidence_freq", nboot=20)
 # out
 # }
-ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT){
+ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, tau = NULL, nT = NULL){
   distM = as.matrix(distM)
   
-  # if(datatype == "incidence_raw"){
-  #   if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-  #     #nT=ncol(data)
-  #     data = data.frame(inc = as.incfreq(data))
-  #   }else{
-  #     data = lapply(data, function(i){
-  #       out = data.frame(inc = as.incfreq(i))
-  #       return(out)
-  #     })
-  #   }
-  #   datatype = "incidence_freq"
-  # }
-  
-  if(datatype == "incidence_raw"){
-    if(class(data)[1] == "matrix"|class(data)[1] == "data.frame"){
-      #nT=ncol(data)
-      # data = data.frame(inc = as.incfreq(data))
-      
-      if(class(nT) == 'data.frame') nT = unlist(nT)
-      mydata = list()
-      if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
-      ntmp <- 0
-      for(i in 1:length(nT)){
-        mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
-        ntmp <- ntmp+nT[i]
-      }
-      
-      if(is.null(names(nT))) {
-        names(mydata) <- paste0("assemblage",1:length(nT))
-      }else{
-        names(mydata) = names(nT)
-      }
-      data = lapply(mydata, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }else{
-      data = lapply(data, function(i){
-        out = data.frame(inc = as.incfreq(i))
-        return(out)
-      })
-    }
-    datatype = "incidence_freq"
-  }
+  if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
   if(class(data) == "list"){
     if(length(data) == 1){

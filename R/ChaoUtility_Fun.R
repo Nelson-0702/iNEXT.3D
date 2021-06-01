@@ -2,8 +2,7 @@
 check_datatype <- function (datatype)
 {
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
-  if ((is.na(pmatch(datatype, TYPE))) | (pmatch(datatype,
-                                                TYPE) == -1))
+  if ((is.na(pmatch(datatype, TYPE))) | (pmatch(datatype, TYPE) == -1))
     stop("invalid datatype")
   datatype <- match.arg(datatype, TYPE)
   if (datatype == "incidence_freq")
@@ -37,9 +36,6 @@ phyL_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 
 
 # phyBranchAL_Abu ------------------------------------------------------------------
-#' @import dplyr
-#' @import tidytree
-#' @import ape
 phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T,remove0=T){
   #if(class(phylo) != "phylo")
   if (!inherits(phylo, "phylo"))
@@ -124,9 +120,6 @@ phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T
 
 
 # phyBranchAL_Inc ------------------------------------------------------------------
-#' @import dplyr
-#' @import tidytree
-#' @import ape
 phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend=T,remove0=T){
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
@@ -222,8 +215,6 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
 
 
 # phylo2phytree ------------------------------------------------------------------
-#' @import dplyr
-#' @import tidytree
 phylo2phytree<-function(phylo){
   if(class(phylo) != "phylo")
     stop("invlid class: only support phylo object")
@@ -292,9 +283,6 @@ phy_L_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 
 
 # phy_BranchAL_IncBootP ------------------------------------------------------------------
-#' @import dplyr
-#' @import tidytree
-#' @import ape
 phy_BranchAL_IncBootP<-function(phylo,pdata,refT=0,rootExtend=T,remove0=T){
   #if(class(phylo) != "phylo")
   if (!inherits(phylo, "phylo"))
