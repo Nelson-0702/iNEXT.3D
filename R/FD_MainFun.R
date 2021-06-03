@@ -1289,25 +1289,6 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
-        return(i)
-      })
-      data = data2[[1]]
-      for(i in 2:length(data2)){
-        data = data.frame(full_join(data, data2[[i]], by = "species"))
-      }
-      data[is.na(data)] = 0
-      rownames(data) = data$species
-      data = data[!colnames(data) == "species"]
-      names(data) = region_names
-    }
-  }if(class(data) == "list"){
-    if(length(data) == 1){
-      data = data[[1]]
-    }else{
-      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
-      
       data2 = lapply(data, function(i) {
         i = as.matrix(i)
         i = data.frame('species' = rownames(i), i)
