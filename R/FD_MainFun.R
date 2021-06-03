@@ -34,8 +34,9 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -178,8 +179,9 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -417,8 +419,9 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -581,8 +584,9 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -703,8 +707,9 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -815,8 +820,9 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -942,8 +948,9 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -1136,8 +1143,9 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
@@ -1294,6 +1302,26 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  }if(class(data) == "list"){
+    if(length(data) == 1){
+      data = data[[1]]
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -1387,8 +1415,9 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
-      data2 = lapply(data, function(i){
-        i$species = rownames(i)
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
         return(i)
       })
       data = data2[[1]]
