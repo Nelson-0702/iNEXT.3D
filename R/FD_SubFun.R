@@ -680,7 +680,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','goalSC')) %>% mutate(
     s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
-    SC.s.e. = , SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
+    SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
     select(Assemblage, goalSC, SC, m, Method, Order.q, qAUC, s.e., qAUC.LCL, qAUC.UCL)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   # AUC$SC.LCL[AUC$SC.LCL<0] <- 0
