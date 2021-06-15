@@ -2,8 +2,7 @@
 % Please edit documentation in R/MainFun.r
 \name{DataInfo3D}
 \alias{DataInfo3D}
-\title{DataInfo3D -------------------------------------------------------------------
-\code{DataInfo3D} Exhibit basic data information}
+\title{Data Information for three diversity.}
 \usage{
 DataInfo3D(
   data,
@@ -43,7 +42,6 @@ It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw
 a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
 }
 \description{
-DataInfo3D -------------------------------------------------------------------
 \code{DataInfo3D} Exhibit basic data information
 }
 \examples{

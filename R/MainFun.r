@@ -980,7 +980,9 @@ ggasy3D <- function(outcome, profile = 'q'){
 }
 
 
-#' DataInfo3D -------------------------------------------------------------------
+# DataInfo3D -------------------------------------------------------------------
+#' Data Information for three diversity.
+#' 
 #' \code{DataInfo3D} Exhibit basic data information
 #' 
 #' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
