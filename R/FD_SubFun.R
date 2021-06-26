@@ -14,8 +14,10 @@ data_transform <- function(data, dij, tau, datatype, truncate = TRUE, filt_zero 
         dij_[which(dij_>tau_,arr.ind = T)] <- tau_
         a <- as.vector((1 - dij_/tau_) %*% data )
       }
-      data <- data[a!=0]
-      a <- a[a!=0]
+      if (filt_zero) {
+        data <- data[a!=0]
+        a <- a[a!=0]
+      }
       v <- data/a
       cbind(a,v)
     })
@@ -52,8 +54,10 @@ data_transform <- function(data, dij, tau, datatype, truncate = TRUE, filt_zero 
           dij_[which(dij_>tau_,arr.ind = T)] <- tau_
           a <- as.vector((1 - dij_/tau_) %*% data )
         }
-        data <- data[a!=0]
-        a <- a[a!=0]
+        if (filt_zero) {
+          data <- data[a!=0]
+          a <- a[a!=0]
+        }
         v <- data/a
         cbind(a,v)
       })
