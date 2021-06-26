@@ -1,8 +1,10 @@
 # data_transform -------------------------------------------------------------------
-data_transform <- function(data, dij, tau, datatype, truncate = TRUE){
+data_transform <- function(data, dij, tau, datatype, truncate = TRUE, filt_zero = TRUE){
   if(datatype == 'abundance'){
-    dij <- dij[data>0,data>0]
-    data <- data[data>0]
+    if (filt_zero) {
+      dij <- dij[data>0,data>0]
+      data <- data[data>0] 
+    }
     out <- lapply(tau,function(tau_){
       dij_ <- dij
       if(tau_==0){
@@ -20,8 +22,10 @@ data_transform <- function(data, dij, tau, datatype, truncate = TRUE){
   }else if (datatype == 'incidence_freq'){
     nT = data[1]
     data <- data[-1]
-    dij <- dij[data>0,data>0]
-    data <- data[data>0]
+    if (filt_zero) {
+      dij <- dij[data>0,data>0]
+      data <- data[data>0]
+    }
     if(truncate == TRUE){
       out <- lapply(tau,function(tau_){
         dij_ <- dij

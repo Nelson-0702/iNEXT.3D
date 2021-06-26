@@ -747,6 +747,7 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
       g2 <- sum(Li[I2])
       g0_hat <- ifelse(f1==0,0, 
                        ifelse(g2>((g1*f2)/(2*f1)) , ((n-1)/n)*(g1^2/(2*g2)) , ((n-1)/n)*(g1*(f1-1)/(2*(f2+1))) ))
+      if (is.na(g0_hat)) g0_hat = 0
       g0_hat
     })
     # g1 <- aL$branch.length[aL$branch.abun==1] %>% sum
@@ -782,6 +783,7 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
       g2 <- sum(Li[I2])
       g0_hat <- ifelse(f1==0,0, 
                        ifelse(g2>((g1*f2)/(2*f1)) , ((n-1)/n)*(g1^2/(2*g2)) , ((n-1)/n)*(g1*(f1-1)/(2*(f2+1))) ))
+      if (is.na(g0_hat)) g0_hat = 0
       g0_hat
     })
     # g1 <- aL$branch.length[aL$branch.abun==1] %>% sum
