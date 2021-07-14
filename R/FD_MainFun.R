@@ -61,7 +61,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
     data <- data[-1,,drop =FALSE]
   }
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -211,7 +211,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
     data <- data[-1,,drop =FALSE]
   }
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -454,7 +454,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -621,7 +621,7 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -746,7 +746,7 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -855,7 +855,7 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
     data <- data[-1,,drop =FALSE]
   }
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -988,7 +988,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
     data <- data[-1,,drop =FALSE]
   }
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -1194,7 +1194,7 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
   
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -1335,7 +1335,7 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
@@ -1444,7 +1444,7 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM = distM[rownames(distM) %in% rownames(data), rownames(distM) %in% rownames(data)]
+  distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
   if(is.null(rownames(data))|is.null(rownames(distM))){
