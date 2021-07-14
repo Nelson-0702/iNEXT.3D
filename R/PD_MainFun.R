@@ -98,7 +98,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL
   ###
   tip <- tree$tip.label[-match(pool.name,tree$tip.label)]
   mytree <- drop.tip(tree,tip)
-  H_max <- get.rooted.tree.height(mytree)
+  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
   
   # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
@@ -308,7 +308,7 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
   ###
   tip <- tree$tip.label[-match(pool.name,tree$tip.label)]
   mytree <- drop.tip(tree,tip)
-  H_max <- get.rooted.tree.height(mytree)
+  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
   
   # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
@@ -496,7 +496,7 @@ estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,
   
   tip <- tree$tip.label[-match(pool.name,tree$tip.label)]
   mytree <- drop.tip(tree,tip)
-  H_max <- get.rooted.tree.height(mytree)
+  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
   
   # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
@@ -634,7 +634,7 @@ AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.
   ###
   tip <- tree$tip.label[-match(pool.name,tree$tip.label)]
   mytree <- drop.tip(tree,tip)
-  H_max <- get.rooted.tree.height(mytree)
+  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
   
   # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
@@ -752,7 +752,7 @@ ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 
   ###
   tip <- tree$tip.label[-match(pool.name,tree$tip.label)]
   mytree <- drop.tip(tree,tip)
-  H_max <- get.rooted.tree.height(mytree)
+  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
   
   # reft <- reftime
   if(is.null(reftime)) reftime <- H_max else reftime <- reftime
