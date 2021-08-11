@@ -48,13 +48,14 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -106,7 +107,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
     stop("Threshold must be a number between 0 and 1. Use NULL to set it to dmean/2.",call. = FALSE)
   }
   
-  info <- TDInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype)$ai %>% round), datatype)
+  info <- TDInfo(lapply(dat, function(x) data_transform(x, distM, threshold, datatype, integer = TRUE)$ai), datatype)
   info$n =lapply(dat, function(x) sum(x))
   info$SC = lapply(dat, function(x) {
     n = sum(x)
@@ -194,6 +195,9 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -204,7 +208,6 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -435,6 +438,9 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -445,7 +451,6 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -602,6 +607,9 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -612,7 +620,6 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -727,6 +734,9 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -737,7 +747,6 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -842,13 +851,14 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
   if(is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -971,6 +981,9 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -981,7 +994,6 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -1168,6 +1180,9 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -1178,7 +1193,6 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -1316,6 +1330,9 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -1326,7 +1343,6 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
@@ -1425,6 +1441,9 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
   }
   
   DATATYPE <- c("abundance", "incidence_freq")
@@ -1435,7 +1454,6 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if ((conf < 0) | (conf > 1) | (is.numeric(conf)==F)) stop('conf (confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
-  if(class(data)=="numeric"|class(data)=="integer"|class(data)=="double" ) data <- matrix(data, ncol = 1)
   
   if(datatype=='incidence_freq'){
     nT <- data[1,]
