@@ -340,14 +340,14 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   out <- tryCatch(FUN(e), error = function(e){return()})
   
   ## AsyEst table ##
-  index <- rbind(AsyFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 30, conf = 0.95, threshold = NULL),
-                 ObsFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 30, conf = 0.95, threshold = NULL))
+  index <- rbind(AsyFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = nboot, conf = 0.95, threshold = NULL),
+                 ObsFD(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = nboot, conf = 0.95, threshold = NULL))
   index <- index %>% arrange(., Assemblage)
   LCL <- index$qFD.LCL[index$Method=='Asymptotic']
   UCL <- index$qFD.UCL[index$Method=='Asymptotic']
   index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qFD')
   index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-  index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+  if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
   index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
@@ -1093,14 +1093,14 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   out <- tryCatch(FUN(e), error = function(e){return()})
   
   ## AsyEst table ##
-  index <- rbind(AsyAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 20, conf = 0.95),
-                 ObsAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = 20, conf = 0.95))
+  index <- rbind(AsyAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = nboot, conf = 0.95),
+                 ObsAUC(data = data, distM = distM, q = c(0,1,2), datatype = datatype, nboot = nboot, conf = 0.95))
   index = index[order(index$Assemblage),]
   LCL <- index$qAUC.LCL[index$Method=='Asymptotic']
   UCL <- index$qAUC.UCL[index$Method=='Asymptotic']
   index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qAUC')
   index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-  index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+  if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
   index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")

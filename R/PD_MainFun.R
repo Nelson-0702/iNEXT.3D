@@ -373,14 +373,14 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
   out <- tryCatch(FUN(e), error = function(e){return()})
   
   ## AsyEst table ##
-  index <- rbind(AsyPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95),
-                 ObsPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = 30,conf = 0.95))
+  index <- rbind(AsyPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = nboot,conf = 0.95),
+                 ObsPD(data = data, nT = nT, tree = tree, q = c(0,1,2), datatype = ifelse(datatype=='abundance','abundance','incidence_raw'), nboot = nboot,conf = 0.95))
   index = index[order(index$Assemblage),]
   LCL <- index$qPD.LCL[index$Method=='Asymptotic']
   UCL <- index$qPD.UCL[index$Method=='Asymptotic']
   index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qPD')
   index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-  index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+  if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
   index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
   index[,3:4] = index[,4:3]
   colnames(index) <- c("Assemblage", "Phylogenetic Diversity", "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.", "LCL", "UCL")

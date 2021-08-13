@@ -175,14 +175,14 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = out[[1]],
                 coverage_based = out[[2]])
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
-    index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
@@ -199,14 +199,14 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
-    index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
@@ -224,14 +224,14 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
     out <- list(size_based = do.call(rbind,lapply(out,  function(out_){out_[[1]]})),
                 coverage_based = do.call(rbind,lapply(out,  function(out_){out_[[2]]})))
     
-    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95),
-                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = 100,conf = 0.95))
+    index <- rbind(AsyTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95),
+                   ObsTD(data = data,q = c(0,1,2),datatype = datatype,nboot = nboot,conf = 0.95))
     index = index[order(index$Assemblage),]
     LCL <- index$qD.LCL[index$Method=='Asymptotic']
     UCL <- index$qD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
-    index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
