@@ -277,7 +277,6 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
-  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- Coverage(data_, 'abundance', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
@@ -306,7 +305,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
     }else if (refC <= cvrg) {
       f1 <- sum(data_ == 1)
       f2 <- sum(data_ == 2)
-      U <- sum(data_)
+      U <- sum(data_[-1])
       if (f1 > 0 & f2 > 0) {
         A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
       }
@@ -325,7 +324,6 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
-  mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
   SC <- Coverage(data_, 'incidence_freq', mm)
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)

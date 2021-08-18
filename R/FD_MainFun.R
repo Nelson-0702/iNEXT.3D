@@ -307,26 +307,13 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
                       nboot = nboot, conf = conf, m = size)
       temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0;temp1$SC.LCL[temp1$SC.LCL<0] <- 0
       temp1$SC.UCL[temp1$SC.UCL>1] <- 1
-      obs = filter(temp1, Method == "Observed")
-      obs$goalSC = rep(sapply(1:length(dat), 
-                              function(i)Coverage(data = dat[[i]], datatype = datatype,
-                                                    m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))),
-                       each = length(q))
-      obs$m = rep(sapply(1:length(dat),
-                         function(i) ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]]))),
-                  each = length(q))
-      obs = obs[!colnames(obs) %in% c("SC.s.e.", "SC.LCL", "SC.UCL")]
       if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
                                                            level = Coverage(data = dat[[i]], datatype = datatype, m = size[[i]]), 
                                                            nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
-      # obs_cov = Coverage(data = dat[[i]], datatype = datatype, 
-      #                  m = ifelse(datatype == "incidence_freq", dat[[i]][1], sum(dat[[i]])))
-      #temp2$Method[temp2$goalSC == obs_cov] = "Observed"
       temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
-      temp2 = bind_rows(temp2, obs)
       
       if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
       temp1$Type = "FD"
