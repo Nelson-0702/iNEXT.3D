@@ -899,6 +899,7 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
   
   info <- cbind(TDInfo(dat, datatype)[,1:4], threshold)
   colnames(info)[5:7] = c("dmin", "dmean", "dmax")
+  rownames(info) = NULL
   return(info)
 }
 

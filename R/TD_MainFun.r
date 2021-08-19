@@ -43,7 +43,7 @@ TDInfo = function(data, datatype, nT = NULL) {
     } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
       out <- t(apply(as.matrix(data), 2, Fun.abun))  
     }
-    if(nrow(out) > 1){
+    if(nrow(out) > 1 | class(data) == "list"){
       out <- data.frame(site=rownames(out), out)
       colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
       rownames(out) <- NULL
@@ -60,7 +60,7 @@ TDInfo = function(data, datatype, nT = NULL) {
     } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
       out <- t(apply(as.matrix(data), 2, Fun.ince))  
     }
-    if(nrow(out) > 1){
+    if(nrow(out) > 1 | class(data) == "list"){
       out <- data.frame(site=rownames(out), out)
       colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
       rownames(out) <- NULL
