@@ -262,8 +262,10 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
     names(nT) = if(is.null(data)) paste0("assemblage", 1:length(data)) else names(data)
     
     data = data2[[1]]
-    for(i in 2:length(data2)){
-      data = full_join(data, data2[[i]], by = "species")
+    if (length(data2) > 1) {
+      for(i in 2:length(data2)){
+        data = full_join(data, data2[[i]], by = "species")
+      }
     }
     data[is.na(data)] = 0
     rownames(data) = data$species
