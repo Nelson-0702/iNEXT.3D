@@ -14,6 +14,10 @@ Imports:
     graphics,
     ggplot2,
     reshape2,
+    tidytree,
+    phyclust,
+    dplyr,
+    ape,
     Rcpp
 BugReports: https://github.com/KaiHsiangHu/iNEXT.3D/issues
 LazyLoad: yes
