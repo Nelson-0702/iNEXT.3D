@@ -69,6 +69,33 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL
     
   }
   
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      dat = as.matrix(data[[1]], ncol = 1)
+      colnames(dat) = names(data)
+      data = dat
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   data <- data[rowSums(data)>0,,drop=FALSE]
@@ -277,6 +304,33 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
   
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
   
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      dat = as.matrix(data[[1]], ncol = 1)
+      colnames(dat) = names(data)
+      data = dat
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   
@@ -460,6 +514,34 @@ estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
   #if (length(level)>1) stop('Currently, we only accept one fixed level of coverage.')
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      dat = as.matrix(data[[1]], ncol = 1)
+      colnames(dat) = names(data)
+      data = dat
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   BASE <- c("size", "coverage")
@@ -605,6 +687,34 @@ AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.
   if ((conf < 0) | (conf < 0) | (is.numeric(conf)==F)) stop('conf"(confidence level) must be a numerical value between 0 and 1, We use "conf" = 0.95 to calculate!', call. = FALSE)
   if ((nboot < 0) | (is.numeric(nboot)==F)) stop('nboot must be a nonnegative integer, We use "nboot" = 50 to calculate!', call. = FALSE)
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      dat = as.matrix(data[[1]], ncol = 1)
+      colnames(dat) = names(data)
+      data = dat
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   
@@ -721,6 +831,34 @@ ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 
   #   }
   # }
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
+  
+  if(class(data) == "list"){
+    if(length(data) == 1){
+      dat = as.matrix(data[[1]], ncol = 1)
+      colnames(dat) = names(data)
+      data = dat
+    }else{
+      region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
+      
+      data2 = lapply(data, function(i) {
+        i = as.matrix(i)
+        i = data.frame('species' = rownames(i), i)
+        return(i)
+      })
+      data = data2[[1]]
+      for(i in 2:length(data2)){
+        data = data.frame(full_join(data, data2[[i]], by = "species"))
+      }
+      data[is.na(data)] = 0
+      rownames(data) = data$species
+      data = data[!colnames(data) == "species"]
+      names(data) = region_names
+    }
+  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+    data = as.matrix(data)
+    colnames(data) = 'Assemblage 1'
+  }
+  
   if(is.null(rownames(data) ))
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
   

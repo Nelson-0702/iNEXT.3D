@@ -30,7 +30,9 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -177,7 +179,9 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -407,7 +411,9 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -576,7 +582,9 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -703,7 +711,9 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -820,7 +830,9 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -951,7 +963,9 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -1150,7 +1164,9 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -1300,7 +1316,9 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
@@ -1411,7 +1429,9 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if(class(data) == "list"){
     if(length(data) == 1){
-      data = data[[1]]
+      dat = as.matrix(data[[1]])
+      colnames(dat) = names(data)
+      data = dat
     }else{
       region_names = if(is.null(names(data))) paste0("region_", 1:length(data)) else names(data)
       
