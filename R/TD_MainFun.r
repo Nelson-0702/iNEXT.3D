@@ -132,9 +132,9 @@ iNEXTTD <- function(data, q=0, datatype="abundance", size=NULL, endpoint=NULL, k
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(data)[1]
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
+  class_x <- class(data)[1]
   
   Fun <- function(x, q, assem_name){
     x <- as.numeric(unlist(x))
@@ -290,9 +290,9 @@ estimateTD <- function (data, q = c(0,1,2), datatype = "abundance", base = "cove
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(data)[1]
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
+  class_x <- class(data)[1]
   
   BASE <- c("size", "coverage")
   if (is.na(pmatch(base, BASE))) 
@@ -349,9 +349,9 @@ AsyTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(data)[1]
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
+  class_x <- class(data)[1]
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
     datalist <- lapply(1:ncol(data), function(i) data[,i])
@@ -453,9 +453,9 @@ ObsTD <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, 
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(data)[1]
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
+  class_x <- class(data)[1]
   
   if (class(data) == "data.frame" | class(data) ==  "matrix"){
     datalist <- lapply(1:ncol(data), function(i) data[,i])
