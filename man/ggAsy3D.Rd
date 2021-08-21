@@ -7,7 +7,9 @@
 ggasy3D(outcome, profile = "q")
 }
 \arguments{
-\item{outcome}{the outcome of the functions \code{asy3D} .\cr}
+\item{outcome}{the outcome of the functions \code{asy3D} or \code{obs3D}.\cr}
+
+\item{profile}{a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr}
 }
 \value{
 a figure of asymptotic of empirical three-divrsity\cr\cr

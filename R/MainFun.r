@@ -768,7 +768,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' \code{ggasy3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{asy3D} using the ggplot2 package.\cr
 #' It will only show the confidence interval of 'Estimated'.
 #'
-#' @param outcome the outcome of the functions \code{asy3D} .\cr
+#' @param outcome the outcome of the functions \code{asy3D} or \code{obs3D}.\cr
+#' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
 #' @return a figure of asymptotic of empirical three-divrsity\cr\cr
 #'
 #' @examples
