@@ -207,7 +207,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' out8
 #' 
 #' @export
-estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT, 
+estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
                        PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) 
 {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
@@ -306,7 +306,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' out8
 #' 
 #' @export
-asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT, 
+asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, 
                   PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -406,7 +406,7 @@ asy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abunda
 #' 
 #' @export
 obs3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95,
-                  nT, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                  nT = NULL, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
@@ -1051,7 +1051,7 @@ ggasy3D <- function(outcome, profile = 'q'){
 #' 
 #'
 #' @export
-DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT, PDtree, PDreftime = NULL, FDdistM, FDtype, FDtau = NULL){
+DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL, PDtree, PDreftime = NULL, FDdistM, FDtype, FDtau = NULL){
   if (diversity == 'TD') {
     TDInfo(data, datatype, nT)
   } else if (diversity == 'PD') {
