@@ -473,8 +473,18 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       aL <- phyBranchAL_Abu(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
       x <- datalist[[i]] %>% .[.>0]
       n <- sum(x)
-      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>%
-        c()
+      # emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>% c()
+      first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
+      if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+        TDq = Diversity_profile_MLE(x, q)
+        emp <- cbind(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)),
+                     PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT[,first.Inode < reft,drop = F], q=q,reft = reft[first.Inode < reft],cal = cal,nt = n) %>% t) %>% t %>% c
+      } else if (sum(first.Inode < reft) != 0) {
+        emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>% c()
+      } else {
+        TDq = Diversity_profile(x, q)
+        emp <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
+      
       
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft, BLs = aL$BLbyT )
@@ -488,7 +498,17 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal, nt = n) %>% c()
+          
+          # out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal, nt = n) %>% c()
+          if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+            TDqb = Diversity_profile_MLE(Boots$boot_data[1:(length(x)+f0),B], q)
+            out_b <- cbind(sapply(reft[first.Inode >= reft], function(i) TDqb*ifelse(cal == 'meanPD', 1, i)),
+                          PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,first.Inode < reft,drop=F],q = q,reft = reft[first.Inode < reft],cal = cal,nt = n) %>% t) %>% t %>% c
+          } else if (sum(first.Inode < reft) != 0) {
+            out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal, nt = n) %>% c()
+          } else {
+            TDqb = Diversity_profile_MLE(Boots$boot_data[1:(length(x)+f0),B], q)
+            out_b <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
           out_b
         }) %>% apply(., 1, sd)
       }else{
@@ -503,8 +523,17 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
       aL <- phyBranchAL_Inc(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
       x <- datalist[[i]] %>% .[rowSums(.)>0,]
       n <- ncol(x)
-      emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT,q=q,reft = reft,cal = cal,nt = n) %>%
-        c()
+      # emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT,q=q,reft = reft,cal = cal,nt = n) %>% c()
+      first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
+      if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+        TDq = Diversity_profile_MLE.inc(c(ncol(x), rowSums(x)), q)
+        emp <- cbind(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)),
+                     PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT[,first.Inode < reft,drop = F], q=q,reft = reft[first.Inode < reft],cal = cal,nt = n) %>% t) %>% t %>% c
+      } else if (sum(first.Inode < reft) != 0) {
+        emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>% c()
+      } else {
+        TDq = Diversity_profile_MLE.inc(c(ncol(x), rowSums(x)), q)
+        emp <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
       
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft,
@@ -519,7 +548,17 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal,nt = n) %>% c()
+          
+          # out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal,nt = n) %>% c()
+          if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+            TDqb = Diversity_profile_MLE.inc(c(ncol(x), Boots$boot_data[1:(nrow(x)+f0),B]), q)
+            out_b <- cbind(sapply(reft[first.Inode >= reft], function(i) TDqb*ifelse(cal == 'meanPD', 1, i)),
+                          PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,first.Inode < reft,drop=F],q = q,reft = reft[first.Inode < reft],cal = cal,nt = n) %>% t) %>% t %>% c
+          } else if (sum(first.Inode < reft) != 0) {
+            out_b <- PD.Tprofile(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q=q,reft = reft,cal = cal, nt = n) %>% c()
+          } else {
+            TDqb = Diversity_profile_MLE.inc(c(ncol(x), Boots$boot_data[1:(nrow(x)+f0),B]), q)
+            out_b <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
           out_b
         }) %>% apply(., 1, sd)
       }else{
@@ -577,13 +616,19 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       n <- sum(x)
       aL <- phyBranchAL_Abu(phylo = phylotr,data = x,datatype,refT = reft)
       
-      # first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
-      # if (sum(first.Inode > reft) != 0) {
-      #   TDq = Diversity_profile(x, q)
-      #   est <- c(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
-      #            PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT[,first.Inode < reft],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
-      # } else est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      # est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
+      if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+        TDq = Diversity_profile(x, q)
+        est <- c(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
+                 PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT[,first.Inode < reft,drop = F],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
+      } else if (sum(first.Inode < reft) != 0) {
+        est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      } else {
+        TDq = Diversity_profile(x, q)
+        est <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
+      
+      
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype,nboot,reft = reft, BLs = aL$BLbyT )
         Li_b <- Boots$Li
@@ -598,7 +643,18 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          
+          # outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+            TDqb = Diversity_profile(Boots$boot_data[1:(length(x)+f0),B], q)
+            outb <- c(sapply(reft[first.Inode >= reft], function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
+                      PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,first.Inode < reft,drop=F],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
+          } else if (sum(first.Inode < reft) != 0) {
+            outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          } else {
+            TDqb = Diversity_profile(Boots$boot_data[1:(length(x)+f0),B], q)
+            outb <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
+          
           return(outb)
         }) %>% apply(., 1, sd)
       }else{
@@ -616,7 +672,19 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       aL <- phyBranchAL_Inc(phylo = phylotr,data = x,datatype,refT = reft)
       # aL$treeNabu$branch.length <- aL$BLbyT[,1]
       # aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
-      est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      # est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      first.Inode = subset(aL$treeNabu, tgroup == 'Tip')$branch.length %>% min
+      if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+        TDq = Diversity_profile.inc(c(ncol(x), rowSums(x)), q)
+        est <- c(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
+                 PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT[,first.Inode < reft,drop = F],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
+      } else if (sum(first.Inode < reft) != 0) {
+        est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+      } else {
+        TDq = Diversity_profile.inc(c(ncol(x), rowSums(x)), q)
+        est <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
+      
+      
       if(nboot!=0){
         Boots <- Boots.one(phylo = phylotr,aL = aL$treeNabu,datatype = datatype,nboot = nboot,
                            splunits = n,reft = reft, BLs = aL$BLbyT )
@@ -632,7 +700,18 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
         ses <- sapply(1:nboot, function(B){
           ai_B <- Boots$boot_data[,B]
           isn0 <- ai_B>0
-          outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          
+          # outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          if (sum(first.Inode >= reft) != 0 & sum(first.Inode < reft) != 0) {
+            TDqb = Diversity_profile.inc(c(ncol(x), Boots$boot_data[1:(nrow(x)+f0),B]), q)
+            outb <- c(sapply(reft[first.Inode >= reft], function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
+                      PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,first.Inode < reft,drop=F],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
+          } else if (sum(first.Inode < reft) != 0) {
+            outb <- PhD.q.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],q = q,nt = n,reft = reft,cal = cal)
+          } else {
+            TDqb = Diversity_profile.inc(c(ncol(x), Boots$boot_data[1:(nrow(x)+f0),B]), q)
+            outb <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
+          
           return(outb)
         }) %>% apply(., 1, sd)
       }else{

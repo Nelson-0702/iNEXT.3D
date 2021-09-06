@@ -367,7 +367,21 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
     out <- lapply(datalist, function(x){
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
-      emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      
+      # emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      dmin = dij[x>0,x>0][dij[x>0,x>0] > 0] %>% min
+      if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        TDq = Diversity_profile_MLE(x, q)
+        data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        emp <- c(rep(TDq, sum(tau <= dmin)),
+                 FD_mle(ai_vi = data_aivi.trun,q = q) %>% as.numeric())
+      } else if (sum(tau > dmin)!= 0) {
+        emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      } else {
+        TDq = Diversity_profile_MLE(x, q)
+        emp <- rep(TDq, length(tau))
+      }
+      
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -375,7 +389,19 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         Boot.X = rmultinom(nboot, n, p_hat)
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          
+          # FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            TDqb = Diversity_profile(Boot.X[,B], q)
+            data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            c(rep(TDqb, sum(tau <= dmin)), 
+              FD_mle(ai_vi = data_aivi.trun.b,q = q) %>% as.numeric())
+          } else if (sum(tau > dmin)!= 0) {
+            FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          } else {
+            TDqb = Diversity_profile(Boot.X[,B], q)
+            rep(TDqb, length(tau))
+          }
         }) %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
@@ -388,7 +414,21 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
     out <- lapply(datalist, function(x){
       nT = x[1]
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
-      emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      
+      # emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      dmin = dij[x[-1]>0,x[-1]>0][dij[x[-1]>0,x[-1]>0] > 0] %>% min
+      if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        TDq = Diversity_profile_MLE.inc(x, q) %>% as.numeric()
+        data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        emp <- c(rep(TDq, sum(tau <= dmin)),
+                 FD_mle(ai_vi = data_aivi.trun,q = q) %>% as.numeric())
+      } else if (sum(tau > dmin)!= 0) {
+        emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
+      } else {
+        TDq = Diversity_profile_MLE.inc(x, q) %>% as.numeric()
+        emp <- rep(TDq, length(tau))
+      }
+      
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -396,7 +436,20 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype)
-          FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          
+          # FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            TDqb = Diversity_profile_MLE.inc(Boot.X, q) %>% as.numeric()
+            data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            c(rep(TDqb, sum(tau <= dmin)),
+              FD_mle(ai_vi = data_aivi.trun.b,q = q) %>% as.numeric())
+          } else if (sum(tau > dmin)!= 0) {
+            FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
+          } else {
+            TDqb = Diversity_profile_MLE.inc(Boot.X, q) %>% as.numeric()
+            rep(TDqb, length(tau))
+          }
+          
         }) %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
@@ -477,8 +530,23 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
     out <- lapply(datalist, function(x){
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      est_info <- FD_est(ai_vi = data_aivi,q = q,nT = n)
-      est <- est_info$est %>% as.numeric()
+      
+      # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = n)
+      # est <- est_info$est %>% as.numeric()
+      dmin = dij[x>0,x>0][dij[x>0,x>0] > 0] %>% min
+      if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        TDq = Diversity_profile(x, q)
+        data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        est <- c(rep(TDq, sum(tau <= dmin)),
+                 FD_est(ai_vi = data_aivi.trun,q = q,nT = n)$est %>% as.numeric())
+      } else if (sum(tau > dmin)!= 0) {
+        est <- FD_est(ai_vi = data_aivi,q = q,nT = n)$est %>% as.numeric()
+      } else {
+        TDq = Diversity_profile(x, q)
+        est <- rep(TDq, length(tau))
+      }
+      
+      
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -486,21 +554,47 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         Boot.X = rmultinom(nboot, n, p_hat)
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          FD_est(ai_vi = Boot_aivi,q = q,nT = n)$est %>% as.numeric()
+          # FD_est(ai_vi = Boot_aivi,q = q,nT = n)$est %>% as.numeric()
+          if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            TDqb = Diversity_profile(Boot.X[,B], q)
+            data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            c(rep(TDqb, sum(tau <= dmin)),
+              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = n)$est %>% as.numeric())
+          } else if (sum(tau > dmin)!= 0) {
+            FD_est(ai_vi = Boot_aivi,q = q,nT = n)$est %>% as.numeric()
+          } else {
+            TDqb = Diversity_profile(Boot.X[,B], q)
+            rep(TDqb, length(tau))
+          }
         }) %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
       output <- cbind(est,ses,est-qtile*ses,est+qtile*ses)
       output[output[,2]<0,2] <- 0
-      list(estimates = output,info = est_info$info)
+      # list(estimates = output,info = est_info$info)
+      output
     }) 
   }else if(datatype=="incidence_freq"){
     out <- lapply(datalist, function(x){
       nT=x[1]
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      est_info <- FD_est(ai_vi = data_aivi,q = q,nT = nT)
-      est <- est_info$est %>% as.numeric()
+      
+      # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = nT)
+      # est <- est_info$est %>% as.numeric()
+      dmin = dij[x[-1]>0,x[-1]>0][dij[x[-1]>0,x[-1]>0] > 0] %>% min
+      if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        TDq = Diversity_profile.inc(x, q) %>% as.numeric()
+        data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        est <- c(rep(TDq, sum(tau <= dmin)),
+                 FD_est(ai_vi = data_aivi.trun,q = q,nT = nT)$est %>% as.numeric())
+      } else if (sum(tau > dmin)!= 0) {
+        est <- FD_est(ai_vi = data_aivi,q = q,nT = nT)$est %>% as.numeric()
+      } else {
+        TDq = Diversity_profile.inc(x, q) %>% as.numeric()
+        est <- rep(TDq, length(tau))
+      }
+      
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -508,25 +602,37 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          FD_est(ai_vi = Boot_aivi,q = q,nT = nT)$est %>% as.numeric()
+          
+          # FD_est(ai_vi = Boot_aivi,q = q,nT = nT)$est %>% as.numeric()
+          if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
+            data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            c(rep(TDqb, sum(tau <= dmin)),
+              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = nT)$est %>% as.numeric())
+          } else if (sum(tau > dmin)!= 0) {
+            FD_est(ai_vi = Boot_aivi,q = q,nT = nT)$est %>% as.numeric()
+          } else {
+            TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
+            rep(TDqb, length(tau))
+          }
         }) %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
       output <- cbind(est,ses,est-qtile*ses,est+qtile*ses)
       output[output[,2]<0,2] <- 0
-      list(estimates = output,info = est_info$info)
+      # list(estimates = output,info = est_info$info)
+      output
     })
   }
-  info <- lapply(out, function(x) x[[2]]) %>% 
-    do.call(rbind,.) %>% as_tibble %>% 
-    mutate(Assemblage = rep(names(datalist),each = length(tau)),
-           tau = rep(tau,length(datalist))) %>% 
-    select(Assemblage,tau,nT,S.obs,f1,f2,h1,h2)
+  # info <- lapply(out, function(x) x[[2]]) %>% 
+  #   do.call(rbind,.) %>% as_tibble %>% 
+  #   mutate(Assemblage = rep(names(datalist),each = length(tau)),
+  #          tau = rep(tau,length(datalist))) %>% 
+  #   select(Assemblage,tau,nT,S.obs,f1,f2,h1,h2)
   
   
-  Estoutput <- lapply(out, function(x) x[[1]]) %>%
-    do.call(rbind,.) #%>% mutate(Assemblage = rep(names(datalist),each = length(q)))
+  Estoutput <- out %>% do.call(rbind,.) #%>% mutate(Assemblage = rep(names(datalist),each = length(q)))
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Estoutput <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = Estoutput[,1],
