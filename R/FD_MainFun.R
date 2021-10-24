@@ -449,8 +449,6 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
     nT <- data[1,]
     data <- data[-1,,drop = FALSE]
   }
-  distM <- distM[rowSums(data)>0,rowSums(data)>0]
-  data <- data[rowSums(data)>0,,drop=FALSE]
   
   distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
@@ -463,6 +461,10 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
+  distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   distM <- distM[order_sp,order_sp]
   BASE <- c("size", "coverage")
@@ -620,8 +622,6 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
     nT <- data[1,]
     data <- data[-1,,drop =FALSE]
   }
-  distM <- distM[rowSums(data)>0,rowSums(data)>0]
-  data <- data[rowSums(data)>0,,drop=FALSE]
   
   distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
@@ -634,7 +634,10 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
@@ -749,8 +752,6 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
     nT <- data[1,]
     data <- data[-1,,drop =FALSE]
   }
-  distM <- distM[rowSums(data)>0,rowSums(data)>0]
-  data <- data[rowSums(data)>0,,drop=FALSE]
   
   distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
@@ -763,7 +764,10 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
@@ -1013,6 +1017,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
@@ -1223,7 +1228,10 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
@@ -1354,9 +1362,6 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
     nT <- data[1,]
     data <- data[-1,,drop =FALSE]
   }
-  distM <- distM[rowSums(data)>0,rowSums(data)>0]
-  data <- data[rowSums(data)>0,,drop=FALSE]
-  
   distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
@@ -1368,7 +1373,10 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
@@ -1467,9 +1475,6 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
     nT <- data[1,]
     data <- data[-1,,drop =FALSE]
   }
-  distM <- distM[rowSums(data)>0,rowSums(data)>0]
-  data <- data[rowSums(data)>0,,drop=FALSE]
-  
   distM = distM[rownames(distM) %in% rownames(data), colnames(distM) %in% rownames(data)]
   if(nrow(data)!=nrow(distM))
     stop("The number of species in data should equal to that in distance matrix", call. = FALSE)
@@ -1481,7 +1486,10 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       stop("Data and distance matrix contain unmatched species", call. = FALSE)
   }
   order_sp <- match(rownames(data),rownames(distM))
+  
   distM <- distM[order_sp,order_sp]
+  distM <- distM[rowSums(data)>0,rowSums(data)>0]
+  data <- data[rowSums(data)>0,,drop=FALSE]
   
   if(datatype=='incidence_freq'){
     data <- rbind(nT,data)
