@@ -1,1 +1,1 @@
-iNEXT.3D (INterpolation and EXtrapolation in three dimension)
+iNEXT.3D (Interpolation and Extrapolation for three dimensions of diversity)
