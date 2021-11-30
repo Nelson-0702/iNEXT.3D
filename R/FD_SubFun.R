@@ -265,13 +265,16 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
       if (f1 > 1 & f2 == 0) {
         A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
       }
+      if (f1 == 0 & f2 > 0) {
+        A <- 0
+      }
       if (f1 == 1 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
       if (f1 == 0 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
-      mm <- (log(n/f1) + log(1 - cvrg))/log(A) - 1
+      mm <- ifelse(A==0,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
     }
     mm
@@ -312,13 +315,16 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
       if (f1 > 1 & f2 == 0) {
         A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
       }
+      if (f1 == 0 & f2 > 0) {
+        A <- 0
+      }
       if (f1 == 1 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
       if (f1 == 0 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
-      mm <- (log(U/f1) + log(1 - cvrg))/log(A) - 1
+      mm <- ifelse(A==0,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
     }
     mm

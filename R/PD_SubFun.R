@@ -393,12 +393,14 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
         A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
       }else if(f1 > 1 & f2 == 0) {
         A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
+      }else if (f1 == 0 & f2 > 0) {
+        A <- 0
       }else if(f1 == 1 & f2 == 0) {
-        A <- 1
+        A <- 0
       }else if(f1 == 0 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
-      mm <- ifelse(A==1,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
+      mm <- ifelse(A==0,0,(log(n/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
     }
     mm
@@ -436,12 +438,14 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
         A <- (n - 1) * f1/((n - 1) * f1 + 2 * f2)
       }else if(f1 > 1 & f2 == 0) {
         A <- (n - 1) * (f1 - 1)/((n - 1) * (f1 - 1) + 2)
+      }else if (f1 == 0 & f2 > 0) {
+        A <- 0
       }else if(f1 == 1 & f2 == 0) {
-        A <- 1
+        A <- 0
       }else if(f1 == 0 & f2 == 0) {
-        A <- 1
+        A <- 0
       }
-      mm <- ifelse(A==1,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
+      mm <- ifelse(A==0,0,(log(U/f1) + log(1 - cvrg))/log(A) - 1)
       mm <- n + mm
     }
     mm
