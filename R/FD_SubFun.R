@@ -396,16 +396,15 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           
-          # FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
           if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
-            TDqb = Diversity_profile(Boot.X[,B], q)
+            TDqb = Diversity_profile_MLE(Boot.X[,B], q)
             data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
             c(rep(TDqb, sum(tau <= dmin)), 
               FD_mle(ai_vi = data_aivi.trun.b,q = q) %>% as.numeric())
           } else if (sum(tau > dmin)!= 0) {
             FD_mle(ai_vi = Boot_aivi,q = q) %>% as.numeric()
           } else {
-            TDqb = Diversity_profile(Boot.X[,B], q)
+            TDqb = Diversity_profile_MLE(Boot.X[,B], q)
             rep(TDqb, length(tau))
           }
         }) %>% apply(., 1, sd)
