@@ -1,14 +1,14 @@
 Package: iNEXT.3D
 Type: Package
 Title: Interpolation and Extrapolation for three dimensions of diversity
-Version: 0.0.1
+Version: 1.0.1
 Author: K. S. Hu and Anne Chao
 Description: 
 License: GPL (>= 3)
 URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/
 Maintainer: K. S. Hu <river19951224@gmail.com>
 Depends:
-    R (>= 3.4)
+    R (>= 4.0)
 Imports:
     stats,
     graphics,
