@@ -11,7 +11,7 @@ asy3D(
   datatype = "abundance",
   nboot = 50,
   conf = 0.95,
-  nT,
+  nT = NULL,
   PDtree,
   PDreftime = NULL,
   PDtype = "meanPD",

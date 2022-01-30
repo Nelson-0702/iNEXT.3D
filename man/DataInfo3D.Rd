@@ -8,7 +8,7 @@ DataInfo3D(
   data,
   diversity = "TD",
   datatype = "abundance",
-  nT,
+  nT = NULL,
   PDtree,
   PDreftime = NULL,
   FDdistM,

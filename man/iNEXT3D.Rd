@@ -30,9 +30,9 @@ iNEXT3D(
 
 \item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.}
 
-\item{q}{a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).}
+\item{q}{a numerical vector specifying the diversity orders. Default is c(0, 1, 2).}
 
-\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)}
+\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
 \item{size}{an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
 If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots} .}
