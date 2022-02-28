@@ -5,7 +5,7 @@ Version: 1.0.1
 Author: K. S. Hu and Anne Chao
 Description: 
 License: GPL (>= 3)
-URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/
+URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-3d/
 Maintainer: K. S. Hu <river19951224@gmail.com>
 Depends:
     R (>= 4.0)

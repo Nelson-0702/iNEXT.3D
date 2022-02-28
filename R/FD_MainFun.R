@@ -466,7 +466,6 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   distM <- distM[rowSums(data)>0,rowSums(data)>0]
   data <- data[rowSums(data)>0,,drop=FALSE]
   
-  distM <- distM[order_sp,order_sp]
   BASE <- c("size", "coverage")
   if (is.na(pmatch(base, BASE))) 
     stop("invalid datatype")
