@@ -120,8 +120,7 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       x <- datalist[[i]]
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = n) %>%
-        as.numeric()
+      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = n) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]])
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
@@ -131,7 +130,7 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = n) %>%
-            t() %>% as.numeric()
+            as.numeric()
           covm_b = Coverage(Boot.X[,B], datatype, m[[i]])
           return(c(qFDm_b,covm_b))
         }) %>% apply(., 1, sd)
@@ -158,8 +157,7 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       x <- datalist[[i]]
       nT=x[1]
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = nT) %>%
-        as.numeric()
+      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = nT) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]])
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
@@ -168,8 +166,7 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = nT) %>%
-            t() %>% as.numeric()
+          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = nT) %>% as.numeric()
           covm_b = Coverage(Boot.X, datatype, m[[i]])
           return(c(qFDm_b,covm_b))
         }) %>% apply(., 1, sd)

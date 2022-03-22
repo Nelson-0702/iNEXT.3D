@@ -706,7 +706,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       if (class == 'PD') {
         g <- g + facet_wrap(Reftime ~ Order.q, nrow = 1, labeller = odr_grp)
       } else if (class == 'FD') {
-        g <- g + facet_wrap(threshold ~ Order.q, nrow = 1, labeller = odr_grp)
+        g <- g + facet_grid(threshold ~ Order.q, labeller = odr_grp, scales = 'free_y')
       } else {g <- g + facet_wrap( ~ Order.q, nrow = 1, labeller = odr_grp)}
       
       if (color.var == "Both") {
@@ -727,8 +727,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       if (class == 'PD') {
         g <- g + facet_wrap(Reftime ~ Assemblage, nrow = 1)
       } else if (class == 'FD') {
-        g <- g + facet_wrap(threshold ~ Assemblage, nrow = 1)
-      } else {g <- g + facet_wrap( ~ Assemblage, nrow = 1)}
+        g <- g + facet_grid(threshold ~ Assemblage, scales = 'free_y')
+      } else {g <- g + facet_wrap(. ~ Assemblage, nrow = 1)}
       
       if(color.var == "Both"){
         g <- g + guides(colour = guide_legend(title = "Guides", nrow = length(levels(factor(output$Order.q)))),
@@ -747,7 +747,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
         g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp)
         # if(length(unique(output$Reftime)) == 1) outp <- outp + theme(strip.background = element_blank(), strip.text.x = element_blank())
       } else if (class == 'FD') {
-        g <- g + facet_wrap(Assemblage + threshold ~ Order.q, labeller = odr_grp)
+        g <- g + facet_grid(Assemblage + threshold ~ Order.q, labeller = odr_grp, scales = 'free_y')
       } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp)}
       
       if(color.var == "both"){
