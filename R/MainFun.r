@@ -591,7 +591,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     output[,1:10] <- output[, id]
     
     xlab_name <- paste0("Number of ", xlab_name)
-    ylab_name <- "Sample Coverage"
+    ylab_name <- "Sample coverage"
     
   } else if (type == 3) {
     output <- x_list$coverage_based
@@ -600,7 +600,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     id <- match(c("goalSC", "Method", "qD", "qD.LCL", "qD.UCL", "Assemblage", "Order.q", "SC", x_name), names(output), nomatch = 0)
     output[,1:9] <- output[, id]
     
-    xlab_name <- "Sample Coverage"
+    xlab_name <- "Sample coverage"
     
   }
   
