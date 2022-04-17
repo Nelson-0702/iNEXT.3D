@@ -315,7 +315,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                           level = Coverage(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                           level = unique(Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
                                                            nboot = nboot, conf = conf, tau = threshold)) %>% do.call(rbind,.)
       temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
       
@@ -1085,7 +1085,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       
       ## coverage-based
       temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = distM, q = q, datatype = datatype,
-                                                                level = Coverage(data = dat[[i]], datatype = datatype, m = size[[i]]), 
+                                                                level = unique(Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
                                                                 nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
       temp2$qAUC.LCL[temp2$qAUC.LCL<0] <- 0
       if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
