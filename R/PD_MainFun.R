@@ -69,7 +69,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL
     
   }
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]], ncol = 1)
       colnames(dat) = names(data)
@@ -91,7 +91,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -102,7 +102,7 @@ PDInfo <- function(data, datatype = "abundance", tree, reftime = NULL, nT = NULL
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(class(data) == "list") {
+    if(class(data)[1] == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
@@ -304,7 +304,7 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
   
   if(c("numeric") %in% class(data) | c("integer") %in% class(data) | c("double") %in% class(data) ) data <- as.matrix(data)
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]], ncol = 1)
       colnames(dat) = names(data)
@@ -326,7 +326,7 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -340,7 +340,7 @@ iNEXTPD <- function(data, nT = NULL, datatype = "abundance", tree, q = c(0,1,2),
   mydata = list()
   
   if(datatype=="incidence_raw"){
-    if(class(data) == "list") {
+    if(class(data)[1] == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
@@ -538,7 +538,7 @@ estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,
     
   }
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]], ncol = 1)
       colnames(dat) = names(data)
@@ -560,7 +560,7 @@ estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -578,7 +578,7 @@ estimatePD <- function(data, nT = NULL, tree, datatype = "abundance", q = c(0,1,
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(class(data) == "list") {
+    if(class(data)[1] == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
@@ -734,7 +734,7 @@ AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.
     
   }
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]], ncol = 1)
       colnames(dat) = names(data)
@@ -756,7 +756,7 @@ AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -768,7 +768,7 @@ AsyPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0,2,by = 0.
   pool.name <- rownames(data)
   mydata = list()
   if(datatype=="incidence_raw"){
-    if(class(data) == "list") {
+    if(class(data)[1] == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {
@@ -901,7 +901,7 @@ ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 
     
   }
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]], ncol = 1)
       colnames(dat) = names(data)
@@ -923,7 +923,7 @@ ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -936,7 +936,7 @@ ObsPD <- function(data,nT = NULL,datatype = "abundance",tree,q = seq(0, 2, by = 
   mydata = list()
   
   if(datatype=="incidence_raw"){
-    if(class(data) == "list") {
+    if(class(data)[1] == "list") {
       mydata = data
       if(is.null(names(mydata))) names(mydata) <- paste0("assemblage",1:length(mydata))
     } else {

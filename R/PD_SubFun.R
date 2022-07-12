@@ -66,7 +66,7 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
       }else{
         ans <- EPD(m = mm,obs = obs,asy = asy)
       }
-      if (class(ans) == 'numeric' | class(ans) == 'integer') ans = matrix(ans, ncol = length(reft))
+      if (class(ans)[1] == 'numeric' | class(ans)[1] == 'integer') ans = matrix(ans, ncol = length(reft))
       ans <- sapply(1:length(reft), function(i){
         ans[,i]/reft[i]
       })

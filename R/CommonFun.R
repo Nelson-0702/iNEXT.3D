@@ -8,7 +8,7 @@
 # data(ciliates)
 # as.incfreq(ciliates)
 as.incfreq <- function(data, nT = NULL) {
-  if (class(data) == "data.frame" | class(data) == "matrix") {
+  if (class(data)[1] == "data.frame" | class(data)[1] == "matrix") {
     if(is.null(nT)) nT = ncol(data)
     if(class(nT) == 'data.frame') nT = unlist(nT)
     mydata = list()
@@ -27,7 +27,7 @@ as.incfreq <- function(data, nT = NULL) {
       out = c('nT' = ncol(i), rowSums(i))
       return(out)
     })
-  } else if (class(data) == "list") 
+  } else if (class(data)[1] == "list") 
     data <- lapply(data, function(i) c('nT' = ncol(i), rowSums(i)))
   if (length(data) == 1) data = data[[1]]
   return(data)

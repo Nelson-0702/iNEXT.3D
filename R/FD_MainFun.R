@@ -28,7 +28,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -50,7 +50,7 @@ FDInfo <- function(data, datatype, distM, threshold = NULL, nT = NULL){
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1] == "numeric"|class(data)[1] == "integer"|class(data)[1] == "double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -177,7 +177,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -199,7 +199,7 @@ iNEXTFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint 
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -409,7 +409,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -431,7 +431,7 @@ estimateFD <- function(data, distM, datatype = "abundance", q = c(0,1,2), base =
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -581,7 +581,7 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -603,7 +603,7 @@ AsyFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -711,7 +711,7 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -733,7 +733,7 @@ ObsFD <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25),
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -831,7 +831,7 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -853,7 +853,7 @@ AUCInfo <- function(data, datatype, distM, nT = NULL){
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -964,7 +964,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -986,7 +986,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -1166,7 +1166,7 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -1188,7 +1188,7 @@ estimateAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), base 
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -1321,7 +1321,7 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -1343,7 +1343,7 @@ AsyAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
@@ -1434,7 +1434,7 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
   
   if (datatype == "incidence_raw") {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
   
-  if(class(data) == "list"){
+  if(class(data)[1] == "list"){
     if(length(data) == 1){
       dat = as.matrix(data[[1]])
       colnames(dat) = names(data)
@@ -1456,7 +1456,7 @@ ObsAUC <- function(data, distM, datatype = "abundance", q = seq(0, 2, by = 0.25)
       data = data[!colnames(data) == "species"]
       names(data) = region_names
     }
-  } else if (class(data)=="numeric"|class(data)=="integer"|class(data)=="double") {
+  } else if (class(data)[1]=="numeric"|class(data)[1]=="integer"|class(data)[1]=="double") {
     data = as.matrix(data)
     colnames(data) = 'Assemblage 1'
   }
