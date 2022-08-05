@@ -1065,7 +1065,7 @@ iNEXTAUC <- function(data, distM, datatype = "abundance", q = c(0,1,2), endpoint
     if(class(size)=="numeric"|class(size)=="integer"|class(size)=="double"){
       size <- list(size = size)
     } 
-    if(length(size)!=length(dat)) lapply(1:length(dat), function(x) size[[1]])
+    if(length(size)!=length(dat)) size <- lapply(1:length(dat), function(x) size[[1]])
     size <- lapply(1:length(dat),function(i){
       ni <- sum(dat[[i]])
       if( sum(size[[i]] == ni) == 0 ) mi <- sort(c(ni,size[[i]]))
