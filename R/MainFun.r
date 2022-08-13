@@ -282,9 +282,9 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     out <- tryCatch(FUN(e), error = function(e){return()})
     
     ## AsyEst table ##
-    index <- rbind(FDtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+    index <- rbind(FDtable_est(datalist = dat, dij = dist, q = q, datatype = datatype, 
                                nboot = nboot, conf = conf, tau = FDtau),
-                   FDtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+                   FDtable_mle(datalist = dat, dij = dist, q = q, datatype = datatype, 
                                nboot = nboot, conf = conf, tau = FDtau))
     index <- index %>% arrange(., Assemblage)
     LCL <- index$qFD.LCL[index$Method=='Asymptotic']
@@ -352,9 +352,9 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     out <- tryCatch(FUN(e), error = function(e){return()})
     
     ## AsyEst table ##
-    index <- rbind(AUCtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+    index <- rbind(AUCtable_est(datalist = dat, dij = dist, q = q, datatype = datatype,
                                 nboot = nboot, conf = conf, tau = NULL),
-                   AUCtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+                   AUCtable_mle(datalist = dat, dij = dist, q = q, datatype = datatype,
                                 nboot = nboot, conf = conf, tau = NULL))
     index = index[order(index$Assemblage),]
     LCL <- index$qAUC.LCL[index$Method=='Asymptotic']
@@ -748,7 +748,7 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     
     checkdistM = check.dist(data, datatype, FDdistM, FDtau)
     FDtau = checkdistM[[1]]
-    FDdistM = checkdistM[[2]]
+    distM = checkdistM[[2]]
     dat = checkdistM[[3]]
     
     q = check.q(q)
@@ -756,16 +756,16 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     nboot = check.nboot(nboot)
     
     
-    if (sum(Method == 'Estimated') == length(Method)) out = FDtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+    if (sum(Method == 'Estimated') == length(Method)) out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
                                                                         nboot = nboot, conf = conf, tau = FDtau)
     
-    if (sum(Method == 'Empirical') == length(Method)) out = FDtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+    if (sum(Method == 'Empirical') == length(Method)) out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
                                                                         nboot = nboot, conf = conf, tau = FDtau)
     
     if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(FDtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+      out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
                               nboot = nboot, conf = conf, tau = FDtau),
-                  FDtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype, 
+                  FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
                               nboot = nboot, conf = conf, tau = FDtau))
     
   } 
@@ -777,7 +777,7 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     data = checkdatatype[[2]]
     
     checkdistM = check.dist(data, datatype, FDdistM, threshold = FALSE)
-    FDdistM = checkdistM[[2]]
+    distM = checkdistM[[2]]
     dat = checkdistM[[3]]
     
     q = check.q(q)
@@ -785,16 +785,16 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     nboot = check.nboot(nboot)
     
     
-    if (sum(Method == 'Estimated') == length(Method)) out = AUCtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+    if (sum(Method == 'Estimated') == length(Method)) out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
                                                                          nboot = nboot, conf = conf, tau = NULL)
     
-    if (sum(Method == 'Empirical') == length(Method)) out = AUCtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+    if (sum(Method == 'Empirical') == length(Method)) out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
                                                                          nboot = nboot, conf = conf, tau = NULL)
     
     if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(AUCtable_est(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+      out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
                                nboot = nboot, conf = conf, tau = NULL),
-                  AUCtable_mle(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+                  AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
                                nboot = nboot, conf = conf, tau = NULL))
     
   }
