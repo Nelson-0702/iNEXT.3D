@@ -237,7 +237,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, goalSC, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, threshold
+    Assemblage, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, threshold
   )
   rownames(out) <- NULL
   out
@@ -285,11 +285,10 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   m <- rep(mm,length(q)*length(tau))
   order <- rep(rep(q,each = length(mm)),length(tau))
   SC <- rep(SC,length(q)*length(tau))
-  goalSC <- rep(Cs,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC,goalSC = goalSC, threshold = threshold)
+         qFD = out,SC=SC, threshold = threshold)
 }
 
 
@@ -335,11 +334,10 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   m <- rep(mm,length(q)*length(tau))
   order <- rep(rep(q,each = length(mm)),length(tau))
   SC <- rep(SC,length(q)*length(tau))
-  goalSC <- rep(Cs,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC,goalSC = goalSC, threshold = threshold)
+         qFD = out,SC=SC, threshold = threshold)
 }
 
 
@@ -727,10 +725,10 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
     tau <- seq(0,1,length.out = 100)
   }
   AUC <- invChatFD(datalist,dij,q,datatype,level,nboot = 0,tau = tau) %>%
-    group_by(Assemblage,Order.q,goalSC) %>% 
+    group_by(Assemblage,Order.q,SC) %>% 
     summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
               AUC_R = sum(qFD[-1]*diff(tau)),SC = mean(SC),m = mean(m),Method = unique(Method)) %>% 
-    ungroup %>% mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,goalSC,m,Method,qAUC,SC)
+    ungroup %>% mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,m,Method,qAUC,SC)
   if(datatype == 'abundance'){
     if(nboot>1){
       ses <- lapply(1:length(datalist),function(i){
@@ -741,15 +739,15 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
         dij_boot = BT[[2]]
         Boot.X = rmultinom(nboot, sum(x), p_hat) %>% split(., col(.))
         ses <- invChatFD(Boot.X,dij_boot,q,datatype,level,nboot = 0,tau = tau) %>% 
-          group_by(Assemblage,Order.q,goalSC) %>% 
+          group_by(Assemblage,Order.q,SC) %>% 
           summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
                     AUC_R = sum(qFD[-1]*diff(tau)),SC = mean(SC)) %>% ungroup %>% 
-          mutate(AUC = (AUC_L+AUC_R)/2) %>% group_by(Order.q,goalSC) %>% 
+          mutate(AUC = (AUC_L+AUC_R)/2) %>% group_by(Order.q,SC) %>% 
           summarise(AUC_se = sd(AUC),SC_se = sd(SC)) %>% 
           ungroup %>% mutate(Assemblage = Assemblage_)
       }) %>% do.call(rbind,.) 
     }else{
-      ses <- AUC %>% select(Assemblage,Order.q,goalSC) %>% mutate(AUC_se = NA, SC_se = NA)
+      ses <- AUC %>% select(Assemblage,Order.q,SC) %>% mutate(AUC_se = NA, SC_se = NA)
     }
   }else if(datatype == 'incidence_freq'){
     if(nboot>1){
@@ -762,22 +760,22 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
         Boot.X <- sapply(1:nboot,function(b) c(x[1],rbinom(n = p_hat,size = x[1],prob = p_hat))) %>% 
           split(., col(.))
         ses <- invChatFD(Boot.X,dij_boot,q,datatype,level,nboot = 0,tau = tau) %>% 
-          group_by(Assemblage,Order.q,goalSC) %>% 
+          group_by(Assemblage,Order.q,SC) %>% 
           summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
                     AUC_R = sum(qFD[-1]*diff(tau)),SC = mean(SC)) %>% ungroup %>% 
-          mutate(AUC = (AUC_L+AUC_R)/2) %>% group_by(Order.q,goalSC) %>% 
+          mutate(AUC = (AUC_L+AUC_R)/2) %>% group_by(Order.q,SC) %>% 
           summarise(AUC_se = sd(AUC),SC_se = sd(SC)) %>% 
           ungroup %>% mutate(Assemblage = Assemblage_)
       }) %>% do.call(rbind,.) 
     }else{
-      ses <- AUC %>% select(Assemblage,Order.q,goalSC) %>% mutate(AUC_se = NA, SC_se = NA)
+      ses <- AUC %>% select(Assemblage,Order.q,SC) %>% mutate(AUC_se = NA, SC_se = NA)
     }
   }
   
-  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','goalSC')) %>% mutate(
+  AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','SC')) %>% mutate(
     s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
     SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage, goalSC, SC, m, Method, Order.q, qAUC, s.e., qAUC.LCL, qAUC.UCL)
+    select(Assemblage, SC, m, Method, Order.q, qAUC, s.e., qAUC.LCL, qAUC.UCL)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   # AUC$SC.LCL[AUC$SC.LCL<0] <- 0
   AUC

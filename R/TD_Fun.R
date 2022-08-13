@@ -131,7 +131,7 @@ TD.m.est_inc <- function(y, t_, qs){
 iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=200, conf=0.95, unconditional_var = TRUE)
 {
   qtile <- qnorm(1-(1-conf)/2)
-  n <- sum(Spec)		  	#sample size
+  n <- sum(Spec)
   if(is.null(m)) {
     if(endpoint <= n) {
       m <- floor(seq(1, endpoint, length=floor(knots)))
@@ -164,7 +164,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
     ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(x) Coverage(x, 'abundance', m)),nrow = length(m)),
                         1, sd, na.rm=TRUE)
     if(unconditional_var){
-      ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(x) invChat.Ind(x, q,unique(Dq.hat_unc$goalSC))$qD),
+      ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(x) invChat.Ind(x, q,unique(Dq.hat_unc$SC))$qD),
                             nrow = nrow(Dq.hat_unc)),1,sd, na.rm=TRUE)
     }
   } else {
@@ -174,23 +174,23 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
       ses_C <- rep(NA,nrow(Dq.hat_unc))
     }
   }
-  out_m <- cbind("m"=rep(m,length(q)), "qD"=Dq.hat, 
-                 "s.e."=ses_m, "qD.LCL"=Dq.hat-qtile*ses_m,
-                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.s.e." = ses_C_on_m,
-                 "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
-  out_m <- data.frame(out_m)
+  out_m <- data.frame("m"=rep(m,length(q)), "qD"=Dq.hat, 
+                      "qD.LCL"=Dq.hat-qtile*ses_m,
+                      "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+                      "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
+  # out_m <- data.frame(out_m)
   out_m$Method <- ifelse(out_m$m<n, "Rarefaction", ifelse(out_m$m==n, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(m))
-  id_m <- match(c("m", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL", "SC", "SC.s.e.", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
   out_m$qD.LCL[out_m$qD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- cbind(Dq.hat_unc, 's.e.' = ses_C,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
-                   'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("goalSC","SC","m", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    out_C <- data.frame(Dq.hat_unc, 'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
+                       'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
+    id_C <- match(c("SC","m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qD.LCL[out_C$qD.LCL<0] <- 0
   }else{
@@ -263,7 +263,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
       ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(y) Coverage(y, "incidence_freq", t)),nrow = length(t)),
                           1, sd, na.rm=TRUE)
       if(unconditional_var){
-        ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(y) invChat.Sam(y, q,unique(Dq.hat_unc$goalSC))$qD),
+        ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(y) invChat.Sam(y, q,unique(Dq.hat_unc$SC))$qD),
                               nrow = nrow(Dq.hat_unc)),1,sd, na.rm=TRUE)
       }
     }
@@ -275,23 +275,22 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
     }
   }
   
-  out_m <- cbind("nt"=rep(t,length(q)), "qD"=Dq.hat, 
-                 "s.e."=ses_m, "qD.LCL"=Dq.hat-qtile*ses_m,
-                 "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.s.e." = ses_C_on_m,
-                 "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
-  out_m <- data.frame(out_m)
+  out_m <- data.frame("nt"=rep(t,length(q)), "qD"=Dq.hat, 
+                      "qD.LCL"=Dq.hat-qtile*ses_m,
+                      "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
+  # out_m <- data.frame(out_m)
   out_m$Method <- ifelse(out_m$nt<nT, "Rarefaction", ifelse(out_m$nt==nT, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(t))
-  id_m <- match(c("nt", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL", "SC", "SC.s.e.", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
   out_m$qD.LCL[out_m$qD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- cbind(Dq.hat_unc,'s.e.'=ses_C,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
-                   'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("goalSC","SC","nt", "Method", "Order.q", "qD", "s.e.", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    out_C <- data.frame(Dq.hat_unc,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
+                        'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
+    id_C <- match(c("SC","nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qD.LCL[out_C$qD.LCL<0] <- 0
   }else{
@@ -337,9 +336,6 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
   }
   if (datatype == "abundance") {
     if (class(x) == "list") {
-      if (is.null(C)) {
-        C <- min(unlist(lapply(x, function(x) Coverage(x,'abundance',2*sum(x)))))
-      }
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Ind(x_, q, C)
@@ -361,15 +357,12 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'm', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'SC', 'm', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
   }else if (datatype == "incidence_freq") {
     if (class(x) == "list") {
-      if (is.null(C)) {
-        C <- min(unlist(lapply(x, function(x) Coverage(x,"incidence_freq",2*max(x)))))
-      }
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Sam(x_, q, C)
@@ -395,7 +388,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'goalSC', 'SC', 'nt', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'SC', 'nt', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
@@ -448,7 +441,7 @@ invChat.Ind <- function (x, q, C) {
   order <- rep(q,each = length(mm))
   SC <- rep(SC,length(q))
   data.frame(m = m,Method = method,Order.q = order,
-             SC=SC,qD = out,goalSC = rep(C,length(q)))
+             SC=SC,qD = out)
 }
 
 
@@ -494,7 +487,7 @@ invChat.Sam <- function (x, q, C) {
   order <- rep(q,each = length(mm))
   SC <- rep(SC,length(q))
   data.frame(nt = m,Method = method,Order.q = order,
-             SC=SC,qD = out,goalSC = rep(C,length(q)))
+             SC=SC,qD = out)
   
 }
 
@@ -519,9 +512,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
   }
   if(datatype=="abundance"){
     if (class(x) == "list") {
-      if (is.null(size)) {
-        size <- min(unlist(lapply(x, function(x) 2*sum(x))))
-      } 
       Community = rep(names(x),each = length(q)*length(size))
       out <- lapply(x, function(x_){
         est <- invSize.Ind(x_, q, size)
@@ -545,9 +535,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
     }
   }else if (datatype == "incidence_freq") {
     if (class(x) == "list") {
-      if (is.null(size)) {
-        size <- min(unlist(lapply(x, function(x) 2*max(x))))
-      }
       Community = rep(names(x),each = length(q)*length(size))
       out <- lapply(x, function(x_){
         est <- invSize.Sam(x_, q, size)
@@ -783,3 +770,180 @@ EstiBootComm.Sam <- function(Spec){
   return(c(Prob.hat, Prob.hat.Unse))									#Output: a vector of estimated detection probability
 }
 
+
+
+# asyTD -------------------------------------------------------------------
+# Estimation of asymptotic diversity
+# 
+# \code{asyTD} Estimation of species detection distribution to obtain bootstrap s.e.
+asyTD = function(data, datatype, q, nboot, conf) {
+  
+  if(datatype=="abundance"){
+    out <- lapply(1:length(data),function(i){
+      dq <- Diversity_profile(data[[i]],q)
+      if(nboot > 1){
+        Prob.hat <- EstiBootComm.Ind(data[[i]])
+        Abun.Mat <- rmultinom(nboot, sum(data[[i]]), Prob.hat)
+        
+        error <- qnorm(1-(1-conf)/2) * 
+          apply(apply(Abun.Mat, 2, function(xb) Diversity_profile(xb, q)), 1, sd, na.rm=TRUE)
+        
+      } else {error = NA}
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+                        "Assemblage" = names(data)[i], "Method" = "Asymptotic")
+      out$qD.LCL[out$qD.LCL<0] <- 0
+      out
+    })
+    out <- do.call(rbind,out)
+  }else if(datatype=="incidence_freq"){
+    out <- lapply(1:length(data),function(i){
+      dq <- Diversity_profile.inc(data[[i]],q)
+      if(nboot > 1){
+        nT <- data[[i]][1]
+        Prob.hat <- EstiBootComm.Sam(data[[i]])
+        Abun.Mat <- t(sapply(Prob.hat, function(p) rbinom(nboot, nT, p)))
+        Abun.Mat <- matrix(c(rbind(nT, Abun.Mat)),ncol=nboot)
+        tmp <- which(colSums(Abun.Mat)==nT)
+        if(length(tmp)>0) Abun.Mat <- Abun.Mat[,-tmp]
+        if(ncol(Abun.Mat)==0){
+          error = 0
+          warning("Insufficient data to compute bootstrap s.e.")
+        }else{		
+          error <- qnorm(1-(1-conf)/2) * 
+            apply(apply(Abun.Mat, 2, function(yb) Diversity_profile.inc(yb, q)), 1, sd, na.rm=TRUE)
+        }
+      } else {error = NA}
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+                        "Assemblage" = names(data)[i],"Method" = "Asymptotic")
+      out$qD.LCL[out$qD.LCL<0] <- 0
+      out
+    })
+    out <- do.call(rbind,out)
+  }
+  
+  return(out)
+}
+
+
+
+# obsTD -------------------------------------------------------------------
+# Observed diversity
+# 
+# \code{TDinfo} Estimation of species detection distribution to obtain bootstrap s.e.
+obsTD = function(data, datatype, q, nboot, conf) {
+ 
+  if(datatype=="abundance"){
+    out <- lapply(1:length(data),function(i){
+      dq <- Diversity_profile_MLE(data[[i]],q)
+      if(nboot > 1){
+        Prob.hat <- EstiBootComm.Ind(data[[i]])
+        Abun.Mat <- rmultinom(nboot, sum(data[[i]]), Prob.hat)
+        
+        error <- qnorm(1-(1-conf)/2) * 
+          apply(apply(Abun.Mat, 2, function(xb) Diversity_profile_MLE(xb,q)), 1, sd, na.rm=TRUE)
+        
+      } else {error = NA}
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+                        "Assemblage" = names(data)[i], "Method" = "Empirical")
+      out$qD.LCL[out$qD.LCL<0] <- 0
+      out
+    })
+    out <- do.call(rbind,out)
+  }else if(datatype=="incidence_freq"){
+    out <- lapply(1:length(data),function(i){
+      dq <- Diversity_profile_MLE.inc(data[[i]],q)
+      if(nboot > 1){
+        nT <- data[[i]][1]
+        Prob.hat <- EstiBootComm.Sam(data[[i]])
+        Abun.Mat <- t(sapply(Prob.hat, function(p) rbinom(nboot, nT, p)))
+        Abun.Mat <- matrix(c(rbind(nT, Abun.Mat)),ncol=nboot)
+        tmp <- which(colSums(Abun.Mat)==nT)
+        if(length(tmp)>0) Abun.Mat <- Abun.Mat[,-tmp]
+        if(ncol(Abun.Mat)==0){
+          error = 0
+          warning("Insufficient data to compute bootstrap s.e.")
+        }else{		
+          error <- qnorm(1-(1-conf)/2) * 
+            apply(apply(Abun.Mat, 2, function(yb) Diversity_profile_MLE.inc(yb,q)), 1, sd, na.rm=TRUE)
+        }
+      } else {error = NA}
+      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+                        "Assemblage" = names(data)[i],"Method" = "Empirical")
+      out$qD.LCL[out$qD.LCL<0] <- 0
+      out
+    })
+    out <- do.call(rbind,out)
+  }
+  
+  return(out)
+}
+
+
+
+# TDinfo -------------------------------------------------------------------
+# Data information
+# 
+# \code{obsTD} Estimation of species detection distribution to obtain bootstrap s.e.
+TDinfo = function(data, datatype) {
+  Fun.abun <- function(x){
+    n <- sum(x)
+    fk <- sapply(1:10, function(k) sum(x==k))
+    f1 <- fk[1]
+    f2 <- fk[2]
+    Sobs <- sum(x>0)
+    f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)
+    A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
+    Chat <- round(1 - f1/n*A, 4)
+    c(n, Sobs, Chat, fk)
+  }
+  
+  Fun.ince <- function(x){
+    nT <- x[1]
+    x <- x[-1]
+    U <- sum(x)
+    Qk <- sapply(1:10, function(k) sum(x==k))
+    Q1 <- Qk[1]
+    Q2 <- Qk[2]
+    Sobs <- sum(x>0)
+    Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)
+    A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
+    Chat <- round(1 - Q1/U*A,4)
+    out <- c(nT, U, Sobs, Chat, Qk)
+  }
+  
+  if(datatype == "abundance"){
+    if(class(data) == "numeric" | class(data) == "integer"){
+      out <- matrix(Fun.abun(data), nrow=1)
+    }else if(class(data) == "list"){
+      out <- do.call("rbind", lapply(data, Fun.abun))
+    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+      out <- t(apply(as.matrix(data), 2, Fun.abun))  
+    }
+    if(nrow(out) > 1 | class(data) == 'list'){
+      out <- data.frame(site=rownames(out), out)
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+      rownames(out) <- NULL
+    }else{
+      out <- data.frame(site="site.1", out)
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+    }
+    as_tibble(out)
+  }else if(datatype == "incidence_freq"){
+    if(class(data) == "numeric" | class(data) == "integer"){
+      out <- matrix(Fun.ince(data), nrow=1)
+    }else if(class(data) == "list"){
+      out <- do.call("rbind", lapply(data, Fun.ince))
+    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+      out <- t(apply(as.matrix(data), 2, Fun.ince))  
+    }
+    if(nrow(out) > 1 | class(data) == 'list'){
+      out <- data.frame(site=rownames(out), out)
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+      rownames(out) <- NULL
+    }else{
+      out <- data.frame(site="site.1", out)
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+    }
+    out = as.data.frame(out)
+  }
+}

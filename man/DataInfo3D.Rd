@@ -12,7 +12,7 @@ DataInfo3D(
   PDtree,
   PDreftime = NULL,
   FDdistM,
-  FDtype,
+  FDtype = "AUC",
   FDtau = NULL
 )
 }

@@ -43,7 +43,7 @@ ggiNEXT3D(out1, facet.var = "Assemblage")
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- iNEXT3D(data, diversity = 'PD', q = 0, datatype = "abundance", nboot = 30, PDtree = tree)
+out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 ggiNEXT3D(out2, type = c(1, 3))
 
 # diversity = 'FD' & FDtype = 'tau_values'

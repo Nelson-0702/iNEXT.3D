@@ -20,14 +20,26 @@ options("width"=200)
 
 if("gridExtra" %in% rownames(installed.packages()) == FALSE) {install.packages("gridExtra")}
 devtools::load_all(".")
-#library(iNEXT)
+library(iNEXT.3D)
 library(ggplot2)
 data("beetles.abu")
 ```
 
 
+```{r eval=FALSE}
+## install iNEXT.3D package from CRAN
+# install.packages("iNEXT.3D")
+## install the latest version from github
+install.packages('devtools')
+library(devtools)
+install_github('AnneChao/iNEXT.3D')
+## import packages
+library(iNEXT.3D)
+library(ggplot2)
+```
 
-In this document, we provide a quick introduction demonstrating how to run the package `iNEXT.3D`(iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has severl main functiona: `iNEXT3D`, `ggiNEXT3D`, `obs3D`, `asy3D`, `ggasy3D`, and `DataInfo3D.`
+
+In this document, we provide a quick introduction demonstrating how to run the package `iNEXT.3D`(iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main function: `iNEXT3D`, `ggiNEXT3D`, `obs3D`, `asy3D`, `ggasy3D`, and `DataInfo3D.`
 
 `iNEXT3D` focuses on three measures of Hill numbers of order q: species richness (`q = 0`), Shannon diversity (`q = 1`, the exponential of Shannon entropy) and Simpson diversity (`q = 2`, the inverse of Simpson concentration) among three classes: taxonomic diversity ('TD'), phylogenetic diversity ('PD'), functional diversity ('FD'). For each diversity measure, `iNEXT.3D` uses the observed sample of abundance or incidence data (called the “reference sample”) to compute diversity estimates and the associated confidence intervals for the following two types of rarefaction and extrapolation (R/E): 
 
@@ -43,7 +55,8 @@ We first describe the main function `iNEXT3D()` with default arguments:
 ```{r eval=FALSE}
 iNEXT3D(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
         size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
-        PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL)
+        PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', 
+        FDdistM, FDtype = 'AUC', FDtau = NULL)
 ```
 
 The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text. This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots=K`) evenly‐spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, endpoint = double the reference sample size (total sample size for abundance data; total sampling units for incidence data). For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).  
@@ -61,63 +74,78 @@ The arguments of this function are briefly described below, and will be explaine
 <tbody>
 <tr class="odd">
 <td align="center"><code>data</code></td>
-<td align="left">a <code>matrix</code>, <code>data.frame</code>, <code>lists</code> of species abundances and species frequencues, or <code>matrix</code>, <code>data.frame</code>, <code>lists</code> of incidence raw (see data format/information below).</td>
+<td align="left">
+(a) For </code>datatype = "abundance"</code>, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
+(b) For </code>datatype = "incidence_freq"</code>, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
+(c) For </code>datatype = "incidence_raw"</code>, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. </td>
 </tr>
 <tr class="even">
-<td align="center"><code>class</code></td>
-<td align="left">a character or vector specifying the diversity class including taxonomic diversity: <code>"TD"</code>, phylogenetic diversity: <code>"PD"</code>, functional diversity: <code>"FD"</code> and functional diversity integated from threshold 0-1: <code>"AUC"</code>.</td>
+<td align="center"><code>diversity</code></td>
+<td align="left">selection of diversity type: </code>'TD'</code> = Taxonomic diversity, </code>'PD'</code> = Phylogenetic diversity, and </code>'FD'</code> = Functional diversity.</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>q</code></td>
-<td align="left">a number or vector specifying the diversity order(s) of Hill numbers.</td>
+<td align="left">a numerical vector specifying the diversity orders. Default is c(0, 1, 2).</td>
 </tr>
 <tr class="even">
 <td align="center"><code>datatype</code></td>
-<td align="left">type of input data, <code>"abundance"</code>, <code>"incidence_raw"</code> or <code>"incidence_freq"</code>.</td>
+<td align="left">data type of input data: individual-based abundance data (</code>datatype = "abundance"</code>), sampling-unit-based incidence frequencies data (</code>datatype = "incidence_freq"</code>), or species by sampling-units incidence matrix (</code>datatype = "incidence_raw"</code>) with all entries being 0 (non-detection) or 1 (detection).</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>size</code></td>
-<td align="left">an integer vector of sample sizes for which diversity estimates will be computed. If <code>NULL</code>, then diversity estimates will be calculated for those sample sizes determined by the specified/default endpoint and knots.</td>
+<td align="left">an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed.
+If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default </code>endpoint</code> and </code>knots</code>.</td>
 </tr>
 <tr class="even">
 <td align="center"><code>endpoint</code></td>
-<td align="left">an integer specifying the sample size that is the endpoint for R/E calculation; If <code>NULL</code>, then endpoint=double the reference sample size.</td>
+<td align="left">an integer specifying the sample size that is the </code>endpoint</code> for rarefaction/extrapolation.
+If NULL, then </code>endpoint</code> </code>=</code> double reference sample size.</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>knots</code></td>
-<td align="left">an integer specifying the number of equally‐spaced knots between size 1 and the endpoint.</td>
+<td align="left">an integer specifying the number of equally-spaced </code>knots</code> (say K, default is 40) between size 1 and the </code>endpoint</code>;each knot represents a particular sample size for which diversity estimate will be calculated.
+If the </code>endpoint</code> is smaller than the reference sample size, then </code>iNEXT3D()</code> computes only the rarefaction esimates for approximately K evenly spaced </code>knots</code>. 
+If the </code>endpoint</code> is larger than the reference sample size, then </code>iNEXT3D()</code> computes rarefaction estimates for approximately K/2 evenly spaced </code>knots</code> between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced </code>knots</code> between the reference sample size and the </code>endpoint</code>.</td>
 </tr>
 <tr class="even">
-<td align="center"><code>conf</code></td>
-<td align="left">a positive number < 1 specifying the level of confidence interval.</td>
-</tr>
-<tr class="odd">
 <td align="center"><code>nboot</code></td>
-<td align="left">an integer specifying the number of bootstrap replications.</td>
-</tr>
-<tr class="even">
-<td align="center"><code>tree</code></td>
-<td align="left">an phylo data needed for class <code>'PD'</code> which specifying the phylogenetic tree.</td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.</td>
 </tr>
 <tr class="odd">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is 0.95.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>nT</code></td>
+<td align="left">(required only when </code>datatype = "incidence_raw"</code> and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. </td>
+</tr>
+<tr class="odd">
+<td align="center"><code>PDtree</code></td>
+<td align="left">(required only when </code>diversity = "PD"</code>), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.</td>
+</tr>
+<tr class="even">
 <td align="center"><code>nT</code></td>
 <td align="left">an vector needed for class <code>'PD'</code> if the datatype belong to <code>"incidence_raw"</code> and data form belog to <code>matrix</code> or <code>data.frame</code>. The vector specifying the sampling unit of each assemblage.</td>
 </tr>
-<tr class="even">
-<td align="center"><code>reftime</code></td>
-<td align="left">as integer specifing the referenct time for phylogenetic tree. If <code>NULL</code>, then reftime = root of tree.</td>
-</tr>
 <tr class="odd">
+<td align="center"><code>PDreftime</code></td>
+<td align="left">(required only when </code>diversity = "PD"</code>), a vector of numerical values specifying reference times for PD. Default is </code>NULL</code> (i.e., the age of the root of PDtree).</td>
+</tr>
+<tr class="even">
 <td align="center"><code>PDtype</code></td>
-<td align="left">type of phylogenetic diversity, <code>"PD"</code> or <code>"meanPD"</code>. </td>
-</tr>
-<tr class="even">
-<td align="center"><code>disM</code></td>
-<td align="left">a matrix needed for class <code>"FD"</code> or <code>"AUC"</code>, which specifying the distance of species.</td>
+<td align="left">(required only when \code{diversity = "PD"}), select PD type: </code>PDtype = "PD"</code> (effective total branch length) or </code>PDtype = "meanPD"</code> (effective number of equally divergent lineages). Default is </code>"meanPD"</code>, where </code>meanPD = PD/tree depth</code>.</td>
 </tr>
 <tr class="odd">
-<td align="center"><code>threshold</code></td>
-<td align="left">a numeric specifying the distance threshold for diversity class <code>"FD"</code>. If <code>NULL</code>, the threshole = dmean.</td>
+<td align="center"><code>FDdistM</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code>), a species pairwise distance matrix for all species in the pooled assemblage.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>FDtype</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code>), select FD type: </code>FDtype = "tau_values"</code> for FD under specified threshold values, or </code>FDtype = "AUC"</code> (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is </code>"AUC"</code>.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>FDtau</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code> and </code>FDtype = "tau_values"</code>), a numerical vector between 0 and 1 specifying tau values (threshold levels). If </code>NULL</code> (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).</td>
 </tr>
 
 
@@ -138,11 +166,9 @@ Three types of data are supported:
 Two data sets (beetles for abundance data ) are included in iNEXT3D package. The first list of beetles' data consist of abundance data who live on three treatments (“Control”, “Debarked” and "Scratched") of trees. The second list consist of the pylogenetic tree for every beetles. And the third list consist of distance matrix for each pair of beetles. For these data, the following commands display the sample species abundances and run the `iNEXT3D()` function for three types of diversty  (`"TD"`, `"PD"`, `"FD"` with threshold dmean, `"AUC"` which integate FD from threshold 0-1) in `q = 0`. 
 
 ```{r eval=FALSE}
-data("beetles")
-str(beetles.abu[[1]])
-iNEXT3D(beetles.abu[[1]], class = c("TD", "PD", "FD", "AUC"), 
-        q=0, datatype="abundance", tree = beetles.abu[[2]], 
-        distM = beetles.abu[[3]])
+data("beetles.abu")
+str(beetles.abu$data)
+iNEXT3D(beetles.abu$data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance")
 ```
 
 
@@ -152,10 +178,17 @@ If one diversity class required, then `iNEXT3D()` function returns including: `$
 ```
 $TD$TDInfo: phylogenetic taxonomic basic data information
   Assembalge       n S.obs     SC  f1  f2 f3 f4 f5 f6 f7 f8 f9 f10
-1    control   11346	 84  0.998  21  13  6  2  2  1  0  0  1   2
+1    control   11346	  84  0.998  21  13  6  2  2  1  0  0  1   2
 2   debarked    3201    61  0.994  19   7  3  1  0  1  2  2  0   2
 3  scratched   10716    86  0.997  27   5  7  5  2  1  1  1  1   0
 ```
+
+```{r eval=FALSE}
+data("beetles")
+str(beetles.abu$data)
+iNEXT3D(beetles.abu$data, diversity = "PD", q = c(0, 1, 2), datatype = "abundance", PDtree = beetles.abu$tree)
+```
+
 ```
 $PD$PDInfo: phylogenetic basic data information
   Assemblage      n  S.obs    PD.obs  f1* f2*       g1        g2  Reftime
@@ -163,13 +196,27 @@ $PD$PDInfo: phylogenetic basic data information
 2  debarked   22034     61  6584.298  19  10  2037.802   416.104	276.437
 3 scratched   81991     86  8873.475  27   8  2189.268   875.041  276.437
 ```
+
+```{r eval=FALSE}
+data("beetles")
+str(beetles.abu$data)
+iNEXT3D(beetles.abu$data, diversity = "FD", q = c(0, 1, 2), datatype = "abundance", FDdistM = beetles.abu$distance.matrix)
+```
+
 ```
 $FD$FDInfo: functional basic data information
   Assembalge       n S.obs     SC  f1  f2 f3 f4 f5 f6 f7 f8 f9 f10
-1    control   81940	 84  0.998   3   6  4  3  1  0  0  0  1   1
+1    control   81940	  84  0.998   3   6  4  3  1  0  0  0  1   1
 2   debarked    3201    61  0.994   8   1  1  1  2  1  0  0  0   2
 3  scratched    3201    86  0.997   6   9  4  2  2  1  1  0  0   0
 ```
+
+```{r eval=FALSE}
+data("beetles")
+str(beetles.abu$data)
+iNEXT3D(beetles.abu$data, diversity = "AUC", q = c(0, 1, 2), datatype = "abundance", FDdistM = beetles.abu$distance.matrix)
+```
+
 ```
 $AUC$AUCInfo: phylogenetic taxonomic basic data information
   Assembalge       n S.obs     SC  
@@ -187,19 +234,24 @@ For the sample size corresponding to each knot, the first data frame of list `$i
 ```{r, echo=FALSE}
 data("beetles")
 
-out <- iNEXT3D(data = beetles.abu[[1]], 
-               class = c("AUC"), 
-        q=c(0,1,2), datatype="abundance", 
-        tree = beetles.abu[[2]], 
-        distM = beetles.abu[[3]],
-        nboot=0)
+out.TD <- iNEXT3D(data = beetles.abu$data, diversity = "TD", 
+               q = c(0, 1, 2), datatype = "abundance", 
+               nboot = 0)
+out.PD <- iNEXT3D(data = beetles.abu$data, diversity = "PD", 
+               q = c(0, 1, 2), datatype = "abundance", 
+               PDtree = beetles.abu$tree, 
+               nboot = 0)
+out.FD <- iNEXT3D(data = beetles.abu$data, diversity = "FD", 
+               q = c(0, 1, 2), datatype = "abundance", 
+               FDdistM = beetles.abu$distance.matrix,
+               nboot = 0)
 #out$TD$DataInfo
 ```
 
 ```{r eval=FALSE}
-head(out$TD$TDiNextEst$size_based)
-head(out$PD$PDiNextEst$size_based)
-head(out$FD$FDiNextEst$size_based)
+head(out.TD$TDiNextEst$size_based)
+head(out.PD$PDiNextEst$size_based)
+head(out.FD$FDiNextEst$size_based)
 ```
 
 
@@ -232,9 +284,9 @@ The second data frame of list `$iNextEst` (as shown below for 'coverage_based') 
 
 
 ```{r eval=FALSE}
-head(out$TD$TDiNextEst$coverage_based)
-head(out$PD$PDiNextEst$coverage_based)
-head(out$FD$FDiNextEst$coverage_based)
+head(out.TD$TDiNextEst$coverage_based)
+head(out.PD$PDiNextEst$coverage_based)
+head(out.FD$FDiNextEst$coverage_based)
 ```
 
 ```
@@ -260,9 +312,7 @@ NOTE: Only show two estimates, call iNEXT.object$FD$iNextEst$coverage_based to s
 ```
 
 ```{r eval=FALSE}
-head(out$TD$TD$AsyEst)
-head(out$PD$PDAsyEst)
-head(out$FD$FDAsyEst)
+out.TD$AsyEst
 ```
 
 `$AsyEst` lists the observed diversity, asymptotic estimates, estimated bootstrap s.e. and 95% confidence intervals for Hill numbers with q = 0, 1, and 2. The estimated asymptotes are calculated via the functions `Asy3D()` and the observed diversity are calculated via the functions `Obs3D()`. The output for the beetles data is shown below. All row and column variables are self‐explanatory. 
@@ -275,6 +325,11 @@ Assemblage         Diversity  Observed Estimator     s.e.      LCL      UCL
            Simpson diversity     4.457     4.458    0.076    4.309    4.608
 NOTE: Only show one assemblage, call iNEXT.object$TD$AsyEst to show complete output.
 ```
+
+```{r eval=FALSE}
+out.PD$PDAsyEst
+```
+
 ```
 $PD$PDAsyEst: asymptotic phylogenetic diversity estimates along with related statistics.
                  Phylogenetic   Phylogenetic   Phylogenetic
@@ -283,6 +338,10 @@ Assemblage          diversity       Observed      Estimator       s.e.        LC
             Shannon diversity        816.638        818.103      6.180    805.989    830.217
             Simpson diversity        509.542        473.711      2.451    468.907    478.515
 NOTE: Only show one assemblage, call iNEXT.object$PD$AsyEst to show complete output.
+```
+
+```{r eval=FALSE}
+out.FD$FDAsyEst
 ```
 
 ```
@@ -303,7 +362,7 @@ The user may also specify the number of knots in the range of sample size betwee
 ```{r eval=FALSE}
 # set a series of sample sizes (m) for R/E computation
 m <- c(1, 5, 20, 50, 100, 200, 400)
-iNEXT3D(beetles.abu[[1]], class = c("TD", "PD", "FD", "AUC"), 
+iNEXT3D(beetles.abu[[1]], diversity = c("TD", "PD", "FD", "AUC"), 
        q = 0, datatype="abundance", size = m,
        tree = beetles.abu[[2]], 
        distM = beetles.abu[[3]])
@@ -312,8 +371,8 @@ iNEXT3D(beetles.abu[[1]], class = c("TD", "PD", "FD", "AUC"),
 Further, `iNEXT3D` can simultaneously run R/E computation for Hill numbers with q = 0, 1, and 2 by specifying a vector for the argument `q` as follows:
 
 ```{r eval=FALSE}
-iNEXT3D(beetles.abu[[1]], class = c("TD", "PD", "FD", "AUC"),
-        q = c(0,1,2), datatype="abundance", size = m,
+iNEXT3D(beetles.abu[[1]], diversity = c("TD", "PD", "FD", "AUC"),
+        q = c(0,1,2), datatype = "abundance", size = m,
         tree = beetles.abu[[2]], 
         distM = beetles.abu[[3]])
 ```
@@ -341,7 +400,7 @@ The argument `facet.var=("Order.q", "Assemblage")` is used to create a separate 
 The argument `facet.var="Assemblage"` in `ggiNEXT3D` function creates a separate plot for each assembalge, therefore the different Order.q will seperated by different colours as shown below: 
 ```{r }
 # Sample‐size‐based R/E curves, separating by "assemblage""
-ggiNEXT3D(out, type=1, facet.var="Assemblage")
+ggiNEXT3D(out.TD, type = 1, facet.var = "Assemblage")
 
 
 ```
@@ -349,7 +408,7 @@ ggiNEXT3D(out, type=1, facet.var="Assemblage")
 The argument `facet.var="Order.q"` in `ggiNEXT3D` function creates a separate plot for each order, therefore three assemblages will be seperated by different colours as shown below: 
 ```{r }
 # Sample‐size‐based R/E curves, separating by "Order.q"
-ggiNEXT3D(out, type=1, facet.var="Order.q")
+ggiNEXT3D(out.TD, type = 1, facet.var = "Order.q")
 
 
 ```
@@ -358,8 +417,7 @@ ggiNEXT3D(out, type=1, facet.var="Order.q")
 The following commands return the sample completeness curve in which different colors are used for the three assemblages. Since the sample completeness curve are same for differnet class of diversity, `ggiNEXT3D` returns only one plot: 
 
 ```{r}
-ggiNEXT3D(out, type=2, facet.var="Order.q", color.var="Assemblage")
-
+ggiNEXT3D(out.TD, type = 2, facet.var = "Order.q", color.var="Assemblage")
 ```
 
 
@@ -367,15 +425,13 @@ The following commands return the coverage‐based R/E sampling curves in which 
 (`facet.var="Order.q"`)
 
 ```{r}
-AssType3 = ggiNEXT3D(out, type=3, facet.var="Assemblage")
-AssType3
+ggiNEXT3D(out.TD, type = 3, facet.var="Assemblage")
 ```
 
 
 
 ```{r}
-OrderType3 = ggiNEXT3D(out, type=3, facet.var="Order.q")
-OrderType3
+ggiNEXT3D(out.TD, type = 3, facet.var="Order.q")
 ```
 
 
@@ -395,30 +451,27 @@ Note that incidence frequency data (`datatype = "incidence_freq`) is allowed onl
 
 ```{r}
 data("fish")
-fish.dis = fish[[3]]
-t <- seq(1, 36, by=10)
-out.inc <- iNEXT3D(data = fish[[1]], 
-                   class = c("TD", "FD"),
-                  q = c(0,1,2), datatype="incidence_freq", 
-                  distM = fish.dis,
-                  size = t)
+out.inc <- iNEXT3D(data = fish$incidence_freq, 
+                   diversity = "FD",
+                   q = c(0,1,2), datatype = "incidence_freq", 
+                   FDdistM = fish$dis)
 
 
 # Sample‐size‐based R/E curves
-ggiNEXT3D(out.inc, type=1, color.var="Assemblage")
+ggiNEXT3D(out.inc, type = 1, color.var = "Assemblage")
 ```
 
 
 
 ```{r}
 # Sample completeness curves
-ggiNEXT3D(out.inc, type=2, color.var="Assemblage") 
+ggiNEXT3D(out.inc, type = 2, color.var = "Assemblage") 
 ```
 
 
 ```{r}
 # Coverage‐based R/E curves
-ggiNEXT3D(out.inc, type=3, color.var ="Assemblage")     
+ggiNEXT3D(out.inc, type = 3, color.var = "Assemblage")     
 ```
 
 
@@ -428,7 +481,6 @@ Incidence raw data is allowed for all diversity class. The data set (`fish.raw`)
 
 ```{r}
 data("fish.raw")
-names(fish.raw)
 head(fish.raw[[1]])
 head(fish.raw[[2]])
 head(fish.raw[[3]])
@@ -436,25 +488,24 @@ head(fish.raw[[3]])
 
 
 ```{r}
-fish.tree = fish[[2]]
-fish.dis = fish[[3]]
+fish.tree = fish$tree
+fish.dis = fish$dis
 
 out.raw <- iNEXT3D(data = fish.raw, 
-                   class = c("AUC"),
-                  q = c(0), datatype="incidence_raw", 
-                  tree = fish.tree,
-                  distM = fish.dis,
-                  size = t)
-out.raw <- iNEXT3D(data = fish.raw, 
-                   class = c("TD", "PD", "FD"),
-                  q = c(0,1,2), datatype="incidence_raw", 
-                  tree = fish.tree,
-                  distM = fish.dis,
-                  size = t)
-
-out.raw.plot = ggiNEXT3D(out.raw, type = 1)
-out.raw.plot
+                   diversity = "PD",
+                   q = c(0, 1, 2), datatype = "incidence_raw", 
+                   PDtree = fish.tree)
+ggiNEXT3D(out.raw, type = 1)
 ```
 
 
+
+```{r}
+out.raw <- iNEXT3D(data = fish.raw, 
+                   diversity = "FD",
+                   q = c(0, 1, 2), datatype = "incidence_raw", 
+                   FDdistM = fish.dis)
+
+ggiNEXT3D(out.raw, type = 1)
+```
 

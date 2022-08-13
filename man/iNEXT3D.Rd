@@ -35,7 +35,7 @@ iNEXT3D(
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
 \item{size}{an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
-If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots} .}
+If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}.}
 
 \item{endpoint}{an integer specifying the sample size that is the \code{endpoint} for rarefaction/extrapolation. 
 If NULL, then \code{endpoint} \code{=} double reference sample size.}
@@ -90,7 +90,7 @@ out2
 # diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+distM <- FunDdata.abu$dij
 out3 <- iNEXT3D(data[,1], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 out3
 

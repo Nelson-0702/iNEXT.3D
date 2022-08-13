@@ -94,8 +94,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       #====unconditional====
       if(unconditional_var){
         goalSC <- unique(covm)
-        qPD_unc <- unique(invChatPD_abu(x = x,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                                        q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
+        qPD_unc <- invChatPD_abu(x = x,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
+                                 q = q,Cs = goalSC,n = n,reft = reft,cal = cal)
         qPD_unc$Method[round(qPD_unc$m) == n] = "Observed"
       }
       if(nboot>1){
@@ -119,9 +119,9 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
                                  m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b <- Coverage(ai_B[isn0&tgroup_B=="Tip"], datatype, m[[i]])
-            qPD_unc_b <- unique(invChatPD_abu(x = ai_B[isn0&tgroup_B=="Tip"],
-                                              ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                              q = q,Cs = goalSC,n = n,reft = reft,cal = cal))$qPD
+            qPD_unc_b <- invChatPD_abu(x = ai_B[isn0&tgroup_B=="Tip"],
+                                       ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
+                                       q = q,Cs = goalSC,n = n,reft = reft,cal = cal)$qPD
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
             return(c(qPDm_b,covm_b,qPD_unc_b))
@@ -158,11 +158,11 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ <- rep(rep(reft,each = length(q)),length(m[[i]]))
-      out_m <- tibble(Assemblage = nms[i], m=m_,Method=method,Order.q=orderq,
-                      qPD=qPDm,s.e. = ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                      SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
-                      Reftime = reft_,
-                      Type=cal) %>%
+      out_m <- data.frame(Assemblage = nms[i], m=m_,Method=method,Order.q=orderq,
+                          qPD=qPDm,s.e. = ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
+                          SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+                          Reftime = reft_,
+                          Type=cal) %>%
         arrange(Reftime,Order.q,m)
       out_m$qPD.LCL[out_m$qPD.LCL<0] <- 0;out_m$SC.LCL[out_m$SC.LCL<0] <- 0
       out_m$SC.UCL[out_m$SC.UCL>1] <- 1
@@ -171,7 +171,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e.=ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','goalSC','SC','m', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage','SC','m', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,m)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -192,8 +192,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       #====unconditional====
       if(unconditional_var){
         goalSC <- unique(covm)
-        qPD_unc <- unique(invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
-                                        q = q,Cs = goalSC,n = n,reft = reft,cal = cal))
+        qPD_unc <- invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
+                                 q = q,Cs = goalSC,n = n,reft = reft,cal = cal)
         qPD_unc$Method[round(qPD_unc$nt) == n] = "Observed"
       }
       if(nboot>1){
@@ -216,9 +216,9 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
             qPDm_b <-  PhD.m.est(ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
                                  m=m[[i]],q=q,nt = n,reft = reft,cal = cal) %>% as.numeric()
             covm_b = Coverage(c(n, ai_B[isn0&tgroup_B=="Tip"]), "incidence_freq", m[[i]])
-            qPD_unc_b <- unique(invChatPD_inc(x = ai_B[isn0&tgroup_B=="Tip"],
-                                              ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
-                                              q = q,Cs = goalSC,n = n,reft = reft,cal = cal))$qPD
+            qPD_unc_b <- invChatPD_inc(x = ai_B[isn0&tgroup_B=="Tip"],
+                                       ai = ai_B[isn0],Lis = Li_b[isn0,,drop=F],
+                                       q = q,Cs = goalSC,n = n,reft = reft,cal = cal)$qPD
             # btime <- Sys.time()
             # print(paste0("Est boot sample",B,": ",btime-atime))
             return(c(qPDm_b,covm_b,qPD_unc_b))
@@ -252,11 +252,11 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ = rep(rep(reft,each = length(q)),length(m[[i]]))
-      out_m <- tibble(Assemblage = nms[i], nt=m_,Method=method,Order.q=orderq,
-                      qPD=qPDm,s.e.=ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                      SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
-                      Reftime = reft_,
-                      Type=cal) %>%
+      out_m <- data.frame(Assemblage = nms[i], nt=m_,Method=method,Order.q=orderq,
+                          qPD=qPDm,s.e.=ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
+                          SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+                          Reftime = reft_,
+                          Type=cal) %>%
         arrange(Reftime,Order.q,nt)
       out_m$qPD.LCL[out_m$qPD.LCL<0] <- 0;out_m$SC.LCL[out_m$SC.LCL<0] <- 0
       out_m$SC.UCL[out_m$SC.UCL>1] <- 1
@@ -265,7 +265,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e. = ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','goalSC','SC','nt', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage','SC','nt', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,nt)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -276,8 +276,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
     })
   }
   if(unconditional_var){
-    ans <- list(size_based = do.call(rbind,lapply(Estoutput, function(x) x$size_based)),
-                coverage_based = do.call(rbind,lapply(Estoutput, function(x) x$coverage_based)))
+    ans <- list(size_based = lapply(Estoutput, function(x) x$size_based) %>% do.call(rbind,.) %>% as_tibble,
+                coverage_based = lapply(Estoutput, function(x) x$coverage_based) %>% do.call(rbind,.) %>% as_tibble)
   }else{
     ans <- list(size_based = do.call(rbind,lapply(Estoutput, function(x) x$size_based)))
   }
@@ -365,10 +365,10 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
   Assemblage = rep(names(datalist), each = length(q)*length(reft)*length(level))
   out <- out %>% mutate(Assemblage = Assemblage, Type=cal)
   if(datatype=='abundance'){
-    out <- out %>% select(Assemblage,goalSC,SC,m,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
+    out <- out %>% select(Assemblage,SC,m,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
                           Reftime,Type)
   }else if(datatype=='incidence_raw'){
-    out <- out %>% select(Assemblage,goalSC,SC,nt,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
+    out <- out %>% select(Assemblage,SC,nt,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
                           Reftime,Type)
   }
   out$qPD.LCL[out$qPD.LCL<0] <- 0
@@ -414,11 +414,10 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
   m <- rep(mm,each = length(q)*ncol(Lis))
   order <- rep(q,ncol(Lis)*length(mm))
   SC <- rep(SC,each = length(q)*ncol(Lis))
-  goalSC <- rep(Cs,each = length(q)*ncol(Lis))
   reft <- as.numeric(substr(colnames(Lis),start = 2,stop = nchar(colnames(Lis))))
   Reftime = rep(rep(reft,each = length(q)),length(Cs))
-  tibble(m = m,Method = method,Order.q = order,
-         qPD = out,SC=SC,goalSC = goalSC,Reftime = Reftime)
+  data.frame(m = m,Method = method,Order.q = order,
+             qPD = out,SC=SC,Reftime = Reftime)
 }
 
 
@@ -459,11 +458,10 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
   m <- rep(mm,each = length(q)*ncol(Lis))
   order <- rep(q,ncol(Lis)*length(mm))
   SC <- rep(SC,each = length(q)*ncol(Lis))
-  goalSC <- rep(Cs,each = length(q)*ncol(Lis))
   reft <- as.numeric(substr(colnames(Lis),start = 2,stop = nchar(colnames(Lis))))
   Reftime = rep(rep(reft,each = length(q)),length(Cs))
-  tibble(nt = m,Method = method,Order.q = order,
-         qPD = out,SC=SC,goalSC = goalSC, Reftime = Reftime)
+  data.frame(nt = m,Method = method,Order.q = order,
+             qPD = out,SC=SC, Reftime = Reftime)
 }
 
 
@@ -885,6 +883,50 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
     boot_data <- sapply(p_hat,function(p) rbinom(n = nboot,size = n,prob = p)) %>% t()
   }
   return(list(boot_data=boot_data,Li = Li, f0 = f0))
+}
+
+
+
+
+# datainf ------------------------------------------------------------------
+datainf <- function(data, datatype, phylotr, reft){
+  if(datatype == "abundance"){
+    new <- phyBranchAL_Abu(phylotr,data,datatype,reft)
+    #new$treeNabu$branch.length <- new$BLbyT[,1]
+    data <- data[data>0]
+    ai <- new$treeNabu$branch.abun
+    Lis <- new$BLbyT
+    a1 <- sapply(1:ncol(Lis),function(i){
+      Li = Lis[,i]
+      I1 <- which(ai==1&Li>0);I2 <- which(ai==2&Li>0)
+      f1 <- length(I1);f2 <- length(I2)
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      c(f1,f2,PD_obs,g1,g2)
+    }) %>% matrix(nrow = 5) %>% t()
+    a1 <- tibble('n' = sum(data),'S.obs' = length(data),'PD.obs' = a1[,3],
+                 'f1*' = a1[,1],'f2*' = a1[,2], 'g1' = a1[,4],'g2' = a1[,5])
+  }else if(datatype == 'incidence_raw'){
+    new <- phyBranchAL_Inc(phylotr,data,datatype,reft)
+    #new$treeNabu$branch.length <- new$BLbyT[,1]
+    data <- data[rowSums(data)>0,colSums(data)>0,drop=F]
+    ai <- new$treeNabu$branch.abun
+    Lis <- new$BLbyT
+    a1 <- sapply(1:ncol(Lis),function(i){
+      Li = Lis[,i]
+      I1 <- which(ai==1);I2 <- which(ai==2)
+      f1 <- length(I1);f2 <- length(I2)
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      c(f1,f2,PD_obs, g1, g2)
+    }) %>% matrix(nrow = 5) %>% t()
+    a1 <- tibble('nT' = ncol(data),'S.obs' = nrow(data),'PD.obs' = a1[,3],
+                 'Q1*' = a1[,1],'Q2*' = a1[,2], 'R1' = a1[,4],'R2' = a1[,5])
+  }
+  return(a1)
+  
 }
 
 
