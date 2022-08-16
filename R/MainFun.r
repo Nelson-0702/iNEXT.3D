@@ -133,18 +133,25 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
       if(datatype == "incidence_freq"){
         t <- x[1]
         y <- x[-1]
+        
         if(t>sum(y)){
           warning("Insufficient data to provide reliable estimators and associated s.e.") 
         }
+        
         if(sum(x)==0) stop("Zero incidence frequencies in one or more sample sites")
         
         out <- iNEXT.Sam(Spec=x, q=q, t=size, endpoint=ifelse(is.null(endpoint), 2*max(x), endpoint), knots=knots, nboot=nboot, conf=conf)  
       }
+      
       if(unconditional_var){
+        
         out <- lapply(out, function(out_) cbind(Assemblage = assem_name, out_))
+        
       }else{
+        
         out[[1]] <- cbind(Assemblage = assem_name, out[[1]])
       }
+      
       out
     }
     
@@ -207,7 +214,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     
     out <- inextPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q, reft = PDreftime, m=size,
-                   cal = PDtype, nboot=nboot, conf = conf, unconditional_var = TRUE)
+                   cal = PDtype, nboot = nboot, conf = conf, unconditional_var = TRUE)
     
     ## AsyEst table ##
     index <- rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
@@ -944,7 +951,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param method 
+#' @param method selection of computing type: \code{'Estimated'} = asymptotic diversity, \code{'Empirical'} = observed diversity. Default is \code{c('Estimated', 'Empirical')}.
 #' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
@@ -1011,7 +1018,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' @export
 AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, 
-                 method, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                 method = c('Estimated', 'Empirical'), PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1184,6 +1191,8 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' nT <- data.inc$nT
 #' out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
 #' ggAO3D(out6, profile = "time")
+
+
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
