@@ -12,7 +12,7 @@ AO3D(
   nboot = 50,
   conf = 0.95,
   nT = NULL,
-  Method,
+  method,
   PDtree,
   PDreftime = NULL,
   PDtype = "meanPD",
@@ -38,7 +38,7 @@ AO3D(
 
 \item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
-\item{Method}{}
+\item{method}{}
 
 \item{PDtree}{(required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -62,34 +62,34 @@ a table of diversity q profile by 'Estimated'.
 ## example for abundance-based data
 # diversity = 'TD'
 data(spider)
-out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
+out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
 out1
 
 # diversity = 'PD'
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree)
+out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, method = c('Estimated', 'Empirical'), PDtree = tree)
 out2
 
 # diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 distM <-  FunDdata.abu$dij
-out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 out3
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 distM <-  FunDdata.abu$dij
-out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 out4
 
 ## example for incidence-based data
 # diversity = 'TD'
 data(ant)
-out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
+out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'))
 out5
 
 # diversity = 'PD'
@@ -97,21 +97,21 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree)
+out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, method = c('Estimated', 'Empirical'), PDtree = tree)
 out6
 
 # diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 distM <-  FunDdata.inc$dij
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 out7
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 distM <-  FunDdata.inc$dij
-out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 out8
 
 }

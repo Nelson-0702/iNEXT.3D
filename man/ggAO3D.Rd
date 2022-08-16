@@ -22,34 +22,34 @@ It will only show the confidence interval of 'Estimated'.
 ## example for abundance-based data
 # diversity = 'TD'
 data(spider)
-out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
+out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
 ggAO3D(out1)
 
 # diversity = 'PD'
 data(data.abu)
 data <- data.abu$data
 tree <- data.abu$tree
-out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree, PDtype = "meanPD")
+out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, method = c('Estimated', 'Empirical'), PDtree = tree, PDtype = "meanPD")
 ggAO3D(out2, profile = "q")
 
 # diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 distM <-  FunDdata.abu$dij
-out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out3, profile = "tau")
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.abu)
 data <- FunDdata.abu$data
 distM <-  FunDdata.abu$dij
-out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 ggAO3D(out4)
 
 ## example for incidence-based data
 # diversity = 'TD'
 data(ant)
-out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
+out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'))
 ggAO3D(out5)
 
 # diversity = 'PD'
@@ -57,21 +57,21 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
 ggAO3D(out6, profile = "time")
 
 # diversity = 'FD' & FDtype = 'tau_values'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 distM <-  FunDdata.inc$dij
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out7)
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(FunDdata.inc)
 data <- FunDdata.inc$data
 distM <-  FunDdata.inc$dij
-out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 ggAO3D(out8)
 
 }
