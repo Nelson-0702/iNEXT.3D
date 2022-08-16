@@ -944,7 +944,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param Method 
+#' @param method 
 #' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
@@ -957,34 +957,34 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' ## example for abundance-based data
 #' # diversity = 'TD'
 #' data(spider)
-#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
+#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
 #' out1
 #' 
 #' # diversity = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree)
+#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, method = c('Estimated', 'Empirical'), PDtree = tree)
 #' out2
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
+#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'))
 #' out5
 #' 
 #' # diversity = 'PD'
@@ -992,26 +992,26 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree)
+#' out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, method = c('Estimated', 'Empirical'), PDtree = tree)
 #' out6
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' distM <-  FunDdata.inc$dij
-#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' distM <-  FunDdata.inc$dij
-#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 #' out8
 #' 
 #' @export
 AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, 
-                 Method, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                 method, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1027,13 +1027,12 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     nboot = check.nboot(nboot)
     
     
-    if (isTRUE(Method == 'Estimated') == length(Method)) out = asyTD(data, datatype, q, nboot, conf)
-    
-    if (isTRUE(Method == 'Empirical') == length(Method)) out = obsTD(data, datatype, q, nboot, conf)
-    
-    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(asyTD(data, datatype, q, nboot, conf),
-                  obsTD(data, datatype, q, nboot, conf))
+    if (sum(method == 'Estimated') == length(method)) out = asyTD(data, datatype, q, nboot, conf) else if (sum(method == 'Empirical') == length(method))
+      
+      out = obsTD(data, datatype, q, nboot, conf) else if (sum(method == c('Estimated', 'Empirical')) == length(method)) 
+        
+        out = rbind(asyTD(data, datatype, q, nboot, conf),
+                    obsTD(data, datatype, q, nboot, conf))
     
   } 
   
@@ -1057,17 +1056,17 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     PDtype = check.PDtype(PDtype)
     
     
-    if (isTRUE(Method == 'Estimated') == length(Method)) out = asymPD(datalist = mydata, datatype = datatype, 
-                                                                   phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
-    
-    if (isTRUE(Method == 'Empirical') == length(Method)) out = EmpPD(datalist = mydata, datatype = datatype, 
-                                                                  phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
-    
-    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                         reft = PDreftime, cal = PDtype, nboot, conf),
-                  EmpPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                        reft = PDreftime, cal = PDtype, nboot, conf))
+    if (sum(method == 'Estimated') == length(method)) 
+      out = asymPD(datalist = mydata, datatype = datatype, 
+                   phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == 'Empirical') == length(method)) 
+                     
+                     out = EmpPD(datalist = mydata, datatype = datatype, 
+                                 phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == c('Estimated', 'Empirical')) == length(method)) 
+                                   
+                                   out = rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
+                                                      reft = PDreftime, cal = PDtype, nboot, conf),
+                                               EmpPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
+                                                     reft = PDreftime, cal = PDtype, nboot, conf))
     
   } 
   
@@ -1087,17 +1086,17 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     nboot = check.nboot(nboot)
     
     
-    if (isTRUE(Method == 'Estimated') == length(Method)) out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                        nboot = nboot, conf = conf, tau = FDtau)
-    
-    if (isTRUE(Method == 'Empirical') == length(Method)) out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                        nboot = nboot, conf = conf, tau = FDtau)
-    
-    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                              nboot = nboot, conf = conf, tau = FDtau),
-                  FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                              nboot = nboot, conf = conf, tau = FDtau))
+    if (sum(method == 'Estimated') == length(method)) 
+      out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                        nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == 'Empirical') == length(method)) 
+                          
+                          out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                                            nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == c('Estimated', 'Empirical')) == length(method)) 
+      
+                                              out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                                                                      nboot = nboot, conf = conf, tau = FDtau),
+                                                          FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                                                                      nboot = nboot, conf = conf, tau = FDtau))
     
   } 
   
@@ -1116,17 +1115,17 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     nboot = check.nboot(nboot)
     
     
-    if (isTRUE(Method == 'Estimated') == length(Method)) out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
-                                                                         nboot = nboot, conf = conf, tau = NULL)
-    
-    if (isTRUE(Method == 'Empirical') == length(Method)) out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
-                                                                         nboot = nboot, conf = conf, tau = NULL)
-    
-    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
-                               nboot = nboot, conf = conf, tau = NULL),
-                  AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
-                               nboot = nboot, conf = conf, tau = NULL))
+    if (sum(method == 'Estimated') == length(method)) 
+      out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
+                         nboot = nboot, conf = conf, tau = NULL) else if (sum(method == 'Empirical') == length(method)) 
+                           
+                           out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
+                                              nboot = nboot, conf = conf, tau = NULL) else if (sum(method == c('Estimated', 'Empirical')) == length(method)) 
+      
+                                                out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
+                                                                         nboot = nboot, conf = conf, tau = NULL),
+                                                            AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
+                                                                         nboot = nboot, conf = conf, tau = NULL))
     
   }
   
@@ -1148,34 +1147,34 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' ## example for abundance-based data
 #' # diversity = 'TD'
 #' data(spider)
-#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
+#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
 #' ggAO3D(out1)
 #' 
 #' # diversity = 'PD'
 #' data(data.abu)
 #' data <- data.abu$data
 #' tree <- data.abu$tree
-#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree, PDtype = "meanPD")
+#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, method = c('Estimated', 'Empirical'), PDtree = tree, PDtype = "meanPD")
 #' ggAO3D(out2, profile = "q")
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+#' out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 #' ggAO3D(out3, profile = "tau")
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.abu)
 #' data <- FunDdata.abu$data
 #' distM <-  FunDdata.abu$dij
-#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 #' ggAO3D(out4)
 #' 
 #' ## example for incidence-based data
 #' # diversity = 'TD'
 #' data(ant)
-#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
+#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'))
 #' ggAO3D(out5)
 #' 
 #' # diversity = 'PD'
@@ -1183,21 +1182,21 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+#' out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
 #' ggAO3D(out6, profile = "time")
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' distM <-  FunDdata.inc$dij
-#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 #' ggAO3D(out7)
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(FunDdata.inc)
 #' data <- FunDdata.inc$data
 #' distM <-  FunDdata.inc$dij
-#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 #' ggAO3D(out8)
 #'
 #' @export
@@ -1446,7 +1445,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     datatype = checkdatatype[[1]]
     data = checkdatatype[[2]]
     
-
+    out <- TDinfo(data, datatype)
     
   } 
   
@@ -1543,10 +1542,10 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       c(dmin, dmean, dmax)
     }))
     
-    info <- cbind(TDinfo(dat, datatype)[,1:4], threshold)
-    colnames(info)[5:7] = c("dmin", "dmean", "dmax")
-    rownames(info) = NULL
-    return(as_tibble(info))
+    out <- cbind(TDinfo(dat, datatype)[,1:4], threshold)
+    colnames(out)[5:7] = c("dmin", "dmean", "dmax")
+    rownames(out) = NULL
+    return(as_tibble(out))
     
   }
   
