@@ -206,15 +206,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     PDtype = check.PDtype(PDtype)
     
     
-    FUN <- function(e){
-      if(class(mydata)=="list"){
-        inextPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q, reft = PDreftime, m=size,
-                cal = PDtype, nboot=nboot, conf = conf, unconditional_var = TRUE)
-      }else{
-        return(NULL)
-      }
-    }
-    out <- tryCatch(FUN(e), error = function(e){return()})
+    out <- inextPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q, reft = PDreftime, m=size,
+                   cal = PDtype, nboot=nboot, conf = conf, unconditional_var = TRUE)
     
     ## AsyEst table ##
     index <- rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
@@ -372,432 +365,6 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
   }
   
   class(out) <- c("iNEXT3D")
-  
-  return(out)
-}
-
-
-# estimate3D -------------------------------------------------------------------
-#' Compute species diversity with a particular of sample size/coverage 
-#' 
-#' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
-#' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
-#' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
-#' @param q a numerical vector specifying the diversity orders. Default is c(0, 1, 2).
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
-#' @param base selection of sample-size-based (\code{base = "size"}) or coverage-based (\code{base = "coverage"}) rarefaction and extrapolation.
-#' @param level A numerical vector specifying the particular sample sizes or sample coverages (between 0 and 1). \cr
-#' If \code{base = "coverage"} (default) and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes. \cr
-#' If \code{base = "size"} and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes. 
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
-#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
-#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
-#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
-#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
-#' 
-#' @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
-#' method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
-#' @examples
-#' # diversity = 'TD'
-#' data(spider)
-#' out1 <- estimate3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
-#' out1
-#' 
-#' # diversity = 'PD'
-#' data(data.abu)
-#' data <- data.abu$data
-#' tree <- data.abu$tree
-#' out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
-#' out2
-#' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' distM <-  FunDdata.abu$dij
-#' out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
-#' out3
-#' 
-#' # diversity = 'FD' & FDtype = 'AUC'
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' distM <-  FunDdata.abu$dij
-#' out4 <- estimate3D(data = data[,2], diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
-#' out4
-#' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
-#' data(ant)
-#' out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base = "coverage", level=0.985)
-#' out5
-#' 
-#' # diversity = 'PD'
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
-#' out6
-#' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' distM <-  FunDdata.inc$dij
-#' out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
-#' out7
-#' 
-#' # diversity = 'FD' & FDtype = 'AUC'
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' distM <-  FunDdata.inc$dij
-#' out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "size", nboot = 20, FDdistM = distM)
-#' out8
-#' 
-#' @export
-estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
-                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
-  
-  if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
-    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
-  
-  if (diversity == 'TD') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    base = check.base(base)
-    level = check.level(data, datatype, base, level)
-    
-    if (base == "size") {
-      out <- invSize(data, q, datatype, size = level, nboot, conf = conf)
-    } else if (base == "coverage") {
-      out <- invChat(data, q, datatype, C = level, nboot, conf = conf)
-    }
-    out$qD.LCL[out$qD.LCL<0] <- 0
-    
-  } 
-  
-  if (diversity == 'PD') {
-    
-    if(datatype == "incidence_freq") stop ("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    nT = checkdatatype[[3]]
-    
-    checktree = check.tree(data, datatype, PDtree, PDreftime, nT)
-    PDreftime = checktree[[1]]
-    mytree = checktree[[2]]
-    mydata = checktree[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    base = check.base(base)
-    PDtype = check.PDtype(PDtype)
-    level = check.level(mydata, datatype, base, level)
-    
-    
-    if (base == "size") {
-      
-      out <- inextPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                     reft = PDreftime,m = lapply(mydata, function(i) level), cal = PDtype, nboot=nboot, conf = conf, unconditional_var = FALSE)$size_based %>% 
-        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
-      
-    } else if (base == "coverage") {
-      
-      out <- invChatPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q,
-                       reft = PDreftime, cal = PDtype, level = level, nboot, conf)
-      
-    }
-    
-  } 
-  
-  if (diversity == 'FD' & FDtype == 'tau_values') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    checkdistM = check.dist(data, datatype, FDdistM, FDtau)
-    FDtau = checkdistM[[1]]
-    FDdistM = checkdistM[[2]]
-    dat = checkdistM[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    base = check.base(base)
-    level = check.level(dat, datatype, base, level)
-    
-    
-    if (base == "size") {
-      out = iNextFD(datalist = dat,dij = FDdistM,q = q,datatype = datatype,tau = FDtau,
-                    nboot = nboot,conf = conf,m = level) %>% 
-        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
-      out$qFD.LCL[out$qFD.LCL<0] <- 0
-      # out$SC.LCL[out$SC.LCL<0] <- 0
-      # out$SC.UCL[out$SC.UCL>1] <- 1
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
-    } else if (base == "coverage") {
-      out <- invChatFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                       level = level, nboot = nboot, conf = conf, tau = FDtau)
-      out$qFD.LCL[out$qFD.LCL<0] <- 0
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
-    }
-    
-  } 
-  
-  if (diversity == 'FD' & FDtype == 'AUC') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    checkdistM = check.dist(data, datatype, FDdistM, threshold = FALSE)
-    FDdistM = checkdistM[[2]]
-    dat = checkdistM[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    base = check.base(base)
-    level = check.level(dat, datatype, base, level)
-    
-    
-    
-    if (base == 'size') {
-      
-      out = AUCtable_iNextFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                             tau = NULL, nboot = nboot, conf = conf, m = level) %>% 
-        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
-      out$qAUC.LCL[out$qAUC.LCL<0] <- 0
-      # out$SC.LCL[out$SC.LCL<0] <- 0
-      # out$SC.UCL[out$SC.UCL>1] <- 1
-      
-    } else if (base == 'coverage') {
-      
-      out <- AUCtable_invFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                            level = level, nboot = nboot, conf = conf, tau = NULL)
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
-      
-    }
-    
-  }
-  
-  return(out)
-}
-
-
-# AO3D -------------------------------------------------------------------
-#' Asymptotic diversity and observed diversity q profile 
-#' 
-#' \code{AO3D} The estimated diversity of order q 
-#' 
-#' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
-#' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
-#' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param Method 
-#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
-#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
-#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
-#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
-#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
-#' 
-#' @return a table of diversity q profile by 'Estimated'.
-#' @examples
-#' ## example for abundance-based data
-#' # diversity = 'TD'
-#' data(spider)
-#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
-#' out1
-#' 
-#' # diversity = 'PD'
-#' data(data.abu)
-#' data <- data.abu$data
-#' tree <- data.abu$tree
-#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree)
-#' out2
-#' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' distM <-  FunDdata.abu$dij
-#' out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
-#' out3
-#' 
-#' # diversity = 'FD' & FDtype = 'AUC'
-#' data(FunDdata.abu)
-#' data <- FunDdata.abu$data
-#' distM <-  FunDdata.abu$dij
-#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
-#' out4
-#' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
-#' data(ant)
-#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
-#' out5
-#' 
-#' # diversity = 'PD'
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree)
-#' out6
-#' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' distM <-  FunDdata.inc$dij
-#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
-#' out7
-#' 
-#' # diversity = 'FD' & FDtype = 'AUC'
-#' data(FunDdata.inc)
-#' data <- FunDdata.inc$data
-#' distM <-  FunDdata.inc$dij
-#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
-#' out8
-#' 
-#' @export
-AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, 
-                 Method, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
-  
-  if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
-    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
-  
-  if (diversity == 'TD') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    
-    
-    if (sum(Method == 'Estimated') == length(Method)) out = asyTD(data, datatype, q, nboot, conf)
-    
-    if (sum(Method == 'Empirical') == length(Method)) out = obsTD(data, datatype, q, nboot, conf)
-    
-    if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(asyTD(data, datatype, q, nboot, conf),
-                  obsTD(data, datatype, q, nboot, conf))
-    
-  } 
-  
-  if (diversity == 'PD') {
-    
-    if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    nT = checkdatatype[[3]]
-    
-    checktree = check.tree(data, datatype, PDtree, PDreftime, nT)
-    PDreftime = checktree[[1]]
-    mytree = checktree[[2]]
-    mydata = checktree[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    PDtype = check.PDtype(PDtype)
-    
-    
-    if (sum(Method == 'Estimated') == length(Method)) out = asymPD(datalist = mydata, datatype = datatype, 
-                                                                   phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
-    
-    if (sum(Method == 'Empirical') == length(Method)) out = EmpPD(datalist = mydata, datatype = datatype, 
-                                                                  phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
-    
-    if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                         reft = PDreftime, cal = PDtype, nboot, conf),
-                  EmpPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
-                        reft = PDreftime, cal = PDtype, nboot, conf))
-    
-  } 
-  
-  if (diversity == 'FD' & FDtype == 'tau_values') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    checkdistM = check.dist(data, datatype, FDdistM, FDtau)
-    FDtau = checkdistM[[1]]
-    distM = checkdistM[[2]]
-    dat = checkdistM[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    
-    
-    if (sum(Method == 'Estimated') == length(Method)) out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                        nboot = nboot, conf = conf, tau = FDtau)
-    
-    if (sum(Method == 'Empirical') == length(Method)) out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                        nboot = nboot, conf = conf, tau = FDtau)
-    
-    if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                              nboot = nboot, conf = conf, tau = FDtau),
-                  FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                              nboot = nboot, conf = conf, tau = FDtau))
-    
-  } 
-  
-  if (diversity == 'FD' & FDtype == 'AUC') {
-    
-    checkdatatype = check.datatype(data, datatype, nT = nT)
-    datatype = checkdatatype[[1]]
-    data = checkdatatype[[2]]
-    
-    checkdistM = check.dist(data, datatype, FDdistM, threshold = FALSE)
-    distM = checkdistM[[2]]
-    dat = checkdistM[[3]]
-    
-    q = check.q(q)
-    conf = check.conf(conf)
-    nboot = check.nboot(nboot)
-    
-    
-    if (sum(Method == 'Estimated') == length(Method)) out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
-                                                                         nboot = nboot, conf = conf, tau = NULL)
-    
-    if (sum(Method == 'Empirical') == length(Method)) out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
-                                                                         nboot = nboot, conf = conf, tau = NULL)
-    
-    if (sum(Method == c('Estimated', 'Empirical')) == length(Method)) 
-      out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
-                               nboot = nboot, conf = conf, tau = NULL),
-                  AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
-                               nboot = nboot, conf = conf, tau = NULL))
-    
-  }
   
   return(out)
 }
@@ -1141,6 +708,432 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 }
 
 
+# estimate3D -------------------------------------------------------------------
+#' Compute species diversity with a particular of sample size/coverage 
+#' 
+#' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
+#' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
+#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
+#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
+#' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders. Default is c(0, 1, 2).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
+#' @param base selection of sample-size-based (\code{base = "size"}) or coverage-based (\code{base = "coverage"}) rarefaction and extrapolation.
+#' @param level A numerical vector specifying the particular sample sizes or sample coverages (between 0 and 1). \cr
+#' If \code{base = "coverage"} (default) and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes. \cr
+#' If \code{base = "size"} and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes. 
+#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
+#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
+#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
+#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' 
+#' @return a \code{data.frame} of species diversity table including the sample size, sample coverage,
+#' method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
+#' @examples
+#' # diversity = 'TD'
+#' data(spider)
+#' out1 <- estimate3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+#' out1
+#' 
+#' # diversity = 'PD'
+#' data(data.abu)
+#' data <- data.abu$data
+#' tree <- data.abu$tree
+#' out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
+#' out2
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' distM <-  FunDdata.abu$dij
+#' out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
+#' out3
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' distM <-  FunDdata.abu$dij
+#' out4 <- estimate3D(data = data[,2], diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
+#' out4
+#' 
+#' ## example for incidence-based data
+#' # diversity = 'TD'
+#' data(ant)
+#' out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base = "coverage", level=0.985)
+#' out5
+#' 
+#' # diversity = 'PD'
+#' data(data.inc)
+#' data <- data.inc$data
+#' tree <- data.inc$tree
+#' nT <- data.inc$nT
+#' out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
+#' out6
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' distM <-  FunDdata.inc$dij
+#' out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
+#' out7
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' distM <-  FunDdata.inc$dij
+#' out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "size", nboot = 20, FDdistM = distM)
+#' out8
+#' 
+#' @export
+estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
+                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+  
+  if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
+    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
+  
+  if (diversity == 'TD') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    base = check.base(base)
+    level = check.level(data, datatype, base, level)
+    
+    if (base == "size") {
+      out <- invSize(data, q, datatype, size = level, nboot, conf = conf)
+    } else if (base == "coverage") {
+      out <- invChat(data, q, datatype, C = level, nboot, conf = conf)
+    }
+    out$qD.LCL[out$qD.LCL<0] <- 0
+    
+  } 
+  
+  if (diversity == 'PD') {
+    
+    if(datatype == "incidence_freq") stop ("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    nT = checkdatatype[[3]]
+    
+    checktree = check.tree(data, datatype, PDtree, PDreftime, nT)
+    PDreftime = checktree[[1]]
+    mytree = checktree[[2]]
+    mydata = checktree[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    base = check.base(base)
+    PDtype = check.PDtype(PDtype)
+    level = check.level(mydata, datatype, base, level)
+    
+    
+    if (base == "size") {
+      
+      out <- inextPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
+                     reft = PDreftime,m = lapply(mydata, function(i) level), cal = PDtype, nboot=nboot, conf = conf, unconditional_var = FALSE)$size_based %>% 
+        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
+      
+    } else if (base == "coverage") {
+      
+      out <- invChatPD(datalist = mydata, datatype = datatype, phylotr = mytree, q = q,
+                       reft = PDreftime, cal = PDtype, level = level, nboot, conf)
+      
+    }
+    
+  } 
+  
+  if (diversity == 'FD' & FDtype == 'tau_values') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    checkdistM = check.dist(data, datatype, FDdistM, FDtau)
+    FDtau = checkdistM[[1]]
+    FDdistM = checkdistM[[2]]
+    dat = checkdistM[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    base = check.base(base)
+    level = check.level(dat, datatype, base, level)
+    
+    
+    if (base == "size") {
+      out = iNextFD(datalist = dat,dij = FDdistM,q = q,datatype = datatype,tau = FDtau,
+                    nboot = nboot,conf = conf,m = level) %>% 
+        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
+      out$qFD.LCL[out$qFD.LCL<0] <- 0
+      # out$SC.LCL[out$SC.LCL<0] <- 0
+      # out$SC.UCL[out$SC.UCL>1] <- 1
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+    } else if (base == "coverage") {
+      out <- invChatFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+                       level = level, nboot = nboot, conf = conf, tau = FDtau)
+      out$qFD.LCL[out$qFD.LCL<0] <- 0
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+    }
+    
+  } 
+  
+  if (diversity == 'FD' & FDtype == 'AUC') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    checkdistM = check.dist(data, datatype, FDdistM, threshold = FALSE)
+    FDdistM = checkdistM[[2]]
+    dat = checkdistM[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    base = check.base(base)
+    level = check.level(dat, datatype, base, level)
+    
+    
+    
+    if (base == 'size') {
+      
+      out = AUCtable_iNextFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+                             tau = NULL, nboot = nboot, conf = conf, m = level) %>% 
+        select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
+      out$qAUC.LCL[out$qAUC.LCL<0] <- 0
+      # out$SC.LCL[out$SC.LCL<0] <- 0
+      # out$SC.UCL[out$SC.UCL>1] <- 1
+      
+    } else if (base == 'coverage') {
+      
+      out <- AUCtable_invFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
+                            level = level, nboot = nboot, conf = conf, tau = NULL)
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+      
+    }
+    
+  }
+  
+  return(out)
+}
+
+
+# AO3D -------------------------------------------------------------------
+#' Asymptotic diversity and observed diversity q profile 
+#' 
+#' \code{AO3D} The estimated diversity of order q 
+#' 
+#' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
+#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
+#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
+#' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
+#' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
+#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
+#' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
+#' @param Method 
+#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
+#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' 
+#' @return a table of diversity q profile by 'Estimated'.
+#' @examples
+#' ## example for abundance-based data
+#' # diversity = 'TD'
+#' data(spider)
+#' out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", Method = c('Estimated', 'Empirical'))
+#' out1
+#' 
+#' # diversity = 'PD'
+#' data(data.abu)
+#' data <- data.abu$data
+#' tree <- data.abu$tree
+#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, Method = c('Estimated', 'Empirical'), PDtree = tree)
+#' out2
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' distM <-  FunDdata.abu$dij
+#' out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out3
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC'
+#' data(FunDdata.abu)
+#' data <- FunDdata.abu$data
+#' distM <-  FunDdata.abu$dij
+#' out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out4
+#' 
+#' ## example for incidence-based data
+#' # diversity = 'TD'
+#' data(ant)
+#' out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'))
+#' out5
+#' 
+#' # diversity = 'PD'
+#' data(data.inc)
+#' data <- data.inc$data
+#' tree <- data.inc$tree
+#' nT <- data.inc$nT
+#' out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", nT = nT, Method = c('Estimated', 'Empirical'), PDtree = tree)
+#' out6
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' distM <-  FunDdata.inc$dij
+#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", Method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out7
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC'
+#' data(FunDdata.inc)
+#' data <- FunDdata.inc$data
+#' distM <-  FunDdata.inc$dij
+#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, Method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out8
+#' 
+#' @export
+AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, 
+                 Method, PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+  
+  if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
+    stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
+  
+  if (diversity == 'TD') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    
+    
+    if (isTRUE(Method == 'Estimated') == length(Method)) out = asyTD(data, datatype, q, nboot, conf)
+    
+    if (isTRUE(Method == 'Empirical') == length(Method)) out = obsTD(data, datatype, q, nboot, conf)
+    
+    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
+      out = rbind(asyTD(data, datatype, q, nboot, conf),
+                  obsTD(data, datatype, q, nboot, conf))
+    
+  } 
+  
+  if (diversity == 'PD') {
+    
+    if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    nT = checkdatatype[[3]]
+    
+    checktree = check.tree(data, datatype, PDtree, PDreftime, nT)
+    PDreftime = checktree[[1]]
+    mytree = checktree[[2]]
+    mydata = checktree[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    PDtype = check.PDtype(PDtype)
+    
+    
+    if (isTRUE(Method == 'Estimated') == length(Method)) out = asymPD(datalist = mydata, datatype = datatype, 
+                                                                   phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
+    
+    if (isTRUE(Method == 'Empirical') == length(Method)) out = EmpPD(datalist = mydata, datatype = datatype, 
+                                                                  phylotr = mytree,q = q, reft = PDreftime, cal = PDtype, nboot, conf)
+    
+    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
+      out = rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
+                         reft = PDreftime, cal = PDtype, nboot, conf),
+                  EmpPD(datalist = mydata, datatype = datatype, phylotr = mytree,q = q, 
+                        reft = PDreftime, cal = PDtype, nboot, conf))
+    
+  } 
+  
+  if (diversity == 'FD' & FDtype == 'tau_values') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    checkdistM = check.dist(data, datatype, FDdistM, FDtau)
+    FDtau = checkdistM[[1]]
+    distM = checkdistM[[2]]
+    dat = checkdistM[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    
+    
+    if (isTRUE(Method == 'Estimated') == length(Method)) out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                                                                        nboot = nboot, conf = conf, tau = FDtau)
+    
+    if (isTRUE(Method == 'Empirical') == length(Method)) out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                                                                        nboot = nboot, conf = conf, tau = FDtau)
+    
+    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
+      out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                              nboot = nboot, conf = conf, tau = FDtau),
+                  FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
+                              nboot = nboot, conf = conf, tau = FDtau))
+    
+  } 
+  
+  if (diversity == 'FD' & FDtype == 'AUC') {
+    
+    checkdatatype = check.datatype(data, datatype, nT = nT)
+    datatype = checkdatatype[[1]]
+    data = checkdatatype[[2]]
+    
+    checkdistM = check.dist(data, datatype, FDdistM, threshold = FALSE)
+    distM = checkdistM[[2]]
+    dat = checkdistM[[3]]
+    
+    q = check.q(q)
+    conf = check.conf(conf)
+    nboot = check.nboot(nboot)
+    
+    
+    if (isTRUE(Method == 'Estimated') == length(Method)) out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
+                                                                         nboot = nboot, conf = conf, tau = NULL)
+    
+    if (isTRUE(Method == 'Empirical') == length(Method)) out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
+                                                                         nboot = nboot, conf = conf, tau = NULL)
+    
+    if (isTRUE(Method == c('Estimated', 'Empirical')) == length(Method)) 
+      out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype,
+                               nboot = nboot, conf = conf, tau = NULL),
+                  AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype,
+                               nboot = nboot, conf = conf, tau = NULL))
+    
+  }
+  
+  return(out)
+}
+
+
 # ggAO3D -------------------------------------------------------------------
 #' ggplot for Asymptotic diversity
 #'
@@ -1244,50 +1237,62 @@ ggAO3D <- function(outcome, profile = 'q'){
   
   ## PD & q-profile ##
   if (class == 'PD' & profile == 'q') {
+    
     outcome$Reftime = paste('Reftime = ', round(outcome$Reftime, 3), sep = '')
     out = ggplot(outcome, aes(x = Order.q, y = qPD, colour = Assemblage, fill = Assemblage))
     
     if (length(unique(outcome$Method)) == 1) {
+      
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic diversity')
       if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic diversity')
       if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic Hill diversity')
       if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic Hill diversity')
+      
     } else {
+      
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Phylogenetic diversity')
       if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Phylogenetic Hill diversity')
+      
     }
+    
     out = out + facet_grid(.~Reftime, scales = "free_y")
   }
   
   ## PD & time-profile ##
   if (class == 'PD' & profile == 'time') {
+    
     outcome$Order.q = paste('q = ', outcome$Order.q, sep = '')
     out = ggplot(outcome, aes(x = Reftime, y = qPD, colour = Assemblage, fill = Assemblage))
     
     if (length(unique(outcome$Method)) == 1) {
+      
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic diversity')
       if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic diversity')
       if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic Hill diversity')
       if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic Hill diversity')
+      
     } else {
+      
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Phylogenetic diversity')
       if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Phylogenetic Hill diversity')
+      
     }
     out = out + facet_grid(.~Order.q, scales = "free_y")
   }
   
   ## FD & q-profile ##
   if (class == 'FD' & profile == 'q') {
+    
     outcome$tau = paste('Tau = ', round(outcome$tau, 3), sep = '')
     out = ggplot(outcome, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
     
@@ -1296,7 +1301,9 @@ ggAO3D <- function(outcome, profile = 'q'){
       
       if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional diversity')
       if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical Functional diversity')
+      
     } else {
+      
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
       
@@ -1307,6 +1314,7 @@ ggAO3D <- function(outcome, profile = 'q'){
   
   ## FD & tau-profile ##
   if (class == 'FD' & profile == 'tau') {
+    
     outcome$Order.q = paste('Order q = ', outcome$Order.q, sep = '')
     out = ggplot(outcome, aes(x = tau, y = qFD, colour = Assemblage, fill = Assemblage))
     
@@ -1489,6 +1497,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     
     out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, FDtau, datatype, integer = TRUE)$ai[,1]), datatype)
     out$n =lapply(dat, function(x) sum(x))
+    
     out$SC = lapply(dat, function(x) {
       n = sum(x)
       f1 = sum(x==1)
@@ -1497,7 +1506,9 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
       Chat <- round(1 - f1/n*A, 4)
     })
+    
     colnames(out)[colnames(out) %in% paste0("f",1:10)] = paste0("a",1:10,"'")
+    
     out$threshold = FDtau
     
   } 
