@@ -66,35 +66,35 @@ method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, an
 }
 \examples{
 # diversity = 'TD'
-data(spider)
-out1 <- estimate3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+data(dunes)
+out1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 out1
 
 # diversity = 'PD'
-data(data.abu)
-data <- data.abu$data
-tree <- data.abu$tree
+data(dunes)
+data <- dunes$data
+tree <- dunes$tree
 out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 out2
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
 out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
 out3
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
-out4 <- estimate3D(data = data[,2], diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
+out4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
 out4
 
 ## example for incidence-based data
 # diversity = 'TD'
-data(ant)
-out5 <- estimate3D(ant, diversity = 'TD', q = c(0,1,2), datatype = "incidence_freq", base = "coverage", level=0.985)
+data(fish)
+out5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", base = "coverage", level=0.985)
 out5
 
 # diversity = 'PD'
@@ -106,17 +106,17 @@ out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "s
 out6
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
 out7
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_freq", base = "size", nboot = 20, FDdistM = distM)
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", nboot = 20, FDdistM = distM)
 out8
 
 }

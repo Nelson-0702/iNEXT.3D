@@ -1,4 +1,3 @@
-
 # iNEXT.3D -------------------------------------------------------------------
 #' Printing iNEXT.3D object
 #' 
@@ -422,7 +421,7 @@ check.level <- function(data, datatype, base, level) {
       
     } else if (datatype=='incidence_freq') {
       
-      level <- sapply(dat,function(x){
+      level <- sapply(data,function(x){
         ni <- x[1]
         Coverage(data = x,datatype = datatype,m = 2*ni)
       })

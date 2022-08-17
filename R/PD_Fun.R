@@ -407,7 +407,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
   })
   mm[mm < 1] <- 1
   mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
-  SC <- Coverage(x, 'abundance', mm)
+  SC <- Cs
   out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,each = length(q)*ncol(Lis))
@@ -451,7 +451,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
   })
   mm[mm < 1] <- 1
   mm[which(round(mm) - n <= 1)] = round(mm[which(round(mm) - n <= 1)]) 
-  SC <- Coverage(c(n, x), 'incidence_freq', mm)
+  SC <- Cs
   out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,each = length(q)*ncol(Lis))
@@ -922,7 +922,7 @@ datainf <- function(data, datatype, phylotr, reft){
       g2 <- sum(Li[I2])
       c(f1,f2,PD_obs, g1, g2)
     }) %>% matrix(nrow = 5) %>% t()
-    a1 <- tibble('nT' = ncol(data),'S.obs' = nrow(data),'PD.obs' = a1[,3],
+    a1 <- tibble('T' = ncol(data),'S.obs' = nrow(data),'PD.obs' = a1[,3],
                  'Q1*' = a1[,1],'Q2*' = a1[,2], 'R1' = a1[,4],'R2' = a1[,5])
   }
   return(a1)

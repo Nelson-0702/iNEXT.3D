@@ -35,36 +35,35 @@ a ggplot2 object
 \examples{
 ## example for abundance based data (list of vector)
 # diversity = 'TD'
-data(spider)
-out1 <- iNEXT3D(spider, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+data(dunes)
+out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 ggiNEXT3D(out1, facet.var = "Assemblage")
 
 # diversity = 'PD'
-data(data.abu)
-data <- data.abu$data
-tree <- data.abu$tree
+data(dunes)
+data <- dunes$data
+tree <- dunes$tree
 out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 ggiNEXT3D(out2, type = c(1, 3))
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
-out3 <- iNEXT3D(data[,1], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
+out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out3)
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
-out4 <- iNEXT3D(data = data[,2], diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
+out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 ggiNEXT3D(out4)
 
 ## example for incidence-based data
 # diversity = 'TD'
-data(ant)
-t <- round(seq(10, 500, length.out = 20))
-out5 <- iNEXT3D(ant$h500m, diversity = 'TD', q = 1, datatype = "incidence_freq", size = t)
+data(fish)
+out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 ggiNEXT3D(out5)
 
 # diversity = 'PD'
@@ -76,17 +75,17 @@ out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_ra
 ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out7)
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 0, FDdistM = distM)
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 ggiNEXT3D(out8)
 
 }

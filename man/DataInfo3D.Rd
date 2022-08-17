@@ -47,31 +47,31 @@ a data.frame of basic data information including sample size, observed species r
 \examples{
 ## example for abundance-based data
 # diversity = 'TD'
-data(spider)
-DataInfo3D(spider, diversity = 'TD', datatype = "abundance")
+data(dunes)
+DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
 
 # diversity = 'PD'
-data(data.abu)
-data <- data.abu$data
-tree <- data.abu$tree
+data(dunes)
+data <- dunes$data
+tree <- dunes$tree
 DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 
 ## example for incidence-based data
 # diversity = 'TD'
-data(ant)
-DataInfo3D(ant, diversity = 'TD', datatype = "incidence_freq")
+data(fish)
+DataInfo3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 
 # diversity = 'PD'
 data(data.inc)
@@ -81,16 +81,16 @@ nT <- data.inc$nT
 DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-DataInfo3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'tau_values')
+data(fish)
+data <- fish$data
+distM <- fish$dist
+DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-DataInfo3D(data, diversity = 'FD', datatype = "incidence_freq", FDdistM = distM, FDtype = 'AUC')
+data(fish)
+data <- fish$data
+distM <- fish$dist
+DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'AUC')
 
 
 }

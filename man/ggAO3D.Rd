@@ -21,35 +21,35 @@ It will only show the confidence interval of 'Estimated'.
 \examples{
 ## example for abundance-based data
 # diversity = 'TD'
-data(spider)
-out1 <- AO3D(spider, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
+data(dunes)
+out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'))
 ggAO3D(out1)
 
 # diversity = 'PD'
-data(data.abu)
-data <- data.abu$data
-tree <- data.abu$tree
+data(dunes)
+data <- dunes$data
+tree <- dunes$tree
 out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, method = c('Estimated', 'Empirical'), PDtree = tree, PDtype = "meanPD")
 ggAO3D(out2, profile = "q")
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+data(dunes)
+data <- dunes$data
+distM <-  dunes$dist
 out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out3, profile = "tau")
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.abu)
-data <- FunDdata.abu$data
-distM <-  FunDdata.abu$dij
+data(dunes)
+data <- dunes$data
+distM <- dunes$dist
 out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 ggAO3D(out4)
 
 ## example for incidence-based data
 # diversity = 'TD'
-data(ant)
-out5 <- AO3D(ant, diversity = 'TD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'))
+data(fish)
+out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw", method = c('Estimated', 'Empirical'))
 ggAO3D(out5)
 
 # diversity = 'PD'
@@ -61,17 +61,17 @@ out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw",
 ggAO3D(out6, profile = "time")
 
 # diversity = 'FD' & FDtype = 'tau_values'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out7)
 
 # diversity = 'FD' & FDtype = 'AUC'
-data(FunDdata.inc)
-data <- FunDdata.inc$data
-distM <-  FunDdata.inc$dij
-out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_freq", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
+data(fish)
+data <- fish$data
+distM <- fish$dist
+out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 ggAO3D(out8)
 
 }

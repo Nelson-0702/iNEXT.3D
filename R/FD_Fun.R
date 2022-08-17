@@ -277,7 +277,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
-  SC <- Coverage(data_, 'abundance', mm)
+  SC <- Cs
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
@@ -326,7 +326,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
     mm
   })
   mm[mm < 1] <- 1
-  SC <- Coverage(data_, 'incidence_freq', mm)
+  SC <- Cs
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
   out <- as.vector(out)
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))

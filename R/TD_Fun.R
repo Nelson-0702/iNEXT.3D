@@ -430,7 +430,7 @@ invChat.Ind <- function (x, q, C) {
     mm
   })
   mm[mm < 1] <- 1
-  SC <- Coverage(x, 'abundance',mm)
+  SC <- C
   # if (sum(round(mm) > 2 * n)>0) 
   #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
   
@@ -477,7 +477,7 @@ invChat.Sam <- function (x, q, C) {
     mm
   })
   mm[mm < 1] <- 1
-  SC <- Coverage(x,"incidence_freq",mm)
+  SC <- C
   # if (sum(round(mm) > 2 * n)>0) 
   #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
   out <- TD.m.est_inc(y = x,t_ = mm,qs = q)
@@ -519,7 +519,7 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
           Prob.hat <- EstiBootComm.Ind(x_)
           Abun.Mat <- rmultinom(nboot, sum(x_), Prob.hat)
           ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invSize.Ind(a, q,size)$qD),
-                              nrow = length(q)* length(size)),1,sd)
+                              nrow = length(q) * length(size)),1,sd)
         }else{
           ses <- rep(0,nrow(est))
         }
@@ -600,7 +600,7 @@ invSize.Sam <- function(x, q, size){
   m <- rep(size,length(q))
   order <- rep(q,each = length(size))
   SC <- rep(SC,length(q))
-  data.frame(t = m,Method = method,Order.q = order,SC=SC,qD = out)
+  data.frame(nt = m,Method = method,Order.q = order,SC=SC,qD = out)
 }
 
 
@@ -785,8 +785,10 @@ asyTD = function(data, datatype, q, nboot, conf) {
         Prob.hat <- EstiBootComm.Ind(data[[i]])
         Abun.Mat <- rmultinom(nboot, sum(data[[i]]), Prob.hat)
         
+        mt = apply(Abun.Mat, 2, function(xb) Diversity_profile(xb, q))
+        if (!is.matrix(mt)) mt = matrix(mt, nrow = 1)
         error <- qnorm(1-(1-conf)/2) * 
-          apply(apply(Abun.Mat, 2, function(xb) Diversity_profile(xb, q)), 1, sd, na.rm=TRUE)
+          apply(mt, 1, sd, na.rm=TRUE)
         
       } else {error = NA}
       out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
@@ -803,14 +805,18 @@ asyTD = function(data, datatype, q, nboot, conf) {
         Prob.hat <- EstiBootComm.Sam(data[[i]])
         Abun.Mat <- t(sapply(Prob.hat, function(p) rbinom(nboot, nT, p)))
         Abun.Mat <- matrix(c(rbind(nT, Abun.Mat)),ncol=nboot)
+        
         tmp <- which(colSums(Abun.Mat)==nT)
         if(length(tmp)>0) Abun.Mat <- Abun.Mat[,-tmp]
         if(ncol(Abun.Mat)==0){
           error = 0
           warning("Insufficient data to compute bootstrap s.e.")
-        }else{		
+        }else{
+          
+          mt = apply(Abun.Mat, 2, function(yb) Diversity_profile.inc(yb, q))
+          if (!is.matrix(mt)) mt = matrix(mt, nrow = 1)
           error <- qnorm(1-(1-conf)/2) * 
-            apply(apply(Abun.Mat, 2, function(yb) Diversity_profile.inc(yb, q)), 1, sd, na.rm=TRUE)
+            apply(mt, 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
       out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
@@ -839,8 +845,10 @@ obsTD = function(data, datatype, q, nboot, conf) {
         Prob.hat <- EstiBootComm.Ind(data[[i]])
         Abun.Mat <- rmultinom(nboot, sum(data[[i]]), Prob.hat)
         
+        mt = apply(Abun.Mat, 2, function(xb) Diversity_profile_MLE(xb, q))
+        if (!is.matrix(mt)) mt = matrix(mt, nrow = 1)
         error <- qnorm(1-(1-conf)/2) * 
-          apply(apply(Abun.Mat, 2, function(xb) Diversity_profile_MLE(xb,q)), 1, sd, na.rm=TRUE)
+          apply(mt, 1, sd, na.rm=TRUE)
         
       } else {error = NA}
       out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
@@ -862,9 +870,12 @@ obsTD = function(data, datatype, q, nboot, conf) {
         if(ncol(Abun.Mat)==0){
           error = 0
           warning("Insufficient data to compute bootstrap s.e.")
-        }else{		
+        }else{	
+          
+          mt = apply(Abun.Mat, 2, function(yb) Diversity_profile_MLE.inc(yb, q))
+          if (!is.matrix(mt)) mt = matrix(mt, nrow = 1)
           error <- qnorm(1-(1-conf)/2) * 
-            apply(apply(Abun.Mat, 2, function(yb) Diversity_profile_MLE.inc(yb,q)), 1, sd, na.rm=TRUE)
+            apply(mt, 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
       out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
