@@ -262,7 +262,7 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
     
     ntmp <- 0
     for(i in 1:length(nT)){
-      datalist[[i]] <- data[,(ntmp+1):as.numeric((ntmp+nT[i]))]
+      datalist[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
       ntmp <- ntmp + nT[i]
     }
     
