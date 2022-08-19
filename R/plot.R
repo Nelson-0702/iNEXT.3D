@@ -72,12 +72,12 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   
   if (datatype == "incidence_raw") {
     
-    if (class(data)[1] == "numeric"|class(data)[1] == "integer"|class(data)[1] == "double") {
+    if (inherits(data, c("numeric", "integer", "double"))) {
       data = as.matrix(data)
       nT = c('Assemblage_1' = 1)
     }
     
-    if (class(data)[1] == "list") {
+    if (inherits(data, "list")) {
       data = lapply(data, function(i) data.frame(i))
       data2 = lapply(data, function(i) {
         i$species = rownames(i)
@@ -102,7 +102,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   
   if (datatype != "incidence_raw") {
     
-    if(class(data)[1] == "list"){
+    if(inherits(data, "list")){
       
       if(length(data) == 1){
         
@@ -134,7 +134,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
         data = datam
       }
       
-    } else if (class(data)[1] == "numeric"|class(data)[1] == "integer"|class(data)[1] == "double") {
+    } else if (inherits(data, c("numeric", "integer", "double"))) {
       data = as.matrix(data)
       colnames(data) = 'Assemblage_1'
     }
@@ -149,7 +149,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
   }
   
-  if(class(nT) == 'data.frame') nT = unlist(nT)
+  if(inherits(nT, 'data.frame')) nT = unlist(nT)
   
   return(list(datatype, data, nT))
 }
@@ -281,7 +281,7 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
 # check.q -------------------------------------------------------------------
 check.q <- function(q) {
   
-  if(class(q) != "numeric")
+  if(!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a postive value/vector of numeric object", call. = FALSE)
   if(min(q) < 0){
     warning("ambigous of order q, we only compute postive q", call. = FALSE)
@@ -373,7 +373,7 @@ check.size <- function(data, datatype, size, endpoint, knots) {
     
   } else {
     
-    if (class(size) == "numeric" | class(size) == "integer" | class(size) == "double") {
+    if (inherits(size, c("numeric", "integer", "double"))) {
       size <- list(size = size)
     }
     

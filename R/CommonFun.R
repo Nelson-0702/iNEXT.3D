@@ -8,9 +8,9 @@
 # data(ciliates)
 # as.incfreq(ciliates)
 as.incfreq <- function(data, nT = NULL) {
-  if (class(data)[1] == "data.frame" | class(data)[1] == "matrix") {
+  if (inherits(data, c("data.frame", "matrix"))) {
     if(is.null(nT)) nT = ncol(data)
-    if(class(nT) == 'data.frame') nT = unlist(nT)
+    if(inherits(nT, 'data.frame')) nT = unlist(nT)
     mydata = list()
     if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
     ntmp <- 0
@@ -27,7 +27,7 @@ as.incfreq <- function(data, nT = NULL) {
       out = c('nT' = ncol(i), rowSums(i))
       return(out)
     })
-  } else if (class(data)[1] == "list") 
+  } else if (inherits(data, "list")) 
     data <- lapply(data, function(i) c('nT' = ncol(i), rowSums(i)))
   if (length(data) == 1) data = data[[1]]
   return(data)

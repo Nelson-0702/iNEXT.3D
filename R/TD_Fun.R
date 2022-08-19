@@ -326,16 +326,16 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
   if (pmatch(datatype, TYPE) == -1) 
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  if (class(x) == "numeric" | class(x) == "integer"){
+  if (inherits(x, c("numeric", "integer"))){
     x <- list(data = x)
   }
-  if (class(x) == "data.frame" | class(x) ==  "matrix"){
+  if (inherits(x, c("data.frame", "matrix"))){
     datalist <- lapply(1:ncol(x), function(i) x[,i])
     if(is.null(colnames(x))) names(datalist) <-  paste0("data",1:ncol(x)) else names(datalist) <- colnames(x)
     x <- datalist
   }
   if (datatype == "abundance") {
-    if (class(x) == "list") {
+    if (inherits(x, "list")) {
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Ind(x_, q, C)
@@ -362,7 +362,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
   }else if (datatype == "incidence_freq") {
-    if (class(x) == "list") {
+    if (inherits(x, "list")) {
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Sam(x_, q, C)
@@ -501,17 +501,17 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(x)[1]
-  if (class(x) == "numeric" | class(x) == "integer"){
+  
+  if (inherits(x, c("numeric", "integer"))){
     x <- list(data = x)
   }
-  if (class(x) == "data.frame" | class(x) ==  "matrix"){
+  if (inherits(x, c("data.frame", "matrix"))){
     datalist <- lapply(1:ncol(x), function(i) x[,i])
     if(is.null(colnames(x))) names(datalist) <-  paste0("data",1:ncol(x)) else names(datalist) <- colnames(x)
     x <- datalist
   }
   if(datatype=="abundance"){
-    if (class(x) == "list") {
+    if (inherits(x, "list")) {
       Community = rep(names(x),each = length(q)*length(size))
       out <- lapply(x, function(x_){
         est <- invSize.Ind(x_, q, size)
@@ -534,7 +534,7 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
   }else if (datatype == "incidence_freq") {
-    if (class(x) == "list") {
+    if (inherits(x, "list")) {
       Community = rep(names(x),each = length(q)*length(size))
       out <- lapply(x, function(x_){
         est <- invSize.Sam(x_, q, size)
@@ -923,14 +923,14 @@ TDinfo = function(data, datatype) {
   }
   
   if(datatype == "abundance"){
-    if(class(data) == "numeric" | class(data) == "integer"){
+    if(inherits(data, c("numeric", "integer"))){
       out <- matrix(Fun.abun(data), nrow=1)
-    }else if(class(data) == "list"){
+    }else if(inherits(data, "list")){
       out <- do.call("rbind", lapply(data, Fun.abun))
-    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+    } else if(inherits(data, c("matrix", "data.frame"))){
       out <- t(apply(as.matrix(data), 2, Fun.abun))  
     }
-    if(nrow(out) > 1 | class(data) == 'list'){
+    if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
       colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
       rownames(out) <- NULL
@@ -940,14 +940,14 @@ TDinfo = function(data, datatype) {
     }
     as_tibble(out)
   }else if(datatype == "incidence_freq"){
-    if(class(data) == "numeric" | class(data) == "integer"){
+    if(inherits(data, c("numeric", "integer"))){
       out <- matrix(Fun.ince(data), nrow=1)
-    }else if(class(data) == "list"){
+    }else if(inherits(data, "list")){
       out <- do.call("rbind", lapply(data, Fun.ince))
-    } else if(class(data)[1] == "matrix" | class(data) == "data.frame"){
+    } else if(inherits(data, c("matrix", "data.frame"))){
       out <- t(apply(as.matrix(data), 2, Fun.ince))  
     }
-    if(nrow(out) > 1 | class(data) == 'list'){
+    if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
       colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
       rownames(out) <- NULL

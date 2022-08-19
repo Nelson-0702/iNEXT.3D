@@ -76,14 +76,14 @@ out2
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+out3 <- AO3D(data, diversity = 'FD', datatype = "abundance", nboot = 50, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 out3
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
+out4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 out4
 
 ## example for incidence-based data

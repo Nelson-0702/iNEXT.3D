@@ -37,7 +37,6 @@ phyL_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 
 # phyBranchAL_Abu ------------------------------------------------------------------
 phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T,remove0=T){
-  #if(class(phylo) != "phylo")
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
   
@@ -216,7 +215,7 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
 
 # phylo2phytree ------------------------------------------------------------------
 phylo2phytree<-function(phylo){
-  if(class(phylo) != "phylo")
+  if(!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
   
   phylo.root<-length(phylo$tip.label)+1
@@ -284,7 +283,6 @@ phy_L_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 
 # phy_BranchAL_IncBootP ------------------------------------------------------------------
 phy_BranchAL_IncBootP<-function(phylo,pdata,refT=0,rootExtend=T,remove0=T){
-  #if(class(phylo) != "phylo")
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
   

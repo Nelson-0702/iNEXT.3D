@@ -43,7 +43,7 @@ ggAO3D(out3, profile = "tau")
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- AO3D(data = data[,2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
+out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
 ggAO3D(out4)
 
 ## example for incidence-based data

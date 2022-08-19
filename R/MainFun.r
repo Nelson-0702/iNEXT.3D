@@ -449,7 +449,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     
     FUN <- function(e){
-      if(class(dat)=="list"){
+      if(inherits(dat, "list")){
         ## size-based
         temp1 = iNextFD(datalist = dat, dij = dist, q = q, datatype = datatype, tau = FDtau,
                         nboot = nboot, conf = conf, m = size)
@@ -523,7 +523,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     
     FUN <- function(e){
-      if(class(dat) == "list"){
+      if(inherits(dat, "list")){
         ## size-based
         temp1 = AUCtable_iNextFD(datalist = dat, dij = dist, q = q, datatype = datatype,
                                  tau = NULL, nboot = nboot, conf = conf, m = size)
@@ -1182,14 +1182,14 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
+#' out3 <- AO3D(data, diversity = 'FD', datatype = "abundance", nboot = 50, method = c('Estimated', 'Empirical'), FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC'
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, method = c('Estimated', 'Empirical'), FDdistM = distM)
+#' out4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 20, method = c('Estimated', 'Empirical'), FDdistM = distM)
 #' out4
 #' 
 #' ## example for incidence-based data
