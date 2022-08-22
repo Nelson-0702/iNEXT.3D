@@ -917,7 +917,8 @@ TDinfo = function(data, datatype) {
       out <- data.frame(site="site.1", out)
       colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
     }
-    as_tibble(out)
+    out = as.data.frame(out)
+    
   }else if(datatype == "incidence_freq"){
     if(inherits(data, c("numeric", "integer"))){
       out <- matrix(Fun.ince(data), nrow=1)

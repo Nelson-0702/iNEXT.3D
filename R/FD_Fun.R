@@ -145,8 +145,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
              Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
              SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
-             threshold = threshold) %>% 
-        arrange(threshold, Order.q)
+             Tau = threshold) %>% 
+        arrange(Tau, Order.q)
     }) %>% do.call(rbind, .)
     
   }else if(datatype=="incidence_freq"){
@@ -181,8 +181,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
              Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
              SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
-             threshold = threshold) %>% 
-        arrange(threshold,Order.q)
+             Tau = threshold) %>% 
+        arrange(Tau,Order.q)
     }) %>% do.call(rbind, .)
   }
   return(out)
@@ -233,7 +233,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, threshold
+    Assemblage, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, Tau
   )
   rownames(out) <- NULL
   out
@@ -283,7 +283,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC, threshold = threshold)
+         qFD = out,SC=SC, Tau = threshold)
 }
 
 
@@ -331,7 +331,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
   tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC, threshold = threshold)
+         qFD = out,SC=SC, Tau = threshold)
 }
 
 
@@ -456,7 +456,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Output <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
                    s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
-                   Assemblage = sites_tmp, Method='Empirical', tau = tau_tmp)
+                   Assemblage = sites_tmp, Method='Empirical', Tau = tau_tmp)
   Output
 }
 
@@ -627,7 +627,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Estoutput <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = Estoutput[,1],
                       s.e. = Estoutput[,2], qFD.LCL = Estoutput[,3], qFD.UCL = Estoutput[,4],
-                      Assemblage = sites_tmp, Method = "Asymptotic", tau = tau_tmp)
+                      Assemblage = sites_tmp, Method = "Asymptotic", Tau = tau_tmp)
   Estoutput$qFD.LCL[Estoutput$qFD.LCL<0] = 0
   # return(list(Estoutput = Estoutput, info = info))
   return(Estoutput)

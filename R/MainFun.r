@@ -138,7 +138,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     
     colnames(out)[colnames(out) %in% paste0("f",1:10)] = paste0("a",1:10,"'")
     
-    out$threshold = FDtau
+    out$Tau = FDtau
     
   } 
   
@@ -152,7 +152,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     distM = checkdistM[[2]]
     dat = checkdistM[[3]]
     
-    threshold = t(sapply(dat, function(i){
+    Tau = t(sapply(dat, function(i){
       
       if(datatype=='abundance') {
         
@@ -172,10 +172,10 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       c(dmin, dmean, dmax)
     }))
     
-    out <- cbind(TDinfo(dat, datatype)[,1:4], threshold)
+    out <- cbind(TDinfo(dat, datatype)[,1:4], Tau)
     colnames(out)[5:7] = c("dmin", "dmean", "dmax")
     rownames(out) = NULL
-    return(as_tibble(out))
+    return(out)
     
   }
   
@@ -375,7 +375,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     out$size_based <- as_tibble(out$size_based)
     out$coverage_based <- as_tibble(out$coverage_based)
     
-    info <- DataInfo3D(data, diversity = 'TD', datatype, nT) %>% as_tibble
+    info <- DataInfo3D(data, diversity = 'TD', datatype, nT)
     
     
     out <- list("DataInfo"=info, "iNextEst"=out, "AsyEst"=index)
@@ -418,9 +418,11 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qPD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
     if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
-    index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+    index$Order.q <- c('q = 0 PD','q = 1 PD','q = 2 PD')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Phylogenetic Diversity", "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.", "LCL", "UCL")
+    index$Reftime = PDreftime
+    index$Type = PDtype
     
     info <- DataInfo3D(data, diversity = 'PD', datatype = datatype, nT, PDtree = PDtree, PDreftime = PDreftime)
     
@@ -485,9 +487,10 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qFD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
     if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
-    index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+    index$Order.q <- c('q = 0 FD(single tau)','q = 1 FD(single tau)','q = 2 FD(single tau)')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
+    index$Tau = FDtau
     
     info <- DataInfo3D(data, diversity = 'FD', datatype = datatype, FDdistM = FDdistM, FDtype = 'tau_values', FDtau = FDtau, nT = nT)
     info$n = lapply(dat, function(x) sum(x))
@@ -557,7 +560,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qAUC')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
     if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
-    index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
+    index$Order.q <- c('q = 0 FD(AUC)','q = 1 FD(AUC)','q = 2 FD(AUC)')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
     
@@ -772,8 +775,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     output$Reftime <- factor(paste0("Ref.time = ", output$Reftime), levels = paste0("Ref.time = ", unique(output$Reftime)))
   }
   if (class == 'FD') {
-    output$threshold <- round(output$threshold, 3)
-    output$threshold <- factor(paste0("tau = ", output$threshold), levels = paste0("tau = ", unique(output$threshold)))
+    output$Tau <- round(output$Tau, 3)
+    output$Tau <- factor(paste0("Tau = ", output$Tau), levels = paste0("Tau = ", unique(output$Tau)))
   }
   
   if (color.var == "None") {
@@ -852,7 +855,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       if (class == 'PD') {
         g <- g + facet_wrap(Reftime ~ Order.q, nrow = 1, labeller = odr_grp)
       } else if (class == 'FD') {
-        g <- g + facet_grid(threshold ~ Order.q, labeller = odr_grp, scales = 'free_y')
+        g <- g + facet_grid(Tau ~ Order.q, labeller = odr_grp, scales = 'free_y')
       } else {g <- g + facet_wrap( ~ Order.q, nrow = 1, labeller = odr_grp)}
       
       if (color.var == "Both") {
@@ -873,7 +876,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
       if (class == 'PD') {
         g <- g + facet_wrap(Reftime ~ Assemblage, nrow = 1)
       } else if (class == 'FD') {
-        g <- g + facet_grid(threshold ~ Assemblage, scales = 'free_y')
+        g <- g + facet_grid(Tau ~ Assemblage, scales = 'free_y')
       } else {g <- g + facet_wrap(. ~ Assemblage, nrow = 1)}
       
       if(color.var == "Both"){
@@ -893,7 +896,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
         g <- g + facet_wrap(Assemblage + Reftime ~ Order.q, labeller = odr_grp)
         # if(length(unique(output$Reftime)) == 1) outp <- outp + theme(strip.background = element_blank(), strip.text.x = element_blank())
       } else if (class == 'FD') {
-        g <- g + facet_grid(Assemblage + threshold ~ Order.q, labeller = odr_grp, scales = 'free_y')
+        g <- g + facet_grid(Assemblage + Tau ~ Order.q, labeller = odr_grp, scales = 'free_y')
       } else {g <- g + facet_wrap(Assemblage ~ Order.q, labeller = odr_grp)}
       
       if(color.var == "both"){
@@ -1496,7 +1499,7 @@ ggAO3D <- function(outcome, profile = 'q'){
   ## FD & q-profile ##
   if (class == 'FD' & profile == 'q') {
     
-    outcome$tau = paste('Tau = ', round(outcome$tau, 3), sep = '')
+    outcome$Tau = paste('Tau = ', round(outcome$Tau, 3), sep = '')
     out = ggplot(outcome, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
     
     if (length(unique(outcome$Method)) == 1) {
@@ -1512,25 +1515,25 @@ ggAO3D <- function(outcome, profile = 'q'){
       
       out = out + labs(x = 'Order q', y = 'Functional diversity')
     }
-    out = out + facet_grid(.~tau, scales = "free_y")
+    out = out + facet_grid(.~Tau, scales = "free_y")
   }
   
   ## FD & tau-profile ##
   if (class == 'FD' & profile == 'tau') {
     
     outcome$Order.q = paste('Order q = ', outcome$Order.q, sep = '')
-    out = ggplot(outcome, aes(x = tau, y = qFD, colour = Assemblage, fill = Assemblage))
+    out = ggplot(outcome, aes(x = Tau, y = qFD, colour = Assemblage, fill = Assemblage))
     
     if (length(unique(outcome$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'tau', y = 'Asymptotic Functional diversity')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'tau', y = 'Empirical Functional diversity')
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Tau', y = 'Asymptotic Functional diversity')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Tau', y = 'Empirical Functional diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
       
-      out = out + labs(x = 'tau', y = 'Functional diversity')
+      out = out + labs(x = 'Tau', y = 'Functional diversity')
     }
     out = out + facet_grid(.~Order.q, scales = "free_y")
   }
