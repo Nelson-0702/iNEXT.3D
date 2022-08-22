@@ -1,4 +1,3 @@
-# DataInfo3D -------------------------------------------------------------------
 #' Data Information for three diversity.
 #' 
 #' \code{DataInfo3D} Exhibit basic data information
@@ -190,7 +189,6 @@ NULL
 
 
 
-# iNEXT3D -------------------------------------------------------------------
 #' iNterpolation and EXTrapolation of Hill number
 #' 
 #' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
@@ -574,7 +572,6 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 }
 
 
-# ggiNEXT3D -------------------------------------------------------------------
 #' ggplot2 extension for an iNEXT object
 #' 
 #' \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
@@ -705,7 +702,6 @@ ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = 
 }
 
 
-# type_plot -------------------------------------------------------------------
 type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   x_name <- colnames(x_list$size_based)[2]
   xlab_name <- ifelse(datatype == "incidence", "sampling units", "individuals")
@@ -911,7 +907,6 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 }
 
 
-# estimate3D -------------------------------------------------------------------
 #' Compute species diversity with a particular of sample size/coverage 
 #' 
 #' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
@@ -1141,7 +1136,6 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 }
 
 
-# AO3D -------------------------------------------------------------------
 #' Asymptotic diversity and observed diversity q profile 
 #' 
 #' \code{AO3D} The estimated diversity of order q 
@@ -1344,7 +1338,6 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 }
 
 
-# ggAO3D -------------------------------------------------------------------
 #' ggplot for Asymptotic diversity
 #'
 #' \code{ggAO3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{AO3D} using the ggplot2 package.\cr

@@ -1,4 +1,3 @@
-# PhD.m.est ------------------------------------------------------------------
 PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   t_bars <- as.numeric(t(ai) %*% Lis/nt)
   if(sum(m>nt)>0){
@@ -77,7 +76,6 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   return(out)
 }
 
-# inextPD ------------------------------------------------------------------
 inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95, unconditional_var=TRUE){
   # m is a list
   nms <- names(datalist)
@@ -285,7 +283,6 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
 }
 
 
-# invChatPD ------------------------------------------------------------------
 invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, conf){
   qtile <- qnorm(1-(1-conf)/2)
   if(datatype=='abundance'){
@@ -377,7 +374,6 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
 }
 
 
-# invChatPD_abu ------------------------------------------------------------------
 invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
   #x <- unlist(aL_table$branch.abun[aL_table$tgroup=="Tip"])
   refC = Coverage(x, 'abundance', n)
@@ -421,7 +417,6 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
 }
 
 
-# invChatPD_inc ------------------------------------------------------------------
 invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
   refC = Coverage(c(n, x), 'incidence_freq', n)
   f <- function(m, C) abs(Coverage(c(n, x), 'incidence_freq', m) - C)
@@ -466,7 +461,6 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
 
 
 
-# EmpPD ------------------------------------------------------------------
 EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
   nms <- names(datalist)
   qtile <- qnorm(1-(1-conf)/2)
@@ -582,7 +576,6 @@ EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
 }
 
 
-# PD.Tprofile ------------------------------------------------------------------
 PD.Tprofile=function(ai,Lis, q, reft, cal, nt) {
   isn0 <- ai>0
   ai <- ai[isn0]
@@ -607,7 +600,6 @@ PD.Tprofile=function(ai,Lis, q, reft, cal, nt) {
 }
 
 
-# asymPD ------------------------------------------------------------------
 asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change final list name
   nms <- names(datalist)
   qtile <- qnorm(1-(1-conf)/2)
@@ -736,7 +728,6 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
 }
 
 
-# PhD.q.est ------------------------------------------------------------------
 PhD.q.est = function(ai,Lis, q, nt, reft, cal){
   t_bars <- as.numeric(t(ai) %*% Lis/nt)
   S <- length(ai)
@@ -804,7 +795,6 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
 
 
 
-# Boots.one ------------------------------------------------------------------
 Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
   if(datatype=='abundance'){
     data <- unlist(aL$branch.abun[aL$tgroup=="Tip"])
@@ -888,7 +878,6 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
 
 
 
-# datainf ------------------------------------------------------------------
 datainf <- function(data, datatype, phylotr, reft){
   if(datatype == "abundance"){
     new <- phyBranchAL_Abu(phylotr,data,datatype,reft)

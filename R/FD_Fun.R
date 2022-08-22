@@ -1,4 +1,3 @@
-# data_transform -------------------------------------------------------------------
 data_transform <- function(data, dij, tau, datatype, integer = FALSE, truncate = TRUE, filt_zero = TRUE){
   if(datatype == 'abundance'){
     if (filt_zero) {
@@ -59,7 +58,6 @@ data_transform <- function(data, dij, tau, datatype, integer = FALSE, truncate =
 }
 
 
-# FD.m.est -------------------------------------------------------------------
 FD.m.est = function(ai_vi, m, q, nT){
   EFD = function(m,qs,obs,asy,beta,av){
     m = m-nT
@@ -110,7 +108,6 @@ FD.m.est = function(ai_vi, m, q, nT){
 }
 
 
-# iNextFD -------------------------------------------------------------------
 iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.95, m){
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
@@ -192,7 +189,6 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
 }
 
 
-# invChatFD -------------------------------------------------------------------
 invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau){
   qtile <- qnorm(1-(1-conf)/2)
   
@@ -244,7 +240,6 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
 }
 
 
-# invChatFD_abu -------------------------------------------------------------------
 invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   n <- sum(data_)
   refC = Coverage(data_, 'abundance', n)
@@ -292,7 +287,6 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
 }
 
 
-# invChatFD_inc -------------------------------------------------------------------
 invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   n <- data_[1]
   refC = Coverage(data_, 'incidence_freq', n)
@@ -341,7 +335,6 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
 }
 
 
-# FD_mle -------------------------------------------------------------------
 FD_mle <- function(ai_vi, q){
   v_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])
   out <- sapply(1:ncol(ai_vi$ai), function(i){
@@ -360,7 +353,6 @@ FD_mle <- function(ai_vi, q){
 }
 
 
-# FDtable_mle -------------------------------------------------------------------
 FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95){
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
@@ -469,7 +461,6 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 }
 
 
-# FD_est -------------------------------------------------------------------
 FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai and vi
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
   Sub <- function(q,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas){
@@ -522,7 +513,6 @@ FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai an
 }
 
 
-# FDtable_est -------------------------------------------------------------------
 FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95){#change final list name
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
@@ -644,7 +634,6 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 }
 
 
-# AUCtable_iNextFD -------------------------------------------------------------------
 AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
                          nboot=0, conf=0.95, m) {
   qtile <- qnorm(1-(1-conf)/2)
@@ -717,7 +706,6 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
 }
 
 
-# AUCtable_invFD -------------------------------------------------------------------
 AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot = 0, conf = 0.95, tau=NULL){
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
@@ -782,7 +770,6 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
 }
 
 
-# AUCtable_mle -------------------------------------------------------------------
 AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
                          nboot=0, conf=0.95) {
   qtile <- qnorm(1-(1-conf)/2)
@@ -850,7 +837,6 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
 }
 
 
-# AUCtable_est -------------------------------------------------------------------
 AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
                          nboot=0, conf=0.95) {
   qtile <- qnorm(1-(1-conf)/2)
@@ -916,7 +902,6 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
 }
 
 
-# EstiBootComm.Func -------------------------------------------------------------------
 EstiBootComm.Func = function(data, distance, datatype){
   if (datatype=="incidence_freq") {
     n <- data[1]

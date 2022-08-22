@@ -1,4 +1,3 @@
-# check_datatype ------------------------------------------------------------------
 check_datatype <- function (datatype)
 {
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
@@ -11,7 +10,6 @@ check_datatype <- function (datatype)
 }
 
 
-# phyL_Abu_T_ ------------------------------------------------------------------
 phyL_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
   rootlength<-0
   if (t_1>0){
@@ -35,7 +33,6 @@ phyL_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 }
 
 
-# phyBranchAL_Abu ------------------------------------------------------------------
 phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T,remove0=T){
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
@@ -118,7 +115,6 @@ phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T
 }
 
 
-# phyBranchAL_Inc ------------------------------------------------------------------
 phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend=T,remove0=T){
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
@@ -213,7 +209,6 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
 }
 
 
-# phylo2phytree ------------------------------------------------------------------
 phylo2phytree<-function(phylo){
   if(!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")
@@ -260,7 +255,6 @@ phylo2phytree<-function(phylo){
 }
 
 
-# phy_L_Abu_T_ ------------------------------------------------------------------
 phy_L_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
   rootlength<-0
   if (t_1>0){
@@ -281,7 +275,6 @@ phy_L_Abu_T_<-function(treeNdata,t_1,rootExtend=T,treeH=0){
 }
 
 
-# phy_BranchAL_IncBootP ------------------------------------------------------------------
 phy_BranchAL_IncBootP<-function(phylo,pdata,refT=0,rootExtend=T,remove0=T){
   if (!inherits(phylo, "phylo"))
     stop("invlid class: only support phylo object")

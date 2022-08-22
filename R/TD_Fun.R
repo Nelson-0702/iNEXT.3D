@@ -1,4 +1,3 @@
-# TD.m.est -------------------------------------------------------------------
 # iNterpolation and EXTrapolation of abundance-based Hill number
 # 
 # \code{TD.m.est} Estimation of interpolation and extrapolation of abundance-based Hill number with order q
@@ -51,7 +50,6 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
 }
 
 
-# TD.m.est_inc -------------------------------------------------------------------
 # iNterpolation and EXTrapolation of incidence-based Hill number
 # 
 # \code{TD.m.est_inc} Estimation of interpolation and extrapolation of incidence-based Hill number
@@ -109,7 +107,6 @@ TD.m.est_inc <- function(y, t_, qs){
 }
 
 
-# iNEXT.Ind -------------------------------------------------------------------
 # iNterpolation and EXTrapolation of abundance-based Hill number
 # 
 # \code{iNEXT.Ind} Estimation of interpolation and extrapolation of abundance-based Hill number with order q
@@ -200,9 +197,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
 }
 
 
-# iNEXT.Sam -------------------------------------------------------------------
 # iNterpolation and EXTrapolation of incidence-based Hill number
-# 
 # \code{iNEXT.Sam} Estimation of interpolation and extrapolation of incidence-based Hill number with order q
 # 
 # @param Spec a vector of species incidence-based frequency, the first entry is the total number of sampling units, followed by the speceis incidences abundances.
@@ -300,7 +295,6 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
 }
 
 
-# invChat -------------------------------------------------------------------
 # Compute species diversity with fixed sample coverage
 # 
 # \code{invChat} compute species diversity with fixed sample coverage
@@ -397,7 +391,6 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
 }
 
 
-# invChat.Ind -------------------------------------------------------------------
 invChat.Ind <- function (x, q, C) {
   x <- x[x>0] ####added by yhc
   m <- NULL
@@ -445,7 +438,6 @@ invChat.Ind <- function (x, q, C) {
 }
 
 
-# invChat.Sam -------------------------------------------------------------------
 invChat.Sam <- function (x, q, C) {
   x <- x[x>0] ####added by yhc
   m <- NULL
@@ -492,7 +484,6 @@ invChat.Sam <- function (x, q, C) {
 }
 
 
-# invSize -------------------------------------------------------------------
 invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
   qtile <- qnorm(1-(1-conf)/2)
   TYPE <- c("abundance", "incidence_freq")
@@ -566,7 +557,6 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
 }
 
 
-# invSize.Ind -------------------------------------------------------------------
 invSize.Ind <- function(x, q, size){
   m <- NULL # no visible binding for global variable 'm'
   
@@ -585,7 +575,6 @@ invSize.Ind <- function(x, q, size){
 }
 
 
-# invSize.Sam -------------------------------------------------------------------
 invSize.Sam <- function(x, q, size){
   m <- NULL # no visible binding for global variable 'm'
   
@@ -605,8 +594,6 @@ invSize.Sam <- function(x, q, size){
 
 
 
-
-# Diversity_profile -------------------------------------------------------------------
 Diversity_profile <- function(x,q){
   x = x[x>0]
   n = sum(x)
@@ -640,7 +627,6 @@ Diversity_profile <- function(x,q){
 }
 
 
-# Diversity_profile.inc -------------------------------------------------------------------
 Diversity_profile.inc <- function(data,q){
   nT = data[1]
   Yi = data[-1]
@@ -676,7 +662,6 @@ Diversity_profile.inc <- function(data,q){
 }
 
 
-# Diversity_profile_MLE -------------------------------------------------------------------
 Diversity_profile_MLE <- function(x,q){
   p <- x[x>0]/sum(x)
   Sub <- function(q){
@@ -688,7 +673,6 @@ Diversity_profile_MLE <- function(x,q){
 }
 
 
-# Diversity_profile_MLE.inc -------------------------------------------------------------------
 Diversity_profile_MLE.inc <- function(data,q){
   Yi = data[-1]
   U = sum(Yi)
@@ -700,7 +684,6 @@ Diversity_profile_MLE.inc <- function(data,q){
 }
 
 
-# EstiBootComm.Ind -------------------------------------------------------------------
 # Estimation of species relative abundance distribution
 # 
 # \code{EstiBootComm.Ind} Estimation of species reletive abundance distribution to obtain bootstrap s.e.
@@ -734,7 +717,6 @@ EstiBootComm.Ind <- function(Spec){
 }
 
 
-# EstiBootComm.Sam -------------------------------------------------------------------
 # Estimation of species detection distribution
 # 
 # \code{EstiBootComm.Sam} Estimation of species detection distribution to obtain bootstrap s.e.
@@ -772,7 +754,6 @@ EstiBootComm.Sam <- function(Spec){
 
 
 
-# asyTD -------------------------------------------------------------------
 # Estimation of asymptotic diversity
 # 
 # \code{asyTD} Estimation of species detection distribution to obtain bootstrap s.e.
@@ -832,7 +813,6 @@ asyTD = function(data, datatype, q, nboot, conf) {
 
 
 
-# obsTD -------------------------------------------------------------------
 # Observed diversity
 # 
 # \code{TDinfo} Estimation of species detection distribution to obtain bootstrap s.e.
@@ -891,7 +871,6 @@ obsTD = function(data, datatype, q, nboot, conf) {
 
 
 
-# TDinfo -------------------------------------------------------------------
 # Data information
 # 
 # \code{obsTD} Estimation of species detection distribution to obtain bootstrap s.e.
