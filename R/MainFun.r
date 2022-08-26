@@ -1160,7 +1160,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
-#' @return a table of diversity q profile by 'Estimated'.
+#' @return a table of diversity q profile by 'Asymptotic' or 'Observed'.
 #' @examples
 #' ## example for abundance-based data
 #' # diversity = 'TD'
@@ -1218,7 +1218,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' out8
 #' 
 #' @export
-AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Empirical'),
+AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
                  PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
@@ -1236,9 +1236,9 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     
     if (sum(method == "Asymptotic") == length(method)) 
       
-      out = asyTD(data, datatype, q, nboot, conf) else if (sum(method == "Empirical") == length(method)) 
+      out = asyTD(data, datatype, q, nboot, conf) else if (sum(method == "Observed") == length(method)) 
         
-        out = obsTD(data, datatype, q, nboot, conf) else if (sum(method == c("Asymptotic", "Empirical")) == length(method)) 
+        out = obsTD(data, datatype, q, nboot, conf) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
           
           out = rbind(asyTD(data, datatype, q, nboot, conf), 
                       obsTD(data, datatype, q, nboot, conf))
@@ -1268,10 +1268,10 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     if (sum(method == "Asymptotic") == length(method)) 
       
       out = asymPD(datalist = mydata, datatype = datatype, phylotr = mytree, 
-                   q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == "Empirical") == length(method)) 
+                   q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == "Observed") == length(method)) 
                      
                      out = EmpPD(datalist = mydata, datatype = datatype, phylotr = mytree, 
-                                 q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == c("Asymptotic", "Empirical")) == length(method)) 
+                                 q = q, reft = PDreftime, cal = PDtype, nboot, conf) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
                                    
                                    out = rbind(asymPD(datalist = mydata, datatype = datatype, phylotr = mytree, 
                                                       q = q, reft = PDreftime, cal = PDtype, nboot, conf), 
@@ -1297,10 +1297,10 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     
     if (sum(method == "Asymptotic") == length(method)) 
       out = FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                        nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == "Empirical") == length(method)) 
+                        nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == "Observed") == length(method)) 
                           
                           out = FDtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                            nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == c("Asymptotic", "Empirical")) == length(method)) 
+                                            nboot = nboot, conf = conf, tau = FDtau) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
                                               
                                               out = rbind(FDtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
                                                                       nboot = nboot, conf = conf, tau = FDtau), 
@@ -1325,10 +1325,10 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
     
     if (sum(method == "Asymptotic") == length(method)) 
       out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                         nboot = nboot, conf = conf,  tau = NULL) else if (sum(method == "Empirical") == length(method)) 
+                         nboot = nboot, conf = conf,  tau = NULL) else if (sum(method == "Observed") == length(method)) 
                            
                            out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                              nboot = nboot, conf = conf, tau = NULL) else if (sum(method == c("Asymptotic", "Empirical")) == length(method)) 
+                                              nboot = nboot, conf = conf, tau = NULL) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
                                                 
                                                 out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
                                                                          nboot = nboot, conf = conf, tau = NULL), 
@@ -1348,7 +1348,7 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' 
 #' @param outcome the outcome of the functions \code{AO3D}.\cr
 #' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
-#' @return a figure of asymptotic of empirical three-divrsity\cr\cr
+#' @return a figure of asymptotic or empirical three-divrsity\cr\cr
 #'
 #' @examples
 #' ## example for abundance-based data

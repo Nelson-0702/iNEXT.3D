@@ -12,7 +12,7 @@ AO3D(
   nboot = 50,
   conf = 0.95,
   nT = NULL,
-  method = c("Asymptotic", "Empirical"),
+  method = c("Asymptotic", "Observed"),
   PDtree,
   PDreftime = NULL,
   PDtype = "meanPD",
@@ -38,7 +38,7 @@ AO3D(
 
 \item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
-\item{method}{computing type from 'Asymptotic' or 'Observed'.}
+\item{method}{computing type. Select 'Asymptotic' or 'Observed'.}
 
 \item{PDtree}{(required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -53,7 +53,7 @@ AO3D(
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a table of diversity q profile by 'Estimated'.
+a table of diversity q profile by 'Asymptotic' or 'Observed'.
 }
 \description{
 \code{AO3D} The estimated diversity of order q
