@@ -177,7 +177,8 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
         }
       }
       data[is.na(data)] = 0
-      data = column_to_rownames(data, var = "species")
+      rownames(data) = data$species
+      data = data %>% select(-species)
       
     }
     
