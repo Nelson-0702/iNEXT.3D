@@ -333,8 +333,8 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
   tip <- tree$tip.label[-match(pool.name, tree$tip.label)]
   mytree <- drop.tip(tree, tip)
   
-  H_max = ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree)))
-  if(is.null(reftime)) reftime <- H_max else reftime <- reftime
+  if (is.null(reftime)) reftime <- ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree))) else 
+    reftime <- reftime
   reftime <- sort(unique(reftime))
   
   if (sum(reftime<=0) > 0) { stop("Reference time must be greater than 0. Use NULL to set it to pooled tree height.",call. = FALSE) }
