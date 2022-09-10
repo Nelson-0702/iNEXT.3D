@@ -715,7 +715,7 @@ EstiBootComm.Ind <- function(Spec){
   Prob.hat.Unse <- rep(a/ceiling(f0.hat), ceiling(f0.hat))  	#estimation of relative abundance of unseen species in the sample
   
   if (is.null(names(Prob.hat))) names(Prob.hat) = paste('Species', 1:length(Prob.hat), sep = '_')
-  if (is.null(names(Prob.hat.Unse))) names(Prob.hat.Unse) = paste('Undetected', 1:length(Prob.hat.Unse), sep = '_')
+  if (is.null(names(Prob.hat.Unse)) & length(Prob.hat.Unse) > 0) names(Prob.hat.Unse) = paste('Undetected', 1:length(Prob.hat.Unse), sep = '_')
   
   return(c(Prob.hat, Prob.hat.Unse))		  							#Output: a vector of estimated relative abundance
 }

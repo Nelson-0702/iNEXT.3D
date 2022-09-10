@@ -87,10 +87,10 @@ Coverage = function(data, datatype, m){
 #' Printing iNEXT.3D object
 #' 
 #' \code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
-#' @param x an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.
+#' @param x an \code{iNEXT.3D} object computed by \code{\link{iNEXT3D}}.
 #' @param ... additional arguments.
 #' @export
-print.iNEXT3D <- function(x, ...){
+print.iNEXT.3D <- function(x, ...){
   site.n <- nrow(x[[1]])
   order.n <- paste(unique(x[[2]]$size_based$Order.q), collapse = ", ")
   cat("Compare ", site.n, " assemblages with Hill number order q = ", order.n,".\n", sep = "")
