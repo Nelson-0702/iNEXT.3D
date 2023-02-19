@@ -15,6 +15,7 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
         beta <- rep(0,length(q))
         beta0plus <- which(asy_i != obs_i)
         beta[beta0plus] <-(obs_i[beta0plus]-RPD_m_i[beta0plus])/(asy_i[beta0plus]-RPD_m_i[beta0plus])
+        beta[beta == -Inf] = 1
         outq <- sapply(1:length(q), function(i){
           if( q[i]!=2 ) {
             obs_i[i]+(asy_i[i]-obs_i[i])*(1-(1-beta[i])^m)
