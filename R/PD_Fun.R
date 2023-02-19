@@ -461,7 +461,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
 
 
 
-EmpPD <- function(datalist,datatype, phylotr, q, reft, cal, nboot, conf){
+EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
   nms <- names(datalist)
   qtile <- qnorm(1-(1-conf)/2)
   if(datatype=="abundance"){
@@ -846,6 +846,7 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
     lambda <- u/n*(1-c) / sum((data/n)*(1- (data/n) )^n)
     p_hat <- (data/n) * (1-lambda*(1- (data/n) )^n)
     p_hat0 <- rep( (u/n) * (1-c) / f0 , f0 );names(p_hat0) <- paste0("notob",1:length(p_hat0))
+    if(length(p_hat0)>0) names(p_hat0) <- paste0("notob",1:length(p_hat0))
     g0_hat <- sapply(1:length(reft), function(i){
       Li = BLs[,i]
       I1 <- which(aL$branch.abun==1&Li>0);I2 <- which(aL$branch.abun==2&Li>0)
