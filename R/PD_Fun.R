@@ -845,7 +845,7 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
                 1 - (f1/u)*((n-1)*(f1-1)/((n-1)*(f1-1)+2)))
     lambda <- u/n*(1-c) / sum((data/n)*(1- (data/n) )^n)
     p_hat <- (data/n) * (1-lambda*(1- (data/n) )^n)
-    p_hat0 <- rep( (u/n) * (1-c) / f0 , f0 );names(p_hat0) <- paste0("notob",1:length(p_hat0))
+    p_hat0 <- rep( (u/n) * (1-c) / f0 , f0 )
     if(length(p_hat0)>0) names(p_hat0) <- paste0("notob",1:length(p_hat0))
     g0_hat <- sapply(1:length(reft), function(i){
       Li = BLs[,i]
