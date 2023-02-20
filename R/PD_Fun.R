@@ -507,7 +507,10 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
             TDqb = Diversity_profile_MLE(Boots$boot_data[1:(length(x)+f0),B], q)
             out_b <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
           out_b
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
       }
@@ -557,7 +560,10 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
             TDqb = Diversity_profile_MLE.inc(c(ncol(x), Boots$boot_data[1:(nrow(x)+f0),B]), q)
             out_b <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
           out_b
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
       }
@@ -618,7 +624,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
         est <- c(sapply(reft[first.Inode >= reft], function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector(),
                  PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT[,first.Inode < reft,drop = F],q = q,nt = n,reft = reft[first.Inode < reft],cal = cal))
       } else if (sum(first.Inode < reft) != 0) {
-        est <- PhD.q.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,q = q,nt = n,reft = reft,cal = cal)
+        est <- PhD.q.est(ai = aL$treeNabu$branch.abun, Lis = aL$BLbyT, q = q, nt = n, reft = reft, cal = cal)
       } else {
         TDq = Diversity_profile(x, q)
         est <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
@@ -651,7 +657,10 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
             outb <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
           
           return(outb)
-        }) %>% apply(., 1, sd)
+        }) 
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
@@ -708,7 +717,10 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
             outb <- sapply(reft, function(i) TDqb*ifelse(cal == 'meanPD', 1, i)) %>% as.vector()}
           
           return(outb)
-        }) %>% apply(., 1, sd)
+        }) 
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
@@ -784,6 +796,8 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
     g2 <- sum(Li[I2])
     est <- sapply(q, function(q_) Sub(q = q_,f1 = f1, f2 = f2, A = A,g1 = g1,g2 = g2,PD_obs = PD_obs,t_bar = t_bar,Li = Li))
   })
+  
+  if(length(q) == 1 & ncol(Lis) == 1) est = as.matrix(est)
   if(cal=='PD'){
     est <- as.numeric(est)
   }else if (cal=='meanPD'){

@@ -785,6 +785,7 @@ asyTD = function(data, datatype, q, nboot, conf) {
   }else if(datatype=="incidence_freq"){
     out <- lapply(1:length(data),function(i){
       dq <- Diversity_profile.inc(data[[i]],q)
+      names(dq) = NULL
       if(nboot > 1){
         nT <- data[[i]][1]
         Prob.hat <- EstiBootComm.Sam(data[[i]])

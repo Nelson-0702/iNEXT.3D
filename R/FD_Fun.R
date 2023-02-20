@@ -205,7 +205,10 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           invChatFD_abu(ai_vi = Boot_aivi,data_ = Boot.X[,B],q = q,Cs = level,tau = tau)$qFD
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,nrow(est))
       }
@@ -224,7 +227,10 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           invChatFD_inc(ai_vi = Boot_aivi,data_ = Boot.X,q = q,Cs = level,tau = tau)$qFD
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,nrow(est))
       }
@@ -394,7 +400,10 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
             TDqb = Diversity_profile_MLE(Boot.X[,B], q)
             rep(TDqb, length(tau))
           }
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
       }
@@ -442,7 +451,10 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
             rep(TDqb, length(tau))
           }
           
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
       }
@@ -556,7 +568,10 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
             TDqb = Diversity_profile(Boot.X[,B], q)
             rep(TDqb, length(tau))
           }
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
@@ -605,7 +620,10 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
             TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
             rep(TDqb, length(tau))
           }
-        }) %>% apply(., 1, sd)
+        })
+        
+        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
       }
