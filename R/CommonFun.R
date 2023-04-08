@@ -330,6 +330,9 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
   data <- data[rowSums(data)>0,,drop=FALSE]
   
   pool.name <- rownames(data)
+  if (sum(pool.name %in% tree$tip.label) != length(pool.name))
+    stop("Data and tree tip label contain unmatched species", call. = FALSE)
+  
   tip <- tree$tip.label[-match(pool.name, tree$tip.label)]
   mytree <- drop.tip(tree, tip)
   
