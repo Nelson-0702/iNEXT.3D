@@ -210,9 +210,8 @@ Enter 0 to skip the bootstrap procedures. Default is 50.
 conf
 </td>
 <td style="text-align: left;">
-a positive integer specifying the number of bootstrap replications when
-assessing sampling uncertainty and constructing confidence intervals.
-Enter 0 to skip the bootstrap procedures. Default is 50.
+a positive number \< 1 specifying the level of confidence interval.
+Default is 0.95.
 </td>
 </tr>
 <tr>
@@ -368,16 +367,16 @@ $size_based (LCL and UCL are obtained for fixed size.)
 # A tibble: 45 x 10
    Assemblage     m Method        Order.q    qD qD.LCL qD.UCL    SC SC.LCL SC.UCL
    <chr>      <dbl> <chr>           <dbl> <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl>
- 1 EM             1 Rarefaction         0  1      1.00   1    0.136  0.127  0.145
- 2 EM           196 Rarefaction         0 15.2   13.7   16.8  0.987  0.980  0.995
- 3 EM           373 Observed            0 17     14.5   19.5  0.992  0.984  1.00 
- 4 EM           550 Extrapolation       0 18.2   14.9   21.6  0.994  0.988  1    
- 5 EM           746 Extrapolation       0 19.2   15.1   23.3  0.996  0.991  1    
- 6 EM             1 Rarefaction         1  1      1      1    0.136  0.127  0.145
- 7 EM           196 Rarefaction         1  9.07   8.55   9.58 0.987  0.980  0.995
- 8 EM           373 Observed            1  9.27   8.71   9.83 0.992  0.984  1.00 
- 9 EM           550 Extrapolation       1  9.37   8.79   9.95 0.994  0.988  1    
-10 EM           746 Extrapolation       1  9.43   8.84  10.0  0.996  0.991  1    
+ 1 EM             1 Rarefaction         0  1      1.00   1    0.136  0.128  0.145
+ 2 EM           196 Rarefaction         0 15.2   13.7   16.7  0.987  0.980  0.994
+ 3 EM           373 Observed            0 17     14.7   19.3  0.992  0.988  0.996
+ 4 EM           550 Extrapolation       0 18.2   15.3   21.2  0.994  0.990  0.998
+ 5 EM           746 Extrapolation       0 19.2   15.6   22.8  0.996  0.993  0.999
+ 6 EM             1 Rarefaction         1  1      1      1    0.136  0.128  0.145
+ 7 EM           196 Rarefaction         1  9.07   8.62   9.51 0.987  0.980  0.994
+ 8 EM           373 Observed            1  9.27   8.80   9.75 0.992  0.988  0.996
+ 9 EM           550 Extrapolation       1  9.37   8.88   9.85 0.994  0.990  0.998
+10 EM           746 Extrapolation       1  9.43   8.93   9.93 0.996  0.993  0.999
 # ... with 35 more rows
 # i Use `print(n = ...)` to see more rows
 
@@ -388,32 +387,32 @@ $coverage_based (LCL and UCL are obtained for fixed coverage; interval length is
 # A tibble: 45 x 8
    Assemblage    SC     m Method        Order.q    qD qD.LCL qD.UCL
    <chr>      <dbl> <dbl> <chr>           <dbl> <dbl>  <dbl>  <dbl>
- 1 EM         0.136    1  Rarefaction         0  1     0.987   1.01
- 2 EM         0.987  196. Rarefaction         0 15.2  12.7    17.7 
- 3 EM         0.992  373  Observed            0 17    13.5    20.5 
- 4 EM         0.994  550. Extrapolation       0 18.2  14.0    22.5 
- 5 EM         0.996  746. Extrapolation       0 19.2  14.3    24.1 
- 6 EM         0.136    1  Rarefaction         1  1     0.987   1.01
- 7 EM         0.987  196. Rarefaction         1  9.07  8.39    9.74
- 8 EM         0.992  373  Observed            1  9.27  8.57    9.97
- 9 EM         0.994  550. Extrapolation       1  9.37  8.66   10.1 
-10 EM         0.996  746. Extrapolation       1  9.43  8.73   10.1 
+ 1 EM         0.136    1  Rarefaction         0  1     0.967   1.03
+ 2 EM         0.987  196. Rarefaction         0 15.2  12.1    18.3 
+ 3 EM         0.992  373  Observed            0 17    12.6    21.4 
+ 4 EM         0.994  550. Extrapolation       0 18.2  13.3    23.1 
+ 5 EM         0.996  746. Extrapolation       0 19.2  13.8    24.5 
+ 6 EM         0.136    1  Rarefaction         1  1     0.968   1.03
+ 7 EM         0.987  196. Rarefaction         1  9.07  8.48    9.66
+ 8 EM         0.992  373  Observed            1  9.27  8.70    9.84
+ 9 EM         0.994  550. Extrapolation       1  9.37  8.80    9.93
+10 EM         0.996  746. Extrapolation       1  9.43  8.87    9.99
 # ... with 35 more rows
 # i Use `print(n = ...)` to see more rows
 
 NOTE: The above output only shows five estimates for each assemblage; call iNEXT.object$iNextEst$coverage_based to view complete output.
 
 AsyEst: asymptotic diversity estimates along with related statistics.
-  Assemblage         Diversity  Observed Estimator      s.e.       LCL      UCL
-1         EM  Species richness 17.000000 21.487936 4.7252632 17.000000 30.74928
-2         EM Shannon diversity  9.272102  9.541765 0.5106684  8.540873 10.54266
-3         EM Simpson diversity  7.218106  7.340810 0.4571866  6.444741  8.23688
-4         MO  Species richness 39.000000 40.998658 3.2474309 39.000000 47.36351
-5         MO Shannon diversity 19.712107 19.987465 0.7107617 18.594398 21.38053
-6         MO Simpson diversity 13.979950 14.102888 0.6083023 12.910638 15.29514
-7         TR  Species richness 42.000000 45.996223 3.7077529 42.000000 53.26329
-8         TR Shannon diversity 23.941938 24.481173 0.7166216 23.076621 25.88573
-9         TR Simpson diversity 18.605455 18.920295 0.7269383 17.495522 20.34507
+  Assemblage         Diversity  Observed Estimator      s.e.       LCL       UCL
+1         EM  Species richness 17.000000 21.487936 7.8075998 17.000000 36.790550
+2         EM Shannon diversity  9.272102  9.541765 0.2735255  9.005665 10.077865
+3         EM Simpson diversity  7.218106  7.340810 0.3037283  6.745514  7.936107
+4         MO  Species richness 39.000000 40.998658 3.8025660 39.000000 48.451550
+5         MO Shannon diversity 19.712107 19.987465 0.4717668 19.062819 20.912111
+6         MO Simpson diversity 13.979950 14.102888 0.4343910 13.251498 14.954279
+7         TR  Species richness 42.000000 45.996223 3.9371403 42.000000 53.712876
+8         TR Shannon diversity 23.941938 24.481173 0.4528253 23.593652 25.368695
+9         TR Simpson diversity 18.605455 18.920295 0.4792300 17.981021 19.859568
 ```
 
 The second data frame of list $iNextEst (as shown below for
@@ -598,15 +597,15 @@ indicated in the method of the output.
 ``` r
 estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage",level = 0.93)
   Assemblage   SC         m      Method Order.q        qD      s.e.    qD.LCL    qD.UCL
-1         EM 0.93  47.88966 Rarefaction       0 11.194508 0.5440690 10.128152 12.260863
-2         EM 0.93  47.88966 Rarefaction       1  8.004329 0.3287016  7.360086  8.648572
-3         EM 0.93  47.88966 Rarefaction       2  6.482469 0.2911946  5.911738  7.053200
-4         MO 0.93 107.56810 Rarefaction       0 24.830302 0.6556692 23.545214 26.115390
-5         MO 0.93 107.56810 Rarefaction       1 16.735683 0.4208898 15.910754 17.560611
-6         MO 0.93 107.56810 Rarefaction       2 12.571520 0.4062615 11.775263 13.367778
-7         TR 0.93 114.37603 Rarefaction       0 27.935556 0.6456804 26.670046 29.201067
-8         TR 0.93 114.37603 Rarefaction       1 20.360646 0.4479612 19.482658 21.238634
-9         TR 0.93 114.37603 Rarefaction       2 16.357398 0.4441066 15.486965 17.227831
+1         EM 0.93  47.88966 Rarefaction       0 11.194508 0.5723628 10.072697 12.316318
+2         EM 0.93  47.88966 Rarefaction       1  8.004329 0.3413100  7.335374  8.673284
+3         EM 0.93  47.88966 Rarefaction       2  6.482469 0.2846312  5.924602  7.040336
+4         MO 0.93 107.56810 Rarefaction       0 24.830302 0.8163906 23.230206 26.430398
+5         MO 0.93 107.56810 Rarefaction       1 16.735683 0.5061083 15.743729 17.727637
+6         MO 0.93 107.56810 Rarefaction       2 12.571520 0.4233112 11.741846 13.401195
+7         TR 0.93 114.37603 Rarefaction       0 27.935556 0.8959244 26.179577 29.691536
+8         TR 0.93 114.37603 Rarefaction       1 20.360646 0.5638913 19.255439 21.465853
+9         TR 0.93 114.37603 Rarefaction       2 16.357398 0.4804488 15.415736 17.299060
 ```
 
 ### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: AO3D
@@ -630,73 +629,73 @@ along with its confidence interval, for a specified q level from 0 to 2.
 out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", method = c("Asymptotic", "Observed"),nboot = 5,conf = 0.95)
 
 out1
-   Order.q        qD      s.e.    qD.LCL    qD.UCL Assemblage     Method
-1      0.0 21.487936 2.9382599 15.729052 27.246819         EM Asymptotic
-2      0.2 16.936433 1.5264765 13.944594 19.928272         EM Asymptotic
-3      0.4 13.885407 0.7940835 12.329032 15.441782         EM Asymptotic
-4      0.6 11.862781 0.4699537 10.941689 12.783873         EM Asymptotic
-5      0.8 10.496859 0.3373749  9.835617 11.158102         EM Asymptotic
-6      1.0  9.541765 0.2756630  9.001476 10.082055         EM Asymptotic
-7      1.2  8.847719 0.2407288  8.375899  9.319539         EM Asymptotic
-8      1.4  8.325449 0.2196508  7.894941  8.755956         EM Asymptotic
-9      1.6  7.920890 0.2074746  7.514247  8.327533         EM Asymptotic
-10     1.8  7.600095 0.2011742  7.205801  7.994389         EM Asymptotic
-11     2.0  7.340810 0.1986141  6.951534  7.730087         EM Asymptotic
-12     0.0 40.998658 5.7841620 29.661908 52.335407         MO Asymptotic
-13     0.2 34.209437 2.7554947 28.808767 39.610107         MO Asymptotic
-14     0.4 29.060182 1.3936238 26.328729 31.791634         MO Asymptotic
-15     0.6 25.175831 0.8792284 23.452575 26.899087         MO Asymptotic
-16     0.8 22.235885 0.6806774 20.901782 23.569988         MO Asymptotic
-17     1.0 19.987465 0.5682018 18.873810 21.101120         MO Asymptotic
-18     1.2 18.241913 0.4851258 17.291084 19.192742         MO Asymptotic
-19     1.4 16.863382 0.4224947 16.035307 17.691456         MO Asymptotic
-20     1.6 15.755819 0.3781258 15.014706 16.496932         MO Asymptotic
-21     1.8 14.851614 0.3489941 14.167598 15.535630         MO Asymptotic
-22     2.0 14.102888 0.3310951 13.453954 14.751823         MO Asymptotic
-23     0.0 45.996223 7.3057997 31.677119 60.315327         TR Asymptotic
-24     0.2 38.731480 3.3500796 32.165444 45.297515         TR Asymptotic
-25     0.4 33.399637 1.6025708 30.258656 36.540618         TR Asymptotic
-26     0.6 29.505773 1.0217409 27.503198 31.508348         TR Asymptotic
-27     0.8 26.635682 0.8660361 24.938282 28.333082         TR Asymptotic
-28     1.0 24.481173 0.8032734 22.906786 26.055560         TR Asymptotic
-29     1.2 22.827199 0.7589538 21.339677 24.314721         TR Asymptotic
-30     1.4 21.527891 0.7222266 20.112353 22.943429         TR Asymptotic
-31     1.6 20.484834 0.6912197 19.130068 21.839599         TR Asymptotic
-32     1.8 19.631065 0.6648912 18.327902 20.934227         TR Asymptotic
-33     2.0 18.920295 0.6423051 17.661400 20.179189         TR Asymptotic
-34     0.0 17.000000 0.8366600 15.360176 18.639824         EM  Empirical
-35     0.2 14.471457 0.3651264 13.755822 15.187092         EM  Empirical
-36     0.4 12.567736 0.1635547 12.247174 12.888297         EM  Empirical
-37     0.6 11.145510 0.2255504 10.703439 11.587580         EM  Empirical
-38     0.8 10.079552 0.2959636  9.499474 10.659630         EM  Empirical
-39     1.0  9.272102 0.3313700  8.622629  9.921575         EM  Empirical
-40     1.2  8.651511 0.3441312  7.977026  9.325995         EM  Empirical
-41     1.4  8.166818 0.3451254  7.490385  8.843251         EM  Empirical
-42     1.6  7.782094 0.3408971  7.113948  8.450240         EM  Empirical
-43     1.8  7.471913 0.3349573  6.815409  8.128418         EM  Empirical
-44     2.0  7.218106 0.3290211  6.573237  7.862976         EM  Empirical
-45     0.0 39.000000 1.0000000 37.040036 40.959964         MO  Empirical
-46     0.2 32.970780 0.7689797 31.463607 34.477952         MO  Empirical
-47     0.4 28.269000 0.6673441 26.961029 29.576970         MO  Empirical
-48     0.6 24.647500 0.5841257 23.502634 25.792365         MO  Empirical
-49     0.8 21.864493 0.5109297 20.863089 22.865897         MO  Empirical
-50     1.0 19.712107 0.4567004 18.816991 20.607223         MO  Empirical
-51     1.2 18.026804 0.4238459 17.196081 18.857526         MO  Empirical
-52     1.4 16.686924 0.4082451 15.886779 17.487070         MO  Empirical
-53     1.6 15.604656 0.4037298 14.813360 16.395951         MO  Empirical
-54     1.8 14.717297 0.4051339 13.923250 15.511345         MO  Empirical
-55     2.0 13.979950 0.4091088 13.178112 14.781789         MO  Empirical
-56     0.0 42.000000 1.6733201 38.720353 45.279647         TR  Empirical
-57     0.2 36.253363 1.0737844 34.148784 38.357942         TR  Empirical
-58     0.4 31.844736 0.7535099 30.367883 33.321588         TR  Empirical
-59     0.6 28.487492 0.6230373 27.266361 29.708622         TR  Empirical
-60     0.8 25.922807 0.5788729 24.788237 27.057378         TR  Empirical
-61     1.0 23.941938 0.5567460 22.850736 25.033140         TR  Empirical
-62     1.2 22.387845 0.5345878 21.340072 23.435617         TR  Empirical
-63     1.4 21.146894 0.5088802 20.149507 22.144281         TR  Empirical
-64     1.6 20.138290 0.4811358 19.195281 21.081299         TR  Empirical
-65     1.8 19.304760 0.4533574 18.416196 20.193324         TR  Empirical
-66     2.0 18.605455 0.4269397 17.768668 19.442241         TR  Empirical
+   Order.q        qD       s.e.    qD.LCL    qD.UCL Assemblage     Method
+1      0.0 21.487936  6.2179769  9.300925 33.674946         EM Asymptotic
+2      0.2 16.936433  2.9506297 11.153305 22.719561         EM Asymptotic
+3      0.4 13.885407  1.2425274 11.450098 16.320716         EM Asymptotic
+4      0.6 11.862781  0.5783225 10.729290 12.996272         EM Asymptotic
+5      0.8 10.496859  0.4821520  9.551859 11.441860         EM Asymptotic
+6      1.0  9.541765  0.5042795  8.553395 10.530135         EM Asymptotic
+7      1.2  8.847719  0.5139625  7.840371  9.855067         EM Asymptotic
+8      1.4  8.325449  0.5099681  7.325930  9.324968         EM Asymptotic
+9      1.6  7.920890  0.5002279  6.940461  8.901319         EM Asymptotic
+10     1.8  7.600095  0.4890426  6.641589  8.558601         EM Asymptotic
+11     2.0  7.340810  0.4782234  6.403510  8.278111         EM Asymptotic
+12     0.0 40.998658  2.7481544 35.612374 46.384941         MO Asymptotic
+13     0.2 34.209437  0.9715199 32.305293 36.113581         MO Asymptotic
+14     0.4 29.060182  0.3577466 28.359011 29.761352         MO Asymptotic
+15     0.6 25.175831  0.4467931 24.300133 26.051530         MO Asymptotic
+16     0.8 22.235885  0.5318755 21.193429 23.278342         MO Asymptotic
+17     1.0 19.987465  0.5576188 18.894553 21.080378         MO Asymptotic
+18     1.2 18.241913  0.5565624 17.151071 19.332756         MO Asymptotic
+19     1.4 16.863382  0.5444817 15.796217 17.930546         MO Asymptotic
+20     1.6 15.755819  0.5275033 14.721931 16.789706         MO Asymptotic
+21     1.8 14.851614  0.5080952 13.855766 15.847463         MO Asymptotic
+22     2.0 14.102888  0.4874604 13.147484 15.058293         MO Asymptotic
+23     0.0 45.996223 17.2515133 12.183878 79.808568         TR Asymptotic
+24     0.2 38.731480  7.6521019 23.733636 53.729324         TR Asymptotic
+25     0.4 33.399637  3.0887934 27.345714 39.453561         TR Asymptotic
+26     0.6 29.505773  1.1925180 27.168481 31.843065         TR Asymptotic
+27     0.8 26.635682  0.4662209 25.721906 27.549458         TR Asymptotic
+28     1.0 24.481173  0.2105288 24.068544 24.893802         TR Asymptotic
+29     1.2 22.827199  0.1566725 22.520126 23.134271         TR Asymptotic
+30     1.4 21.527891  0.1836786 21.167888 21.887895         TR Asymptotic
+31     1.6 20.484834  0.2283208 20.037333 20.932334         TR Asymptotic
+32     1.8 19.631065  0.2724989 19.096977 20.165153         TR Asymptotic
+33     2.0 18.920295  0.3118545 18.309071 19.531518         TR Asymptotic
+34     0.0 17.000000  1.5811388 13.901025 20.098975         EM  Empirical
+35     0.2 14.471457  1.0255475 12.461421 16.481493         EM  Empirical
+36     0.4 12.567736  0.6403398 11.312693 13.822779         EM  Empirical
+37     0.6 11.145510  0.3930937 10.375060 11.915959         EM  Empirical
+38     0.8 10.079552  0.2515846  9.586456 10.572649         EM  Empirical
+39     1.0  9.272102  0.1871846  8.905227  9.638977         EM  Empirical
+40     1.2  8.651511  0.1684919  8.321272  8.981749         EM  Empirical
+41     1.4  8.166818  0.1672663  7.838982  8.494654         EM  Empirical
+42     1.6  7.782094  0.1693320  7.450209  8.113979         EM  Empirical
+43     1.8  7.471913  0.1704998  7.137740  7.806087         EM  Empirical
+44     2.0  7.218106  0.1702588  6.884405  7.551808         EM  Empirical
+45     0.0 39.000000  1.0000000 37.040036 40.959964         MO  Empirical
+46     0.2 32.970780  0.6064201 31.782218 34.159341         MO  Empirical
+47     0.4 28.269000  0.5268270 27.236438 29.301562         MO  Empirical
+48     0.6 24.647500  0.5252337 23.618060 25.676939         MO  Empirical
+49     0.8 21.864493  0.5266566 20.832265 22.896721         MO  Empirical
+50     1.0 19.712107  0.5275484 18.678131 20.746083         MO  Empirical
+51     1.2 18.026804  0.5304494 16.987142 19.066465         MO  Empirical
+52     1.4 16.686924  0.5348825 15.638574 17.735275         MO  Empirical
+53     1.6 15.604656  0.5392157 14.547812 16.661499         MO  Empirical
+54     1.8 14.717297  0.5421461 13.654711 15.779884         MO  Empirical
+55     2.0 13.979950  0.5430364 12.915619 15.044282         MO  Empirical
+56     0.0 42.000000  2.4899799 37.119729 46.880271         TR  Empirical
+57     0.2 36.253363  1.8114448 32.702996 39.803730         TR  Empirical
+58     0.4 31.844736  1.4270242 29.047820 34.641652         TR  Empirical
+59     0.6 28.487492  1.2214653 26.093464 30.881520         TR  Empirical
+60     0.8 25.922807  1.1066850 23.753745 28.091870         TR  Empirical
+61     1.0 23.941938  1.0343156 21.914717 25.969159         TR  Empirical
+62     1.2 22.387845  0.9827904 20.461611 24.314078         TR  Empirical
+63     1.4 21.146894  0.9430966 19.298459 22.995330         TR  Empirical
+64     1.6 20.138290  0.9111937 18.352383 21.924197         TR  Empirical
+65     1.8 19.304760  0.8849557 17.570279 21.039241         TR  Empirical
+66     2.0 18.605455  0.8630694 16.913870 20.297040         TR  Empirical
 ```
 
 ### GRAPHIC DISPLAYS FUNCTION: ggAO3D()
