@@ -26,7 +26,7 @@ iNEXT.3D (R package)
 
 <font color="394CAE"><h3 color= 394CAE style = "font-weight: bold"> Introduction to iNEXT.3D (R package): Excerpt from iNEXT.3D User’s Guide </h3> </font>
 <br>
-<h5><b>Hsieh, Anne Chao, Kai-Hsiang Hu</b>
+<h5><b>Anne Chao, Kai-Hsiang Hu</b>
 <br><br>
 <i>Institute of Statistics, National Tsing Hua University, Hsin-Chu, Taiwan 30043</i>  
 </h5>
