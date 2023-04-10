@@ -24,7 +24,7 @@ iNEXT.3D (R package)
 
 <h5 align="right">Latest version: `r Sys.Date()`</h5>
 
-<font color="394CAE"><h3 color= 394CAE style = "font-weight: bold"> Introduction to `iNEXT.3D` (R package): Excerpt from iNEXT.3D User’s Guide </h3> </font>
+<font color="394CAE"><h3 color= 394CAE style = "font-weight: bold"> Introduction to iNEXT.3D (R package): Excerpt from iNEXT.3D User’s Guide </h3> </font>
 <br>
 <h5><b>Hsieh, Anne Chao, Kai-Hsiang Hu</b>
 <br><br>
@@ -45,9 +45,9 @@ iNEXT.3D (INterpolation and EXTrapolation for three dimensions of diversity) is 
 -   Required: [R](http://cran.rstudio.com/)
 -   Suggested: [RStudio IDE](http://www.rstudio.com/ide/download/)
 
-### HOW TO RUN INEXT:
+### HOW TO RUN INEXT.3D:
 
-The iNEXT package is available on [Github](https://github.com/AnneChao/iNEXT.3D) and can be downloaded with a standard installation procedure using the commands shown below.For a first-time installation, an additional visualization extension package (ggplot2) must be installed and loaded.  
+The iNEXT.3D package is available on [Github](https://github.com/AnneChao/iNEXT.3D) and can be downloaded with a standard installation procedure using the commands shown below.For a first-time installation, an additional visualization extension package (ggplot2) must be installed and loaded.  
 
 ```{r install, eval=FALSE}
 ## install the latest version from github
@@ -79,7 +79,9 @@ This main function computes diversity estimates of order q, the sample coverage 
 This function returns an "iNEXT3D" object which can be further used to make plots using the function ggiNEXT3D() to be described below.
 
 ```{r, echo=FALSE,warning=FALSE}
-Des <- c("data"," (a). For datatype = 'abundance', data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. (b). For datatype = 'incidence_freq', data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. (c). For datatype = 'incidence_raw', data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.",
+Des <- c("data"," (a). For datatype = 'abundance', data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. 
+         (b). For datatype = 'incidence_freq', data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. 
+         (c). For datatype = 'incidence_raw', data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.",
 "diversity"," selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.",
 "q","	a numerical vector specifying the diversity orders. Default is c(0, 1, 2).",
 "datatype"	,"data type of input data: individual-based abundance data (datatype = 'abundance'), sampling-unit-based incidence frequencies data (datatype = 'incidence_freq'), or species by sampling-units incidence matrix (datatype = 'incidence_raw') with all entries being 0 (non-detection) or 1 (detection).", 
@@ -91,7 +93,7 @@ Des <- c("data"," (a). For datatype = 'abundance', data can be input as a vector
 "nT","(required only when datatype = 'incidence_raw' and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as 'assemblage1', 'assemblage2',..., etc.",
 "PDtree","	(required only when diversity = 'PD'), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.",
 "PDreftime", "(required only when diversity = 'PD'), a vector of numerical values specifying reference times for PD. Default is NULL (i.e., the age of the root of PDtree).",
-"PDtype"," (required only when ), select PD type: PDtype = 'PD' (effective total branch length) or PDtype = 'meanPD' (effective number of equally divergent lineages). Default is 'meanPD', where meanPD = PD/tree depth.",
+"PDtype"," (required only when diversity = 'PD'), select PD type: PDtype = 'PD' (effective total branch length) or PDtype = 'meanPD' (effective number of equally divergent lineages). Default is 'meanPD', where meanPD = PD/tree depth.",
 "FDdistM"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
 "FDtype"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
 "FDtau"," (required only when diversity = 'FD' and FDtype = 'tau_values'), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy)."
@@ -142,9 +144,15 @@ out.FD <- iNEXT3D(data = dunes$data, diversity = "FD",
                FDdistM = dunes$dist,
                nboot = 5)
 
+```
+
+```{r}
 out.TD
 ```
 
+The second data frame of list $iNextEst (as shown below for ‘coverage_based’) under each class includes the reference sample coverage (‘goalSC’), real sample coverage (‘SC’), sample size (m, i.e., each of the 40 knots), the method (Rarefaction, Observed, or Extrapolation, depending on whether the size m is less than, equal to, or greater than the reference sample size), the diversity order, the diversity estimate of order q conditioning on ‘goalSC’, the 95% lower and upper confidence limits of diversity. These sample coverage estimates with confidence intervals are used for plotting the coverage-based R/E curves.
+
+$AsyEst lists the observed diversity, asymptotic estimates, estimated bootstrap s.e. and 95% confidence intervals for Hill numbers with q = 0, 1, and 2. The estimated asymptotes and the observed diversity are calculated via the functions AO3D() . The output for the dunes data is shown below. All row and column variables are self‐explanatory.
 
 
 ### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
