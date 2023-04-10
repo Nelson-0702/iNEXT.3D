@@ -32,14 +32,14 @@ library(ggplot2)
 ## install the latest version from github
 install.packages('devtools')
 library(devtools)
-install_github('AnneChao/iNEXT.3D')
+# install_github('AnneChao/iNEXT.3D')
 ## import packages
 library(iNEXT.3D)
 library(ggplot2)
 ```
 
 
-In this document, we provide a quick introduction demonstrating how to run the package `iNEXT.3D`(iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main function: `iNEXT3D`, `ggiNEXT3D`, `obs3D`, `asy3D`, `ggasy3D`, and `DataInfo3D.`
+In this document, we provide a quick introduction demonstrating how to run the package `iNEXT.3D`(iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main function: `iNEXT3D`, `ggiNEXT3D`, `AO3D`, `ggAO3D`, `estimate3D`, and `DataInfo3D.`
 
 `iNEXT3D` focuses on three measures of Hill numbers of order q: species richness (`q = 0`), Shannon diversity (`q = 1`, the exponential of Shannon entropy) and Simpson diversity (`q = 2`, the inverse of Simpson concentration) among three classes: taxonomic diversity ('TD'), phylogenetic diversity ('PD'), functional diversity ('FD'). For each diversity measure, `iNEXT.3D` uses the observed sample of abundance or incidence data (called the “reference sample”) to compute diversity estimates and the associated confidence intervals for the following two types of rarefaction and extrapolation (R/E): 
 
@@ -124,26 +124,22 @@ If the </code>endpoint</code> is larger than the reference sample size, then </c
 <td align="left">(required only when </code>diversity = "PD"</code>), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.</td>
 </tr>
 <tr class="even">
-<td align="center"><code>nT</code></td>
-<td align="left">an vector needed for class <code>'PD'</code> if the datatype belong to <code>"incidence_raw"</code> and data form belog to <code>matrix</code> or <code>data.frame</code>. The vector specifying the sampling unit of each assemblage.</td>
-</tr>
-<tr class="odd">
 <td align="center"><code>PDreftime</code></td>
 <td align="left">(required only when </code>diversity = "PD"</code>), a vector of numerical values specifying reference times for PD. Default is </code>NULL</code> (i.e., the age of the root of PDtree).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center"><code>PDtype</code></td>
 <td align="left">(required only when \code{diversity = "PD"}), select PD type: </code>PDtype = "PD"</code> (effective total branch length) or </code>PDtype = "meanPD"</code> (effective number of equally divergent lineages). Default is </code>"meanPD"</code>, where </code>meanPD = PD/tree depth</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center"><code>FDdistM</code></td>
 <td align="left">(required only when </code>diversity = "FD"</code>), a species pairwise distance matrix for all species in the pooled assemblage.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center"><code>FDtype</code></td>
 <td align="left">(required only when </code>diversity = "FD"</code>), select FD type: </code>FDtype = "tau_values"</code> for FD under specified threshold values, or </code>FDtype = "AUC"</code> (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is </code>"AUC"</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center"><code>FDtau</code></td>
 <td align="left">(required only when </code>diversity = "FD"</code> and </code>FDtype = "tau_values"</code>), a numerical vector between 0 and 1 specifying tau values (threshold levels). If </code>NULL</code> (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).</td>
 </tr>
@@ -412,7 +408,7 @@ ggiNEXT3D(out.incfreq, type = 3, color.var = "Assemblage")
 
 
 
-## DATA INFORMATION FUNCTION: DataInfo()
+## DATA INFORMATION FUNCTION: DataInfo3D()
 
 We can supply the function
 ```{r eval=FALSE}
@@ -449,7 +445,7 @@ estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", b
 ```{r,eval=FALSE}
 AO3D(
   data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
-  nboot = 50,conf = 0.95,nT = NULL,Method,
+  nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
   PDtree,PDreftime = NULL,PDtype = "meanPD",
   FDdistM,FDtype = "AUC",FDtau = NULL
 )
@@ -460,7 +456,7 @@ The function `AO3D()` can compute three type diversity('TD','PD','FD'),which inc
 For example, the following command returns an empirical taxonomic diversity('TD') and asymptotic taxonomic diversity('TD') for dunes data, along with its confidence interval, for a specified q level from 0 to 2.
 
 ```{r}
-out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", method = c('Estimated', 'Empirical'),nboot = 5,conf = 0.95)
+out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", method = c("Asymptotic", "Observed"),nboot = 5,conf = 0.95)
 
 out1
 ```
@@ -475,7 +471,7 @@ The function `ggAO3D()`, which extends `ggplot2` with default arguments, is desc
 ```{r,eval=FALSE}
 ggAO3D(outcome, profile = "q")
 ```
-Here `outcome` is the object of `AO3D`'s output and `profile` is an object versus to diversity.Default is `profile = "q"`.Note that `profile = "time"` is allowed for only when diversity = "PD" and `profile = "tau"` profile is allowed for only when diversity = "FD" and FDtype = "tau_values".  
+Here `outcome` is the object of `AO3D`'s output and `profile` is an object versus to diversity.Default is `profile = "q"`.Note that `profile = "time"` is allowed for only when diversity = "PD" and `profile = "tau"` profile is allowed for only when `diversity = "FD"` and `FDtype = "tau_values"`.  
 
 ```{r }
 # q profile curve""
@@ -489,16 +485,16 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out2 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, nboot = 5, method = c('Estimated', 'Empirical'), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+out2 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, nboot = 5, method = c("Asymptotic", "Observed"), PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
 ggAO3D(out2, profile = "time")
 ```
 
-The argument `profile = "tau"` in `ggAO3D` function creates a separate plot for each order.q, therefore the different assemblages will seperated by different colours as shown below: 
+The argument `profile = "tau"` in `ggAO3D` function creates a separate plot for each order.q. Therefore the different assemblages will seperated by different colours as shown below: 
 ```{r }
 # tau curves, separating by "Order.q"
 data <- dunes$data
 distM <-  dunes$dist
-out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 5, method = c('Estimated', 'Empirical'), FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
+out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 5, method = c("Asymptotic", "Observed"), FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out3, profile = "tau")
 ```
 
