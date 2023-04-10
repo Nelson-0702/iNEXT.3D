@@ -31,7 +31,7 @@ iNEXT.3D (R package)
 <i>Institute of Statistics, National Tsing Hua University, Hsin-Chu, Taiwan 30043</i>  
 </h5>
 <br>
-iNEXT.3D (INterpolation and EXTrapolation for three dimensions of diversity) is an R package, available in [Github](https://github.com/AnneChao), for rarefaction and extrapolation of species diversity (Hill numbers) for three dimensions. Here we provide a quick introduction demonstrating how to run iNEXT.3D, and showing three types of sampling curves. See Chao et al. (2021) for methodologies. An online version of iNEXT.3D Online is also available for users without an R background. Detailed information about all functions in iNEXT.3D is provided in the iNEXT.3D Manual in [iNEXT.3D_vignettes](http://chao.stat.nthu.edu.tw/wordpress/wp-content/uploads/software/A%20Quick%20Introduction%20to%20iNEXT.3D%20via%20Examples.html),which is available from [Anne Chao's website](http://chao.stat.nthu.edu.tw/wordpress/software_download/).
+iNEXT.3D (INterpolation and EXTrapolation for three dimensions of diversity) is an R package, available in [Github](https://github.com/AnneChao), for rarefaction and extrapolation of species diversity (Hill numbers) for three dimensions. Here we provide a quick introduction demonstrating how to run iNEXT.3D, and showing three types of sampling curves. See Chao et al. (2021) for methodologies. An online version of iNEXT.3D Online [iNEXT_3D Online](https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background. Detailed information about all functions in iNEXT.3D is provided in the iNEXT.3D Manual in [iNEXT.3D_vignettes](http://chao.stat.nthu.edu.tw/wordpress/wp-content/uploads/software/A%20Quick%20Introduction%20to%20iNEXT.3D%20via%20Examples.html),which is available from [Anne Chao's website](http://chao.stat.nthu.edu.tw/wordpress/software_download/).
 
 `iNEXT3D` focuses on three measures of Hill numbers of order q: species richness (`q = 0`), Shannon diversity (`q = 1`, the exponential of Shannon entropy) and Simpson diversity (`q = 2`, the inverse of Simpson concentration) among three classes: taxonomic diversity ('TD'), phylogenetic diversity ('PD'), functional diversity ('FD'). For each diversity measure, `iNEXT.3D` uses the observed sample of abundance or incidence data (called the “reference sample”) to compute diversity estimates and the associated confidence intervals for the following two types of rarefaction and extrapolation (R/E):
 
@@ -333,7 +333,8 @@ ggAO3D(out3, profile = "tau")
 
 
 ### How to cite
-- 
+- Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+
 
 ### Referance
 

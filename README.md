@@ -21,9 +21,10 @@ diversity) is an R package, available in
 of species diversity (Hill numbers) for three dimensions. Here we
 provide a quick introduction demonstrating how to run iNEXT.3D, and
 showing three types of sampling curves. See Chao et al. (2021) for
-methodologies. An online version of iNEXT.3D Online is also available
-for users without an R background. Detailed information about all
-functions in iNEXT.3D is provided in the iNEXT.3D Manual in
+methodologies. An online version of iNEXT.3D Online [iNEXT_3D
+Online](https://chao.shinyapps.io/iNEXT_3D/) is also available for users
+without an R background. Detailed information about all functions in
+iNEXT.3D is provided in the iNEXT.3D Manual in
 [iNEXT.3D_vignettes](http://chao.stat.nthu.edu.tw/wordpress/wp-content/uploads/software/A%20Quick%20Introduction%20to%20iNEXT.3D%20via%20Examples.html),which
 is available from [Anne Chao’s
 website](http://chao.stat.nthu.edu.tw/wordpress/software_download/).
@@ -367,16 +368,16 @@ $size_based (LCL and UCL are obtained for fixed size.)
 # A tibble: 45 x 10
    Assemblage     m Method        Order.q    qD qD.LCL qD.UCL    SC SC.LCL SC.UCL
    <chr>      <dbl> <chr>           <dbl> <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl>
- 1 EM             1 Rarefaction         0  1      1      1    0.136  0.125  0.147
- 2 EM           196 Rarefaction         0 15.2   13.8   16.7  0.987  0.979  0.995
- 3 EM           373 Observed            0 17     14.5   19.5  0.992  0.985  0.999
- 4 EM           550 Extrapolation       0 18.2   14.8   21.6  0.994  0.988  1    
- 5 EM           746 Extrapolation       0 19.2   15.0   23.4  0.996  0.991  1    
- 6 EM             1 Rarefaction         1  1      1      1    0.136  0.125  0.147
- 7 EM           196 Rarefaction         1  9.07   8.39   9.75 0.987  0.979  0.995
- 8 EM           373 Observed            1  9.27   8.56   9.99 0.992  0.985  0.999
- 9 EM           550 Extrapolation       1  9.37   8.63  10.1  0.994  0.988  1    
-10 EM           746 Extrapolation       1  9.43   8.69  10.2  0.996  0.991  1    
+ 1 EM             1 Rarefaction         0  1      1.00    1   0.136  0.116  0.156
+ 2 EM           196 Rarefaction         0 15.2   14.1    16.4 0.987  0.978  0.996
+ 3 EM           373 Observed            0 17     14.8    19.2 0.992  0.983  1    
+ 4 EM           550 Extrapolation       0 18.2   15.1    21.4 0.994  0.986  1    
+ 5 EM           746 Extrapolation       0 19.2   14.9    23.5 0.996  0.989  1    
+ 6 EM             1 Rarefaction         1  1      1       1   0.136  0.116  0.156
+ 7 EM           196 Rarefaction         1  9.07   7.90   10.2 0.987  0.978  0.996
+ 8 EM           373 Observed            1  9.27   8.09   10.5 0.992  0.983  1    
+ 9 EM           550 Extrapolation       1  9.37   8.18   10.6 0.994  0.986  1    
+10 EM           746 Extrapolation       1  9.43   8.24   10.6 0.996  0.989  1    
 # ... with 35 more rows
 # i Use `print(n = ...)` to see more rows
 
@@ -387,16 +388,16 @@ $coverage_based (LCL and UCL are obtained for fixed coverage; interval length is
 # A tibble: 45 x 8
    Assemblage    SC     m Method        Order.q    qD qD.LCL qD.UCL
    <chr>      <dbl> <dbl> <chr>           <dbl> <dbl>  <dbl>  <dbl>
- 1 EM         0.136    1  Rarefaction         0  1     0.973   1.03
- 2 EM         0.987  196. Rarefaction         0 15.2  11.5    18.9 
- 3 EM         0.992  373  Observed            0 17    12.4    21.6 
- 4 EM         0.994  550. Extrapolation       0 18.2  13.2    23.3 
- 5 EM         0.996  746. Extrapolation       0 19.2  13.8    24.6 
- 6 EM         0.136    1  Rarefaction         1  1     0.974   1.03
- 7 EM         0.987  196. Rarefaction         1  9.07  8.27    9.86
- 8 EM         0.992  373  Observed            1  9.27  8.49   10.1 
- 9 EM         0.994  550. Extrapolation       1  9.37  8.59   10.1 
-10 EM         0.996  746. Extrapolation       1  9.43  8.66   10.2 
+ 1 EM         0.136    1  Rarefaction         0  1     0.921   1.08
+ 2 EM         0.987  196. Rarefaction         0 15.2  10.8    19.6 
+ 3 EM         0.992  373  Observed            0 17    10.1    23.9 
+ 4 EM         0.994  550. Extrapolation       0 18.2  10.1    26.3 
+ 5 EM         0.996  746. Extrapolation       0 19.2  10.1    28.3 
+ 6 EM         0.136    1  Rarefaction         1  1     0.925   1.08
+ 7 EM         0.987  196. Rarefaction         1  9.07  8.01   10.1 
+ 8 EM         0.992  373  Observed            1  9.27  8.18   10.4 
+ 9 EM         0.994  550. Extrapolation       1  9.37  8.25   10.5 
+10 EM         0.996  746. Extrapolation       1  9.43  8.30   10.6 
 # ... with 35 more rows
 # i Use `print(n = ...)` to see more rows
 
@@ -404,15 +405,15 @@ NOTE: The above output only shows five estimates for each assemblage; call iNEXT
 
 AsyEst: asymptotic diversity estimates along with related statistics.
   Assemblage         Diversity  Observed Estimator      s.e.       LCL       UCL
-1         EM  Species richness 17.000000 21.487936 3.6321292 17.000000 28.606778
-2         EM Shannon diversity  9.272102  9.541765 0.3569320  8.842191 10.241339
-3         EM Simpson diversity  7.218106  7.340810 0.3511763  6.652518  8.029103
-4         MO  Species richness 39.000000 40.998658 2.5772122 39.000000 46.049901
-5         MO Shannon diversity 19.712107 19.987465 0.3521758 19.297213 20.677717
-6         MO Simpson diversity 13.979950 14.102888 0.3865942 13.345178 14.860599
-7         TR  Species richness 42.000000 45.996223 8.6404703 42.000000 62.931234
-8         TR Shannon diversity 23.941938 24.481173 0.5920044 23.320866 25.641481
-9         TR Simpson diversity 18.605455 18.920295 0.4892438 17.961394 19.879195
+1         EM  Species richness 17.000000 21.487936 6.8438443 17.000000 34.901624
+2         EM Shannon diversity  9.272102  9.541765 0.3229302  8.908834 10.174697
+3         EM Simpson diversity  7.218106  7.340810 0.1667320  7.014022  7.667599
+4         MO  Species richness 39.000000 40.998658 5.7377525 39.000000 52.244446
+5         MO Shannon diversity 19.712107 19.987465 0.3207481 19.358811 20.616120
+6         MO Simpson diversity 13.979950 14.102888 0.3429921 13.430636 14.775141
+7         TR  Species richness 42.000000 45.996223 6.2099948 42.000000 58.167589
+8         TR Shannon diversity 23.941938 24.481173 0.6085377 23.288461 25.673885
+9         TR Simpson diversity 18.605455 18.920295 0.6984230 17.551411 20.289178
 ```
 
 The second data frame of list $iNextEst (as shown below for
@@ -597,15 +598,15 @@ indicated in the method of the output.
 ``` r
 estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage",level = 0.93)
   Assemblage   SC         m      Method Order.q        qD      s.e.    qD.LCL    qD.UCL
-1         EM 0.93  47.88966 Rarefaction       0 11.194508 0.6206547  9.978047 12.410969
-2         EM 0.93  47.88966 Rarefaction       1  8.004329 0.3867576  7.246298  8.762360
-3         EM 0.93  47.88966 Rarefaction       2  6.482469 0.3128096  5.869373  7.095564
-4         MO 0.93 107.56810 Rarefaction       0 24.830302 0.6756662 23.506021 26.154584
-5         MO 0.93 107.56810 Rarefaction       1 16.735683 0.3868194 15.977531 17.493835
-6         MO 0.93 107.56810 Rarefaction       2 12.571520 0.3603800 11.865189 13.277852
-7         TR 0.93 114.37603 Rarefaction       0 27.935556 0.8746709 26.221233 29.649880
-8         TR 0.93 114.37603 Rarefaction       1 20.360646 0.5987815 19.187056 21.534236
-9         TR 0.93 114.37603 Rarefaction       2 16.357398 0.5028173 15.371894 17.342902
+1         EM 0.93  47.88966 Rarefaction       0 11.194508 0.5576521 10.101530 12.287486
+2         EM 0.93  47.88966 Rarefaction       1  8.004329 0.3630917  7.292682  8.715976
+3         EM 0.93  47.88966 Rarefaction       2  6.482469 0.3017298  5.891089  7.073849
+4         MO 0.93 107.56810 Rarefaction       0 24.830302 0.6786476 23.500177 26.160427
+5         MO 0.93 107.56810 Rarefaction       1 16.735683 0.4398505 15.873591 17.597774
+6         MO 0.93 107.56810 Rarefaction       2 12.571520 0.4051718 11.777398 13.365643
+7         TR 0.93 114.37603 Rarefaction       0 27.935556 0.8515544 26.266540 29.604572
+8         TR 0.93 114.37603 Rarefaction       1 20.360646 0.5490569 19.284514 21.436778
+9         TR 0.93 114.37603 Rarefaction       2 16.357398 0.4897403 15.397525 17.317271
 ```
 
 ### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: AO3D
@@ -630,72 +631,72 @@ out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", method = c("A
 
 out1
    Order.q        qD      s.e.    qD.LCL    qD.UCL Assemblage     Method
-1      0.0 21.487936 2.8762792 15.850532 27.125339         EM Asymptotic
-2      0.2 16.936433 1.4046941 14.183283 19.689583         EM Asymptotic
-3      0.4 13.885407 0.7100604 12.493714 15.277099         EM Asymptotic
-4      0.6 11.862781 0.5112327 10.860783 12.864779         EM Asymptotic
-5      0.8 10.496859 0.4840794  9.548081 11.445638         EM Asymptotic
-6      1.0  9.541765 0.4721045  8.616457 10.467073         EM Asymptotic
-7      1.2  8.847719 0.4539566  7.957980  9.737457         EM Asymptotic
-8      1.4  8.325449 0.4337147  7.475383  9.175514         EM Asymptotic
-9      1.6  7.920890 0.4150786  7.107351  8.734429         EM Asymptotic
-10     1.8  7.600095 0.3994859  6.817117  8.383073         EM Asymptotic
-11     2.0  7.340810 0.3870961  6.582116  8.099505         EM Asymptotic
-12     0.0 40.998658 4.2987148 32.573331 49.423984         MO Asymptotic
-13     0.2 34.209437 1.7611972 30.757554 37.661320         MO Asymptotic
-14     0.4 29.060182 0.6074646 27.869573 30.250791         MO Asymptotic
-15     0.6 25.175831 0.2948930 24.597852 25.753811         MO Asymptotic
-16     0.8 22.235885 0.3473397 21.555112 22.916659         MO Asymptotic
-17     1.0 19.987465 0.3881110 19.226782 20.748149         MO Asymptotic
-18     1.2 18.241913 0.3994499 17.459006 19.024821         MO Asymptotic
-19     1.4 16.863382 0.3983186 16.082691 17.644072         MO Asymptotic
-20     1.6 15.755819 0.3929329 14.985684 16.525953         MO Asymptotic
-21     1.8 14.851614 0.3861981 14.094680 15.608549         MO Asymptotic
-22     2.0 14.102888 0.3789341 13.360191 14.845586         MO Asymptotic
-23     0.0 45.996223 4.4810622 37.213502 54.778943         TR Asymptotic
-24     0.2 38.731480 1.8739322 35.058640 42.404319         TR Asymptotic
-25     0.4 33.399637 0.6065589 32.210804 34.588471         TR Asymptotic
-26     0.6 29.505773 0.2948804 28.927818 30.083728         TR Asymptotic
-27     0.8 26.635682 0.3882502 25.874725 27.396638         TR Asymptotic
-28     1.0 24.481173 0.4310114 23.636407 25.325940         TR Asymptotic
-29     1.2 22.827199 0.4395817 21.965635 23.688763         TR Asymptotic
-30     1.4 21.527891 0.4432190 20.659198 22.396585         TR Asymptotic
-31     1.6 20.484834 0.4517666 19.599387 21.370280         TR Asymptotic
-32     1.8 19.631065 0.4658101 18.718093 20.544036         TR Asymptotic
-33     2.0 18.920295 0.4833648 17.972917 19.867672         TR Asymptotic
-34     0.0 17.000000 1.1401754 14.765297 19.234703         EM  Empirical
-35     0.2 14.471457 0.9322456 12.644289 16.298625         EM  Empirical
-36     0.4 12.567736 0.7633898 11.071519 14.063952         EM  Empirical
-37     0.6 11.145510 0.6331091  9.904639 12.386381         EM  Empirical
-38     0.8 10.079552 0.5363058  9.028412 11.130692         EM  Empirical
-39     1.0  9.272102 0.4651532  8.360418 10.183785         EM  Empirical
-40     1.2  8.651511 0.4122250  7.843565  9.459457         EM  Empirical
-41     1.4  8.166818 0.3719357  7.437837  8.895799         EM  Empirical
-42     1.6  7.782094 0.3405161  7.114695  8.449493         EM  Empirical
-43     1.8  7.471913 0.3154948  6.853555  8.090272         EM  Empirical
-44     2.0  7.218106 0.2952230  6.639480  7.796733         EM  Empirical
-45     0.0 39.000000 1.0000000 37.040036 40.959964         MO  Empirical
-46     0.2 32.970780 0.6690511 31.659464 34.282096         MO  Empirical
-47     0.4 28.269000 0.6562457 26.982782 29.555218         MO  Empirical
-48     0.6 24.647500 0.6382357 23.396580 25.898419         MO  Empirical
-49     0.8 21.864493 0.5718477 20.743692 22.985294         MO  Empirical
-50     1.0 19.712107 0.4823141 18.766789 20.657425         MO  Empirical
-51     1.2 18.026804 0.3907581 17.260932 18.792675         MO  Empirical
-52     1.4 16.686924 0.3080180 16.083220 17.290629         MO  Empirical
-53     1.6 15.604656 0.2384134 15.137374 16.071937         MO  Empirical
-54     1.8 14.717297 0.1832094 14.358214 15.076381         MO  Empirical
-55     2.0 13.979950 0.1426557 13.700350 14.259550         MO  Empirical
-56     0.0 42.000000 0.8366600 40.360176 43.639824         TR  Empirical
-57     0.2 36.253363 0.9406666 34.409690 38.097036         TR  Empirical
-58     0.4 31.844736 0.9740287 29.935675 33.753797         TR  Empirical
-59     0.6 28.487492 0.9574087 26.611005 30.363978         TR  Empirical
-60     0.8 25.922807 0.9228223 24.114109 27.731506         TR  Empirical
-61     1.0 23.941938 0.8888194 22.199884 25.683992         TR  Empirical
-62     1.2 22.387845 0.8625567 20.697264 24.078425         TR  Empirical
-63     1.4 21.146894 0.8450341 19.490658 22.803131         TR  Empirical
-64     1.6 20.138290 0.8348239 18.502065 21.774515         TR  Empirical
-65     1.8 19.304760 0.8300008 17.677988 20.931532         TR  Empirical
-66     2.0 18.605455 0.8288988 16.980843 20.230067         TR  Empirical
+1      0.0 21.487936 4.9090774 11.866321 31.109551         EM Asymptotic
+2      0.2 16.936433 2.5464122 11.945557 21.927309         EM Asymptotic
+3      0.4 13.885407 1.2403970 11.454273 16.316540         EM Asymptotic
+4      0.6 11.862781 0.6003011 10.686212 13.039349         EM Asymptotic
+5      0.8 10.496859 0.3426670  9.825244 11.168474         EM Asymptotic
+6      1.0  9.541765 0.2901776  8.973027 10.110503         EM Asymptotic
+7      1.2  8.847719 0.3041198  8.251655  9.443783         EM Asymptotic
+8      1.4  8.325449 0.3244605  7.689518  8.961380         EM Asymptotic
+9      1.6  7.920890 0.3400539  7.254397  8.587383         EM Asymptotic
+10     1.8  7.600095 0.3511550  6.911844  8.288346         EM Asymptotic
+11     2.0  7.340810 0.3594169  6.636366  8.045255         EM Asymptotic
+12     0.0 40.998658 6.4829942 28.292223 53.705093         MO Asymptotic
+13     0.2 34.209437 2.9918042 28.345608 40.073265         MO Asymptotic
+14     0.4 29.060182 1.3437455 26.426489 31.693875         MO Asymptotic
+15     0.6 25.175831 0.6083235 23.983539 26.368124         MO Asymptotic
+16     0.8 22.235885 0.2941871 21.659289 22.812481         MO Asymptotic
+17     1.0 19.987465 0.2010122 19.593489 20.381442         MO Asymptotic
+18     1.2 18.241913 0.2221500 17.806507 18.677319         MO Asymptotic
+19     1.4 16.863382 0.2711936 16.331852 17.394911         MO Asymptotic
+20     1.6 15.755819 0.3191527 15.130291 16.381346         MO Asymptotic
+21     1.8 14.851614 0.3601141 14.145804 15.557425         MO Asymptotic
+22     2.0 14.102888 0.3931734 13.332283 14.873494         MO Asymptotic
+23     0.0 45.996223 7.4731581 31.349102 60.643344         TR Asymptotic
+24     0.2 38.731480 3.9445849 31.000236 46.462724         TR Asymptotic
+25     0.4 33.399637 2.0681452 29.346147 37.453127         TR Asymptotic
+26     0.6 29.505773 1.1940859 27.165408 31.846138         TR Asymptotic
+27     0.8 26.635682 0.8602168 24.949688 28.321676         TR Asymptotic
+28     1.0 24.481173 0.7602774 22.991057 25.971290         TR Asymptotic
+29     1.2 22.827199 0.7357087 21.385236 24.269161         TR Asymptotic
+30     1.4 21.527891 0.7302930 20.096543 22.959239         TR Asymptotic
+31     1.6 20.484834 0.7276974 19.058573 21.911094         TR Asymptotic
+32     1.8 19.631065 0.7233268 18.213370 21.048759         TR Asymptotic
+33     2.0 18.920295 0.7160548 17.516853 20.323736         TR Asymptotic
+34     0.0 17.000000 0.8366600 15.360176 18.639824         EM  Empirical
+35     0.2 14.471457 0.5819063 13.330942 15.611972         EM  Empirical
+36     0.4 12.567736 0.4126783 11.758901 13.376570         EM  Empirical
+37     0.6 11.145510 0.3151381 10.527850 11.763169         EM  Empirical
+38     0.8 10.079552 0.2737538  9.543005 10.616100         EM  Empirical
+39     1.0  9.272102 0.2649524  8.752805  9.791399         EM  Empirical
+40     1.2  8.651511 0.2683346  8.125585  9.177437         EM  Empirical
+41     1.4  8.166818 0.2737369  7.630304  8.703333         EM  Empirical
+42     1.6  7.782094 0.2779337  7.237354  8.326834         EM  Empirical
+43     1.8  7.471913 0.2805493  6.922047  8.021780         EM  Empirical
+44     2.0  7.218106 0.2820395  6.665319  7.770894         EM  Empirical
+45     0.0 39.000000 1.0954451 36.852967 41.147033         MO  Empirical
+46     0.2 32.970780 0.6144240 31.766531 34.175029         MO  Empirical
+47     0.4 28.269000 0.3299614 27.622287 28.915712         MO  Empirical
+48     0.6 24.647500 0.2012987 24.252961 25.042038         MO  Empirical
+49     0.8 21.864493 0.1856694 21.500587 22.228398         MO  Empirical
+50     1.0 19.712107 0.2099955 19.300523 20.123691         MO  Empirical
+51     1.2 18.026804 0.2358648 17.564517 18.489090         MO  Empirical
+52     1.4 16.686924 0.2563250 16.184537 17.189312         MO  Empirical
+53     1.6 15.604656 0.2717131 15.072108 16.137204         MO  Empirical
+54     1.8 14.717297 0.2831714 14.162292 15.272303         MO  Empirical
+55     2.0 13.979950 0.2916043 13.408416 14.551484         MO  Empirical
+56     0.0 42.000000 1.6733201 38.720353 45.279647         TR  Empirical
+57     0.2 36.253363 1.3618992 33.584090 38.922637         TR  Empirical
+58     0.4 31.844736 1.1064754 29.676084 34.013388         TR  Empirical
+59     0.6 28.487492 0.8848701 26.753178 30.221805         TR  Empirical
+60     0.8 25.922807 0.6985845 24.553607 27.292008         TR  Empirical
+61     1.0 23.941938 0.5504717 22.863033 25.020843         TR  Empirical
+62     1.2 22.387845 0.4400210 21.525419 23.250270         TR  Empirical
+63     1.4 21.146894 0.3640477 20.433374 21.860415         TR  Empirical
+64     1.6 20.138290 0.3174819 19.516037 20.760543         TR  Empirical
+65     1.8 19.304760 0.2937249 18.729070 19.880450         TR  Empirical
+66     2.0 18.605455 0.2856194 18.045651 19.165259         TR  Empirical
 ```
 
 ### GRAPHIC DISPLAYS FUNCTION: ggAO3D()
@@ -747,7 +748,13 @@ ggAO3D(out3, profile = "tau")
 
 <img src="README/README-unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" />
 
-## \#\#\# How to cite
+### How to cite
+
+-   Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H.,
+    Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in
+    alpha diversity: a framework integrating taxonomic, phylogenetic and
+    functional diversity and the iNEXT.3D standardization. Methods in
+    Ecology and Evolution, 12, 1926-1940.
 
 ### Referance
 
