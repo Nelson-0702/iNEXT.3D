@@ -79,24 +79,22 @@ This main function computes diversity estimates of order q, the sample coverage 
 This function returns an "iNEXT3D" object which can be further used to make plots using the function ggiNEXT3D() to be described below.
 
 ```{r, echo=FALSE,warning=FALSE}
-Des <- c("data"," (a). For datatype = “abundance”, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors.
-(b). For datatype = “incidence_freq”, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage.
-(c). For datatype = “incidence_raw”, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.",
-"diversity"," selection of diversity type: ‘TD’ = Taxonomic diversity, ‘PD’ = Phylogenetic diversity, and ‘FD’ = Functional diversity.",
+Des <- c("data"," (a). For datatype = 'abundance', data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. (b). For datatype = 'incidence_freq', data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. (c). For datatype = 'incidence_raw', data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.",
+"diversity"," selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.",
 "q","	a numerical vector specifying the diversity orders. Default is c(0, 1, 2).",
-"datatype"	,"data type of input data: individual-based abundance data (datatype = “abundance”), sampling-unit-based incidence frequencies data (datatype = “incidence_freq”), or species by sampling-units incidence matrix (datatype = “incidence_raw”) with all entries being 0 (non-detection) or 1 (detection).", 
+"datatype"	,"data type of input data: individual-based abundance data (datatype = 'abundance'), sampling-unit-based incidence frequencies data (datatype = 'incidence_freq'), or species by sampling-units incidence matrix (datatype = 'incidence_raw') with all entries being 0 (non-detection) or 1 (detection).", 
 "size","an integer vector of sample sizes for which diversity estimates will be computed. If NULL, then diversity estimates will be calculated for those sample sizes determined by the specified/default endpoint and knots;",
 "endpoint","an integer specifying the sample size that is the endpoint for R/E calculation; If NULL, then endpoint=double the reference sample size;",
 "knots","	an integer specifying the number of equally-spaced knots (say K, default is 40) between size 1 and the endpoint;each knot represents a particular sample size for which diversity estimate will be calculated. If the endpoint is smaller than the reference sample size, then iNEXT3D() computes only the rarefaction esimates for approximately K evenly spaced knots. If the endpoint is larger than the reference sample size, then iNEXT3D() computes rarefaction estimates for approximately K/2 evenly spaced knots between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced knots between the reference sample size and the endpoint.",
 "nboot"," a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.",
 "conf","	a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.",
-"nT","(required only when datatype = “incidence_raw” and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as “assemblage1”, “assemblage2”,…, etc.",
-"PDtree","	(required only when diversity = “PD”), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.",
-"PDreftime", "(required only when diversity = “PD”), a vector of numerical values specifying reference times for PD. Default is NULL (i.e., the age of the root of PDtree).",
-"PDtype"," (required only when ), select PD type: PDtype = “PD” (effective total branch length) or PDtype = “meanPD” (effective number of equally divergent lineages). Default is “meanPD”, where meanPD = PD/tree depth.",
-"FDdistM"," (required only when diversity = “FD”), select FD type: FDtype = “tau_values” for FD under specified threshold values, or FDtype = “AUC” (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is “AUC”.",
-"FDtype"," (required only when diversity = “FD”), select FD type: FDtype = “tau_values” for FD under specified threshold values, or FDtype = “AUC” (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is “AUC”.",
-"FDtau"," (required only when diversity = “FD” and FDtype = “tau_values”), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).",
+"nT","(required only when datatype = 'incidence_raw' and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as 'assemblage1', 'assemblage2',..., etc.",
+"PDtree","	(required only when diversity = 'PD'), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.",
+"PDreftime", "(required only when diversity = 'PD'), a vector of numerical values specifying reference times for PD. Default is NULL (i.e., the age of the root of PDtree).",
+"PDtype"," (required only when ), select PD type: PDtype = 'PD' (effective total branch length) or PDtype = 'meanPD' (effective number of equally divergent lineages). Default is 'meanPD', where meanPD = PD/tree depth.",
+"FDdistM"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
+"FDtype"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
+"FDtau"," (required only when diversity = 'FD' and FDtype = 'tau_values'), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy)."
 )
 output <- 
   matrix(Des, 
@@ -122,6 +120,12 @@ Three types of data are supported: ("abundance", "incidence_raw", or "incidence_
 (2b) Incidence‐frequency data (datatype="incidence_freq"): input data for each assemblage consist of species sample incidence frequencies (row sums of each incidence matrix). When there are N assemblages, input data consist of an S by N matrix, or N lists of species incidence frequencies. The first entry of each list must be the total number of sampling units, followed by the species incidence frequencies.
 
 Two data sets (beetles for abundance data ) are included in iNEXT3D package. The first list of beetles’ data consist of abundance data who live on three treatments (“Control”, “Debarked” and “Scratched”) of trees. The second list consist of the pylogenetic tree for every beetles. And the third list consist of distance matrix for each pair of beetles. For these data, the following commands display the sample species abundances and run the iNEXT3D() function for three types of diversty ("TD", "PD", "FD" with threshold dmean, "AUC" which integate FD from threshold 0-1) in q = 0.
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(comment="", message=FALSE, warning=FALSE)
+library(iNEXT.3D)
+library(ggplot2)
+```
 
 ```{r}
 data("dunes")
