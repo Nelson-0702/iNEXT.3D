@@ -402,7 +402,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
           }
         })
         
-        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        if (length(q) == 1 & length(tau) == 1) ses = matrix(ses, nrow = 1)
         ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
@@ -453,7 +453,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
           
         })
         
-        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        if (length(q) == 1 & length(tau) == 1) ses = matrix(ses, nrow = 1)
         ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(emp))
@@ -570,7 +570,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
           }
         })
         
-        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        if (length(q) == 1 & length(tau) == 1) ses = matrix(ses, nrow = 1)
         ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
@@ -622,7 +622,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
           }
         })
         
-        if (length(q) == 1) ses = matrix(ses, nrow = 1)
+        if (length(q) == 1 & length(tau) == 1) ses = matrix(ses, nrow = 1)
         ses = ses %>% apply(., 1, sd)
       }else{
         ses <- rep(NA,length(est))
