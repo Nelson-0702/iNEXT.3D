@@ -21,7 +21,7 @@ Imports:
     Rcpp
 BugReports: https://github.com/KaiHsiangHu/iNEXT.3D/issues
 LazyLoad: yes
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Suggests: testthat,
     knitr,
     rmarkdown,

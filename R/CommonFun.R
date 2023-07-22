@@ -152,7 +152,16 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, DATATYPE)
   
-  if (datatype == "incidence_raw" & raw.to.inci == TRUE) {data = as.incfreq(data, nT = nT); datatype = "incidence_freq"}
+  if (datatype == "incidence_raw" & raw.to.inci == TRUE) {
+    if (!inherits(data, "list")) 
+      data = as.incfreq(data, nT = nT) else if (length(data) != 1)
+      data = as.incfreq(data, nT = nT) else {
+        tmp = names(data)
+        data = list(as.incfreq(data, nT = nT))
+        names(data) = tmp
+      }
+    datatype = "incidence_freq"
+      }
   
   if (datatype == "incidence_raw") {
     
