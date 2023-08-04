@@ -1,6 +1,6 @@
 ---
 title: "A Quick Introduction to iNEXT.3D via Examples"
-author: "Anne Chao, K.H.-Hu"
+author: "Anne Chao, K.H. Hu,"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
