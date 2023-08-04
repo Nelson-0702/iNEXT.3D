@@ -465,8 +465,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
         temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
         
         if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
-        temp1$Type = "FD"
-        temp2$Type = "FD"
+        # temp1$Type = "FD"
+        # temp2$Type = "FD"
         ans <- list(size_based = temp1, coverage_based = temp2)
         return(ans)
       }else{
