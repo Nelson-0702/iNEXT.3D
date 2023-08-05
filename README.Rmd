@@ -71,12 +71,16 @@ In this document, here provide a quick introduction demonstrating how to run the
 ### MAIN FUNCTION: iNEXT3D()
 
 The main function iNEXT3D() with default arguments is described below:
-<br><br>
+
+
+```{r eval=FALSE}
 iNEXT3D(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
         size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
         PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', 
         FDdistM, FDtype = 'AUC', FDtau = NULL)
-<br><br>
+```
+
+
 This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots = K`) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, `endpoint` = double the reference sample size for abundance data or double the total sampling units for incidence data. For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).
 
 
@@ -176,10 +180,11 @@ out.TD$AsyEst
 ### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
 The function `ggiNEXT3D()`, which extends `ggplot2` with default arguments, is described as follows: 
 
-<br><br>
+```{r eval=FALSE}
 ggiNEXT3D(outcome, type = 1:3, se = TRUE,
           facet.var = "Assemblage", color.var = "Order.q")  
-<br><br>
+```
+
 Here `outcome` is the object of `iNEXT3D()`'s output. Three types of curves are allowed for different diversity dimensions:  
 
 (1) Sample-size-based R/E curve (`type = 1`): This curve plots diversity estimates with confidence intervals as a function of sample size.  
@@ -293,11 +298,12 @@ ggiNEXT3D(out.incfreq, type = 3, color.var = "Order.q")
 
 ### DATA INFORMATION FUNCTION: DataInfo3D()
 
-<br><br>
+```{r eval=FALSE}
 DataInfo3D(data, diversity = "TD", datatype = "abundance", 
-  nT = NULL, PDtree, PDreftime = NULL, 
-  FDdistM, FDtype = "AUC", FDtau = NULL) 
-<br><br>
+           nT = NULL, PDtree, PDreftime = NULL, 
+           FDdistM, FDtype = "AUC", FDtau = NULL) 
+```
+
 Here provide the function `DataInfo3D` to compute three diversity dimensions ('TD', 'PD', 'FD') data information, which including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts when `diversity = TD`. And so on for PD, FD.
 
 ```{r}
@@ -307,12 +313,13 @@ DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
 
 ### POINT ESTIMATION FUNCTION: estimate3D()
 
-<br><br>
+```{r eval=FALSE}
 estimate3D(data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance", 
-  base = "coverage", level = NULL, nboot = 50, conf = 0.95, 
-  nT = NULL, PDtree, PDreftime = NULL, PDtype = "meanPD", 
-  FDdistM, FDtype = "AUC", FDtau = NULL)
-<br><br>
+           base = "coverage", level = NULL, nboot = 50, conf = 0.95, 
+           nT = NULL, PDtree, PDreftime = NULL, PDtype = "meanPD", 
+           FDdistM, FDtype = "AUC", FDtau = NULL)
+```
+
 `estimate3D` is used to compute three diversity dimensions (TD, PD, FD) estimates with q = 0, 1, 2 under any specified level of sample size (when `base = "size"`) or sample coverage (when `base = "coverage"`) for either abundance data (`datatype = "abundance"`) or incidence data (`datatype = "incidence_freq"` or `"incidence_raw"`). If `level = NULL`, this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes (when `base = "size"`) or the minimum sample coverage among all samples extrapolated to double reference sizes (when `base = "coverage"`). 
 
 For example, the following command returns the taxonomic diversity ('TD') with a specified level of sample coverage = 99.5% for the dunes data. For some assemblages, this coverage value corresponds to the rarefaction part whereas the others correspond to extrapolation. 
@@ -326,14 +333,12 @@ estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance",
 
 ### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: AO3D
 
-<br><br>
-AO3D(
-  data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
-  nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
-  PDtree,PDreftime = NULL,PDtype = "meanPD",
-  FDdistM,FDtype = "AUC",FDtau = NULL
-)
-<br><br>
+```{r eval=FALSE}
+AO3D(data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
+     nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
+     PDtree,PDreftime = NULL,PDtype = "meanPD",
+     FDdistM,FDtype = "AUC",FDtau = NULL)
+```
 
 The function `AO3D()` compute three diversity dimensions (TD, PD, FD) for empirical (observed) diversity and estimated asymptotic diversity with any diversity order. For example, the following commands returns empirical and asymptotic taxonomic diversity ('TD') for dunes data, along with its confidence interval at diversity order q from 0 to 2. Here only show the first ten rows.
 
@@ -350,9 +355,11 @@ head(out1, 10)
 Plots q-profile, time-profile, and tau-profile based on the outcome of AO3D using the ggplot2 package.
 
 The function ggAO3D(), which extends ggplot2 with default arguments, is described as follows:
-<br><br>
+
+```{r eval=FALSE}
 ggAO3D(outcome, profile = "q")
-<br><br>
+```
+
 `ggAO3D` plots q-profile, time-profile, and tau-profile based on `ggplot2`. Here `outcome` is the object from the function `AO3D`, and `profile` is a profile selection versus to diversity. Default is `profile = "q"`. Note that `profile = "time"` is allowed for only when diversity = "PD" and `profile = "tau"` profile is allowed for only when `diversity = "FD"` and `FDtype = "tau_values"`.  
 
 ```{r }

@@ -93,19 +93,23 @@ Dimensions). `iNEXT.3D` has several main functions: `iNEXT3D`,
 ### MAIN FUNCTION: iNEXT3D()
 
 The main function iNEXT3D() with default arguments is described below:
-<br><br> iNEXT3D(data, diversity = ‘TD’, q = c(0,1,2), datatype =
-“abundance”, size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf
-= 0.95, nT = NULL, PDtree = NULL, PDreftime = NULL, PDtype = ‘meanPD’,
-FDdistM, FDtype = ‘AUC’, FDtau = NULL) <br><br> This main function
-computes diversity estimates of order q, the sample coverage estimates
-and related statistics for K (if `knots = K`) evenly-spaced knots
-(sample sizes) between size 1 and the `endpoint`, where the endpoint is
-described below. Each knot represents a particular sample size for which
-diversity estimates will be calculated. By default, `endpoint` = double
-the reference sample size for abundance data or double the total
-sampling units for incidence data. For example, if `endpoint = 10`,
-`knot = 4`, diversity estimates will be computed for a sequence of
-samples with sizes (1, 4, 7, 10).
+
+``` r
+iNEXT3D(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
+        size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
+        PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', 
+        FDdistM, FDtype = 'AUC', FDtau = NULL)
+```
+
+This main function computes diversity estimates of order q, the sample
+coverage estimates and related statistics for K (if `knots = K`)
+evenly-spaced knots (sample sizes) between size 1 and the `endpoint`,
+where the endpoint is described below. Each knot represents a particular
+sample size for which diversity estimates will be calculated. By
+default, `endpoint` = double the reference sample size for abundance
+data or double the total sampling units for incidence data. For example,
+if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for
+a sequence of samples with sizes (1, 4, 7, 10).
 
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
@@ -386,12 +390,12 @@ head(out.TD$iNextEst$size_based)
 # A tibble: 6 x 10
   Assemblage     m Method      Order.q    qD qD.LCL qD.UCL    SC SC.LCL SC.UCL
   <chr>      <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl>
-1 EM             1 Rarefaction       0  1      1      1    0.136  0.123  0.150
-2 EM            20 Rarefaction       0  8.22   7.83   8.62 0.837  0.822  0.852
-3 EM            40 Rarefaction       0 10.6    9.98  11.2  0.915  0.902  0.929
-4 EM            59 Rarefaction       0 11.9   11.1   12.7  0.945  0.932  0.958
-5 EM            79 Rarefaction       0 12.8   11.9   13.8  0.962  0.951  0.973
-6 EM            98 Rarefaction       0 13.4   12.4   14.5  0.972  0.962  0.982
+1 EM             1 Rarefaction       0  1      1.00   1    0.136  0.123  0.149
+2 EM            20 Rarefaction       0  8.22   7.68   8.77 0.837  0.813  0.860
+3 EM            40 Rarefaction       0 10.6    9.70  11.5  0.915  0.900  0.931
+4 EM            59 Rarefaction       0 11.9   10.8   13.0  0.945  0.932  0.957
+5 EM            79 Rarefaction       0 12.8   11.5   14.1  0.962  0.951  0.973
+6 EM            98 Rarefaction       0 13.4   12.0   14.9  0.972  0.961  0.982
 ```
 
 The second data frame of list `$iNextEst` (as shown below for
@@ -409,12 +413,12 @@ head(out.TD$iNextEst$coverage_based)
 # A tibble: 6 x 8
   Assemblage    SC     m Method      Order.q    qD qD.LCL qD.UCL
   <chr>      <dbl> <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl>
-1 EM         0.136   1   Rarefaction       0  1     0.970   1.03
-2 EM         0.837  20.0 Rarefaction       0  8.22  7.53    8.92
-3 EM         0.915  40.0 Rarefaction       0 10.6   9.62   11.5 
-4 EM         0.945  59.0 Rarefaction       0 11.9  10.7    13.1 
-5 EM         0.962  79.0 Rarefaction       0 12.8  11.3    14.3 
-6 EM         0.972  98.0 Rarefaction       0 13.4  11.7    15.2 
+1 EM         0.136   1   Rarefaction       0  1     0.949   1.05
+2 EM         0.837  20.0 Rarefaction       0  8.22  7.22    9.23
+3 EM         0.915  40.0 Rarefaction       0 10.6   9.14   12.0 
+4 EM         0.945  59.0 Rarefaction       0 11.9  10.2    13.6 
+5 EM         0.962  79.0 Rarefaction       0 12.8  10.9    14.7 
+6 EM         0.972  98.0 Rarefaction       0 13.4  11.2    15.7 
 ```
 
 The output `$AsyEst` lists the diversity labels, the observed diversity,
@@ -426,15 +430,15 @@ be computed via the function `AO3D()`. The output are shown below:
 ``` r
 out.TD$AsyEst
   Assemblage         Diversity  Observed Estimator      s.e.       LCL       UCL
-1         EM  Species richness 17.000000 21.487936 3.3026767 17.000000 27.961063
-2         EM Shannon diversity  9.272102  9.541765 0.3072638  8.939539 10.143991
-3         EM Simpson diversity  7.218106  7.340810 0.2150888  6.919244  7.762377
-4         MO  Species richness 39.000000 40.998658 5.0222279 39.000000 50.842044
-5         MO Shannon diversity 19.712107 19.987465 0.4893122 19.028431 20.946500
-6         MO Simpson diversity 13.979950 14.102888 0.6085372 12.910177 15.295599
-7         TR  Species richness 42.000000 45.996223 3.9664256 42.000000 53.770274
-8         TR Shannon diversity 23.941938 24.481173 0.8177399 22.878433 26.083914
-9         TR Simpson diversity 18.605455 18.920295 0.5968307 17.750528 20.090061
+1         EM  Species richness 17.000000 21.487936 8.3226277 17.000000 37.799986
+2         EM Shannon diversity  9.272102  9.541765 0.4885346  8.584255 10.499275
+3         EM Simpson diversity  7.218106  7.340810 0.4045811  6.547846  8.133775
+4         MO  Species richness 39.000000 40.998658 4.4043657 39.000000 49.631056
+5         MO Shannon diversity 19.712107 19.987465 0.4541758 19.097297 20.877634
+6         MO Simpson diversity 13.979950 14.102888 0.4230610 13.273704 14.932073
+7         TR  Species richness 42.000000 45.996223 7.3321687 42.000000 60.367009
+8         TR Shannon diversity 23.941938 24.481173 0.7385748 23.033593 25.928753
+9         TR Simpson diversity 18.605455 18.920295 0.6452699 17.655589 20.185000
 ```
 
 ### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
@@ -442,10 +446,13 @@ out.TD$AsyEst
 The function `ggiNEXT3D()`, which extends `ggplot2` with default
 arguments, is described as follows:
 
-<br><br> ggiNEXT3D(outcome, type = 1:3, se = TRUE, facet.var =
-“Assemblage”, color.var = “Order.q”)  
-<br><br> Here `outcome` is the object of `iNEXT3D()`’s output. Three
-types of curves are allowed for different diversity dimensions:
+``` r
+ggiNEXT3D(outcome, type = 1:3, se = TRUE,
+          facet.var = "Assemblage", color.var = "Order.q")  
+```
+
+Here `outcome` is the object of `iNEXT3D()`’s output. Three types of
+curves are allowed for different diversity dimensions:
 
 1.  Sample-size-based R/E curve (`type = 1`): This curve plots diversity
     estimates with confidence intervals as a function of sample size.
@@ -475,7 +482,7 @@ as below:
 ggiNEXT3D(out.TD, type = 1, facet.var = "Assemblage")
 ```
 
-<img src="README/README-unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" />
 
 When `facet.var = "Order.q"` in `ggiNEXT3D` function, it creates a
 separate plot for each diversity order and the different color lines
@@ -487,7 +494,7 @@ below:
 ggiNEXT3D(out.TD, type = 1, facet.var = "Order.q")
 ```
 
-<img src="README/README-unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" />
 
 The following command return the sample completeness (sample coverage)
 curve (`type = 2`) in which different colors are used for the three
@@ -497,7 +504,7 @@ assemblages.
 ggiNEXT3D(out.TD, type = 2, facet.var = "Order.q", color.var = "Assemblage")
 ```
 
-<img src="README/README-unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
 
 The following commands return the coverage-based R/E sampling curves in
 which different colors are used for the three assemblages
@@ -508,13 +515,13 @@ which different colors are used for the three assemblages
 ggiNEXT3D(out.TD, type = 3, facet.var = "Assemblage")
 ```
 
-<img src="README/README-unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" />
 
 ``` r
 ggiNEXT3D(out.TD, type = 3, facet.var = "Order.q")
 ```
 
-<img src="README/README-unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" />
 
 ### EXAMPLE for INCIDENCE-RAW DATA
 
@@ -546,19 +553,19 @@ out.raw <- iNEXT3D(data = fish$data, diversity = "TD",
 ggiNEXT3D(out.raw, type = 1)
 ```
 
-<img src="README/README-unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" />
 
 ``` r
 ggiNEXT3D(out.raw, type = 2)
 ```
 
-<img src="README/README-unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" />
 
 ``` r
 ggiNEXT3D(out.raw, type = 3)
 ```
 
-<img src="README/README-unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" />
 
 ### EXAMPLE for INCIDENCE-FREQUENCY DATA
 
@@ -602,31 +609,35 @@ out.incfreq <- iNEXT3D(data = fish.freq, diversity = "TD",
 ggiNEXT3D(out.incfreq, type = 1, color.var = "Order.q")
 ```
 
-<img src="README/README-unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" />
 
 ``` r
 # Sample completeness curves
 ggiNEXT3D(out.incfreq, type = 2)
 ```
 
-<img src="README/README-unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" />
 
 ``` r
 # Coverage-based R/E curves
 ggiNEXT3D(out.incfreq, type = 3, color.var = "Order.q")     
 ```
 
-<img src="README/README-unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" />
 
 ### DATA INFORMATION FUNCTION: DataInfo3D()
 
-<br><br> DataInfo3D(data, diversity = “TD”, datatype = “abundance”, nT =
-NULL, PDtree, PDreftime = NULL, FDdistM, FDtype = “AUC”, FDtau = NULL)
-<br><br> Here provide the function `DataInfo3D` to compute three
-diversity dimensions (‘TD’, ‘PD’, ‘FD’) data information, which
-including sample size, observed species richness, sample coverage
-estimate, and the first ten abundance/incidence frequency counts when
-`diversity = TD`. And so on for PD, FD.
+``` r
+DataInfo3D(data, diversity = "TD", datatype = "abundance", 
+           nT = NULL, PDtree, PDreftime = NULL, 
+           FDdistM, FDtype = "AUC", FDtau = NULL) 
+```
+
+Here provide the function `DataInfo3D` to compute three diversity
+dimensions (‘TD’, ‘PD’, ‘FD’) data information, which including sample
+size, observed species richness, sample coverage estimate, and the first
+ten abundance/incidence frequency counts when `diversity = TD`. And so
+on for PD, FD.
 
 ``` r
 DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
@@ -638,14 +649,17 @@ DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
 
 ### POINT ESTIMATION FUNCTION: estimate3D()
 
-<br><br> estimate3D(data, diversity = “TD”, q = c(0, 1, 2), datatype =
-“abundance”, base = “coverage”, level = NULL, nboot = 50, conf = 0.95,
-nT = NULL, PDtree, PDreftime = NULL, PDtype = “meanPD”, FDdistM, FDtype
-= “AUC”, FDtau = NULL) <br><br> `estimate3D` is used to compute three
-diversity dimensions (TD, PD, FD) estimates with q = 0, 1, 2 under any
-specified level of sample size (when `base = "size"`) or sample coverage
-(when `base = "coverage"`) for either abundance data
-(`datatype = "abundance"`) or incidence data
+``` r
+estimate3D(data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance", 
+           base = "coverage", level = NULL, nboot = 50, conf = 0.95, 
+           nT = NULL, PDtree, PDreftime = NULL, PDtype = "meanPD", 
+           FDdistM, FDtype = "AUC", FDtau = NULL)
+```
+
+`estimate3D` is used to compute three diversity dimensions (TD, PD, FD)
+estimates with q = 0, 1, 2 under any specified level of sample size
+(when `base = "size"`) or sample coverage (when `base = "coverage"`) for
+either abundance data (`datatype = "abundance"`) or incidence data
 (`datatype = "incidence_freq"` or `"incidence_raw"`). If `level = NULL`,
 this function computes the diversity estimates for the minimum sample
 size among all samples extrapolated to double reference sizes (when
@@ -660,24 +674,26 @@ rarefaction part whereas the others correspond to extrapolation.
 ``` r
 estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
            base = "coverage", level = 0.995)
-  Assemblage    SC        m        Method Order.q        qD      s.e.    qD.LCL   qD.UCL
-1         EM 0.995 637.4836 Extrapolation       0 18.692936 4.8488409  9.189382 28.19649
-2         EM 0.995 637.4836 Extrapolation       1  9.400018 0.4376309  8.542277 10.25776
-3         EM 0.995 637.4836 Extrapolation       2  7.268513 0.3598977  6.563127  7.97390
-4         MO 0.995 732.4154   Rarefaction       0 37.191467 1.0499609 35.133582 39.24935
-5         MO 0.995 732.4154   Rarefaction       1 19.428728 0.4277988 18.590257 20.26720
-6         MO 0.995 732.4154   Rarefaction       2 13.855022 0.4283415 13.015488 14.69456
-7         TR 0.995 853.3564   Rarefaction       0 41.115774 3.7841373 33.699001 48.53255
-8         TR 0.995 853.3564   Rarefaction       1 23.815218 0.7010055 22.441272 25.18916
-9         TR 0.995 853.3564   Rarefaction       2 18.531144 0.6785671 17.201177 19.86111
+  Assemblage    SC        m        Method Order.q        qD      s.e.    qD.LCL    qD.UCL
+1         EM 0.995 637.4836 Extrapolation       0 18.692936 4.0371150 10.780336 26.605536
+2         EM 0.995 637.4836 Extrapolation       1  9.400018 0.4665542  8.485589 10.314448
+3         EM 0.995 637.4836 Extrapolation       2  7.268513 0.3289014  6.623878  7.913148
+4         MO 0.995 732.4154   Rarefaction       0 37.191467 1.2054378 34.828853 39.554082
+5         MO 0.995 732.4154   Rarefaction       1 19.428728 0.4542729 18.538369 20.319086
+6         MO 0.995 732.4154   Rarefaction       2 13.855022 0.4588017 12.955788 14.754257
+7         TR 0.995 853.3564   Rarefaction       0 41.115774 2.5486280 36.120555 46.110993
+8         TR 0.995 853.3564   Rarefaction       1 23.815218 0.6731344 22.495899 25.134537
+9         TR 0.995 853.3564   Rarefaction       2 18.531144 0.6644563 17.228834 19.833455
 ```
 
 ### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: AO3D
 
-<br><br> AO3D( data,diversity = “TD”,q = seq(0,2,0.2),datatype =
-“abundance”, nboot = 50,conf = 0.95,nT = NULL,method = c(“Asymptotic”,
-“Observed”), PDtree,PDreftime = NULL,PDtype = “meanPD”, FDdistM,FDtype =
-“AUC”,FDtau = NULL ) <br><br>
+``` r
+AO3D(data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
+     nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
+     PDtree,PDreftime = NULL,PDtype = "meanPD",
+     FDdistM,FDtype = "AUC",FDtau = NULL)
+```
 
 The function `AO3D()` compute three diversity dimensions (TD, PD, FD)
 for empirical (observed) diversity and estimated asymptotic diversity
@@ -692,16 +708,16 @@ out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance",
 
 head(out1, 10)
    Order.q        qD      s.e.    qD.LCL    qD.UCL Assemblage     Method
-1      0.0 21.487936 3.9187781 13.807272 29.168600         EM Asymptotic
-2      0.2 16.936433 2.0579518 12.902922 20.969944         EM Asymptotic
-3      0.4 13.885407 1.0179171 11.890326 15.880487         EM Asymptotic
-4      0.6 11.862781 0.5277510 10.828408 12.897154         EM Asymptotic
-5      0.8 10.496859 0.3565462  9.798042 11.195677         EM Asymptotic
-6      1.0  9.541765 0.3205752  8.913449 10.170081         EM Asymptotic
-7      1.2  8.847719 0.3164388  8.227510  9.467928         EM Asymptotic
-8      1.4  8.325449 0.3154286  7.707220  8.943677         EM Asymptotic
-9      1.6  7.920890 0.3135268  7.306389  8.535391         EM Asymptotic
-10     1.8  7.600095 0.3111726  6.990208  8.209982         EM Asymptotic
+1      0.0 21.487936 3.4359036 14.753688 28.222183         EM Asymptotic
+2      0.2 16.936433 1.8940908 13.224083 20.648783         EM Asymptotic
+3      0.4 13.885407 1.0326885 11.861374 15.909439         EM Asymptotic
+4      0.6 11.862781 0.6144771 10.658428 13.067134         EM Asymptotic
+5      0.8 10.496859 0.4424516  9.629670 11.364049         EM Asymptotic
+6      1.0  9.541765 0.3810451  8.794930 10.288600         EM Asymptotic
+7      1.2  8.847719 0.3584067  8.145255  9.550183         EM Asymptotic
+8      1.4  8.325449 0.3474795  7.644401  9.006496         EM Asymptotic
+9      1.6  7.920890 0.3401920  7.254126  8.587654         EM Asymptotic
+10     1.8  7.600095 0.3344821  6.944522  8.255668         EM Asymptotic
 ```
 
 ### GRAPHIC DISPLAYS FUNCTION: ggAO3D()
@@ -710,7 +726,12 @@ Plots q-profile, time-profile, and tau-profile based on the outcome of
 AO3D using the ggplot2 package.
 
 The function ggAO3D(), which extends ggplot2 with default arguments, is
-described as follows: <br><br> ggAO3D(outcome, profile = “q”) <br><br>
+described as follows:
+
+``` r
+ggAO3D(outcome, profile = "q")
+```
+
 `ggAO3D` plots q-profile, time-profile, and tau-profile based on
 `ggplot2`. Here `outcome` is the object from the function `AO3D`, and
 `profile` is a profile selection versus to diversity. Default is
@@ -723,7 +744,7 @@ diversity = “PD” and `profile = "tau"` profile is allowed for only when
 ggAO3D(out1,profile = "q")
 ```
 
-<img src="README/README-unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" />
 
 The argument `profile = "time"` in `ggAO3D` function creates a separate
 plot for each diversity order q. Therefore the different assemblages
@@ -742,7 +763,7 @@ out2 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw",
 ggAO3D(out2, profile = "time")
 ```
 
-<img src="README/README-unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" />
 
 The argument `profile = "tau"` in `ggAO3D` function creates a separate
 plot for each diversity order q. Therefore the different assemblages
@@ -758,7 +779,7 @@ out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nbo
 ggAO3D(out3, profile = "tau")
 ```
 
-<img src="README/README-unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" />
+<img src="README/README-unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" />
 
 ### How to cite
 
