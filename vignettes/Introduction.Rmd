@@ -28,18 +28,20 @@ library(ggplot2)
 
 ```{r eval=FALSE}
 ## install iNEXT.3D package from CRAN
-# install.packages("iNEXT.3D")
+# install.packages("iNEXT.3D")  # coming soon
+
 ## install the latest version from github
 install.packages('devtools')
 library(devtools)
-# install_github('AnneChao/iNEXT.3D')
+install_github('AnneChao/iNEXT.3D')
+
 ## import packages
 library(iNEXT.3D)
 library(ggplot2)
 ```
 
 
-In this document, here provide a quick introduction demonstrating how to run the package `iNEXT.3D` (iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main function: `iNEXT3D`, `ggiNEXT3D`, `AO3D`, `ggAO3D`, `estimate3D`, and `DataInfo3D.`
+In this document, here provide a quick introduction demonstrating how to run the package `iNEXT.3D` (iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main functions: `iNEXT3D`, `ggiNEXT3D`, `AO3D`, `ggAO3D`, `estimate3D`, and `DataInfo3D.`
 
 `iNEXT.3D` is the extension of R package [iNEXT](https://cran.r-project.org/web/packages/iNEXT/index.html) (Hsieh et al., 2016). `iNEXT.3D` focuses on three measures of Hill numbers of order q: species richness (`q = 0`), Shannon diversity (`q = 1`, the exponential of Shannon entropy) and Simpson diversity (`q = 2`, the inverse of Simpson concentration) and extend Hill number to three dimensions: taxonomic diversity (TD), phylogenetic diversity (PD), and functional diversity (FD) under Hill-Chao family frame work (Chao et al., 2019). Besides, `iNEXT.3D` also provide statistic estimation for three dimensions biodiversity (Chao et al., 2021). For each diversity measure, `iNEXT.3D` uses the observed sample of abundance or incidence data (called the “reference sample”) to compute diversity estimates and the associated confidence intervals for the following two types of rarefaction and extrapolation (R/E): 
 
@@ -47,6 +49,35 @@ In this document, here provide a quick introduction demonstrating how to run the
 2. Coverage-based R/E sampling curves: `iNEXT3D` computes diversity estimates for rarefied and extrapolated samples with sample completeness (as measured by sample coverage) up to an appropriate coverage. This type of sampling curve plots the diversity estimates with respect to sample coverage. 
 
 `iNEXT.3D` also plots the above two types of sampling curves and a sample completeness curve by `ggiNEXT3D`. The sample completeness curve provides a bridge between these two types of curves.
+
+## How to cite
+If you publish your work based on results from iNEXT.3D package, you should make references to the following Online reference:
+
+*	Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and. Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+
+## SOFTWARE NEEDED TO RUN iNEXT.3D IN R
+- Required: [R](https://cran.r-project.org/)
+- Suggested: [RStudio IDE](https://www.rstudio.com/products/RStudio/#Desktop)
+
+## HOW TO RUN iNEXT.3D:
+The `iNEXT.3D` package can be downloaded from Anne Chao's [iNEXT.3D_github](https://github.com/AnneChao/iNEXT.3D) using the following commands. For a first-time installation, an additional visualization extension package (`ggplot2`) must be installed and loaded. 
+
+```{r eval=FALSE}
+## install iNEXT.3D package from CRAN
+# install.packages("iNEXT.3D")  # coming soon
+
+## install the latest version from github
+install.packages('devtools')
+library(devtools)
+install_github('AnneChao/iNEXT.3D')
+
+## import packages
+library(iNEXT.3D)
+library(ggplot2)
+```
+
+An online version of iNEXT.3D(https://chao.shinyapps.io/iNEXT_3D/) is also available for users without R background.
+
 
 ## MAIN FUNCTION: iNEXT3D()
 
@@ -214,7 +245,7 @@ $FDInfo: functional basic data information
 3 TR         1059    42   0.996     0     0     0     0     0     0     0     1     0     0  0.592
 ```
 
-Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default (for example in "EM" assemblage, corresponding to sample sizes m = 1, 20, 40, ..., 372, 373, 374, ..., 746), which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL` under 'size-based'). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
+Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default (for example in "EM" assemblage, corresponding to sample sizes m = 1, 20, 40, ..., 372, 373, 374, ..., 746), which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
 
 Here only show first six rows for each diversity:
 
@@ -284,10 +315,12 @@ iNEXT3D(dunes$data, diversity = "TD",
 ## GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
 
 The function `ggiNEXT3D()`, which extends `ggplot2` with default arguments, is described as follows: 
+
 ```{r eval=FALSE}
 ggiNEXT3D(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")  
 ```
-Here `outcome` is the object of `iNEXT3D()`'s output. Three types of curves are allowed for different diversity classes:  
+
+Here `outcome` is the object of `iNEXT3D()`'s output. Three types of curves are allowed for different diversity dimensions:  
 
 (1) Sample-size-based R/E curve (`type = 1`): This curve plots diversity estimates with confidence intervals as a function of sample size.  
 
