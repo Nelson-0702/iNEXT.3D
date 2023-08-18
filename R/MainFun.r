@@ -99,15 +99,17 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       
       out <- lapply(mydata, function(x){
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
-      }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(names(mydata),each = length(PDreftime))) %>%
-        select(Assemblage,n,S.obs,PD.obs,`f1*`,`f2*`,g1,g2,Reftime)
+      }) %>% do.call(rbind,.) %>% 
+        mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
+        select(Assemblage, n, S.obs, PD.obs, `f1*`, `f2*`, g1, g2, Reftime)
       
     }else if (datatype=='incidence_raw'){
       
       out <- lapply(mydata, function(x){
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
-      }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(names(mydata),each = length(PDreftime))) %>%
-        select(Assemblage,`T`,S.obs,PD.obs,`Q1*`,`Q2*`,R1,R2,Reftime)
+      }) %>% do.call(rbind,.) %>% 
+        mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
+        select(Assemblage,`T`, U, S.obs, PD.obs, `Q1*`, `Q2*`, R1, R2, Reftime)
       
     }
     
@@ -125,21 +127,28 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     dat = checkdistM[[3]]
     
     
-    out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, FDtau, datatype, integer = TRUE)$ai[,1]), datatype)
-    out$n =lapply(dat, function(x) sum(x))
-    
-    out$SC = lapply(dat, function(x) {
-      n = sum(x)
-      f1 = sum(x==1)
-      f2 = sum(x==2)
-      f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2) 
-      A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
-      Chat <- round(1 - f1/n*A, 4)
-    })
-    
-    colnames(out)[colnames(out) %in% paste0("f",1:10)] = paste0("a",1:10,"'")
-    
-    out$Tau = FDtau
+    out = lapply(FDtau, function(tau) {
+      
+      out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, tau, datatype, integer = TRUE)$ai[,1]), datatype)
+      if (datatype == "abundance") out$n = lapply(dat, function(x) sum(x)) else if (datatype == "incidence_freq") 
+        out$U = lapply(dat, function(x) sum(x[-1]))
+      
+      out$SC = lapply(dat, function(x) {
+        n = sum(x)
+        f1 = sum(x == 1)
+        f2 = sum(x == 2)
+        f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
+        A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
+        Chat <- round(1 - f1/n * A, 4)
+      })
+      
+      colnames(out)[colnames(out) %in% paste0("f", 1:10)] = paste0("a", 1:10, "'")
+      
+      out$Tau = tau
+      
+      return(out)
+      
+    }) %>% do.call(rbind,.)
     
   } 
   
@@ -166,18 +175,28 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       }
       
       dmean <- sum ( (tmp %*% t(tmp) ) * distM)
-      distM <- distM[tmp>0,tmp>0]
-      dmin <- min(distM[distM>0])
-      dmax <- max(distM[distM>0])
+      distM <- distM[tmp > 0, tmp > 0]
+      dmin <- min(distM[distM > 0])
+      dmax <- max(distM[distM > 0])
       
       c(dmin, dmean, dmax)
     }))
     
-    out <- cbind(TDinfo(dat, datatype)[,1:4], Tau)
-    colnames(out)[5:7] = c("dmin", "dmean", "dmax")
-    rownames(out) = NULL
-    return(out)
+    if (datatype == "abundance") {
+      
+      out <- cbind(TDinfo(dat, datatype)[,1:4], Tau)
+      colnames(out)[5:7] = c("dmin", "dmean", "dmax")
+      rownames(out) = NULL
+      
+    } else {
+      
+      out <- cbind(TDinfo(dat, datatype)[,1:5], Tau)
+      colnames(out)[6:8] = c("dmin", "dmean", "dmax")
+      rownames(out) = NULL
+      
+    }
     
+    return(out)
   }
   
   return(out)

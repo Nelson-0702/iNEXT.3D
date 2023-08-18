@@ -901,37 +901,45 @@ datainf <- function(data, datatype, phylotr, reft){
     data <- data[data>0]
     ai <- new$treeNabu$branch.abun
     Lis <- new$BLbyT
-    a1 <- sapply(1:ncol(Lis),function(i){
+    out <- sapply(1:ncol(Lis),function(i){
       Li = Lis[,i]
-      I1 <- which(ai==1&Li>0);I2 <- which(ai==2&Li>0)
-      f1 <- length(I1);f2 <- length(I2)
+      I1 <- which(ai==1 & Li>0)
+      I2 <- which(ai==2 & Li>0)
+      f1 <- length(I1)
+      f2 <- length(I2)
       PD_obs <- sum(Li)
       g1 <- sum(Li[I1])
       g2 <- sum(Li[I2])
       c(f1,f2,PD_obs,g1,g2)
     }) %>% matrix(nrow = 5) %>% t()
-    a1 <- tibble('n' = sum(data),'S.obs' = length(data),'PD.obs' = a1[,3],
-                 'f1*' = a1[,1],'f2*' = a1[,2], 'g1' = a1[,4],'g2' = a1[,5])
+    
+    out <- tibble('n' = sum(data), 'S.obs' = length(data), 'PD.obs' = out[,3],
+                  'f1*' = out[,1], 'f2*' = out[,2], 'g1' = out[,4], 'g2' = out[,5])
+    
   }else if(datatype == 'incidence_raw'){
     new <- phyBranchAL_Inc(phylotr,data,datatype,reft)
     #new$treeNabu$branch.length <- new$BLbyT[,1]
     data <- data[rowSums(data)>0,colSums(data)>0,drop=F]
     ai <- new$treeNabu$branch.abun
     Lis <- new$BLbyT
-    a1 <- sapply(1:ncol(Lis),function(i){
+    out <- sapply(1:ncol(Lis),function(i){
       Li = Lis[,i]
-      I1 <- which(ai==1);I2 <- which(ai==2)
-      f1 <- length(I1);f2 <- length(I2)
+      I1 <- which(ai==1 & Li>0)
+      I2 <- which(ai==2 & Li>0)
+      f1 <- length(I1)
+      f2 <- length(I2)
       PD_obs <- sum(Li)
       g1 <- sum(Li[I1])
       g2 <- sum(Li[I2])
       c(f1,f2,PD_obs, g1, g2)
     }) %>% matrix(nrow = 5) %>% t()
-    a1 <- tibble('T' = ncol(data),'S.obs' = nrow(data),'PD.obs' = a1[,3],
-                 'Q1*' = a1[,1],'Q2*' = a1[,2], 'R1' = a1[,4],'R2' = a1[,5])
+    
+    out <- tibble('T' = ncol(data), 'U' = sum(data), 'S.obs' = nrow(data), 'PD.obs' = out[,3],
+                  'Q1*' = out[,1], 'Q2*' = out[,2], 'R1' = out[,4], 'R2' = out[,5])
+    
   }
-  return(a1)
   
+  return(out)
 }
 
 
