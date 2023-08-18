@@ -888,7 +888,7 @@ TDinfo = function(data, datatype) {
     Sobs <- sum(x>0)
     f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)
     A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
-    Chat <- round(1 - f1/n*A, 4)
+    Chat <- 1 - f1/n*A
     c(n, Sobs, Chat, fk)
   }
   
@@ -902,7 +902,7 @@ TDinfo = function(data, datatype) {
     Sobs <- sum(x>0)
     Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)
     A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
-    Chat <- round(1 - Q1/U*A,4)
+    Chat <- 1 - Q1/U*A
     out <- c(nT, U, Sobs, Chat, Qk)
   }
   
