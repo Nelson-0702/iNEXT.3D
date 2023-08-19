@@ -895,12 +895,15 @@ Boots.one = function(phylo, aL, datatype, nboot,reft, BLs, splunits = NULL){
 
 
 datainf <- function(data, datatype, phylotr, reft){
+  
   if(datatype == "abundance"){
+    
     new <- phyBranchAL_Abu(phylotr,data,datatype,reft)
     #new$treeNabu$branch.length <- new$BLbyT[,1]
     data <- data[data>0]
     ai <- new$treeNabu$branch.abun
     Lis <- new$BLbyT
+    
     out <- sapply(1:ncol(Lis),function(i){
       Li = Lis[,i]
       I1 <- which(ai==1 & Li>0)
@@ -913,15 +916,24 @@ datainf <- function(data, datatype, phylotr, reft){
       c(f1,f2,PD_obs,g1,g2)
     }) %>% matrix(nrow = 5) %>% t()
     
-    out <- tibble('n' = sum(data), 'S.obs' = length(data), 'PD.obs' = out[,3],
+    n = sum(data)
+    f1 = sum(data == 1)
+    f2 = sum(data == 2)
+    f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
+    A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
+    Chat <- 1 - f1/n * A
+    
+    out <- tibble('n' = sum(data), 'S.obs' = length(data), 'SC' = Chat, 'PD.obs' = out[,3],
                   'f1*' = out[,1], 'f2*' = out[,2], 'g1' = out[,4], 'g2' = out[,5])
     
-  }else if(datatype == 'incidence_raw'){
+  } else if(datatype == 'incidence_raw') {
+    
     new <- phyBranchAL_Inc(phylotr,data,datatype,reft)
     #new$treeNabu$branch.length <- new$BLbyT[,1]
     data <- data[rowSums(data)>0,colSums(data)>0,drop=F]
     ai <- new$treeNabu$branch.abun
     Lis <- new$BLbyT
+    
     out <- sapply(1:ncol(Lis),function(i){
       Li = Lis[,i]
       I1 <- which(ai==1 & Li>0)
@@ -934,7 +946,16 @@ datainf <- function(data, datatype, phylotr, reft){
       c(f1,f2,PD_obs, g1, g2)
     }) %>% matrix(nrow = 5) %>% t()
     
-    out <- tibble('T' = ncol(data), 'U' = sum(data), 'S.obs' = nrow(data), 'PD.obs' = out[,3],
+    nT = ncol(data)
+    x = rowSums(data)
+    U <- sum(x)
+    Q1 = sum(x == 1)
+    Q2 = sum(x == 2)
+    Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
+    A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
+    Chat <- 1 - Q1/U * A
+    
+    out <- tibble('T' = ncol(data), 'U' = sum(data), 'S.obs' = nrow(data), 'SC' = Chat, 'PD.obs' = out[,3],
                   'Q1*' = out[,1], 'Q2*' = out[,2], 'R1' = out[,4], 'R2' = out[,5])
     
   }

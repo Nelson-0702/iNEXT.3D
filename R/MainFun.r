@@ -101,7 +101,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
       }) %>% do.call(rbind,.) %>% 
         mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
-        select(Assemblage, n, S.obs, PD.obs, `f1*`, `f2*`, g1, g2, Reftime)
+        select(Assemblage, n, S.obs, SC, PD.obs, `f1*`, `f2*`, g1, g2, Reftime)
       
     }else if (datatype=='incidence_raw'){
       
@@ -109,7 +109,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
       }) %>% do.call(rbind,.) %>% 
         mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
-        select(Assemblage,`T`, U, S.obs, PD.obs, `Q1*`, `Q2*`, R1, R2, Reftime)
+        select(Assemblage,`T`, U, S.obs, SC, PD.obs, `Q1*`, `Q2*`, R1, R2, Reftime)
       
     }
     
