@@ -749,7 +749,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   xlab_name <- ifelse(datatype == "incidence", "sampling units", "individuals")
   
   if (class == 'TD') {
-    ylab_name = "Species diversity"
+    ylab_name = "Taxonomic diversity"
   } else if (class == 'FD') {
     ylab_name = "Functional diversity"
   } else if (class == 'AUC') {
@@ -757,7 +757,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   } else if (class == 'PD' & unique(x_list$size_based$Type) == 'PD') {
     ylab_name = "Phylogenetic diversity"
   } else if (class == 'PD' & unique(x_list$size_based$Type) == 'meanPD') {
-    ylab_name = "Phylogenetic Hill diversity"
+    ylab_name = "Mean phylogenetic diversity"
   } 
   
   
@@ -1471,8 +1471,8 @@ ggAO3D <- function(outcome, profile = 'q'){
     if (length(unique(outcome$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qD.LCL, ymax = qD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method == 'Asymptotic')) out = out + labs(x = 'Order q', y = 'Asymptotic Taxonomic diversity')
-      if (unique(outcome$Method == 'Empirical')) out = out + labs(x = 'Order q', y = 'Empirical Taxonomic diversity')
+      if (unique(outcome$Method == 'Asymptotic')) out = out + labs(x = 'Order q', y = 'Asymptotic taxonomic diversity')
+      if (unique(outcome$Method == 'Empirical')) out = out + labs(x = 'Order q', y = 'Empirical taxonomic diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
@@ -1491,10 +1491,10 @@ ggAO3D <- function(outcome, profile = 'q'){
       
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic diversity')
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic Phylogenetic Hill diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Empirical Phylogenetic Hill diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic phylogenetic diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Empirical phylogenetic diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic mean phylogenetic diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Empirical mean phylogenetic diversity')
       
     } else {
       
@@ -1502,7 +1502,7 @@ ggAO3D <- function(outcome, profile = 'q'){
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Phylogenetic diversity')
-      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Phylogenetic Hill diversity')
+      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Mean phylogenetic diversity')
       
     }
     
@@ -1519,10 +1519,10 @@ ggAO3D <- function(outcome, profile = 'q'){
       
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic diversity')
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic Phylogenetic Hill diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Empirical Phylogenetic Hill diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic phylogenetic diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Empirical phylogenetic diversity')
+      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic mean phylogenetic diversity')
+      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Empirical mean phylogenetic diversity')
       
     } else {
       
@@ -1530,7 +1530,7 @@ ggAO3D <- function(outcome, profile = 'q'){
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
       if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Phylogenetic diversity')
-      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Phylogenetic Hill diversity')
+      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Mean phylogenetic diversity')
       
     }
     out = out + facet_grid(.~Order.q, scales = "free_y")
@@ -1545,8 +1545,8 @@ ggAO3D <- function(outcome, profile = 'q'){
     if (length(unique(outcome$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional diversity')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical Functional diversity')
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic functional diversity')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical functional diversity')
       
     } else {
       
@@ -1567,8 +1567,8 @@ ggAO3D <- function(outcome, profile = 'q'){
     if (length(unique(outcome$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Tau', y = 'Asymptotic Functional diversity')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Tau', y = 'Empirical Functional diversity')
+      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Tau', y = 'Asymptotic functional diversity')
+      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Tau', y = 'Empirical functional diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
         geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
