@@ -22,9 +22,9 @@ This package contains six main functions: \cr\cr
 5. \code{estimate3D} Computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr\cr
 6. \code{DataInfo3D} Exhibit basic data information \cr\cr
 
-An Online version of iNEXT.3D is also available for users without an R background: \cr
+An Online version of \code{iNEXT.3D} is also available for users without an R background: \cr
 https://chao.shinyapps.io/iNEXT_3D/. \cr
-In the detailed Online iNEXT.3D User's Guide, we illustrate all the running procedures in an easily
+In the detailed Online \code{iNEXT.3D} User's Guide, we illustrate all the running procedures in an easily
 accessible way through numerical examples with proper interpretations of portions of the output.
 All the data of those illustrative examples are included in this package. \cr\cr
 }
