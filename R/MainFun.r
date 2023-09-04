@@ -127,14 +127,55 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     dat = checkdistM[[3]]
     
     
+    # out = lapply(FDtau, function(tau) {
+    #   
+    #   out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, tau, datatype, integer = TRUE)$ai[,1]), datatype)
+    #   
+    #   if (datatype == "abundance") out$n = sapply(dat, function(x) sum(x)) else if (datatype == "incidence_freq") 
+    #     out$U = sapply(dat, function(x) sum(x[-1]))
+    #   
+    #   out$SC = sapply(dat, function(x) {
+    #     
+    #     if (datatype == "abundance") {
+    #       
+    #       n = sum(x)
+    #       f1 = sum(x == 1)
+    #       f2 = sum(x == 2)
+    #       f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
+    #       A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
+    #       Chat <- 1 - f1/n * A
+    #       
+    #     } else if (datatype == "incidence_freq") {
+    #       
+    #       nT = x[1]
+    #       x = x[-1]
+    #       U <- sum(x)
+    #       Q1 = sum(x == 1)
+    #       Q2 = sum(x == 2)
+    #       Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
+    #       A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
+    #       Chat <- 1 - Q1/U * A
+    #       
+    #     }
+    #     
+    #     Chat
+    #   })
+    #   
+    #   colnames(out)[colnames(out) %in% paste0("f", 1:10)] = paste0("a", 1:10, "'")
+    #   
+    #   out$Tau = tau
+    #   
+    #   return(out)
+    #   
+    # }) %>% do.call(rbind,.)
+    
+    
     out = lapply(FDtau, function(tau) {
       
-      out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, tau, datatype, integer = TRUE)$ai[,1]), datatype)
-      
-      if (datatype == "abundance") out$n = sapply(dat, function(x) sum(x)) else if (datatype == "incidence_freq") 
-        out$U = sapply(dat, function(x) sum(x[-1]))
-      
-      out$SC = sapply(dat, function(x) {
+      out <- lapply(1:length(dat), function(i) {
+        
+        x = dat[[i]]
+        aivi = data_transform(x, distM, tau, datatype, integer = TRUE)
         
         if (datatype == "abundance") {
           
@@ -144,6 +185,14 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
           f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
           A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
           Chat <- 1 - f1/n * A
+          
+          multiple = tibble('Assemblage' = names(dat)[i], 
+                            'n' = n, 
+                            'S.obs' = sum(x > 0), 
+                            'SC' = Chat, 
+                            'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2), 
+                            'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
+                            'Tau' = tau)
           
         } else if (datatype == "incidence_freq") {
           
@@ -156,18 +205,23 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
           A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
           Chat <- 1 - Q1/U * A
           
+          multiple = tibble('Assemblage' = names(dat)[i], 
+                            'T' = nT, 
+                            'U' = U,
+                            'S.obs' = sum(x > 0), 
+                            'SC' = Chat, 
+                            'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2), 
+                            'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
+                            'Tau' = tau)
         }
         
-        Chat
-      })
+        return(multiple)
+        
+      }) %>% do.call(rbind,.)
       
-      colnames(out)[colnames(out) %in% paste0("f", 1:10)] = paste0("a", 1:10, "'")
-      
-      out$Tau = tau
-      
-      return(out)
       
     }) %>% do.call(rbind,.)
+    
     
   } 
   
