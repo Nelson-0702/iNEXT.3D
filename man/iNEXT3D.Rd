@@ -64,9 +64,9 @@ If the \code{endpoint} is larger than the reference sample size, then \code{iNEX
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a list of three objects: \code{$DataInfo} for summarizing data information; 
-\code{$iNextEst} for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
-and \code{$AsyEst} for showing asymptotic diversity estimates along with related statistics.
+a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
+\code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
+and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.
 }
 \description{
 \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q

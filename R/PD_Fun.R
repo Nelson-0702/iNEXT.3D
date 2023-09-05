@@ -362,11 +362,12 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
   }
   Assemblage = rep(names(datalist), each = length(q)*length(reft)*length(level))
   out <- out %>% mutate(Assemblage = Assemblage, Type=cal)
-  if(datatype=='abundance'){
-    out <- out %>% select(Assemblage,SC,m,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
+  
+  if(datatype == 'abundance'){
+    out <- out %>% select(Assemblage, m, Method, Order.q, SC, qPD, s.e., qPD.LCL, qPD.UCL,
                           Reftime,Type)
-  }else if(datatype=='incidence_raw'){
-    out <- out %>% select(Assemblage,SC,nt,Method,Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
+  } else if(datatype == 'incidence_raw') {
+    out <- out %>% select(Assemblage, nt, Method, Order.q, SC, qPD, s.e., qPD.LCL, qPD.UCL,
                           Reftime,Type)
   }
   out$qPD.LCL[out$qPD.LCL<0] <- 0

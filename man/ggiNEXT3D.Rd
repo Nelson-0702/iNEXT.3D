@@ -27,7 +27,7 @@ use different colors for combinations of order x assemblage (\code{color.var="Bo
 \item{...}{other arguments passed on to methods. Not currently used.}
 }
 \value{
-a ggplot2 object
+a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 }
 \description{
 \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve

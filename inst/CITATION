@@ -1,17 +1,35 @@
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 
-citHeader("To cite iNEXT in publications use:")
+citHeader("To cite iNEXT.3D in publications use:")
 
 citEntry(
 		 entry = 'manual',
 		 title = paste('iNEXT.3D:', meta$Title),
-		 author = personList(as.person("K. H. Hu"),
-    	                     as.person("Anne Chao")),
+		 author = personList(as.person("Anne Chao"),
+    	                   as.person("Kai-Hsiang Hu")),
 		 year = year,
 		 note = note,
-		 url = "http://chao.stat.nthu.edu.tw/wordpress/software_download/",
-		 textVersion = paste("", note, "URL: http://chao.stat.nthu.edu.tw/wordpress/software-download/.")
+		 url = "http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-3d/",
+		 textVersion = paste("Anne Chao. and K.-H. Hu", year, "iNEXT.3D: Interpolation and Extrapolation for three dimensions of diversity.", note, "URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-3d/.")
+)
+
+citEntry(
+		 entry = 'Article',
+		 title = 'Measuring temporal change in alpha diversity: A framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization.',
+         author = personList(as.person("Anne Chao"),
+                             as.person("Peter A. Henderson"),
+  		                       as.person("Chun-Huo Chiu"),
+  		                       as.person("Faye Moyes"),
+  		                       as.person("Kai-Hsiang Hu"),
+    	                       as.person("Maria Dornelas"),
+                             as.person("Anne E. Magurran")),
+		 journal = 'Methods in Ecology and Evolution',
+		 year   = '2021',
+		 volume = "12",
+     pages  = "1747-2054",
+     doi    = '10.1111/2041-210X.13682',
+  textVersion = paste('Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and. Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.')
 )
 
 

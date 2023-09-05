@@ -58,8 +58,18 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a \code{data.frame} of species diversity table including the sample size, sample coverage,
-method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
+a \code{data.frame} of diversity table including the following arguments:
+'Assemblage' = the assemblage name.\cr\cr
+'Size' = the corresponding sample size for the standardized coverage value. \cr\cr
+'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
+'Order.q' = the diversity order of q.\cr\cr
+'SC' = the target standardized coverage value. \cr\cr
+'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
+'s.e.' = standard error of diversity estimate.\cr\cr
+'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
+'Reftime' = reference times for PD.\cr\cr
+'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
+'Tau' = the threshold of functional distinctiveness between any two species.\cr
 }
 \description{
 \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.

@@ -239,7 +239,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, SC, m, Method, Order.q, qFD, s.e., qFD.LCL, qFD.UCL, Tau
+    Assemblage, m, Method, Order.q, SC, qFD, s.e., qFD.LCL, qFD.UCL, Tau
   )
   rownames(out) <- NULL
   out
@@ -781,7 +781,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','SC')) %>% mutate(
     s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
     SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage, SC, m, Method, Order.q, qAUC, s.e., qAUC.LCL, qAUC.UCL)
+    select(Assemblage, m, Method, Order.q, SC, qAUC, s.e., qAUC.LCL, qAUC.UCL)
   AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
   # AUC$SC.LCL[AUC$SC.LCL<0] <- 0
   AUC

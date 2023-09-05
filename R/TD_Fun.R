@@ -351,7 +351,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'SC', 'm', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'm', 'Method', 'Order.q', 'SC', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
@@ -382,7 +382,7 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'SC', 'nt', 'Method', 'Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'nt', 'Method', 'Order.q', 'SC', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }

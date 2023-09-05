@@ -39,7 +39,11 @@ It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw
 \item{FDtau}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.}
 }
 \value{
-a data.frame of basic data information including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts.
+a data.frame of basic data information including assemblage name (Assemblage), sample size (n) or total sampling units (T), total incidences (U), observed species richness (S.obs), sample coverage estimate (SC).\cr\cr
+Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10 or Q1-Q10)\cr\cr
+In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), reference time (Reftime).\cr\cr
+In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the functional group (a1*-a2*), the total contribution of those singletons/doubletons in the functional group (h1-h2), the threshold of functional distinctiveness between any two species (Tau).\cr\cr
+In FD (FDtype = "AUC"), show the the minimum distance among all non-zero elements in the distance matrix (dmin), the mean distance between any two individuals randomly selected from the pooled data (dmean), the maximum distance among all elements in the distance matrix (dmax).\cr
 }
 \description{
 \code{DataInfo3D} Exhibit basic data information
@@ -84,7 +88,8 @@ DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree =
 data(fish)
 data <- fish$data
 distM <- fish$dist
-DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
+DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
+           FDdistM = distM, FDtype = 'tau_values')
 
 # diversity = 'FD' & FDtype = 'AUC'
 data(fish)

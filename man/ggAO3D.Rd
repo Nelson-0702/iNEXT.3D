@@ -12,7 +12,7 @@ ggAO3D(outcome, profile = "q")
 \item{profile}{a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr}
 }
 \value{
-a figure of asymptotic or empirical three-divrsity\cr\cr
+a figure of asymptotic or empirical diversity in q-profile, time-profile, or tau-profile.\cr\cr
 }
 \description{
 \code{ggAO3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{AO3D} using the ggplot2 package.\cr
@@ -29,14 +29,16 @@ ggAO3D(out1)
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", nboot = 30, PDtree = tree, PDtype = "meanPD")
+out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
+             nboot = 30, PDtree = tree, PDtype = "meanPD")
 ggAO3D(out2, profile = "q")
 
 # diversity = 'FD' & FDtype = 'tau_values'
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
+             FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out3, profile = "tau")
 
 # diversity = 'FD' & FDtype = 'AUC'
@@ -65,7 +67,8 @@ ggAO3D(out6, profile = "time")
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
+out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+             FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(out7)
 
 # diversity = 'FD' & FDtype = 'AUC'
