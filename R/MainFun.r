@@ -662,7 +662,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
   }
   
-  class(out) <- c("iNEXT.3D")
+  class(out) <- c("iNEXT3D")
   
   return(out)
 }
