@@ -333,8 +333,8 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Ind(x_, q, C)
-        if (sum(round(est$m) > 2 * sum(x_))>0) 
-          warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
+        # if (sum(round(est$m) > 2 * sum(x_))>0) 
+        #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
         
         if(nboot>1){
           Prob.hat <- EstiBootComm.Ind(x_)
@@ -360,8 +360,8 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
       Community = rep(names(x),each = length(q)*length(C))
       out <- lapply(x, function(x_){
         est <- invChat.Sam(x_, q, C)
-        if (sum(round(est$nt) > 2 * max(x_))>0) 
-          warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
+        # if (sum(round(est$nt) > 2 * max(x_))>0) 
+        #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
         
         if(nboot>1){
           Prob.hat <- EstiBootComm.Sam(x_)
