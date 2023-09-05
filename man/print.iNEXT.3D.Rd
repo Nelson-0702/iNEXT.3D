@@ -12,5 +12,5 @@
 \item{...}{additional arguments.}
 }
 \description{
-\code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
+\code{print.iNEXT.3D}: Print method for objects inheriting from class "iNEXT.3D"
 }

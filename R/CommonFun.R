@@ -86,7 +86,7 @@ Coverage = function(data, datatype, m){
 
 #' Printing iNEXT.3D object
 #' 
-#' \code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
+#' \code{print.iNEXT.3D}: Print method for objects inheriting from class "iNEXT.3D"
 #' @param x an \code{iNEXT.3D} object computed by \code{\link{iNEXT3D}}.
 #' @param ... additional arguments.
 #' @export
@@ -115,14 +115,14 @@ print.iNEXT.3D <- function(x, ...){
   
   print(res[[1]])
   cat("\n")
-  cat("NOTE: The above output only shows five estimates for each assemblage; call iNEXT.object$", names(x)[2],
+  cat("NOTE: The above output only shows five estimates for each assemblage; call iNEXT.3D.object$", names(x)[2],
       "$size_based to view complete output.\n", sep = "")
   cat("\n")
   cat("$coverage_based (LCL and UCL are obtained for fixed coverage; interval length is wider due to varying size in bootstraps.)\n")
   cat("\n")
   print(res[[2]])
   cat("\n")
-  cat("NOTE: The above output only shows five estimates for each assemblage; call iNEXT.object$", names(x[2]), 
+  cat("NOTE: The above output only shows five estimates for each assemblage; call iNEXT.3D.object$", names(x[2]), 
       "$coverage_based to view complete output.\n", sep = "")
   cat("\n")
   cat(names(x)[3], ": asymptotic diversity estimates along with related statistics.\n", sep = "")
