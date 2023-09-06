@@ -60,7 +60,7 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 \value{
 a \code{data.frame} of diversity table including the following arguments:
 'Assemblage' = the assemblage name.\cr\cr
-'Size' = the corresponding sample size for the standardized coverage value. \cr\cr
+'m' (or 'nt') = the corresponding sample size (or sampling units) for the standardized coverage value. \cr\cr
 'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
 'Order.q' = the diversity order of q.\cr\cr
 'SC' = the target standardized coverage value. \cr\cr

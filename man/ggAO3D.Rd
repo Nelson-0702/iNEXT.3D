@@ -12,7 +12,7 @@ ggAO3D(outcome, profile = "q")
 \item{profile}{a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr}
 }
 \value{
-a figure of asymptotic or empirical diversity in q-profile, time-profile, or tau-profile.\cr\cr
+a figure of asymptotic or empirical (observed) diversity in q-profile, time-profile, or tau-profile.\cr\cr
 }
 \description{
 \code{ggAO3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{AO3D} using the ggplot2 package.\cr

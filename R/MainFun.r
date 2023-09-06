@@ -1035,7 +1035,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @return a \code{data.frame} of diversity table including the following arguments:
 #' 'Assemblage' = the assemblage name.\cr\cr
-#' 'Size' = the corresponding sample size for the standardized coverage value. \cr\cr
+#' 'm' (or 'nt') = the corresponding sample size (or sampling units) for the standardized coverage value. \cr\cr
 #' 'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
 #' 'Order.q' = the diversity order of q.\cr\cr
 #' 'SC' = the target standardized coverage value. \cr\cr
@@ -1482,7 +1482,7 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' 
 #' @param outcome the outcome of the functions \code{AO3D}.\cr
 #' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
-#' @return a figure of asymptotic or empirical diversity in q-profile, time-profile, or tau-profile.\cr\cr
+#' @return a figure of asymptotic or empirical (observed) diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
 #' ## example for abundance-based data
