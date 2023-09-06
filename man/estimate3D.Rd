@@ -130,3 +130,6 @@ out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "s
 out8
 
 }
+\references{
+Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+}
