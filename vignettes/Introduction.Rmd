@@ -197,57 +197,6 @@ The output of function `iNEXT3D()` includes three parts: `$DataInfo` for summari
 
 `$DataInfo`, as shown below, returns basic data information.  It can also be presented by the function `DataInfo3D()`.
 
-```{r eval=FALSE}
-data("dunes")
-str(dunes$data)
-out.TD = iNEXT3D(dunes$data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance")
-out.TD[1]
-```
-
-```
-$DataInfo: Taxonomic basic data information
-Assemblage  n   S.obs   SC     f1    f2    f3    f4    f5    f6    f7    f8    f9   f10
-
-1 EM      373    17   0.992     3     1     1     0     0     1     0     1     1     1
-2 MO      1490   39   0.999     2     1     1     4     2     2     3     1     1     1
-3 TR      1059   42   0.996     4     2     4     2     2     2     0     1     2     2
-```
-
-```{r eval=FALSE}
-data("dunes")
-str(dunes$data)
-out.PD = iNEXT3D(dunes$data, diversity = "PD", q = c(0, 1, 2), 
-                 datatype = "abundance", PDtree = dunes$tree)
-out.PD[1]
-```
-
-```
-$PDInfo: phylogenetic basic data information
-Assemblage     n    S.obs PD.obs `f1*` `f2*`    g1    g2    Reftime
-1 EM           373    17  2660.   3     1     309     65       325
-2 MO          1490    39  4783.   2     1     211     43.3     325
-3 TR          1059    42  5303.   4     2     352     108      325
-```
-
-```{r eval=FALSE}
-data("dunes")
-str(dunes$data)
-out.FD = iNEXT3D(dunes$data, diversity = "FD", q = c(0, 1, 2), 
-                 datatype = "abundance", FDdistM = dunes$dist, FDtype = "tau_values")
-out.FD[1]
-```
-
-```
-$FDInfo: functional basic data information
-  Assemblage    n   S.obs   SC     a1'   a2'   a3'   a4'   a5'   a6'   a7'  a8'   a9'  a10'    Tau
-1 EM          373    17   0.992     0     0     1     0     0     0     1     0     0     0  0.592
-2 MO         1490    39   0.999     0     0     0     0     0     0     0     0     0     1  0.592
-3 TR         1059    42   0.996     0     0     0     0     0     0     0     1     0     0  0.592
-```
-
-Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default (for example in "EM" assemblage, corresponding to sample sizes m = 1, 20, 40, ..., 372, 373, 374, ..., 746), which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
-
-Here only show first six rows for each diversity:
 
 ```{r, echo=FALSE}
 data("dunes")
@@ -259,10 +208,50 @@ out.PD <- iNEXT3D(data = dunes$data, diversity = "PD", q = c(0, 1, 2),
 out.FD <- iNEXT3D(data = dunes$data, diversity = "FD", q = c(0, 1, 2), 
                   datatype = "abundance", FDdistM = dunes$dist, FDtype = "tau_values", nboot = 30)
 
-head(out.TD$iNextEst$size_based)
-head(out.PD$PDiNextEst$size_based)
-head(out.FD$FDiNextEst$size_based)
 ```
+
+
+```{r eval=FALSE}
+data("dunes")
+str(dunes$data)
+out.TD = iNEXT3D(dunes$data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance")
+out.TD[1]
+```
+
+```{r echo=FALSE}
+out.TD[1]
+```
+
+
+```{r eval=FALSE}
+data("dunes")
+str(dunes$data)
+out.PD = iNEXT3D(dunes$data, diversity = "PD", q = c(0, 1, 2), 
+                 datatype = "abundance", PDtree = dunes$tree)
+out.PD[1]
+```
+
+```{r echo=FALSE}
+out.PD[1]
+```
+
+
+```{r eval=FALSE}
+data("dunes")
+str(dunes$data)
+out.FD = iNEXT3D(dunes$data, diversity = "FD", q = c(0, 1, 2), 
+                 datatype = "abundance", FDdistM = dunes$dist, FDtype = "tau_values")
+out.FD[1]
+```
+
+```{r echo=FALSE}
+out.FD[1]
+```
+
+
+Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default (for example in "EM" assemblage, corresponding to sample sizes m = 1, 20, 40, ..., 372, 373, 374, ..., 746), which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
+
+Here only show first six rows for each diversity:
 
 ```{r eval=FALSE}
 out.TD$iNextEst$size_based
@@ -270,21 +259,26 @@ out.PD$PDiNextEst$size_based
 out.FD$FDiNextEst$size_based
 ```
 
+```{r, echo=FALSE}
+head(out.TD$iNextEst$size_based)
+head(out.PD$PDiNextEst$size_based)
+head(out.FD$FDiNextEst$size_based)
+```
 
 The second data frame of list `$iNextEst` (as shown below for 'coverage_based') includes the sample coverage estimate ('SC'), the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample coverage estimate. 
 
 Here only show first six rows for each diversity:
 
-```{r, echo=FALSE}
-head(out.TD$iNextEst$coverage_based)
-head(out.PD$PDiNextEst$coverage_based)
-head(out.FD$FDiNextEst$coverage_based)
-```
-
 ```{r, eval=FALSE}
 out.TD$iNextEst$coverage_based
 out.PD$PDiNextEst$coverage_based
 out.FD$FDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+head(out.TD$iNextEst$coverage_based)
+head(out.PD$PDiNextEst$coverage_based)
+head(out.FD$FDiNextEst$coverage_based)
 ```
 
 The output `$AsyEst` lists the diversity labels (`Diversity` in TD, `Phylogenetic Diversity` in PD, `Functional Diversity` in FD), the observed diversity (`Observed` in TD, `Phylogenetic Observed` in PD, `Functional Observed` in FD), asymptotic diversity estimates  (`Estimator` in TD, `Phylogenetic Estimator` in PD, `Functional Estimator` in FD), estimated bootstrap standard error (`s.e.`) and  confidence intervals for diversity with q = 0, 1, and 2 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also be computed via the function `AO3D()`. The output are shown below:
