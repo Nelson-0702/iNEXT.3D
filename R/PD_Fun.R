@@ -404,7 +404,6 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
     mm
   })
   mm[mm < 1] <- 1
-  # mm[which(abs(round(mm) - n) <= 1)] = round(mm[which(abs(round(mm) - n) <= 1)]) 
   SC <- Cs
   
   out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
@@ -448,7 +447,6 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
     mm
   })
   mm[mm < 1] <- 1
-  # mm[which(abs(round(mm) - n) <= 1)] = round(mm[which(abs(round(mm) - n) <= 1)]) 
   
   SC <- Cs
   out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))
