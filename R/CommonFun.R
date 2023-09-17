@@ -378,7 +378,7 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
 check.q <- function(q) {
   
   if(!inherits(q, "numeric"))
-    stop("invlid class of order q, q should be a postive value/vector of numeric object", call. = FALSE)
+    stop("invalid class of order q, q should be a postive value/vector of numeric object", call. = FALSE)
   if(min(q) < 0){
     warning("ambigous of order q, we only compute postive q", call. = FALSE)
     q <- q[q >= 0]
@@ -415,7 +415,7 @@ check.PDtype <- function(type) {
   
   divtype <- c("PD", "meanPD")
   if(is.na(pmatch(type, divtype)) == T)
-    stop("Incorrect type of desired diversity type, please use either PD or meanPD.", call. = FALSE)
+    stop("Incorrect type of phylogenetic diversity type, please use either PD or meanPD.", call. = FALSE)
   
   return(type)
 }

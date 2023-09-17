@@ -97,6 +97,9 @@ phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T
     treeNdata<-full_join(phylo.t.1, tmp, by="label")
     inodelist<-treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
     names(inodelist)<-treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+    
+    class(treeNdata) = c("tbl_tree", class(treeNdata))  ## tidytree version 0.4.5
+    
     inode_x<-sapply(inodelist,function(x){offspring(treeNdata,x,tiponly=T) %>% select(x) %>% sum()})
     
     tmp_all<-bind_rows(tibble(label=names(subdata),branch.abun=subdata),tibble(label=names(inode_x),branch.abun=inode_x))
@@ -187,6 +190,9 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
       tmp.treeNdata<-full_join(phylo.t.1, tmp, by="label")
       inodelist<-tmp.treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
       names(inodelist)<-tmp.treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+      
+      class(tmp.treeNdata) = c("tbl_tree", class(tmp.treeNdata))  ## tidytree version 0.4.5
+      
       ivalue_each<-sapply(inodelist,function(x){offspring(tmp.treeNdata,x,tiponly=T) %>% select(x) %>% max()})
     })
     inode_x <- rowSums(inode_each)
@@ -306,6 +312,9 @@ phy_BranchAL_IncBootP<-function(phylo,pdata,refT=0,rootExtend=T,remove0=T){
   treeNdata<-full_join(chaotr$phytree, tmp, by="label")
   inodelist<-treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
   names(inodelist)<-treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+  
+  class(treeNdata) = c("tbl_tree", class(treeNdata))  ## tidytree version 0.4.5
+  
   inode_x<-sapply(inodelist,function(x){
     tmp<-offspring(treeNdata,x,tiponly=T) %>% mutate(y=1-x) %>% select (y) %>% prod()
     pi<-1-tmp
