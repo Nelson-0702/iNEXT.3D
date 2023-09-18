@@ -120,6 +120,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     
   } 
   
+  
   if (diversity == 'FD' & FDtype == 'tau_values') {
     
     checkdatatype = check.datatype(data, datatype, nT = nT)
@@ -229,6 +230,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     
     
   } 
+  
   
   if (diversity == 'FD' & FDtype == 'AUC') {
     

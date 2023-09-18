@@ -129,18 +129,18 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
 {
   qtile <- qnorm(1-(1-conf)/2)
   n <- sum(Spec)
-  if(is.null(m)) {
-    if(endpoint <= n) {
-      m <- floor(seq(1, endpoint, length=floor(knots)))
-    } else {
-      m <- c(floor(seq(1, sum(Spec)-1, length.out=floor(knots/2)-1)), sum(Spec), floor(seq(sum(Spec)+1, to=endpoint, length.out=floor(knots/2))))
-    }
-    m <- c(1, m[-1])
-  } else if(is.null(m)==FALSE) {	
-    if(max(m)>n | length(m[m==n])==0)  m <- c(m, n-1, n, n+1)
-    m <- sort(m)
-  }
-  m <- unique(m)
+  # if(is.null(m)) {
+  #   if(endpoint <= n) {
+  #     m <- floor(seq(1, endpoint, length=floor(knots)))
+  #   } else {
+  #     m <- c(floor(seq(1, sum(Spec)-1, length.out=floor(knots/2)-1)), sum(Spec), floor(seq(sum(Spec)+1, to=endpoint, length.out=floor(knots/2))))
+  #   }
+  #   m <- c(1, m[-1])
+  # } else if(is.null(m)==FALSE) {	
+  #   if(max(m)>n | length(m[m==n])==0)  m <- c(m, n-1, n, n+1)
+  #   m <- sort(m)
+  # }
+  # m <- unique(m)
   #====conditional on m====
   Dq.hat <- TD.m.est(Spec,m,q)
   C.hat <- Coverage(Spec, 'abundance', m)
@@ -221,18 +221,18 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
     stop("invalid data structure!, first element should be number of sampling units")
   
   nT <- Spec[1]
-  if(is.null(t)) {
-    if(endpoint <= nT) {
-      t <- floor(seq(1, endpoint, length.out=floor(knots)))
-    } else {
-      t <- c(floor(seq(1, nT-1, length.out=floor(knots/2)-1)), nT, floor(seq(nT+1, to=endpoint, length.out=floor(knots/2))))
-    }
-    t <- c(1, t[-1])
-  } else if(is.null(t)==FALSE) {	
-    if(max(t)>nT | length(t[t==nT])==0)  t <- c(t, nT-1, nT, nT+1)
-    t <- sort(t)
-  }
-  t <- unique(t)
+  # if(is.null(t)) {
+  #   if(endpoint <= nT) {
+  #     t <- floor(seq(1, endpoint, length.out=floor(knots)))
+  #   } else {
+  #     t <- c(floor(seq(1, nT-1, length.out=floor(knots/2)-1)), nT, floor(seq(nT+1, to=endpoint, length.out=floor(knots/2))))
+  #   }
+  #   t <- c(1, t[-1])
+  # } else if(is.null(t)==FALSE) {	
+  #   if(max(t)>nT | length(t[t==nT])==0)  t <- c(t, nT-1, nT, nT+1)
+  #   t <- sort(t)
+  # }
+  # t <- unique(t)
   #====conditional on m====
   Dq.hat <- TD.m.est_inc(Spec,t,q)
   C.hat <- Coverage(Spec, "incidence_freq", t)

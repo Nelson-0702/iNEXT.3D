@@ -931,7 +931,7 @@ datainf <- function(data, datatype, phylotr, reft){
     
     new <- phyBranchAL_Inc(phylotr,data,datatype,reft)
     #new$treeNabu$branch.length <- new$BLbyT[,1]
-    data <- data[rowSums(data)>0,colSums(data)>0,drop=F]
+    data <- data[rowSums(data)>0,,drop=F]
     ai <- new$treeNabu$branch.abun
     Lis <- new$BLbyT
     
