@@ -182,7 +182,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
   }else if(datatype=="incidence_raw"){
     Estoutput <- lapply(1:length(datalist), function(i){
       aL <- phyBranchAL_Inc(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
-      x <- datalist[[i]] %>% .[rowSums(.)>0,colSums(.)>0]
+      x <- datalist[[i]] %>% .[rowSums(.)>0,]
       n <- ncol(x)
       #====conditional on m====
       qPDm <- PhD.m.est(ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,m = m[[i]],
@@ -329,7 +329,7 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       aL <- phyBranchAL_Inc(phylo = phylotr,data = x_,'incidence_raw',refT = reft)
       # aL$treeNabu$branch.length <- aL$BLbyT[,1]
       # aL_table <- aL$treeNabu %>% select(branch.abun,branch.length,tgroup)
-      x_ <- x_[rowSums(x_)>0,colSums(x_)>0]
+      x_ <- x_[rowSums(x_)>0,]
       n <- ncol(x_)
       est <- invChatPD_inc(x = rowSums(x_),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                            q = q,Cs = level, n = n, reft = reft, cal = cal)
@@ -672,7 +672,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
     })
   }else if(datatype=="incidence_raw"){
     Estoutput <- lapply(datalist,function(x){
-      x <- x[rowSums(x)>0,colSums(x)>0]
+      x <- x[rowSums(x)>0,]
       n <- ncol(x)
       aL <- phyBranchAL_Inc(phylo = phylotr,data = x,datatype,refT = reft)
       # aL$treeNabu$branch.length <- aL$BLbyT[,1]
