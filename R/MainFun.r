@@ -595,16 +595,6 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     index$Tau = FDtau
     
     info <- DataInfo3D(data, diversity = 'FD', datatype = datatype, FDdistM = FDdistM, FDtype = 'tau_values', FDtau = FDtau, nT = nT)
-    info$n = lapply(dat, function(x) sum(x))
-    info$SC = lapply(dat, function(x) {
-      n = sum(x)
-      f1 = sum(x==1)
-      f2 = sum(x==2)
-      f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2) 
-      A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
-      Chat <- round(1 - f1/n*A, 4)
-    })
-    colnames(info)[colnames(info) %in% paste0("f",1:10)] = paste0("f",1:10,"'")
     out = list("FDInfo" = info, "FDiNextEst" = out, "FDAsyEst" = index)
     
   } 
