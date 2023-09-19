@@ -256,7 +256,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       
       dmean <- sum ( (tmp %*% t(tmp) ) * distM)
       distM <- distM[tmp > 0, tmp > 0]
-      dmin <- min(distM[distM > 0])
+      dmin <- min(distM[lower.tri(distM)])
       dmax <- max(distM[distM > 0])
       
       c(dmin, dmean, dmax)
