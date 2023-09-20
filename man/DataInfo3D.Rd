@@ -49,49 +49,54 @@ In FD (FDtype = "AUC"), show the the minimum distance among all non-zero element
 \code{DataInfo3D} Exhibit basic data information
 }
 \examples{
-## example for abundance-based data
-# diversity = 'TD'
+# diversity = 'TD' for abundance-based data
 data(dunes)
 DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
 
-# diversity = 'PD'
+
+# diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
 DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 
-## example for incidence-based data
-# diversity = 'TD'
+
+# diversity = 'TD' for incidence-based data
 data(fish)
 DataInfo3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 
-# diversity = 'PD'
+
+# diversity = 'PD' for incidence-based data
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
 DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
            FDdistM = distM, FDtype = 'tau_values')
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist

@@ -68,13 +68,13 @@ a table of diversity table including the following arguments.
 \code{AO3D} The estimated diversity of order q
 }
 \examples{
-## example for abundance-based data
-# diversity = 'TD'
+# diversity = 'TD' for abundance-based data
 data(dunes)
 out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
 out1
 
-# diversity = 'PD'
+
+# diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
@@ -82,7 +82,8 @@ out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25),
              datatype = "abundance", nboot = 30, PDtree = tree)
 out2
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
@@ -90,7 +91,8 @@ out3 <- AO3D(data, diversity = 'FD', datatype = "abundance",
              nboot = 50, FDdistM = distM, FDtype = 'tau_values')
 out3
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
@@ -98,13 +100,14 @@ out4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5),
              datatype = "abundance", nboot = 20, FDdistM = distM)
 out4
 
-## example for incidence-based data
-# diversity = 'TD'
+
+# diversity = 'TD' for incidence-based data
 data(fish)
 out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 out5
 
-# diversity = 'PD'
+
+# diversity = 'PD' for incidence-based data
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
@@ -113,7 +116,8 @@ out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25),
              datatype = "incidence_raw", nT = nT, PDtree = tree)
 out6
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
@@ -121,12 +125,14 @@ out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw",
              FDdistM = distM, FDtype = 'tau_values')
 out7
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 out8
+
 
 }
 \references{

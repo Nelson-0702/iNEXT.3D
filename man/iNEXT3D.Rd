@@ -72,42 +72,45 @@ and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) fo
 \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
 }
 \examples{
-## example for abundance based data (list of vector)
-# diversity = 'TD'
+# diversity = 'TD' for abundance-based data
 data(dunes)
 out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 out1$DataInfo # showing basic data information.
 out1$AsyEst # showing asymptotic diversity estimates.
 out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
 
-# diversity = 'PD'
+
+# diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
 out2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, PDtree = tree)
 out2
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, FDdistM = distM, FDtype = 'tau_values')
 out3
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 out4
 
-## example for incidence-based data
-# diversity = 'TD'
+
+# diversity = 'TD' for incidence-based data
 data(fish)
 out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 out5
 
-# diversity = 'PD'
+
+# diversity = 'PD' for incidence-based data
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
@@ -115,19 +118,22 @@ nT <- data.inc$nT
 out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 out6
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 out7
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
 out8
+
 
 }
 \references{

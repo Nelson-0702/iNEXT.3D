@@ -75,39 +75,43 @@ a \code{data.frame} of diversity table including the following arguments:
 \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
-# diversity = 'TD'
+# diversity = 'TD' for abundance-based data
 data(dunes)
 out1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 out1
 
-# diversity = 'PD'
+
+# diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
 out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 out2
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
 out3
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
 out4
 
-## example for incidence-based data
-# diversity = 'TD'
+
+# diversity = 'TD' for incidence-based data
 data(fish)
 out5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", base = "coverage", level=0.985)
 out5
 
-# diversity = 'PD'
+
+# diversity = 'PD' for incidence-based data
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
@@ -115,19 +119,22 @@ nT <- data.inc$nT
 out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
 out6
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
 out7
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", nboot = 20, FDdistM = distM)
 out8
+
 
 }
 \references{

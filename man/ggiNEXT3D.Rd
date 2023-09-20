@@ -33,40 +33,43 @@ a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 }
 \examples{
-## example for abundance based data (list of vector)
-# diversity = 'TD'
+# diversity = 'TD' for abundance-based data
 data(dunes)
 out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 ggiNEXT3D(out1, facet.var = "Assemblage")
 
-# diversity = 'PD'
+
+# diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
 out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 ggiNEXT3D(out2, type = c(1, 3))
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out3)
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
 out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 ggiNEXT3D(out4)
 
-## example for incidence-based data
-# diversity = 'TD'
+
+# diversity = 'TD' for incidence-based data
 data(fish)
 out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 ggiNEXT3D(out5)
 
-# diversity = 'PD'
+
+# diversity = 'PD' for incidence-based data
 data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
@@ -74,14 +77,16 @@ nT <- data.inc$nT
 out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 
-# diversity = 'FD' & FDtype = 'tau_values'
+
+# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
 out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(out7)
 
-# diversity = 'FD' & FDtype = 'AUC'
+
+# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist

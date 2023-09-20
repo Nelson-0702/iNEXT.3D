@@ -21,50 +21,56 @@
 #' In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the functional group (a1*-a2*), the total contribution of those singletons/doubletons in the functional group (h1-h2), the threshold of functional distinctiveness between any two species (Tau).\cr\cr
 #' In FD (FDtype = "AUC"), show the the minimum distance among all non-zero elements in the distance matrix (dmin), the mean distance between any two individuals randomly selected from the pooled data (dmean), the maximum distance among all elements in the distance matrix (dmax).\cr
 #' 
+#' 
 #' @examples
-#' ## example for abundance-based data
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' DataInfo3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
 #' DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
 #'            FDdistM = distM, FDtype = 'tau_values')
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
@@ -335,43 +341,47 @@ NULL
 #' \code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
 #' and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.  
 #' 
+#' 
 #' @examples
-#' ## example for abundance based data (list of vector)
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' out1$DataInfo # showing basic data information.
 #' out1$AsyEst # showing asymptotic diversity estimates.
 #' out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
 #' out2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' out4
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 #' out5
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
@@ -379,19 +389,22 @@ NULL
 #' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
 #' out8
+#' 
 #' 
 #' @references
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
@@ -686,41 +699,45 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' @param ... other arguments passed on to methods. Not currently used.
 #' @return a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 #' 
+#' 
 #' @examples
-#' ## example for abundance based data (list of vector)
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' ggiNEXT3D(out1, facet.var = "Assemblage")
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
 #' out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 #' ggiNEXT3D(out2, type = c(1, 3))
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(out3)
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggiNEXT3D(out4)
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 #' ggiNEXT3D(out5)
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
@@ -728,14 +745,16 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(out7)
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
@@ -743,8 +762,6 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' ggiNEXT3D(out8)
 #' 
 #' @export
-#' 
-#' 
 #' 
 ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
   if (sum(names(outcome) %in% c('DataInfo', 'iNextEst', 'AsyEst')) == 3) {
@@ -1040,39 +1057,43 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' 
 #' @examples
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' out1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 #' out1
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
 #' out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
 #' out4
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' out5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", base = "coverage", level=0.985)
 #' out5
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
@@ -1080,24 +1101,28 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", nboot = 20, FDdistM = distM)
 #' out8
 #' 
+#' 
 #' @references
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 #' 
 #' @export
+#' 
 estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
                        PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
@@ -1280,13 +1305,13 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' 
 #' @examples
-#' ## example for abundance-based data
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
 #' out1
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
@@ -1294,7 +1319,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'              datatype = "abundance", nboot = 30, PDtree = tree)
 #' out2
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
@@ -1302,7 +1328,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'              nboot = 50, FDdistM = distM, FDtype = 'tau_values')
 #' out3
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
@@ -1310,13 +1337,14 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'              datatype = "abundance", nboot = 20, FDdistM = distM)
 #' out4
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 #' out5
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
@@ -1325,7 +1353,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'              datatype = "incidence_raw", nT = nT, PDtree = tree)
 #' out6
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
@@ -1333,17 +1362,20 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'              FDdistM = distM, FDtype = 'tau_values')
 #' out7
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
 #' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' out8
 #' 
+#' 
 #' @references
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 #' 
 #' @export
+#' 
 AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
                  PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
@@ -1477,13 +1509,13 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' @return a figure of asymptotic or empirical (observed) diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
-#' ## example for abundance-based data
-#' # diversity = 'TD'
+#' # diversity = 'TD' for abundance-based data
 #' data(dunes)
 #' out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
 #' ggAO3D(out1)
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
@@ -1491,7 +1523,8 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #'              nboot = 30, PDtree = tree, PDtype = "meanPD")
 #' ggAO3D(out2, profile = "q")
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
@@ -1499,20 +1532,22 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #'              FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 #' ggAO3D(out3, profile = "tau")
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
 #' out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggAO3D(out4)
 #' 
-#' ## example for incidence-based data
-#' # diversity = 'TD'
+#' 
+#' # diversity = 'TD' for incidence-based data
 #' data(fish)
 #' out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
 #' ggAO3D(out5)
 #' 
-#' # diversity = 'PD'
+#' 
+#' # diversity = 'PD' for incidence-based data
 #' data(data.inc)
 #' data <- data.inc$data
 #' tree <- data.inc$tree
@@ -1521,7 +1556,8 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #'              nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
 #' ggAO3D(out6, profile = "time")
 #' 
-#' # diversity = 'FD' & FDtype = 'tau_values'
+#' 
+#' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
@@ -1529,7 +1565,8 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #'              FDdistM = distM, FDtype = 'tau_values')
 #' ggAO3D(out7)
 #' 
-#' # diversity = 'FD' & FDtype = 'AUC'
+#' 
+#' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
@@ -1537,6 +1574,7 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' ggAO3D(out8)
 #'
 #' @export
+#' 
 ggAO3D <- function(outcome, profile = 'q'){
   if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
     stop("Please use the outcome from specified function 'AO3D'")
