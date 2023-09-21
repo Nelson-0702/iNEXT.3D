@@ -838,7 +838,7 @@ obsTD = function(data, datatype, q, nboot, conf) {
         
       } else {error = NA}
       out <- data.frame("Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qTD.LCL" = dq - error, "qTD.UCL" = dq + error,
-                        "Assemblage" = names(data)[i], "Method" = "Empirical")
+                        "Assemblage" = names(data)[i], "Method" = "Observed")
       out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })
@@ -865,7 +865,7 @@ obsTD = function(data, datatype, q, nboot, conf) {
         }
       } else {error = NA}
       out <- data.frame("Assemblage" = names(data)[i], "Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),
-                        "qTD.LCL" = dq - error, "qTD.UCL" = dq + error, "Method" = "Empirical")
+                        "qTD.LCL" = dq - error, "qTD.UCL" = dq + error, "Method" = "Observed")
       out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })

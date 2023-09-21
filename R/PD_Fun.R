@@ -586,7 +586,7 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
   Output <- tibble(Assemblage = rep(nms, each=length(reft)*length(q)),
                    Order.q = rep(rep(q, each=length(reft)),length(datalist)),
                    qPD = out[,1], s.e. = out[,2],qPD.LCL = out[,3], qPD.UCL = out[,4],
-                   Method='Empirical',
+                   Method='Observed',
                    Reftime = rep(reft,length(q)*length(datalist)),
                    Type=cal) %>%
     arrange(Reftime)

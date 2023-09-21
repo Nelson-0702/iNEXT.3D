@@ -475,7 +475,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
   Output <- tibble(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
                    s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
-                   Method='Empirical', Tau = tau_tmp)
+                   Method='Observed', Tau = tau_tmp)
   Output
 }
 
@@ -855,7 +855,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
                                                                                 qFD.LCL = qFD - se * qtile,
                                                                                 qFD.UCL = qFD + se * qtile,
-                                                                                Method = "Empirical") %>% 
+                                                                                Method = "Observed") %>% 
     select(-se)
   AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC = AUC %>% select(c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method'))
