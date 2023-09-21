@@ -112,7 +112,9 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   length_tau <- length(tau)
+  
   if(datatype=="abundance"){
+    
     out <- lapply(1:length(datalist), function(i){
       x <- datalist[[i]]
       n=sum(x)
@@ -142,14 +144,15 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_cov <- rep(ses_cov,each = length(q)*length(tau))
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
-      tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
-             Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+      tibble(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method, 
+             qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
              SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
              Tau = threshold) %>% 
         arrange(Tau, Order.q)
     }) %>% do.call(rbind, .)
     
   }else if(datatype=="incidence_freq"){
+    
     out <- lapply(1:length(datalist), function(i){
       x <- datalist[[i]]
       nT=x[1]
@@ -178,13 +181,17 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_cov <- rep(ses_cov,each = length(q)*length(tau))
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
-      tibble(Assemblage = sites[i], m=rep(m[[i]],length(q)*length(tau)), Method=method,
-             Order.q=orderq, qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+      tibble(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method,
+             qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
              SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
              Tau = threshold) %>% 
         arrange(Tau,Order.q)
     }) %>% do.call(rbind, .)
   }
+  
+  out$qFD.LCL[out$qFD.LCL<0] <- 0
+  out$SC.LCL[out$SC.LCL<0] <- 0
+  out$SC.UCL[out$SC.UCL>1] <- 1
   return(out)
 }
 
@@ -239,7 +246,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, m, Method, Order.q, SC, qFD, s.e., qFD.LCL, qFD.UCL, Tau
+    Assemblage, Order.q, SC, m, qFD, Method, s.e., qFD.LCL, qFD.UCL, Tau
   )
   rownames(out) <- NULL
   out
@@ -466,9 +473,9 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   }
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
-  Output <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
+  Output <- tibble(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
                    s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
-                   Assemblage = sites_tmp, Method='Empirical', Tau = tau_tmp)
+                   Method='Empirical', Tau = tau_tmp)
   Output
 }
 
@@ -643,9 +650,10 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   Estoutput <- out %>% do.call(rbind,.) #%>% mutate(Assemblage = rep(names(datalist),each = length(q)))
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
-  Estoutput <- tibble(Order.q = rep(q,length(tau)*length(sites)), qFD = Estoutput[,1],
+  Estoutput <- tibble(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), 
+                      qFD = Estoutput[,1],
                       s.e. = Estoutput[,2], qFD.LCL = Estoutput[,3], qFD.UCL = Estoutput[,4],
-                      Assemblage = sites_tmp, Method = "Asymptotic", Tau = tau_tmp)
+                      Method = "Asymptotic", Tau = tau_tmp)
   Estoutput$qFD.LCL[Estoutput$qFD.LCL<0] = 0
   # return(list(Estoutput = Estoutput, info = info))
   return(Estoutput)
@@ -668,7 +676,7 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
     group_by(Assemblage,Order.q,m) %>% 
     summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
               AUC_R = sum(qFD[-1]*diff(tau)),SC = mean(SC),Method = unique(Method)) %>% ungroup %>% 
-    mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,m,qAUC,SC,Method)
+    mutate(qFD = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,m,qFD,SC,Method)
   if(datatype == 'abundance'){
     if(nboot>1){
       ses <- lapply(1:length(datalist),function(i){
@@ -715,11 +723,12 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
   }
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','m')) %>% mutate(
-    s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
+    s.e. = AUC_se, qFD.LCL = qFD - AUC_se * qtile, qFD.UCL = qFD + AUC_se * qtile,
     SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage,m,Method,Order.q,qAUC,s.e.,qAUC.LCL,qAUC.UCL,SC,SC.s.e.,SC.LCL,SC.UCL)
-  AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
+    select(Assemblage,Order.q,m,Method,qFD,s.e.,qFD.LCL,qFD.UCL,SC,SC.s.e.,SC.LCL,SC.UCL)
+  AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC$SC.LCL[AUC$SC.LCL<0] <- 0
+  AUC$SC.UCL[AUC$SC.UCL>1] <- 1
   AUC
 }
 
@@ -734,7 +743,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
     group_by(Assemblage,Order.q,SC) %>% 
     summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
               AUC_R = sum(qFD[-1]*diff(tau)),SC = mean(SC),m = mean(m),Method = unique(Method)) %>% 
-    ungroup %>% mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,m,Method,qAUC,SC)
+    ungroup %>% mutate(qFD = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,m,Method,qFD,SC)
   if(datatype == 'abundance'){
     if(nboot>1){
       ses <- lapply(1:length(datalist),function(i){
@@ -779,11 +788,10 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   }
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','SC')) %>% mutate(
-    s.e. = AUC_se, qAUC.LCL = qAUC - AUC_se * qtile, qAUC.UCL = qAUC + AUC_se * qtile,
+    s.e. = AUC_se, qFD.LCL = qFD - AUC_se * qtile, qFD.UCL = qFD + AUC_se * qtile,
     SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage, m, Method, Order.q, SC, qAUC, s.e., qAUC.LCL, qAUC.UCL)
-  AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
-  # AUC$SC.LCL[AUC$SC.LCL<0] <- 0
+    select(Assemblage, Order.q, SC, m, qFD, Method, s.e., qFD.LCL, qFD.UCL)
+  AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC
 }
 
@@ -806,7 +814,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     group_by(Assemblage,Order.q) %>% 
     summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
               AUC_R = sum(qFD[-1]*diff(tau))) %>% ungroup %>% 
-    mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,qAUC)
+    mutate(qFD = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,qFD)
   if(datatype=='abundance'){
     if(nboot>1){
       ses <- lapply(datalist,function(x){
@@ -845,12 +853,12 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   }
   
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
-                                                                                qAUC.LCL = qAUC - se * qtile,
-                                                                                qAUC.UCL = qAUC + se * qtile,
+                                                                                qFD.LCL = qFD - se * qtile,
+                                                                                qFD.UCL = qFD + se * qtile,
                                                                                 Method = "Empirical") %>% 
     select(-se)
-  AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
-  AUC = AUC %>% select(c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
+  AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
+  AUC = AUC %>% select(c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method'))
   AUC
 }
 
@@ -872,7 +880,7 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     group_by(Assemblage,Order.q) %>% 
     summarise(AUC_L = sum(qFD[seq_along(qFD[-1])]*diff(tau)),
               AUC_R = sum(qFD[-1]*diff(tau))) %>% ungroup %>% 
-    mutate(qAUC = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,qAUC)
+    mutate(qFD = (AUC_L+AUC_R)/2) %>% select(Assemblage,Order.q,qFD)
   if(datatype=='abundance'){
     if(nboot>1){
       ses <- lapply(datalist,function(x){
@@ -910,12 +918,12 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     }
   }
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
-                                                                                qAUC.LCL = qAUC - se * qtile,
-                                                                                qAUC.UCL = qAUC + se * qtile,
+                                                                                qFD.LCL = qFD - se * qtile,
+                                                                                qFD.UCL = qFD + se * qtile,
                                                                                 Method = "Asymptotic") %>% 
     select(-se)
-  AUC$qAUC.LCL[AUC$qAUC.LCL<0] <- 0
-  AUC = AUC %>% select(c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method'))
+  AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
+  AUC = AUC %>% select(c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method'))
   return(AUC)
 }
 

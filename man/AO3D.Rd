@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.r
 \name{AO3D}
 \alias{AO3D}
-\title{Asymptotic diversity and observed diversity of q profile}
+\title{Asymptotic diversity and observed diversity of order q}
 \usage{
 AO3D(
   data,
@@ -53,58 +53,58 @@ AO3D(
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a table of diversity table including the following arguments.
-'Order.q' = the diversity order of q.\cr\cr
-'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated asymptotic diversity or empirical (observed) diversity of order q. \cr\cr
-'s.e.' = standard error of diversity. \cr\cr
-'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-'Assemblage' = the assemblage name.\cr\cr
-'Method' = "Asymptotic" or "Empirical".\cr\cr
-'Reftime' = reference times for PD.\cr\cr
-'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-'Tau' = the threshold of functional distinctiveness between any two species.\cr
+a table of diversity table including the following arguments: 
+\item{Assemblage}{the assemblage name.}
+\item{Order.q}{the diversity order of q.}
+\item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.} 
+\item{s.e.}{standard error of diversity.}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity.}
+\item{Method}{"Asymptotic" means asymptotic diversity and "Observed" means observed diversity.}
+\item{Reftime}{the reference times for PD.}
+\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 }
 \description{
-\code{AO3D} The estimated diversity of order q
+\code{AO3D}: The estimated asymptotic and observed diversity of order q
 }
 \examples{
 # diversity = 'TD' for abundance-based data
 data(dunes)
-out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
-out1
+output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+output1
 
 
 # diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-             datatype = "abundance", nboot = 30, PDtree = tree)
-out2
+output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+                datatype = "abundance", nboot = 30, PDtree = tree)
+output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
-             nboot = 50, FDdistM = distM, FDtype = 'tau_values')
-out3
+output3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
+                nboot = 50, FDdistM = distM, FDtype = 'tau_values')
+output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
-             datatype = "abundance", nboot = 20, FDdistM = distM)
-out4
+output4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
+                datatype = "abundance", nboot = 20, FDdistM = distM)
+output4
 
 
 # diversity = 'TD' for incidence-based data
 data(fish)
-out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
-out5
+output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+output5
 
 
 # diversity = 'PD' for incidence-based data
@@ -112,26 +112,26 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-             datatype = "incidence_raw", nT = nT, PDtree = tree)
-out6
+output6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+                datatype = "incidence_raw", nT = nT, PDtree = tree)
+output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
-             FDdistM = distM, FDtype = 'tau_values')
-out7
+output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                FDdistM = distM, FDtype = 'tau_values')
+output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-out8
+output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+output8
 
 
 }

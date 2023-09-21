@@ -1,12 +1,12 @@
 Package: iNEXT.3D
 Type: Package
-Title: Interpolation and Extrapolation for three dimensions of diversity
+Title: Interpolation and Extrapolation for three dimensions of biodiversity
 Version: 1.0.1
 Author: Anne Chao and K.-H. Hu
 Description: 
 License: GPL (>= 3)
 URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-3d/
-Maintainer: K.-H. Hu <river19951224@gmail.com>
+Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 Depends:
     R (>= 4.0)
 Imports:

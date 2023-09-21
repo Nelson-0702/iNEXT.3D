@@ -1,6 +1,6 @@
-#' Data Information for three diversity.
+#' Data information for reference samples
 #' 
-#' \code{DataInfo3D} Exhibit basic data information
+#' \code{DataInfo3D} Provides basic data information
 #' 
 #' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
 #' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
@@ -15,12 +15,27 @@
 #' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
 #' 
-#' @return a data.frame of basic data information including assemblage name (Assemblage), sample size (n) or total sampling units (T), total incidences (U), observed species richness (S.obs), sample coverage estimate (SC).\cr\cr
-#' Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10 or Q1-Q10)\cr\cr
-#' In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), reference time (Reftime).\cr\cr
-#' In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the functional group (a1*-a2*), the total contribution of those singletons/doubletons in the functional group (h1-h2), the threshold of functional distinctiveness between any two species (Tau).\cr\cr
-#' In FD (FDtype = "AUC"), show the the minimum distance among all non-zero elements in the distance matrix (dmin), the mean distance between any two individuals randomly selected from the pooled data (dmean), the maximum distance among all elements in the distance matrix (dmax).\cr
-#' 
+#' @return a data.frame including basic data information.\cr\cr 
+#' For abundance data, basic information shared by TD, mean-PD and FD
+#'  includes assemblage name (Assemblage),
+#' sample size (n), observed species richness (S.obs), sample coverage estimates of the reference sample (SC(n)), 
+#' sample coverage estimate for twice the reference sample size (SC(2n)). Other additional information is given below.\cr\cr
+#' (1) TD: the first five species abundance (f1-f10).\cr\cr
+#' (2) Mean-PD: the the observed total branch length in the phylogenetic tree (PD.obs), 
+#' the number of singletons (f1*) and doubletons (f2*) in the node/branch abundance set, as well as the total branch length 
+#' of those singletons (g1) and of those doubletons (g2), and the reference time (Reftime).\cr\cr
+#' (3) FD (\code{FDtype = "AUC"}): the minimum distance among all non-diagonal elements in the distance matrix (dmin), the mean distance
+#' (dmean), and the maximum distance (dmax) in the distance matrix.\cr \cr
+#' (4) FD (\code{FDtype = "tau_value"}): the number of singletons (a1*) and of doubletons (a2*) among the functionally indistinct
+#'  set at the specified threshold level 'Tau', as well as the total contribution of singletons (h1) and of doubletons (h2)
+#'   at the specified threshold level 'Tau'.\cr\cr
+#'  
+#'  For incidence data, the basic information for TD includes assemblage name (Assemblage), number of sampling units (T), 
+#'  total number of incidences (U), observed species richness (S.obs), 
+#'  sample coverage estimates of the reference sample (SC(T)), sample coverage estimate for twice the reference sample size
+#'  (SC(2T)), as well as the first species incidence frequency counts (Q1-Q5). For mean-PD and FD, output is similar to that
+#'  for abundance data.   
+#'  
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
@@ -112,7 +127,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
       }) %>% do.call(rbind,.) %>% 
         mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
-        select(Assemblage, n, S.obs, SC, PD.obs, `f1*`, `f2*`, g1, g2, Reftime)
+        select(Assemblage, n, S.obs, `SC(n)`, `SC(2n)`, PD.obs, `f1*`, `f2*`, g1, g2, Reftime)
       
     }else if (datatype=='incidence_raw'){
       
@@ -120,7 +135,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
         datainf(data = x, datatype, phylotr = mytree,reft = PDreftime) %>% mutate(Reftime = PDreftime)
       }) %>% do.call(rbind,.) %>% 
         mutate(Assemblage = rep(names(mydata), each = length(PDreftime))) %>%
-        select(Assemblage,`T`, U, S.obs, SC, PD.obs, `Q1*`, `Q2*`, R1, R2, Reftime)
+        select(Assemblage,`T`, U, S.obs, `SC(T)`, `SC(2T)`, PD.obs, `Q1*`, `Q2*`, R1, R2, Reftime)
       
     }
     
@@ -138,50 +153,6 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     distM = checkdistM[[2]]
     dat = checkdistM[[3]]
     
-    
-    # out = lapply(FDtau, function(tau) {
-    #   
-    #   out <- TDinfo(lapply(dat, function(x) data_transform(x, distM, tau, datatype, integer = TRUE)$ai[,1]), datatype)
-    #   
-    #   if (datatype == "abundance") out$n = sapply(dat, function(x) sum(x)) else if (datatype == "incidence_freq") 
-    #     out$U = sapply(dat, function(x) sum(x[-1]))
-    #   
-    #   out$SC = sapply(dat, function(x) {
-    #     
-    #     if (datatype == "abundance") {
-    #       
-    #       n = sum(x)
-    #       f1 = sum(x == 1)
-    #       f2 = sum(x == 2)
-    #       f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
-    #       A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
-    #       Chat <- 1 - f1/n * A
-    #       
-    #     } else if (datatype == "incidence_freq") {
-    #       
-    #       nT = x[1]
-    #       x = x[-1]
-    #       U <- sum(x)
-    #       Q1 = sum(x == 1)
-    #       Q2 = sum(x == 2)
-    #       Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
-    #       A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
-    #       Chat <- 1 - Q1/U * A
-    #       
-    #     }
-    #     
-    #     Chat
-    #   })
-    #   
-    #   colnames(out)[colnames(out) %in% paste0("f", 1:10)] = paste0("a", 1:10, "'")
-    #   
-    #   out$Tau = tau
-    #   
-    #   return(out)
-    #   
-    # }) %>% do.call(rbind,.)
-    
-    
     out = lapply(FDtau, function(tau) {
       
       out <- lapply(1:length(dat), function(i) {
@@ -197,11 +168,12 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
           f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
           A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
           Chat <- 1 - f1/n * A
+          Chat2n <- Coverage(x, "abundance", 2*sum(x))
           
           multiple = tibble('Assemblage' = names(dat)[i], 
                             'n' = n, 
                             'S.obs' = sum(x > 0), 
-                            'SC' = Chat, 
+                            'SC(n)' = Chat, 'SC(2n)' = Chat2n, 
                             'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2), 
                             'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
                             'Tau' = tau)
@@ -216,12 +188,13 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
           Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
           A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
           Chat <- 1 - Q1/U * A
+          Chat2T <- Coverage(c(nT,x), "incidence_freq", 2*nT)
           
           multiple = tibble('Assemblage' = names(dat)[i], 
                             'T' = nT, 
                             'U' = U,
                             'S.obs' = sum(x > 0), 
-                            'SC' = Chat, 
+                            'SC(T)' = Chat, 'SC(2T)' = Chat2T,
                             'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2), 
                             'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
                             'Tau' = tau)
@@ -270,14 +243,14 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     
     if (datatype == "abundance") {
       
-      out <- cbind(TDinfo(dat, datatype)[,1:4], Tau)
-      colnames(out)[5:7] = c("dmin", "dmean", "dmax")
+      out <- cbind(TDinfo(dat, datatype)[,1:5], Tau)
+      colnames(out)[6:8] = c("dmin", "dmean", "dmax")
       rownames(out) = NULL
       
     } else {
       
-      out <- cbind(TDinfo(dat, datatype)[,1:5], Tau)
-      colnames(out)[6:8] = c("dmin", "dmean", "dmax")
+      out <- cbind(TDinfo(dat, datatype)[,1:6], Tau)
+      colnames(out)[7:9] = c("dmin", "dmean", "dmax")
       rownames(out) = NULL
       
     }
@@ -295,9 +268,9 @@ NULL
 
 
 
-#' iNterpolation and EXTrapolation of Hill number
+#' iNterpolation and EXTrapolation of Hill-Chao number
 #' 
-#' \code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
+#' \code{iNEXT3D}: Interpolation and extrapolation of Hill-Chao number with order q
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
@@ -337,48 +310,71 @@ NULL
 #' @importFrom phyclust get.rooted.tree.height
 #' @importFrom stats optimize
 #' 
-#' @return a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
-#' \code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
-#' and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.  
+#' @return a list of three objects: \cr
+#' \code{$TDInfo} (or \code{$PDInfo}, \code{$FDInfo}) for summarizing data information. Details please refer to the output of \code{DataInfo3D}. \cr\cr
+#' \code{$TDiNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics by \code{"$size_based"} and \code{"$coverage_based"}. \cr\cr
+#'    In \code{"$size_based"}, the output includes:
+#'    \item{Assemblage}{the name of assemblage.} 
+#'    \item{Order.q}{the diversity order of q.}
+#'    \item{m, nT}{the target sample size.}
+#'    \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target sample size is less than, equal to, or greater than the size of the reference sample.}
+#'    \item{qTD, qPD, qFD}{the estimated diversity estimate.}
+#'    \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity.}
+#'    \item{SC}{the standardized coverage value}
+#'    \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for coverage}
+#'    \item{Reftime}{reference times for PD.}
+#'    \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+#'    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+#'  Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+#' \code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
+#'    \item{Assemblage}{the name of assemblage.} 
+#'    \item{Diversity}{the diversity order of q.}
+#'    \item{Observed}{the observed diversity.}
+#'    \item{Estimator}{the asymptotic diversity estimate.}
+#'    \item{s.e.}{standard error of asymptotic diversity.}
+#'    \item{LCL, UCL}{the bootstrap lower and upper  confidence limits for asymptotic diversity.}
+#'    \item{Reftime}{reference times for PD.}
+#'    \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+#'    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 #' 
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
 #' data(dunes)
-#' out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
-#' out1$DataInfo # showing basic data information.
-#' out1$AsyEst # showing asymptotic diversity estimates.
-#' out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
+#' output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
-#' out2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, PDtree = tree)
-#' out2
+#' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+#'                    nboot = 30, PDtree = tree)
+#' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, FDdistM = distM, FDtype = 'tau_values')
-#' out3
+#' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
+#'                    FDdistM = distM, FDtype = 'tau_values')
+#' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
-#' out4
+#' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+#' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish)
-#' out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
-#' out5
+#' output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+#' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
@@ -386,24 +382,26 @@ NULL
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
-#' out6
+#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+#'                    nT = nT, PDtree = tree)
+#' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
-#' out7
+#' output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#'                    FDdistM = distM, FDtype = 'tau_values')
+#' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
-#' out8
+#' output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
+#' output8
 #' 
 #' 
 #' @references
@@ -427,12 +425,15 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     size = check.size(data, datatype, size, endpoint, knots)
     
     Fun <- function(x, q, size, assem_name){
+      
       x <- as.numeric(unlist(x))
       unconditional_var <- TRUE
+      
       if(datatype == "abundance"){
         if(sum(x)==0) stop("Zero abundance counts in one or more sample sites")
         out <- iNEXT.Ind(Spec=x, q=q, m=size, endpoint=ifelse(is.null(endpoint), 2*sum(x), endpoint), knots=knots, nboot=nboot, conf=conf,unconditional_var)
       }
+      
       if(datatype == "incidence_freq"){
         t <- x[1]
         y <- x[-1]
@@ -458,7 +459,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
       out
     }
     
-    z <- qnorm(1-(1-0.95)/2)
+    z <- qnorm(1-(1-conf)/2)
     
     if(is.null(names(data))){
       names(data) <- sapply(1:length(data), function(i) paste0('assemblage',i))
@@ -474,14 +475,14 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     index <- rbind(asyTD(data, datatype, c(0, 1, 2), nboot, conf),
                    obsTD(data, datatype, c(0, 1, 2), nboot, conf))
     index = index[order(index$Assemblage),]
-    LCL <- index$qD.LCL[index$Method=='Asymptotic']
-    UCL <- index$qD.UCL[index$Method=='Asymptotic']
-    index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qD')
+    LCL <- index$qTD.LCL[index$Method=='Asymptotic']
+    UCL <- index$qTD.UCL[index$Method=='Asymptotic']
+    index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qTD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/z,LCL,UCL)
-    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Observed & index$Order.q==0] <- index$Observed[index$LCL<index$Observed & index$Order.q==0]
     index$Order.q <- c('Species richness','Shannon diversity','Simpson diversity')
     index[,3:4] = index[,4:3]
-    colnames(index) <- c("Assemblage", "Diversity", "Observed", "Estimator", "s.e.", "LCL", "UCL")
+    colnames(index) <- c("Assemblage", "Taxonomic Diversity", "Taxonomic Observed", "Taxonomic Estimator", "s.e.", "LCL", "UCL")
     
     
     out$size_based$Assemblage <- as.character(out$size_based$Assemblage)
@@ -492,7 +493,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     info <- DataInfo3D(data, diversity = 'TD', datatype, nT)
     
     
-    out <- list("DataInfo"=info, "iNextEst"=out, "AsyEst"=index)
+    out <- list("TDInfo"=info, "TDiNextEst"=out, "TDAsyEst"=index)
   } 
   
   if (diversity == 'PD') {
@@ -531,7 +532,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     UCL <- index$qPD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qPD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Observed & index$Order.q==0] <- index$Observed[index$LCL<index$Observed & index$Order.q==0]
     index$Order.q <- c('q = 0 PD','q = 1 PD','q = 2 PD')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Phylogenetic Diversity", "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.", "LCL", "UCL")
@@ -569,7 +570,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
                         nboot = nboot, conf = conf, m = size)
         temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0;temp1$SC.LCL[temp1$SC.LCL<0] <- 0
         temp1$SC.UCL[temp1$SC.UCL>1] <- 1
-        if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
+        if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nT'
         
         ## coverage-based
         temp2 <- lapply(1:length(dat), function(i) invChatFD(datalist = dat[i], dij = dist, q = q, datatype = datatype,
@@ -577,7 +578,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
                                                              nboot = nboot, conf = conf, tau = FDtau)) %>% do.call(rbind,.)
         temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
         
-        if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+        if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nT'
         # temp1$Type = "FD"
         # temp2$Type = "FD"
         ans <- list(size_based = temp1, coverage_based = temp2)
@@ -600,7 +601,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     UCL <- index$qFD.UCL[index$Method=='Asymptotic']
     index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qFD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Observed & index$Order.q==0] <- index$Observed[index$LCL<index$Observed & index$Order.q==0]
     index$Order.q <- c('q = 0 FD(single tau)','q = 1 FD(single tau)','q = 2 FD(single tau)')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
@@ -632,16 +633,16 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
         ## size-based
         temp1 = AUCtable_iNextFD(datalist = dat, dij = dist, q = q, datatype = datatype,
                                  tau = NULL, nboot = nboot, conf = conf, m = size)
-        temp1$qAUC.LCL[temp1$qAUC.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
+        temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
         temp1$SC.UCL[temp1$SC.UCL>1] <- 1
-        if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nt'
+        if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nT'
         
         ## coverage-based
         temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = dist, q = q, datatype = datatype,
                                                                   level = unique(Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
                                                                   nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
-        temp2$qAUC.LCL[temp2$qAUC.LCL<0] <- 0
-        if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nt'
+        temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
+        if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nT'
         
         ans <- list(size_based = temp1, coverage_based = temp2)
         return(ans)
@@ -659,17 +660,17 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
                    AUCtable_mle(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
                                 nboot = nboot, conf = conf, tau = NULL))
     index = index[order(index$Assemblage),]
-    LCL <- index$qAUC.LCL[index$Method=='Asymptotic']
-    UCL <- index$qAUC.UCL[index$Method=='Asymptotic']
-    index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qAUC')
+    LCL <- index$qFD.LCL[index$Method=='Asymptotic']
+    UCL <- index$qFD.UCL[index$Method=='Asymptotic']
+    index <- dcast(index,formula = Assemblage+Order.q~Method,value.var = 'qFD')
     index <- cbind(index,se = (UCL - index$Asymptotic)/qnorm(1-(1-conf)/2),LCL,UCL)
-    if (nboot > 0) index$LCL[index$LCL<index$Empirical & index$Order.q==0] <- index$Empirical[index$LCL<index$Empirical & index$Order.q==0]
+    if (nboot > 0) index$LCL[index$LCL<index$Observed & index$Order.q==0] <- index$Observed[index$LCL<index$Observed & index$Order.q==0]
     index$Order.q <- c('q = 0 FD(AUC)','q = 1 FD(AUC)','q = 2 FD(AUC)')
     index[,3:4] = index[,4:3]
     colnames(index) <- c("Assemblage", "Functional Diversity", "Functional Observed", "Functional Estimator", "s.e.", "LCL", "UCL")
     
     info <- DataInfo3D(data, diversity = 'FD', datatype = datatype, FDdistM = FDdistM, FDtype = 'AUC', nT = nT)
-    out = list("AUCInfo" = info, "AUCiNextEst" = out, "AUCAsyEst" = index)
+    out = list("FDInfo" = info, "FDiNextEst" = out, "FDAsyEst" = index)
     
   }
   
@@ -679,22 +680,22 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 }
 
 
-#' ggplot2 extension for an iNEXT object
+#' ggplot2 extension for an iNEXT3D object
 #' 
-#' \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
-#' @param x an \code{iNEXT} object computed by \code{\link{iNEXT}}.
+#' \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+#' @param output an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.
 #' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
 #' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).            
 #' @param facet.var create a separate plot for each value of a specified variable: 
-#'  no separation \cr (\code{facet.var="None"}); 
-#'  a separate plot for each diversity order (\code{facet.var="Order.q"}); 
-#'  a separate plot for each assemblage (\code{facet.var="Assemblage"}); 
-#'  a separate plot for each combination of order x assemblage (\code{facet.var="Both"}).              
+#'  no separation \cr (\code{facet.var = "None"}); 
+#'  a separate plot for each diversity order (\code{facet.var = "Order.q"}); 
+#'  a separate plot for each assemblage (\code{facet.var = "Assemblage"}); 
+#'  a separate plot for each combination of order x assemblage (\code{facet.var = "Both"}).              
 #' @param color.var create curves in different colors for values of a specified variable:
-#'  all curves are in the same color (\code{color.var="None"}); 
-#'  use different colors for diversity orders (\code{color.var="Order.q"}); 
-#'  use different colors for sites (\code{color.var="Assemblage"}); 
-#'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).  
+#'  all curves are in the same color (\code{color.var = "None"}); 
+#'  use different colors for diversity orders (\code{color.var = "Order.q"}); 
+#'  use different colors for sites (\code{color.var = "Assemblage"}); 
+#'  use different colors for combinations of order x assemblage (\code{color.var = "Both"}).  
 #' @param ... other arguments passed on to methods. Not currently used.
 #' @return a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 #' 
@@ -702,38 +703,39 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' @examples
 #' # diversity = 'TD' for abundance-based data
 #' data(dunes)
-#' out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
-#' ggiNEXT3D(out1, facet.var = "Assemblage")
+#' output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' ggiNEXT3D(output1, facet.var = "Assemblage")
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
-#' out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
-#' ggiNEXT3D(out2, type = c(1, 3))
+#' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
+#' ggiNEXT3D(output2, type = c(1, 3))
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
-#' ggiNEXT3D(out3)
+#' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+#'                    FDdistM = distM, FDtype = 'tau_values')
+#' ggiNEXT3D(output3)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
-#' ggiNEXT3D(out4)
+#' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+#' ggiNEXT3D(output4)
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish)
-#' out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
-#' ggiNEXT3D(out5)
+#' output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+#' ggiNEXT3D(output5)
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
@@ -741,49 +743,51 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
-#' ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
+#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
+#' ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
-#' ggiNEXT3D(out7)
+#' output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
+#' ggiNEXT3D(output7)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-#' ggiNEXT3D(out8)
+#' output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' ggiNEXT3D(output8)
 #' 
 #' @export
-ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
-  if (sum(names(outcome) %in% c('DataInfo', 'iNextEst', 'AsyEst')) == 3) {
+ggiNEXT3D = function(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
+  
+  if (sum(names(output) %in% c('TDInfo', 'TDiNextEst', 'TDAsyEst')) == 3) {
+    
     class = 'TD'
-    plottable = outcome$iNextEst
-  } else if (sum(names(outcome) %in% c('PDInfo', 'PDiNextEst', 'PDAsyEst')) == 3) {
+    plottable = output$TDiNextEst
+    plottable$size_based = rename(plottable$size_based, c('qD' = 'qTD', 'qD.LCL' = 'qTD.LCL', 'qD.UCL' = 'qTD.UCL'))
+    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qTD', 'qD.LCL' = 'qTD.LCL', 'qD.UCL' = 'qTD.UCL'))
+    
+  } else if (sum(names(output) %in% c('PDInfo', 'PDiNextEst', 'PDAsyEst')) == 3) {
+    
     class = 'PD'
-    plottable = outcome$PDiNextEst
+    plottable = output$PDiNextEst
     plottable$size_based = rename(plottable$size_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qPD', 'qD.LCL' = 'qPD.LCL', 'qD.UCL' = 'qPD.UCL'))
     
-  } else if (sum(names(outcome) %in% c('FDInfo', 'FDiNextEst', 'FDAsyEst')) == 3) {
-    class = 'FD'
-    plottable = outcome$FDiNextEst
+  } else if (sum(names(output) %in% c('FDInfo', 'FDiNextEst', 'FDAsyEst')) == 3) {
+    
+    if ("Tau" %in% colnames(output$FDiNextEst$size_based)) class = 'FD' else class = 'FD(AUC)'
+    
+    plottable = output$FDiNextEst
     plottable$size_based = rename(plottable$size_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
     plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qFD', 'qD.LCL' = 'qFD.LCL', 'qD.UCL' = 'qFD.UCL'))
     
-  } else if (sum(names(outcome) %in% c("AUCInfo", 'AUCiNextEst', 'AUCAsyEst')) == 3) {
-    class = 'AUC'
-    plottable = outcome$AUCiNextEst
-    plottable$size_based = rename(plottable$size_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-    plottable$coverage_based = rename(plottable$coverage_based, c('qD' = 'qAUC', 'qD.LCL' = 'qAUC.LCL', 'qD.UCL' = 'qAUC.UCL'))
-    
-  } else {stop("Please use the outcome from specified function 'iNEXT3D'")}
+  } else {stop("Please use the output from the function 'iNEXT3D'")}
   
   SPLIT <- c("None", "Order.q", "Assemblage", "Both")
   if(is.na(pmatch(facet.var, SPLIT)) | pmatch(facet.var, SPLIT) == -1)
@@ -802,7 +806,7 @@ ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = 
   if(facet.var == "Assemblage") color.var <- "Order.q"
   
   if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
-  if ('nt' %in% colnames(plottable$size_based) & 'nt' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+  if ('nT' %in% colnames(plottable$size_based) & 'nT' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
   
   
   out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var))
@@ -813,23 +817,34 @@ ggiNEXT3D = function(outcome, type = 1:3, facet.var = "Assemblage", color.var = 
 
 
 type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
-  x_name <- colnames(x_list$size_based)[2]
+  
+  x_name <- colnames(x_list$size_based)[3]
   xlab_name <- ifelse(datatype == "incidence", "sampling units", "individuals")
   
   if (class == 'TD') {
+    
     ylab_name = "Taxonomic diversity"
+    
   } else if (class == 'FD') {
+    
     ylab_name = "Functional diversity"
-  } else if (class == 'AUC') {
+    
+  } else if (class == 'FD(AUC)') {
+    
     ylab_name = "Functional diversity (AUC)"
+    
   } else if (class == 'PD' & unique(x_list$size_based$Type) == 'PD') {
+    
     ylab_name = "Phylogenetic diversity"
+    
   } else if (class == 'PD' & unique(x_list$size_based$Type) == 'meanPD') {
+    
     ylab_name = "Mean phylogenetic diversity"
   } 
   
   
   if (type == 1) {
+    
     output <- x_list$size_based
     output$y.lwr <- output$qD.LCL
     output$y.upr <- output$qD.UCL
@@ -839,6 +854,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     xlab_name <- paste0("Number of ", xlab_name)
     
   } else if (type == 2) {
+    
     output <- x_list$size_based
     if (length(unique(output$Order.q)) > 1) output <- subset(output, Order.q == unique(output$Order.q)[1])
     output$y.lwr <- output$SC.LCL
@@ -850,6 +866,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     ylab_name <- "Sample coverage"
     
   } else if (type == 3) {
+    
     output <- x_list$coverage_based %>% data.frame
     output$y.lwr <- output$qD.LCL
     output$y.upr <- output$qD.UCL
@@ -861,32 +878,40 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   }
   
   if (facet.var == "None" & color.var == "None" & length(unique(output$Order.q)) > 1 & length(unique(output$Assemblage)) > 1) {
+    
     color.var <- "Order.q"
     facet.var <- "Assemblage"
     warning ("invalid color.var and facet.var setting, the iNEXT3D object consists multiple orders and assemblage, change setting as Order.q and Assemblage")
+    
   } else if (facet.var == "None" & color.var == "None" & length(unique(output$Order.q)) > 1) {
+    
     color.var <- "Order.q"
     warning ("invalid color.var setting, the iNEXT3D object consists multiple orders, change setting as Order.q")
+    
   } else if (facet.var == "None" & color.var == "None" & length(unique(output$Assemblage)) > 1) { 
+    
     color.var <- "Assemblage" 
     warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblage, change setting as Assemblage")
   }
-  
   
   
   title <- c("Sample-size-based sampling curve", "Sample completeness curve", "Coverage-based sampling curve")[type]
   colnames(output)[1:7] <- c("x", "Method", "y", "LCL", "UCL", "Assemblage", "Order.q")
   
   if (class == 'PD') {
+    
     output$Reftime <- round(output$Reftime, 3)
     output$Reftime <- factor(paste0("Ref.time = ", output$Reftime), levels = paste0("Ref.time = ", unique(output$Reftime)))
   }
+  
   if (class == 'FD') {
+    
     output$Tau <- round(output$Tau, 3)
     output$Tau <- factor(paste0("Tau = ", output$Tau), levels = paste0("Tau = ", unique(output$Tau)))
   }
   
   if (color.var == "None") {
+    
     if (levels(factor(output$Order.q)) > 1 & length(unique(output$Assemblage)) > 1) {
       warning ("invalid color.var setting, the iNEXT3D object consists multiple assemblages and orders, change setting as Both")
       color.var <- "Both"
@@ -903,15 +928,19 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     } else {
       output$col <- output$shape <- rep(1, nrow(output))
     }
-  } else if (color.var == "Order.q") {     
+  } else if (color.var == "Order.q") {    
+    
     output$col <- output$shape <- factor(output$Order.q)
   } else if (color.var == "Assemblage") {
+    
     if (length(unique(output$Assemblage)) == 1) {
       warning ("invalid color.var setting, the iNEXT3D object do not consist multiple assemblages, change setting as Order.q")
       output$col <- output$shape <- factor(output$Order.q)
     }
     output$col <- output$shape <- output$Assemblage
+    
   } else if (color.var == "Both") {
+    
     if (length(unique(output$Assemblage)) == 1) {
       warning ("invalid color.var setting, the iNEXT3D object do not consist multiple assemblages, change setting as Order.q")
       output$col <- output$shape <- factor(output$Order.q)
@@ -954,6 +983,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   
   
   if (facet.var == "Order.q") {
+    
     if(length(levels(factor(output$Order.q))) == 1 & type != 2){
       warning("invalid facet.var setting, the iNEXT3D object do not consist multiple orders.")      
     } else {
@@ -977,6 +1007,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   }
   
   if(facet.var == "Assemblage"){
+    
     if(length(unique(output$Assemblage)) == 1) {
       warning("invalid facet.var setting, the iNEXT3D object do not consist multiple assemblages")
     }else{
@@ -994,6 +1025,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   }
   
   if(facet.var == "Both"){
+    
     if(length(levels(factor(output$Order.q))) == 1 | length(unique(output$Assemblage)) == 1){
       warning("invalid facet.var setting, the iNEXT3D object do not consist multiple assemblages or orders.")
     }else{
@@ -1017,9 +1049,9 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 }
 
 
-#' Compute species diversity with a particular of sample size/coverage 
+#' Compute diversity with a particular of sample size/coverage 
 #' 
-#' \code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
+#' \code{estimate3D}: computes diversity (Hill-Chao number with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
 #' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
@@ -1040,55 +1072,59 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
-#' @return a \code{data.frame} of diversity table including the following arguments:
-#' 'Assemblage' = the assemblage name.\cr\cr
-#' 'm' (or 'nt') = the corresponding sample size (or sampling units) for the standardized coverage value. \cr\cr
-#' 'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
-#' 'Order.q' = the diversity order of q.\cr\cr
-#' 'SC' = the target standardized coverage value. \cr\cr
-#' 'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
-#' 's.e.' = standard error of diversity estimate.\cr\cr
-#' 'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-#' 'Reftime' = reference times for PD.\cr\cr
-#' 'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-#' 'Tau' = the threshold of functional distinctiveness between any two species.\cr
+#' @return a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
+#' \item{Assemblage}{the assemblage name}
+#' \item{Order.q}{the diversity order of q.}
+#' \item{SC}{the target standardized coverage value.}
+#' \item{m, nT}{the corresponding sample size (or sampling units) for the standardized coverage value.}
+#' \item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+#' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+#' \item{s.e.}{standard error of diversity estimate.}
+#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level. (with a default value of 0.95)}
+#' \item{Reftime}{reference times for PD.}
+#' \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+#' \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+#' Similar output is obtained for \code{base = "size"}. \cr\cr
 #' 
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
 #' data(dunes)
-#' out1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
-#' out1
+#' output1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+#' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
-#' out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
-#' out2
+#' output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
+#' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
-#' out3
+#' output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
+#'                       FDdistM = distM, FDtype = 'tau_values')
+#' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
-#' out4
+#' output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
+#'                       nboot = 0, FDdistM = distM)
+#' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish)
-#' out5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", base = "coverage", level=0.985)
-#' out5
+#' output5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", 
+#'                       base = "coverage")
+#' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
@@ -1096,24 +1132,27 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
-#' out6
+#' output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+#'                       base = "size", nT = nT, PDtree = tree)
+#' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
-#' out7
+#' output7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", 
+#'                       FDdistM = distM, FDtype = 'tau_values')
+#' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", nboot = 20, FDdistM = distM)
-#' out8
+#' output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
+#'                       nboot = 20, FDdistM = distM)
+#' output8
 #' 
 #' 
 #' @references
@@ -1143,7 +1182,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     } else if (base == "coverage") {
       out <- invChat(data, q, datatype, C = level, nboot, conf = conf)
     }
-    out$qD.LCL[out$qD.LCL<0] <- 0
+    out$qTD.LCL[out$qTD.LCL<0] <- 0
     
   } 
   
@@ -1182,7 +1221,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
                        reft = PDreftime, cal = PDtype, level = level, nboot, conf)
       
     }
-    
+    out$qPD.LCL[out$qPD.LCL<0] <- 0
   } 
   
   if (diversity == 'FD' & FDtype == 'tau_values') {
@@ -1211,7 +1250,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
       out$qFD.LCL[out$qFD.LCL<0] <- 0
       # out$SC.LCL[out$SC.LCL<0] <- 0
       # out$SC.UCL[out$SC.UCL>1] <- 1
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       out = out %>% .[,c(1:4, 9, 5:8, 10)]
       
     } else if (base == "coverage") {
@@ -1219,7 +1258,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
       out <- invChatFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
                        level = level, nboot = nboot, conf = conf, tau = FDtau)
       out$qFD.LCL[out$qFD.LCL<0] <- 0
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       
     }
     
@@ -1248,29 +1287,29 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
       out = AUCtable_iNextFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
                              tau = NULL, nboot = nboot, conf = conf, m = lapply(1:length(dat), function(i) level)) %>% 
         select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
-      out$qAUC.LCL[out$qAUC.LCL<0] <- 0
+      out$qFD.LCL[out$qFD.LCL<0] <- 0
       # out$SC.LCL[out$SC.LCL<0] <- 0
       # out$SC.UCL[out$SC.UCL>1] <- 1
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       out = out %>% .[,c(1:4, 9, 5:8)]
       
     } else if (base == 'coverage') {
       
       out <- AUCtable_invFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
                             level = level, nboot = nboot, conf = conf, tau = NULL)
-      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nt'
+      if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       
     }
-    
+    out$qFD.LCL[out$qFD.LCL<0] <- 0
   }
   
   return(out)
 }
 
 
-#' Asymptotic diversity and observed diversity of q profile 
+#' Asymptotic diversity and observed diversity of order q
 #' 
-#' \code{AO3D} The estimated diversity of order q 
+#' \code{AO3D}: The estimated asymptotic and observed diversity of order q 
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
@@ -1289,56 +1328,56 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
-#' @return a table of diversity table including the following arguments.
-#' 'Order.q' = the diversity order of q.\cr\cr
-#' 'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated asymptotic diversity or empirical (observed) diversity of order q. \cr\cr
-#' 's.e.' = standard error of diversity. \cr\cr
-#' 'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-#' 'Assemblage' = the assemblage name.\cr\cr
-#' 'Method' = "Asymptotic" or "Empirical".\cr\cr
-#' 'Reftime' = reference times for PD.\cr\cr
-#' 'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-#' 'Tau' = the threshold of functional distinctiveness between any two species.\cr
+#' @return a table of diversity table including the following arguments: 
+#' \item{Assemblage}{the assemblage name.}
+#' \item{Order.q}{the diversity order of q.}
+#' \item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.} 
+#' \item{s.e.}{standard error of diversity.}
+#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity.}
+#' \item{Method}{"Asymptotic" means asymptotic diversity and "Observed" means observed diversity.}
+#' \item{Reftime}{the reference times for PD.}
+#' \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+#' \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 #' 
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
 #' data(dunes)
-#' out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
-#' out1
+#' output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+#' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
-#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-#'              datatype = "abundance", nboot = 30, PDtree = tree)
-#' out2
+#' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+#'                 datatype = "abundance", nboot = 30, PDtree = tree)
+#' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
-#'              nboot = 50, FDdistM = distM, FDtype = 'tau_values')
-#' out3
+#' output3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
+#'                 nboot = 50, FDdistM = distM, FDtype = 'tau_values')
+#' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
-#'              datatype = "abundance", nboot = 20, FDdistM = distM)
-#' out4
+#' output4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
+#'                 datatype = "abundance", nboot = 20, FDdistM = distM)
+#' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish)
-#' out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
-#' out5
+#' output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+#' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
@@ -1346,26 +1385,26 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-#'              datatype = "incidence_raw", nT = nT, PDtree = tree)
-#' out6
+#' output6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+#'                 datatype = "incidence_raw", nT = nT, PDtree = tree)
+#' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
-#'              FDdistM = distM, FDtype = 'tau_values')
-#' out7
+#' output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#'                 FDdistM = distM, FDtype = 'tau_values')
+#' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-#' out8
+#' output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' output8
 #' 
 #' 
 #' @references
@@ -1495,52 +1534,52 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 }
 
 
-#' ggplot for Asymptotic diversity
+#' ggplot2 extension for plotting q-profile, time-profile, and tau-profile
 #'
-#' \code{ggAO3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{AO3D} using the ggplot2 package.\cr
-#' It will only show the confidence interval of 'Estimated'.
+#' \code{ggAO3D} the \code{\link[ggplot2]{ggplot}} extension for \code{\link{AO3D}} object to plot q-profile, time-profile, and tau-profile based on the output of \code{AO3D} using the ggplot2 package.\cr
+#' Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{AO3D}.
 #' 
-#' @param outcome the outcome of the functions \code{AO3D}.\cr
+#' @param output the output of the function \code{AO3D}.\cr
 #' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
-#' @return a figure of asymptotic or empirical (observed) diversity in q-profile, time-profile, or tau-profile.\cr\cr
+#' @return a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
 #' # diversity = 'TD' for abundance-based data
 #' data(dunes)
-#' out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
-#' ggAO3D(out1)
+#' output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+#' ggAO3D(output1)
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' tree <- dunes$tree
-#' out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
-#'              nboot = 30, PDtree = tree, PDtype = "meanPD")
-#' ggAO3D(out2, profile = "q")
+#' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
+#'                 nboot = 30, PDtree = tree, PDtype = "meanPD")
+#' ggAO3D(output2, profile = "q")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
-#'              FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
-#' ggAO3D(out3, profile = "tau")
+#' output3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
+#'                 FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+#' ggAO3D(output3, profile = "tau")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 #' data(dunes)
 #' data <- dunes$data
 #' distM <- dunes$dist
-#' out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
-#' ggAO3D(out4)
+#' output4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+#' ggAO3D(output4)
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish)
-#' out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
-#' ggAO3D(out5)
+#' output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+#' ggAO3D(output5)
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
@@ -1548,57 +1587,62 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #' data <- data.inc$data
 #' tree <- data.inc$tree
 #' nT <- data.inc$nT
-#' out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-#'              nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
-#' ggAO3D(out6, profile = "time")
+#' output6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+#'                 nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+#' ggAO3D(output6, profile = "time")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
-#'              FDdistM = distM, FDtype = 'tau_values')
-#' ggAO3D(out7)
+#' output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#'                 FDdistM = distM, FDtype = 'tau_values')
+#' ggAO3D(output7)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 #' data(fish)
 #' data <- fish$data
 #' distM <- fish$dist
-#' out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-#' ggAO3D(out8)
+#' output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' ggAO3D(output8)
 #'
 #' @export
-ggAO3D <- function(outcome, profile = 'q'){
-  if (sum(unique(outcome$Method) %in% c("Asymptotic", "Empirical")) == 0)
-    stop("Please use the outcome from specified function 'AO3D'")
+ggAO3D <- function(output, profile = 'q'){
+  
+  if (sum(unique(output$Method) %in% c("Asymptotic", "Observed")) == 0)
+    stop("Please use the output from specified function 'AO3D'")
   
   if (!(profile %in% c('q', 'time', 'tau')))
     stop("Please select one of 'q', 'time', 'tau' profile.")
   
-  if (sum(colnames(outcome)[1:7] == c('Order.q', 'qD', 's.e.', 'qD.LCL', 'qD.UCL', 'Assemblage', 'Method')) == 7) {
+  if (sum(colnames(output)[1:7] == c('Assemblage', 'Order.q', 'qTD', 's.e.', 'qTD.LCL', 'qTD.UCL', 'Method')) == 7) {
+    
     class = 'TD'
-  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL', 'Assemblage', 'Method')) == 7) {
+    
+  } else if (sum(colnames(output)[1:7] == c('Assemblage', 'Order.q', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL', 'Method')) == 7) {
+    
     class = 'PD'
-  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Assemblage', 'Method')) == 7) {
-    class = 'FD'
-  } else if (sum(colnames(outcome)[1:7] == c('Order.q', 'qAUC', 's.e.', 'qAUC.LCL', 'qAUC.UCL', 'Assemblage', 'Method')) == 7) {
-    class = 'AUC'
-  } else {stop("Please use the outcome from specified function 'AO3D'")}
+    
+  } else if (sum(colnames(output)[1:7] == c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method')) == 7) {
+    
+    if ("Tau" %in% colnames(output)) class = 'FD' else class = 'FD(AUC)'
+    
+  } else {stop("Please use the output from specified function 'AO3D'")}
   
   ## TD & q-profile ##
   if (class == 'TD') {
-    out = ggplot(outcome, aes(x = Order.q, y = qD, colour = Assemblage, fill = Assemblage))
+    out = ggplot(output, aes(x = Order.q, y = qTD, colour = Assemblage, fill = Assemblage))
     
-    if (length(unique(outcome$Method)) == 1) {
-      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qD.LCL, ymax = qD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+    if (length(unique(output$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qTD.LCL, ymax = qTD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method == 'Asymptotic')) out = out + labs(x = 'Order q', y = 'Asymptotic taxonomic diversity')
-      if (unique(outcome$Method == 'Empirical')) out = out + labs(x = 'Order q', y = 'Empirical taxonomic diversity')
+      if (unique(output$Method == 'Asymptotic')) out = out + labs(x = 'Order q', y = 'Asymptotic taxonomic diversity')
+      if (unique(output$Method == 'Observed')) out = out + labs(x = 'Order q', y = 'Observed taxonomic diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qD.LCL, ymax = qD.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qTD.LCL, ymax = qTD.UCL), linetype = 0, alpha = 0.2)
       
       out = out + labs(x = 'Order q', y = 'Taxonomic diversity')
     }
@@ -1607,25 +1651,25 @@ ggAO3D <- function(outcome, profile = 'q'){
   ## PD & q-profile ##
   if (class == 'PD' & profile == 'q') {
     
-    outcome$Reftime = paste('Reftime = ', round(outcome$Reftime, 3), sep = '')
-    out = ggplot(outcome, aes(x = Order.q, y = qPD, colour = Assemblage, fill = Assemblage))
+    output$Reftime = paste('Reftime = ', round(output$Reftime, 3), sep = '')
+    out = ggplot(output, aes(x = Order.q, y = qPD, colour = Assemblage, fill = Assemblage))
     
-    if (length(unique(outcome$Method)) == 1) {
+    if (length(unique(output$Method)) == 1) {
       
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Empirical phylogenetic diversity')
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic mean phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Empirical mean phylogenetic diversity')
+      if (unique(output$Method) == 'Asymptotic' & unique(output$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Asymptotic phylogenetic diversity')
+      if (unique(output$Method) == 'Observed' & unique(output$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Observed phylogenetic diversity')
+      if (unique(output$Method) == 'Asymptotic' & unique(output$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Asymptotic mean phylogenetic diversity')
+      if (unique(output$Method) == 'Observed' & unique(output$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Observed mean phylogenetic diversity')
       
     } else {
       
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Phylogenetic diversity')
-      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Mean phylogenetic diversity')
+      if (unique(output$Type) == 'PD') out = out + labs(x = 'Order q', y = 'Phylogenetic diversity')
+      if (unique(output$Type) == 'meanPD') out = out + labs(x = 'Order q', y = 'Mean phylogenetic diversity')
       
     }
     
@@ -1635,25 +1679,25 @@ ggAO3D <- function(outcome, profile = 'q'){
   ## PD & time-profile ##
   if (class == 'PD' & profile == 'time') {
     
-    outcome$Order.q = paste('q = ', outcome$Order.q, sep = '')
-    out = ggplot(outcome, aes(x = Reftime, y = qPD, colour = Assemblage, fill = Assemblage))
+    output$Order.q = paste('q = ', output$Order.q, sep = '')
+    out = ggplot(output, aes(x = Reftime, y = qPD, colour = Assemblage, fill = Assemblage))
     
-    if (length(unique(outcome$Method)) == 1) {
+    if (length(unique(output$Method)) == 1) {
       
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qPD.LCL, ymax = qPD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Empirical phylogenetic diversity')
-      if (unique(outcome$Method) == 'Asymptotic' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic mean phylogenetic diversity')
-      if (unique(outcome$Method) == 'Empirical' & unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Empirical mean phylogenetic diversity')
+      if (unique(output$Method) == 'Asymptotic' & unique(output$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Asymptotic phylogenetic diversity')
+      if (unique(output$Method) == 'Observed' & unique(output$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Observed phylogenetic diversity')
+      if (unique(output$Method) == 'Asymptotic' & unique(output$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Asymptotic mean phylogenetic diversity')
+      if (unique(output$Method) == 'Observed' & unique(output$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Observed mean phylogenetic diversity')
       
     } else {
       
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qPD.LCL, ymax = qPD.UCL), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Phylogenetic diversity')
-      if (unique(outcome$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Mean phylogenetic diversity')
+      if (unique(output$Type) == 'PD') out = out + labs(x = 'Reference time', y = 'Phylogenetic diversity')
+      if (unique(output$Type) == 'meanPD') out = out + labs(x = 'Reference time', y = 'Mean phylogenetic diversity')
       
     }
     out = out + facet_grid(.~Order.q, scales = "free_y")
@@ -1662,19 +1706,19 @@ ggAO3D <- function(outcome, profile = 'q'){
   ## FD & q-profile ##
   if (class == 'FD' & profile == 'q') {
     
-    outcome$Tau = paste('Tau = ', round(outcome$Tau, 3), sep = '')
-    out = ggplot(outcome, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
+    output$Tau = paste('Tau = ', round(output$Tau, 3), sep = '')
+    out = ggplot(output, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
     
-    if (length(unique(outcome$Method)) == 1) {
+    if (length(unique(output$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic functional diversity')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical functional diversity')
+      if (unique(output$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic functional diversity')
+      if (unique(output$Method) == 'Observed') out = out + labs(x = 'Order q', y = 'Observed functional diversity')
       
     } else {
       
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
       
       out = out + labs(x = 'Order q', y = 'Functional diversity')
     }
@@ -1684,17 +1728,17 @@ ggAO3D <- function(outcome, profile = 'q'){
   ## FD & tau-profile ##
   if (class == 'FD' & profile == 'tau') {
     
-    outcome$Order.q = paste('Order q = ', outcome$Order.q, sep = '')
-    out = ggplot(outcome, aes(x = Tau, y = qFD, colour = Assemblage, fill = Assemblage))
+    output$Order.q = paste('Order q = ', output$Order.q, sep = '')
+    out = ggplot(output, aes(x = Tau, y = qFD, colour = Assemblage, fill = Assemblage))
     
-    if (length(unique(outcome$Method)) == 1) {
+    if (length(unique(output$Method)) == 1) {
       out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Tau', y = 'Asymptotic functional diversity')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Tau', y = 'Empirical functional diversity')
+      if (unique(output$Method) == 'Asymptotic') out = out + labs(x = 'Tau', y = 'Asymptotic functional diversity')
+      if (unique(output$Method) == 'Observed') out = out + labs(x = 'Tau', y = 'Observed functional diversity')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
       
       out = out + labs(x = 'Tau', y = 'Functional diversity')
     }
@@ -1702,17 +1746,18 @@ ggAO3D <- function(outcome, profile = 'q'){
   }
   
   ## AUC & q-profile ##
-  if (class == 'AUC') {
-    out = ggplot(outcome, aes(x = Order.q, y = qAUC, colour = Assemblage, fill = Assemblage))
+  if (class == 'FD(AUC)') {
     
-    if (length(unique(outcome$Method)) == 1) {
-      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qAUC.LCL, ymax = qAUC.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
+    out = ggplot(output, aes(x = Order.q, y = qFD, colour = Assemblage, fill = Assemblage))
+    
+    if (length(unique(output$Method)) == 1) {
+      out = out + geom_line(size = 1.5) + geom_ribbon(aes(ymin = qFD.LCL, ymax = qFD.UCL, fill = Assemblage), linetype = 0, alpha = 0.2)
       
-      if (unique(outcome$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional diversity (AUC)')
-      if (unique(outcome$Method) == 'Empirical') out = out + labs(x = 'Order q', y = 'Empirical Functional diversity (AUC)')
+      if (unique(output$Method) == 'Asymptotic') out = out + labs(x = 'Order q', y = 'Asymptotic Functional diversity (AUC)')
+      if (unique(output$Method) == 'Observed') out = out + labs(x = 'Order q', y = 'Observed Functional diversity (AUC)')
     } else {
       out = out + geom_line(aes(lty = Method), size = 1.5) + 
-        geom_ribbon(data = outcome %>% filter(Method=="Asymptotic"), aes(ymin = qAUC.LCL, ymax = qAUC.UCL), linetype = 0, alpha = 0.2)
+        geom_ribbon(data = output %>% filter(Method=="Asymptotic"), aes(ymin = qFD.LCL, ymax = qFD.UCL), linetype = 0, alpha = 0.2)
       
       out = out + labs(x = 'Order q', y = 'Functional diversity (AUC)')
     }

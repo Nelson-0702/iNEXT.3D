@@ -157,20 +157,24 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ <- rep(rep(reft,each = length(q)),length(m[[i]]))
-      out_m <- data.frame(Assemblage = nms[i], m=m_,Method=method,Order.q=orderq,
-                          qPD=qPDm,s.e. = ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                          SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+      out_m <- data.frame(Assemblage = nms[i], 
+                          Order.q=orderq,
+                          m=m_,
+                          Method=method,
+                          qPD=qPDm, s.e. = ses_pd, qPD.LCL=qPDm-qtile*ses_pd, qPD.UCL=qPDm+qtile*ses_pd,
+                          SC=SC_, SC.s.e.=SC.se,SC.LCL=SC.LCL_, SC.UCL=SC.UCL_,
                           Reftime = reft_,
                           Type=cal) %>%
         arrange(Reftime,Order.q,m)
       out_m$qPD.LCL[out_m$qPD.LCL<0] <- 0;out_m$SC.LCL[out_m$SC.LCL<0] <- 0
       out_m$SC.UCL[out_m$SC.UCL>1] <- 1
+      
       if(unconditional_var){
         ses_pd_unc <- ses[-(1:(length(qPDm)+length(covm)))]
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e.=ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','SC','m', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage', 'Order.q', 'SC','m', 'qPD', 'Method', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,m)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -179,7 +183,9 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       }
       return(list(size_based = out_m, coverage_based = out_C))
     })
+    
   }else if(datatype=="incidence_raw"){
+    
     Estoutput <- lapply(1:length(datalist), function(i){
       aL <- phyBranchAL_Inc(phylo = phylotr,data = datalist[[i]],datatype,refT = reft)
       x <- datalist[[i]] %>% .[rowSums(.)>0,]
@@ -193,7 +199,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         goalSC <- unique(covm)
         qPD_unc <- invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                                  q = q,Cs = goalSC,n = n,reft = reft,cal = cal)
-        qPD_unc$Method[round(qPD_unc$nt) == n] = "Observed"
+        qPD_unc$Method[round(qPD_unc$nT) == n] = "Observed"
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT,n)
@@ -251,22 +257,26 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
       SC.LCL_ <- rep(covm-qtile*ses_cov,each = length(q)*length(reft))
       SC.UCL_ <- rep(covm+qtile*ses_cov,each = length(q)*length(reft))
       reft_ = rep(rep(reft,each = length(q)),length(m[[i]]))
-      out_m <- data.frame(Assemblage = nms[i], nt=m_,Method=method,Order.q=orderq,
-                          qPD=qPDm,s.e.=ses_pd,qPD.LCL=qPDm-qtile*ses_pd,qPD.UCL=qPDm+qtile*ses_pd,
-                          SC=SC_,SC.s.e.=SC.se,SC.LCL=SC.LCL_,SC.UCL=SC.UCL_,
+      out_m <- data.frame(Assemblage = nms[i], 
+                          Order.q=orderq,
+                          nT=m_,
+                          Method=method,
+                          qPD=qPDm, s.e.=ses_pd, qPD.LCL=qPDm-qtile*ses_pd, qPD.UCL=qPDm+qtile*ses_pd,
+                          SC=SC_, SC.s.e.=SC.se, SC.LCL=SC.LCL_, SC.UCL=SC.UCL_,
                           Reftime = reft_,
                           Type=cal) %>%
-        arrange(Reftime,Order.q,nt)
+        arrange(Reftime,Order.q,nT)
       out_m$qPD.LCL[out_m$qPD.LCL<0] <- 0;out_m$SC.LCL[out_m$SC.LCL<0] <- 0
       out_m$SC.UCL[out_m$SC.UCL>1] <- 1
+      
       if(unconditional_var){
         ses_pd_unc <- ses[-(1:(length(qPDm)+length(covm)))]
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e. = ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage','SC','nt', 'Method', 'Order.q', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage', 'Order.q', 'SC','nT', 'qPD', 'Method', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
-        out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,nt)
+        out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,nT)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
       }else{
         out_C <- NULL
@@ -364,11 +374,11 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
   out <- out %>% mutate(Assemblage = Assemblage, Type=cal)
   
   if(datatype == 'abundance'){
-    out <- out %>% select(Assemblage, m, Method, Order.q, SC, qPD, s.e., qPD.LCL, qPD.UCL,
-                          Reftime,Type)
+    out <- out %>% select(Assemblage, Order.q, SC, m, qPD, Method, s.e., qPD.LCL, qPD.UCL,
+                          Reftime, Type)
   } else if(datatype == 'incidence_raw') {
-    out <- out %>% select(Assemblage, nt, Method, Order.q, SC, qPD, s.e., qPD.LCL, qPD.UCL,
-                          Reftime,Type)
+    out <- out %>% select(Assemblage, Order.q, SC, nT, qPD, Method, s.e., qPD.LCL, qPD.UCL,
+                          Reftime, Type)
   }
   out$qPD.LCL[out$qPD.LCL<0] <- 0
   rownames(out) <- NULL
@@ -457,7 +467,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
   SC <- rep(SC,each = length(q)*ncol(Lis))
   reft <- as.numeric(substr(colnames(Lis),start = 2,stop = nchar(colnames(Lis))))
   Reftime = rep(rep(reft,each = length(q)),length(Cs))
-  data.frame(nt = m,Method = method,Order.q = order,
+  data.frame(nT = m,Method = method,Order.q = order,
              qPD = out,SC=SC, Reftime = Reftime)
 }
 
@@ -573,9 +583,9 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
       output
     }) %>% do.call(rbind,.)
   }
-  Output <- tibble(Order.q = rep(rep(q, each=length(reft)),length(datalist)),
+  Output <- tibble(Assemblage = rep(nms, each=length(reft)*length(q)),
+                   Order.q = rep(rep(q, each=length(reft)),length(datalist)),
                    qPD = out[,1], s.e. = out[,2],qPD.LCL = out[,3], qPD.UCL = out[,4],
-                   Assemblage = rep(nms, each=length(reft)*length(q)),
                    Method='Empirical',
                    Reftime = rep(reft,length(q)*length(datalist)),
                    Type=cal) %>%
@@ -734,7 +744,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
   Estoutput <- do.call(rbind,Estoutput) %>%
     mutate(Assemblage = rep(names(datalist),each = length(q)*tau_l),Method = 'Asymptotic',
            Type=cal) %>%
-    select(Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,Assemblage, 
+    select(Assemblage, Order.q,qPD,s.e.,qPD.LCL,qPD.UCL,
            Method,Reftime,Type) %>%
     arrange(Reftime)
   Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
@@ -923,9 +933,10 @@ datainf <- function(data, datatype, phylotr, reft){
     f0.hat <- ifelse(f2 == 0, (n-1) / n * f1 * (f1-1) / 2, (n-1) / n * f1^2 / 2 / f2) 
     A <- ifelse(f1 > 0, n * f0.hat / (n * f0.hat + f1), 1)
     Chat <- 1 - f1/n * A
+    Chat2n <- Coverage(data, "abundance", 2*sum(data))
     
-    out <- tibble('n' = sum(data), 'S.obs' = length(data), 'SC' = Chat, 'PD.obs' = out[,3],
-                  'f1*' = out[,1], 'f2*' = out[,2], 'g1' = out[,4], 'g2' = out[,5])
+    out <- tibble('n' = sum(data), 'S.obs' = length(data), 'SC(n)' = Chat, 'SC(2n)' = Chat2n, 
+                  'PD.obs' = out[,3], 'f1*' = out[,1], 'f2*' = out[,2], 'g1' = out[,4], 'g2' = out[,5])
     
   } else if(datatype == 'incidence_raw') {
     
@@ -955,8 +966,9 @@ datainf <- function(data, datatype, phylotr, reft){
     Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
     A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
     Chat <- 1 - Q1/U * A
+    Chat2T <- Coverage(c(nT,x), "incidence_freq", 2*nT)
     
-    out <- tibble('T' = ncol(data), 'U' = sum(data), 'S.obs' = nrow(data), 'SC' = Chat, 'PD.obs' = out[,3],
+    out <- tibble('T' = ncol(data), 'U' = sum(data), 'S.obs' = nrow(data), 'SC(T)' = Chat, 'SC(2T)' = Chat2T, 'PD.obs' = out[,3],
                   'Q1*' = out[,1], 'Q2*' = out[,2], 'R1' = out[,4], 'R2' = out[,5])
     
   }

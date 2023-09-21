@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.r
 \name{estimate3D}
 \alias{estimate3D}
-\title{Compute species diversity with a particular of sample size/coverage}
+\title{Compute diversity with a particular of sample size/coverage}
 \usage{
 estimate3D(
   data,
@@ -58,57 +58,61 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a \code{data.frame} of diversity table including the following arguments:
-'Assemblage' = the assemblage name.\cr\cr
-'m' (or 'nt') = the corresponding sample size (or sampling units) for the standardized coverage value. \cr\cr
-'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
-'Order.q' = the diversity order of q.\cr\cr
-'SC' = the target standardized coverage value. \cr\cr
-'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
-'s.e.' = standard error of diversity estimate.\cr\cr
-'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-'Reftime' = reference times for PD.\cr\cr
-'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-'Tau' = the threshold of functional distinctiveness between any two species.\cr
+a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
+\item{Assemblage}{the assemblage name}
+\item{Order.q}{the diversity order of q.}
+\item{SC}{the target standardized coverage value.}
+\item{m, nT}{the corresponding sample size (or sampling units) for the standardized coverage value.}
+\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+\item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+\item{s.e.}{standard error of diversity estimate.}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level. (with a default value of 0.95)}
+\item{Reftime}{reference times for PD.}
+\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+Similar output is obtained for \code{base = "size"}. \cr\cr
 }
 \description{
-\code{estimate3D}: computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
+\code{estimate3D}: computes diversity (Hill-Chao number with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
 # diversity = 'TD' for abundance-based data
 data(dunes)
-out1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
-out1
+output1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+output1
 
 
 # diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
-out2
+output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
+output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", FDdistM = distM, FDtype = 'tau_values')
-out3
+output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
+                      FDdistM = distM, FDtype = 'tau_values')
+output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", nboot = 0, FDdistM = distM)
-out4
+output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
+                      nboot = 0, FDdistM = distM)
+output4
 
 
 # diversity = 'TD' for incidence-based data
 data(fish)
-out5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", base = "coverage", level=0.985)
-out5
+output5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", 
+                      base = "coverage")
+output5
 
 
 # diversity = 'PD' for incidence-based data
@@ -116,24 +120,27 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", nT = nT, PDtree = tree)
-out6
+output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+                      base = "size", nT = nT, PDtree = tree)
+output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", FDdistM = distM, FDtype = 'tau_values')
-out7
+output7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", 
+                      FDdistM = distM, FDtype = 'tau_values')
+output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", nboot = 20, FDdistM = distM)
-out8
+output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
+                      nboot = 20, FDdistM = distM)
+output8
 
 
 }

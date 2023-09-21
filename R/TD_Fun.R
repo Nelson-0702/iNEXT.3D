@@ -117,7 +117,7 @@ TD.m.est_inc <- function(y, t_, qs){
 # @param endpoint a integer of sample size that is the endpoint for rarefaction/extrapolation. Default is double the original sample size.
 # @param knots a number of knots of computation, default is 40
 # @param nboot the number of bootstrap resampling times, default is 200
-# @return a list of interpolation and extrapolation Hill number with specific order q (qD) and sample coverage (SC)
+# @return a list of interpolation and extrapolation Hill number with specific order q (qTD) and sample coverage (SC)
 # @seealso \code{\link{iNEXT.Sam}}
 # @examples
 # data(spider)
@@ -161,7 +161,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
     ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(x) Coverage(x, 'abundance', m)),nrow = length(m)),
                         1, sd, na.rm=TRUE)
     if(unconditional_var){
-      ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(x) invChat.Ind(x, q,unique(Dq.hat_unc$SC))$qD),
+      ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(x) invChat.Ind(x, q,unique(Dq.hat_unc$SC))$qTD),
                             nrow = nrow(Dq.hat_unc)),1,sd, na.rm=TRUE)
     }
   } else {
@@ -171,25 +171,25 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
       ses_C <- rep(NA,nrow(Dq.hat_unc))
     }
   }
-  out_m <- data.frame("m"=rep(m,length(q)), "qD"=Dq.hat, 
-                      "qD.LCL"=Dq.hat-qtile*ses_m,
-                      "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+  out_m <- data.frame("m"=rep(m,length(q)), "qTD"=Dq.hat, 
+                      "qTD.LCL"=Dq.hat-qtile*ses_m,
+                      "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
                       "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
   # out_m <- data.frame(out_m)
   out_m$Method <- ifelse(out_m$m<n, "Rarefaction", ifelse(out_m$m==n, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(m))
-  id_m <- match(c("m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("Order.q", "m", "Method", "qTD", "qTD.LCL", "qTD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
-  out_m$qD.LCL[out_m$qD.LCL<0] <- 0
+  out_m$qTD.LCL[out_m$qTD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- data.frame(Dq.hat_unc, 'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
-                       'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("SC","m", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    out_C <- data.frame(Dq.hat_unc, 'qTD.LCL' = Dq.hat_unc$qTD-qtile*ses_C,
+                       'qTD.UCL' = Dq.hat_unc$qTD+qtile*ses_C) 
+    id_C <- match(c("Order.q", "SC", "m", "qTD", "Method", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
-    out_C$qD.LCL[out_C$qD.LCL<0] <- 0
+    out_C$qTD.LCL[out_C$qTD.LCL<0] <- 0
   }else{
     out_C <- NULL
   }
@@ -206,7 +206,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
 # @param endpoint a integer of sample size that is the endpoint for rarefaction/extrapolation. Default is double the original sample size.
 # @param knots a number of knots of computation, default is 40
 # @param nboot the number of bootstrap resampling times, default is 200
-# @return a list of interpolation and extrapolation Hill number with specific order q (qD) and sample coverage (SC)
+# @return a list of interpolation and extrapolation Hill number with specific order q (qTD) and sample coverage (SC)
 # @seealso \code{\link{iNEXT.Ind}}
 # @examples
 # data(ant)
@@ -239,7 +239,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
   if(unconditional_var){
     goalSC <- unique(C.hat)
     Dq.hat_unc <- unique(invChat.Sam(x = Spec,q = q,C = goalSC))
-    Dq.hat_unc$Method[round(Dq.hat_unc$nt) == nT] = "Observed"
+    Dq.hat_unc$Method[round(Dq.hat_unc$nT) == nT] = "Observed"
   }
   
   if(nboot > 1 & length(Spec) > 2){
@@ -249,7 +249,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
     tmp <- which(colSums(Abun.Mat)==nT)
     if(length(tmp)>0) Abun.Mat <- Abun.Mat[,-tmp]
     if(ncol(Abun.Mat)==0){
-      out <- cbind("t"=t, "qD"=Dq.hat, "SC"=C.hat)
+      out <- cbind("t"=t, "qTD"=Dq.hat, "SC"=C.hat)
       warning("Insufficient data to compute bootstrap s.e.")
     }else{		
       ses_m <- apply(matrix(apply(Abun.Mat,2 ,function(y) TD.m.est_inc(y, t, q)),
@@ -258,7 +258,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
       ses_C_on_m <- apply(matrix(apply(Abun.Mat, 2, function(y) Coverage(y, "incidence_freq", t)),nrow = length(t)),
                           1, sd, na.rm=TRUE)
       if(unconditional_var){
-        ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(y) invChat.Sam(y, q,unique(Dq.hat_unc$SC))$qD),
+        ses_C <- apply(matrix(apply(Abun.Mat,2 ,function(y) invChat.Sam(y, q,unique(Dq.hat_unc$SC))$qTD),
                               nrow = nrow(Dq.hat_unc)),1,sd, na.rm=TRUE)
       }
     }
@@ -270,24 +270,24 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
     }
   }
   
-  out_m <- data.frame("nt"=rep(t,length(q)), "qD"=Dq.hat, 
-                      "qD.LCL"=Dq.hat-qtile*ses_m,
-                      "qD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
+  out_m <- data.frame("nT"=rep(t,length(q)), "qTD"=Dq.hat, 
+                      "qTD.LCL"=Dq.hat-qtile*ses_m,
+                      "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
   # out_m <- data.frame(out_m)
-  out_m$Method <- ifelse(out_m$nt<nT, "Rarefaction", ifelse(out_m$nt==nT, "Observed", "Extrapolation"))
+  out_m$Method <- ifelse(out_m$nT<nT, "Rarefaction", ifelse(out_m$nT==nT, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(t))
-  id_m <- match(c("nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
+  id_m <- match(c("Order.q", "nT", "Method", "qTD", "qTD.LCL", "qTD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
   out_m <- out_m[, id_m]
-  out_m$qD.LCL[out_m$qD.LCL<0] <- 0
+  out_m$qTD.LCL[out_m$qTD.LCL<0] <- 0
   out_m$SC.LCL[out_m$SC.LCL<0] <- 0
   out_m$SC.UCL[out_m$SC.UCL>1] <- 1
   
   if(unconditional_var){
-    out_C <- data.frame(Dq.hat_unc,'qD.LCL' = Dq.hat_unc$qD-qtile*ses_C,
-                        'qD.UCL' = Dq.hat_unc$qD+qtile*ses_C) 
-    id_C <- match(c("SC","nt", "Method", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(out_C), nomatch = 0)
+    out_C <- data.frame(Dq.hat_unc,'qTD.LCL' = Dq.hat_unc$qTD-qtile*ses_C,
+                        'qTD.UCL' = Dq.hat_unc$qTD+qtile*ses_C) 
+    id_C <- match(c("Order.q", "SC","nT", "qTD", "Method", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
-    out_C$qD.LCL[out_C$qD.LCL<0] <- 0
+    out_C$qTD.LCL[out_C$qTD.LCL<0] <- 0
   }else{
     out_C <- NULL
   }
@@ -339,19 +339,19 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
         if(nboot>1){
           Prob.hat <- EstiBootComm.Ind(x_)
           Abun.Mat <- rmultinom(nboot, sum(x_), Prob.hat)
-          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invChat.Ind(a, q,C)$qD),
+          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invChat.Ind(a, q,C)$qTD),
                               nrow = length(q) * length(C)),1,sd)
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qTD.LCL=est$qTD-qtile*ses,qTD.UCL=est$qTD+qtile*ses)
         est
       })
       out <- do.call(rbind,out)
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'm', 'Method', 'Order.q', 'SC', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'Order.q', 'SC', 'm', 'qTD', 'Method', 's.e.', 'qTD.LCL', 'qTD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
@@ -372,21 +372,22 @@ invChat <- function (x, q, datatype = "abundance", C = NULL,nboot=0, conf = NULL
           if(ncol(Abun.Mat)==0){
             warning("Insufficient data to compute bootstrap s.e.")
           }
-          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invChat.Sam(a, q,C)$qD),nrow = length(q)* length(C)),1,sd)
+          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invChat.Sam(a, q,C)$qTD),nrow = length(q)* length(C)),1,sd)
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qTD.LCL=est$qTD-qtile*ses,qTD.UCL=est$qTD+qtile*ses)
       })
       out <- do.call(rbind,out)
       out$Assemblage <- Community
       out <- out[,c(ncol(out),seq(1,(ncol(out)-4)),(ncol(out)-2),(ncol(out)-1),(ncol(out)-3))]
       rownames(out) <- NULL
-      out = out %>% select(c('Assemblage', 'nt', 'Method', 'Order.q', 'SC', 'qD', 's.e.', 'qD.LCL', 'qD.UCL'))
+      out = out %>% select(c('Assemblage', 'Order.q', 'SC', 'nT', 'qTD', 'Method', 's.e.', 'qTD.LCL', 'qTD.UCL'))
     }else {
       stop("Wrong data format, dataframe/matrix or list would be accepted")
     }
   }
+  out$qTD.LCL[out$qTD.LCL<0] <- 0
   out
 }
 
@@ -434,7 +435,7 @@ invChat.Ind <- function (x, q, C) {
   order <- rep(q,each = length(mm))
   SC <- rep(SC,length(q))
   data.frame(m = m,Method = method,Order.q = order,
-             SC=SC,qD = out)
+             SC=SC,qTD = out)
 }
 
 
@@ -478,8 +479,8 @@ invChat.Sam <- function (x, q, C) {
   m <- rep(mm,length(q))
   order <- rep(q,each = length(mm))
   SC <- rep(SC,length(q))
-  data.frame(nt = m,Method = method,Order.q = order,
-             SC=SC,qD = out)
+  data.frame(nT = m,Method = method,Order.q = order,
+             SC=SC,qTD = out)
   
 }
 
@@ -509,12 +510,12 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
         if(nboot>1){
           Prob.hat <- EstiBootComm.Ind(x_)
           Abun.Mat <- rmultinom(nboot, sum(x_), Prob.hat)
-          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invSize.Ind(a, q,size)$qD),
+          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invSize.Ind(a, q,size)$qTD),
                               nrow = length(q) * length(size)),1,sd)
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qTD.LCL=est$qTD-qtile*ses,qTD.UCL=est$qTD+qtile*ses)
         est
       })
       out <- do.call(rbind,out)
@@ -538,12 +539,12 @@ invSize <- function(x, q, datatype="abundance", size=NULL, nboot=0, conf=NULL){
           if(ncol(Abun.Mat)==0){
             warning("Insufficient data to compute bootstrap s.e.")
           }
-          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invSize.Sam(a, q,size)$qD),
+          ses <- apply(matrix(apply(Abun.Mat,2 ,function(a) invSize.Sam(a, q,size)$qTD),
                               nrow = length(q)* length(size)),1,sd)
         }else{
           ses <- rep(0,nrow(est))
         }
-        est <- cbind(est,s.e.=ses,qD.LCL=est$qD-qtile*ses,qD.UCL=est$qD+qtile*ses)
+        est <- cbind(est,s.e.=ses,qTD.LCL=est$qTD-qtile*ses,qTD.UCL=est$qTD+qtile*ses)
       })
       out <- do.call(rbind,out)
       out$Assemblage <- Community
@@ -571,7 +572,7 @@ invSize.Ind <- function(x, q, size){
   m <- rep(size,length(q))
   order <- rep(q,each = length(size))
   SC <- rep(SC,length(q))
-  data.frame(m = m,Method = method,Order.q = order,SC=SC,qD = out)
+  data.frame(Order.q = order,m = m,Method = method,SC=SC,qTD = out)
 }
 
 
@@ -589,7 +590,7 @@ invSize.Sam <- function(x, q, size){
   m <- rep(size,length(q))
   order <- rep(q,each = length(size))
   SC <- rep(SC,length(q))
-  data.frame(nt = m,Method = method,Order.q = order,SC=SC,qD = out)
+  data.frame(Order.q = order,nT = m,Method = method,SC=SC,qTD = out)
 }
 
 
@@ -776,9 +777,9 @@ asyTD = function(data, datatype, q, nboot, conf) {
           apply(mt, 1, sd, na.rm=TRUE)
         
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
-                        "Assemblage" = names(data)[i], "Method" = "Asymptotic")
-      out$qD.LCL[out$qD.LCL<0] <- 0
+      out <- data.frame("Assemblage" = names(data)[i], "Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),
+                        "qTD.LCL" = dq - error, "qTD.UCL" = dq + error, "Method" = "Asymptotic")
+      out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })
     out <- do.call(rbind,out)
@@ -805,9 +806,9 @@ asyTD = function(data, datatype, q, nboot, conf) {
             apply(mt, 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
-                        "Assemblage" = names(data)[i],"Method" = "Asymptotic")
-      out$qD.LCL[out$qD.LCL<0] <- 0
+      out <- data.frame("Assemblage" = names(data)[i], "Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),
+                        "qTD.LCL" = dq - error, "qTD.UCL" = dq + error, "Method" = "Asymptotic")
+      out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })
     out <- do.call(rbind,out)
@@ -836,9 +837,9 @@ obsTD = function(data, datatype, q, nboot, conf) {
           apply(mt, 1, sd, na.rm=TRUE)
         
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
+      out <- data.frame("Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qTD.LCL" = dq - error, "qTD.UCL" = dq + error,
                         "Assemblage" = names(data)[i], "Method" = "Empirical")
-      out$qD.LCL[out$qD.LCL<0] <- 0
+      out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })
     out <- do.call(rbind,out)
@@ -863,9 +864,9 @@ obsTD = function(data, datatype, q, nboot, conf) {
             apply(mt, 1, sd, na.rm=TRUE)
         }
       } else {error = NA}
-      out <- data.frame("Order.q" = q, "qD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),"qD.LCL" = dq - error, "qD.UCL" = dq + error,
-                        "Assemblage" = names(data)[i],"Method" = "Empirical")
-      out$qD.LCL[out$qD.LCL<0] <- 0
+      out <- data.frame("Assemblage" = names(data)[i], "Order.q" = q, "qTD" = dq, "s.e." = error/qnorm(1-(1-conf)/2),
+                        "qTD.LCL" = dq - error, "qTD.UCL" = dq + error, "Method" = "Empirical")
+      out$qTD.LCL[out$qTD.LCL<0] <- 0
       out
     })
     out <- do.call(rbind,out)
@@ -889,7 +890,8 @@ TDinfo = function(data, datatype) {
     f0.hat <- ifelse(f2==0, (n-1)/n*f1*(f1-1)/2, (n-1)/n*f1^2/2/f2)
     A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
     Chat <- 1 - f1/n*A
-    c(n, Sobs, Chat, fk)
+    Chat2n <- Coverage(x, "abundance", 2*sum(x))
+    c(n, Sobs, Chat, Chat2n, fk)
   }
   
   Fun.ince <- function(x){
@@ -903,10 +905,12 @@ TDinfo = function(data, datatype) {
     Q0.hat <- ifelse(Q2==0, (nT-1)/nT*Q1*(Q1-1)/2, (nT-1)/nT*Q1^2/2/Q2)
     A <- ifelse(Q1>0, nT*Q0.hat/(nT*Q0.hat+Q1), 1)
     Chat <- 1 - Q1/U*A
-    out <- c(nT, U, Sobs, Chat, Qk)
+    Chat2T <- Coverage(c(nT,x), "incidence_freq", 2*nT)
+    out <- c(nT, U, Sobs, Chat, Chat2T, Qk)
   }
   
   if(datatype == "abundance"){
+    
     if(inherits(data, c("numeric", "integer"))){
       out <- matrix(Fun.abun(data), nrow=1)
     }else if(inherits(data, "list")){
@@ -916,15 +920,16 @@ TDinfo = function(data, datatype) {
     }
     if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
-      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:10, sep=""))
       rownames(out) <- NULL
     }else{
       out <- data.frame(site="site.1", out)
-      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC", paste("f",1:10, sep=""))
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:10, sep=""))
     }
     out = as.data.frame(out)
     
   }else if(datatype == "incidence_freq"){
+    
     if(inherits(data, c("numeric", "integer"))){
       out <- matrix(Fun.ince(data), nrow=1)
     }else if(inherits(data, "list")){
@@ -934,12 +939,15 @@ TDinfo = function(data, datatype) {
     }
     if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
-      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:10, sep=""))
       rownames(out) <- NULL
     }else{
       out <- data.frame(site="site.1", out)
-      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC", paste("Q",1:10, sep=""))
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:10, sep=""))
     }
     out = as.data.frame(out)
   }
 }
+
+
+

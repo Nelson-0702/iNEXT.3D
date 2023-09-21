@@ -2,27 +2,27 @@
 % Please edit documentation in R/MainFun.r
 \name{ggiNEXT3D}
 \alias{ggiNEXT3D}
-\title{ggplot2 extension for an iNEXT object}
+\title{ggplot2 extension for an iNEXT3D object}
 \usage{
-ggiNEXT3D(outcome, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")
+ggiNEXT3D(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")
 }
 \arguments{
+\item{output}{an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.}
+
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
 sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
 
 \item{facet.var}{create a separate plot for each value of a specified variable: 
-no separation \cr (\code{facet.var="None"}); 
-a separate plot for each diversity order (\code{facet.var="Order.q"}); 
-a separate plot for each assemblage (\code{facet.var="Assemblage"}); 
-a separate plot for each combination of order x assemblage (\code{facet.var="Both"}).}
+no separation \cr (\code{facet.var = "None"}); 
+a separate plot for each diversity order (\code{facet.var = "Order.q"}); 
+a separate plot for each assemblage (\code{facet.var = "Assemblage"}); 
+a separate plot for each combination of order x assemblage (\code{facet.var = "Both"}).}
 
 \item{color.var}{create curves in different colors for values of a specified variable:
-all curves are in the same color (\code{color.var="None"}); 
-use different colors for diversity orders (\code{color.var="Order.q"}); 
-use different colors for sites (\code{color.var="Assemblage"}); 
-use different colors for combinations of order x assemblage (\code{color.var="Both"}).}
-
-\item{x}{an \code{iNEXT} object computed by \code{\link{iNEXT}}.}
+all curves are in the same color (\code{color.var = "None"}); 
+use different colors for diversity orders (\code{color.var = "Order.q"}); 
+use different colors for sites (\code{color.var = "Assemblage"}); 
+use different colors for combinations of order x assemblage (\code{color.var = "Both"}).}
 
 \item{...}{other arguments passed on to methods. Not currently used.}
 }
@@ -30,43 +30,44 @@ use different colors for combinations of order x assemblage (\code{color.var="Bo
 a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 }
 \description{
-\code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} Object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+\code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 }
 \examples{
 # diversity = 'TD' for abundance-based data
 data(dunes)
-out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
-ggiNEXT3D(out1, facet.var = "Assemblage")
+output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+ggiNEXT3D(output1, facet.var = "Assemblage")
 
 
 # diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
-ggiNEXT3D(out2, type = c(1, 3))
+output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
+ggiNEXT3D(output2, type = c(1, 3))
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM, FDtype = 'tau_values')
-ggiNEXT3D(out3)
+output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+                   FDdistM = distM, FDtype = 'tau_values')
+ggiNEXT3D(output3)
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
-ggiNEXT3D(out4)
+output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+ggiNEXT3D(output4)
 
 
 # diversity = 'TD' for incidence-based data
 data(fish)
-out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
-ggiNEXT3D(out5)
+output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+ggiNEXT3D(output5)
 
 
 # diversity = 'PD' for incidence-based data
@@ -74,23 +75,23 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
-ggiNEXT3D(out6, facet.var = "Order.q", color.var = "Assemblage")
+output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
+ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
-ggiNEXT3D(out7)
+output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
+ggiNEXT3D(output7)
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-ggiNEXT3D(out8)
+output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+ggiNEXT3D(output8)
 
 }

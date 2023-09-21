@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.r
 \name{iNEXT3D}
 \alias{iNEXT3D}
-\title{iNterpolation and EXTrapolation of Hill number}
+\title{iNterpolation and EXTrapolation of Hill-Chao number}
 \usage{
 iNEXT3D(
   data,
@@ -64,50 +64,73 @@ If the \code{endpoint} is larger than the reference sample size, then \code{iNEX
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
-\code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
-and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.
+a list of three objects: \cr
+\code{$TDInfo} (or \code{$PDInfo}, \code{$FDInfo}) for summarizing data information. Details please refer to the output of \code{DataInfo3D}. \cr\cr
+\code{$TDiNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics by \code{"$size_based"} and \code{"$coverage_based"}. \cr\cr
+   In \code{"$size_based"}, the output includes:
+   \item{Assemblage}{the name of assemblage.} 
+   \item{Order.q}{the diversity order of q.}
+   \item{m, nT}{the target sample size.}
+   \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target sample size is less than, equal to, or greater than the size of the reference sample.}
+   \item{qTD, qPD, qFD}{the estimated diversity estimate.}
+   \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity.}
+   \item{SC}{the standardized coverage value}
+   \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for coverage}
+   \item{Reftime}{reference times for PD.}
+   \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+ Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+\code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
+   \item{Assemblage}{the name of assemblage.} 
+   \item{Diversity}{the diversity order of q.}
+   \item{Observed}{the observed diversity.}
+   \item{Estimator}{the asymptotic diversity estimate.}
+   \item{s.e.}{standard error of asymptotic diversity.}
+   \item{LCL, UCL}{the bootstrap lower and upper  confidence limits for asymptotic diversity.}
+   \item{Reftime}{reference times for PD.}
+   \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 }
 \description{
-\code{iNEXT3D}: Interpolation and extrapolation of Hill number with order q
+\code{iNEXT3D}: Interpolation and extrapolation of Hill-Chao number with order q
 }
 \examples{
 # diversity = 'TD' for abundance-based data
 data(dunes)
-out1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
-out1$DataInfo # showing basic data information.
-out1$AsyEst # showing asymptotic diversity estimates.
-out1$iNextEst # showing diversity estimates with rarefied and extrapolated.
+output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+output1
 
 
 # diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, PDtree = tree)
-out2
+output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+                   nboot = 30, PDtree = tree)
+output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, FDdistM = distM, FDtype = 'tau_values')
-out3
+output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
+                   FDdistM = distM, FDtype = 'tau_values')
+output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
-out4
+output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+output4
 
 
 # diversity = 'TD' for incidence-based data
 data(fish)
-out5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
-out5
+output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+output5
 
 
 # diversity = 'PD' for incidence-based data
@@ -115,24 +138,26 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
-out6
+output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                   nT = nT, PDtree = tree)
+output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
-out7
+output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                   FDdistM = distM, FDtype = 'tau_values')
+output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
-out8
+output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
+output8
 
 
 }

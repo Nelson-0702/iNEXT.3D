@@ -2,59 +2,59 @@
 % Please edit documentation in R/MainFun.r
 \name{ggAO3D}
 \alias{ggAO3D}
-\title{ggplot for Asymptotic diversity}
+\title{ggplot2 extension for plotting q-profile, time-profile, and tau-profile}
 \usage{
-ggAO3D(outcome, profile = "q")
+ggAO3D(output, profile = "q")
 }
 \arguments{
-\item{outcome}{the outcome of the functions \code{AO3D}.\cr}
+\item{output}{the output of the function \code{AO3D}.\cr}
 
 \item{profile}{a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr}
 }
 \value{
-a figure of asymptotic or empirical (observed) diversity in q-profile, time-profile, or tau-profile.\cr\cr
+a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 }
 \description{
-\code{ggAO3D} Plots q-profile, time-profile, and tau-profile based on the outcome of \code{AO3D} using the ggplot2 package.\cr
-It will only show the confidence interval of 'Estimated'.
+\code{ggAO3D} the \code{\link[ggplot2]{ggplot}} extension for \code{\link{AO3D}} object to plot q-profile, time-profile, and tau-profile based on the output of \code{AO3D} using the ggplot2 package.\cr
+Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{AO3D}.
 }
 \examples{
 # diversity = 'TD' for abundance-based data
 data(dunes)
-out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
-ggAO3D(out1)
+output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+ggAO3D(output1)
 
 
 # diversity = 'PD' for abundance-based data
 data(dunes)
 data <- dunes$data
 tree <- dunes$tree
-out2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
-             nboot = 30, PDtree = tree, PDtype = "meanPD")
-ggAO3D(out2, profile = "q")
+output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
+                nboot = 30, PDtree = tree, PDtype = "meanPD")
+ggAO3D(output2, profile = "q")
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
-             FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
-ggAO3D(out3, profile = "tau")
+output3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
+                FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+ggAO3D(output3, profile = "tau")
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
 data(dunes)
 data <- dunes$data
 distM <- dunes$dist
-out4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
-ggAO3D(out4)
+output4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+ggAO3D(output4)
 
 
 # diversity = 'TD' for incidence-based data
 data(fish)
-out5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
-ggAO3D(out5)
+output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+ggAO3D(output5)
 
 
 # diversity = 'PD' for incidence-based data
@@ -62,25 +62,25 @@ data(data.inc)
 data <- data.inc$data
 tree <- data.inc$tree
 nT <- data.inc$nT
-out6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-             nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
-ggAO3D(out6, profile = "time")
+output6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+ggAO3D(output6, profile = "time")
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
-             FDdistM = distM, FDtype = 'tau_values')
-ggAO3D(out7)
+output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                FDdistM = distM, FDtype = 'tau_values')
+ggAO3D(output7)
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
 data(fish)
 data <- fish$data
 distM <- fish$dist
-out8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-ggAO3D(out8)
+output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+ggAO3D(output8)
 
 }
