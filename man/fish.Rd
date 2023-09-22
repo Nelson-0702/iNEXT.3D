@@ -11,7 +11,7 @@ Species-by-site raw incidence data (datatype = "incidence_raw")
 \format{
   A list includes three objects: \cr
    $ data a list with three species-by-site raw incidence records for 78 species and 60 sampling units. \cr
-   $ treea phylo object giving the phylogenetic tree in Newick format. \cr
-   $ dista symmetric distance matrix. \cr
+   $ tree a phylo object giving the phylogenetic tree in Newick format. \cr
+   $ dist a symmetric distance matrix. \cr
  }
 \keyword{datasets}

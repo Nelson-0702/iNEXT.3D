@@ -12,8 +12,8 @@ Brazil rainforests data (datatype = "abundance")
 \format{
   A list includes three objects: \cr
    $ data a data.frame with 425 tree species abundance data in two habitats: Edge and Interior. \cr
-   $ tree a phylo object giving the phylogenetic tree in Newick format. \cr
    $ dist a symmetric distance matrix. \cr
+   $ tree a phylo object giving the phylogenetic tree in Newick format. \cr
  }
 \references{
 Magnago, L. F. S., Edwards, D. P., Edwards, F. A., Magrach, A., Martins, S. V., & Laurance, W. F. 2014. Functional attributes change but functional richness is unchanged after fragmentation of Brazilian Atlantic forests. Journal of Ecology 102: 475-485. \cr\cr
