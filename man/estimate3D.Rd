@@ -45,17 +45,17 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 
 \item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
-\item{PDtree}{(required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
+\item{PDtree}{(required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
-\item{PDreftime}{(required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).}
+\item{PDreftime}{(argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).}
 
-\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.}
+\item{PDtype}{(argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.}
 
-\item{FDdistM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage.}
+\item{FDdistM}{(required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage.}
 
-\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+\item{FDtype}{(argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
 a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
@@ -77,32 +77,32 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(dunes)
-output1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+data(Brazil)
+output1 <- estimate3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 output1
 
 
 # diversity = 'PD' for abundance-based data
-data(dunes)
-data <- dunes$data
-tree <- dunes$tree
+data(Brazil)
+data <- Brazil$data
+tree <- Brazil$tree
 output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
                       FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
                       nboot = 0, FDdistM = distM)
 output4

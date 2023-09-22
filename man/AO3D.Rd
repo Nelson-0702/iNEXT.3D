@@ -40,17 +40,17 @@ AO3D(
 
 \item{method}{computing type. Select 'Asymptotic' or 'Observed'.}
 
-\item{PDtree}{(required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
+\item{PDtree}{(required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
-\item{PDreftime}{(required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).}
+\item{PDreftime}{(argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).}
 
-\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.}
+\item{PDtype}{(argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.}
 
-\item{FDdistM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage.}
+\item{FDdistM}{(required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage.}
 
-\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+\item{FDtype}{(argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
 a table of diversity table including the following arguments: 
@@ -69,33 +69,33 @@ a table of diversity table including the following arguments:
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(dunes)
-output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+data(Brazil)
+output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 output1
 
 
 # diversity = 'PD' for abundance-based data
-data(dunes)
-data <- dunes$data
-tree <- dunes$tree
+data(Brazil)
+data <- Brazil$data
+tree <- Brazil$tree
 output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
                 datatype = "abundance", nboot = 30, PDtree = tree)
 output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
                 nboot = 50, FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
                 datatype = "abundance", nboot = 20, FDdistM = distM)
 output4

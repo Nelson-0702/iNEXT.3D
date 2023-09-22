@@ -20,33 +20,33 @@ Note, it will only show the confidence interval of 'Asymptotic' when setting \co
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(dunes)
-output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+data(Brazil)
+output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 ggAO3D(output1)
 
 
 # diversity = 'PD' for abundance-based data
-data(dunes)
-data <- dunes$data
-tree <- dunes$tree
+data(Brazil)
+data <- Brazil$data
+tree <- Brazil$tree
 output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
                 nboot = 30, PDtree = tree, PDtype = "meanPD")
 ggAO3D(output2, profile = "q")
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
                 FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggAO3D(output3, profile = "tau")
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
 ggAO3D(output4)
 

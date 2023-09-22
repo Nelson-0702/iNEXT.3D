@@ -28,15 +28,15 @@ If \code{datatype = "incidence_freq"}, then the first entry of the input data mu
 If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.}
 
-\item{PDtree}{a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.}
+\item{PDtree}{(required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
-\item{PDreftime}{Select several reference time points for \code{diversity = 'PD'}. Default is NULL.}
+\item{PDreftime}{(argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).}
 
-\item{FDdistM}{a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.}
+\item{FDdistM}{(required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage.}
 
-\item{FDtype}{a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+\item{FDtype}{(argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.}
+\item{FDtau}{(argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
 a data.frame including basic data information.\cr\cr 
@@ -65,28 +65,28 @@ of those singletons (g1) and of those doubletons (g2), and the reference time (R
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(dunes)
-DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
+data(Brazil)
+DataInfo3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 
 
 # diversity = 'PD' for abundance-based data
-data(dunes)
-data <- dunes$data
-tree <- dunes$tree
+data(Brazil)
+data <- Brazil$data
+tree <- Brazil$tree
 DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 
 

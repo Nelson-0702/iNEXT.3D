@@ -9,11 +9,11 @@
 #' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
-#' @param PDtree a phylo object describing the phylogenetic tree in Newick format for all observed species in the pooled assemblage. It is necessary when \code{diversity = 'PD'}.
-#' @param PDreftime Select several reference time points for \code{diversity = 'PD'}. Default is NULL. 
-#' @param FDdistM a pair wise distance matrix for all pairs of observed species in the pooled assemblage. It will be use when \code{diversity = 'FD'}.
-#' @param FDtype a binary selection for FD. \code{FDtype = "tau_values"} computes diversity under certain threshold values. \code{FDtype = "AUC"} computes an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
-#' @param FDtau a sequence between 0 and 1 specifying tau. If \code{NULL}, \code{threshold = } dmean. Default is \code{NULL}. It will be use when \code{diversity = 'FD'} and \code{FDtype = "tau_values"}.
+#' @param PDtree (required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
 #' @return a data.frame including basic data information.\cr\cr 
 #' For abundance data, basic information shared by TD, mean-PD and FD
@@ -39,28 +39,28 @@
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
+#' data(Brazil)
+#' DataInfo3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 #' 
 #' 
@@ -289,12 +289,12 @@ NULL
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
-#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
-#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
-#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
-#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param PDtree (required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param PDtype (argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
+#' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
 #' @importFrom reshape2 dcast
 #' @import ape
@@ -340,33 +340,33 @@ NULL
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' data(Brazil)
+#' output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
 #'                    nboot = 30, PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' output4
 #' 
@@ -702,32 +702,32 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' data(Brazil)
+#' output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' ggiNEXT3D(output1, facet.var = "Assemblage")
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 #' ggiNEXT3D(output2, type = c(1, 3))
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(output3)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggiNEXT3D(output4)
 #' 
@@ -1065,12 +1065,12 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
-#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
-#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
-#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
-#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
-#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param PDtree (required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param PDtype (argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
+#' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
 #' @return a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
 #' \item{Assemblage}{the assemblage name}
@@ -1089,32 +1089,32 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' output1 <- estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+#' data(Brazil)
+#' output1 <- estimate3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
 #'                       FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
 #'                       nboot = 0, FDdistM = distM)
 #' output4
@@ -1321,12 +1321,12 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
 #' @param method computing type. Select 'Asymptotic' or 'Observed'.
-#' @param PDtree (required only when \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
-#' @param PDreftime (required only when \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
-#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
-#' @param FDdistM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
-#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param PDtree (required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
+#' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
+#' @param PDtype (argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
+#' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
+#' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
+#' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' 
 #' @return a table of diversity table including the following arguments: 
 #' \item{Assemblage}{the assemblage name.}
@@ -1342,33 +1342,33 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+#' data(Brazil)
+#' output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
 #'                 datatype = "abundance", nboot = 30, PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
 #'                 nboot = 50, FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
 #'                 datatype = "abundance", nboot = 20, FDdistM = distM)
 #' output4
@@ -1545,33 +1545,33 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 #'
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(dunes)
-#' output1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance")
+#' data(Brazil)
+#' output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
 #' ggAO3D(output1)
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' tree <- dunes$tree
+#' data(Brazil)
+#' data <- Brazil$data
+#' tree <- Brazil$tree
 #' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
 #'                 nboot = 30, PDtree = tree, PDtype = "meanPD")
 #' ggAO3D(output2, profile = "q")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
 #'                 FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
 #' ggAO3D(output3, profile = "tau")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(dunes)
-#' data <- dunes$data
-#' distM <- dunes$dist
+#' data(Brazil)
+#' data <- Brazil$data
+#' distM <- Brazil$dist
 #' output4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggAO3D(output4)
 #' 

@@ -34,32 +34,32 @@ a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(dunes)
-output1 <- iNEXT3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+data(Brazil)
+output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 ggiNEXT3D(output1, facet.var = "Assemblage")
 
 
 # diversity = 'PD' for abundance-based data
-data(dunes)
-data <- dunes$data
-tree <- dunes$tree
+data(Brazil)
+data <- Brazil$data
+tree <- Brazil$tree
 output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 ggiNEXT3D(output2, type = c(1, 3))
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
                    FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(output3)
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(dunes)
-data <- dunes$data
-distM <- dunes$dist
+data(Brazil)
+data <- Brazil$data
+distM <- Brazil$dist
 output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 ggiNEXT3D(output4)
 
