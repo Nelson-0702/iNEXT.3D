@@ -29,17 +29,17 @@ This type of sampling curve plots the diversity estimates with respect to sample
 
 This package contains six main functions: \cr\cr
 
-1. \code{iNEXT3D} Computing interpolation and extrapolation with order q for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size. \cr
+1. \code{iNEXT3D} computing interpolation and extrapolation with order q for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size. \cr
 
-2. \code{ggiNEXT3D} Visualizing the output from the function \code{iNEXT.3D}. \cr
+2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT.3D}. \cr
 
-3. \code{AO3D} Computing empirical and asymptotic diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
+3. \code{AO3D} computing empirical and asymptotic diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
 
-4. \code{ggAO3D} Visualizing the output from the function \code{AO3D}. \cr
+4. \code{ggAO3D} visualizing the output from the function \code{AO3D}. \cr
 
-5. \code{estimate3D} Computes taxonomic, phylogenetic, and functional diversity (Hill-Chao family with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr
+5. \code{estimate3D} computes taxonomic, phylogenetic, and functional diversity (Hill-Chao family with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr
 
-6. \code{DataInfo3D} Provides basic data information. \cr
+6. \code{DataInfo3D} provides basic data information. \cr
 
 }
 \author{
