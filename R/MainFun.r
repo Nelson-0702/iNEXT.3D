@@ -33,7 +33,7 @@
 #'  For incidence data, the basic information for TD includes assemblage name (Assemblage), number of sampling units (T), 
 #'  total number of incidences (U), observed species richness (S.obs), 
 #'  sample coverage estimates of the reference sample (SC(T)), sample coverage estimate for twice the reference sample size
-#'  (SC(2T)), as well as the first species incidence frequency counts (Q1-Q5). For mean-PD and FD, output is similar to that
+#'  (SC(2T)), as well as the first five species incidence frequency counts (Q1-Q5). For mean-PD and FD, output is similar to that
 #'  for abundance data.   
 #'  
 #' 
