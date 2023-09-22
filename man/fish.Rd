@@ -5,7 +5,7 @@
 Species-by-site raw incidence data (datatype = "incidence_raw")
 }
 \description{
-  This data set consists of the species-by-site raw incidence (detection/non-detection) matrix in three time periods (1981-1985, 1987-1991, 2015-2019). Besides, it includes a phylogenetic tree and a species pairwise distance matrix.\cr
+  Hinkley's fish data consists of the species-by-site raw incidence (detection/non-detection) matrix in three time periods (1981-1985, 1987-1991, 2015-2019). Besides, it includes a phylogenetic tree and a species pairwise distance matrix.\cr
 }
 \usage{data(fish)}
 \format{
