@@ -883,7 +883,7 @@ obsTD = function(data, datatype, q, nboot, conf) {
 TDinfo = function(data, datatype) {
   Fun.abun <- function(x){
     n <- sum(x)
-    fk <- sapply(1:10, function(k) sum(x==k))
+    fk <- sapply(1:5, function(k) sum(x==k))
     f1 <- fk[1]
     f2 <- fk[2]
     Sobs <- sum(x>0)
@@ -898,7 +898,7 @@ TDinfo = function(data, datatype) {
     nT <- x[1]
     x <- x[-1]
     U <- sum(x)
-    Qk <- sapply(1:10, function(k) sum(x==k))
+    Qk <- sapply(1:5, function(k) sum(x==k))
     Q1 <- Qk[1]
     Q2 <- Qk[2]
     Sobs <- sum(x>0)
@@ -920,11 +920,11 @@ TDinfo = function(data, datatype) {
     }
     if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
-      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:10, sep=""))
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:5, sep=""))
       rownames(out) <- NULL
     }else{
       out <- data.frame(site="site.1", out)
-      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:10, sep=""))
+      colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:5, sep=""))
     }
     out = as.data.frame(out)
     
@@ -939,11 +939,11 @@ TDinfo = function(data, datatype) {
     }
     if(nrow(out) > 1 | inherits(data, 'list')){
       out <- data.frame(site=rownames(out), out)
-      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:10, sep=""))
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:5, sep=""))
       rownames(out) <- NULL
     }else{
       out <- data.frame(site="site.1", out)
-      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:10, sep=""))
+      colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:5, sep=""))
     }
     out = as.data.frame(out)
   }
