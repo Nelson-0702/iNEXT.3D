@@ -951,7 +951,9 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
   if (type == 2) output$col = output$shape = output$Assemblage
   
   data.sub = output
+  tmp = output %>% filter(Method == "Observed") %>% mutate(Method = "Extrapolation")
   output$Method[output$Method == "Observed"] = "Rarefaction"
+  output = rbind(output, tmp)
   output$lty <- factor(output$Method, levels = c("Rarefaction", "Extrapolation"))
   output$col <- factor(output$col)
   data.sub <- data.sub[which(data.sub$Method == "Observed"),]
