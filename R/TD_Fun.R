@@ -15,6 +15,9 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
   RFD_m <- RTD(ifi, n, n-1, qs)
   #asymptotic value
   asy <- Diversity_profile(x,qs)
+  asy <- sapply(1:length(qs), function(j){
+    max(asy[j], obs[j])
+  })
   #beta
   beta <- rep(0,length(qs))
   beta0plus <- which(asy != RFD_m)
