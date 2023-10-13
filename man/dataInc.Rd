@@ -15,9 +15,9 @@ Incidence raw data (datatype = "incidence_raw")
 \usage{data(data.inc)}
 \format{
   A list includes three objects: \cr
-   $ data a data frame with species-by-site raw incidence records for 41 species. \cr
-   $ tree a phylo object giving the phylogenetic tree in Newick format. \cr
-   $ nT a vector giving the numbers of sampling units in all sites. \cr
+   $ data: a data frame with species-by-site raw incidence records for 41 species. \cr
+   $ tree: a phylo object giving the phylogenetic tree in Newick format. \cr
+   $ nT: a vector giving the numbers of sampling units in all sites. \cr
  }
 \references{
 Chao, A., Chiu, C.-H., Hsieh, T. C., Davis, T., Nipperess, D., and Faith, D. (2015). Rarefaction and extrapolation of phylogenetic diversity. \emph{Methods in Ecology and Evolution}, 6, 380-388. \cr\cr

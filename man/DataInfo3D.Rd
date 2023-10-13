@@ -44,7 +44,7 @@ For abundance data, basic information shared by TD, mean-PD and FD
  includes assemblage name (Assemblage),
 sample size (n), observed species richness (S.obs), sample coverage estimates of the reference sample (SC(n)), 
 sample coverage estimate for twice the reference sample size (SC(2n)). Other additional information is given below.\cr\cr
-(1) TD: the first five species abundance (f1-f10).\cr\cr
+(1) TD: the first five species abundance (f1-f5).\cr\cr
 (2) Mean-PD: the the observed total branch length in the phylogenetic tree (PD.obs), 
 the number of singletons (f1*) and doubletons (f2*) in the node/branch abundance set, as well as the total branch length 
 of those singletons (g1) and of those doubletons (g2), and the reference time (Reftime).\cr\cr
@@ -57,7 +57,7 @@ of those singletons (g1) and of those doubletons (g2), and the reference time (R
  For incidence data, the basic information for TD includes assemblage name (Assemblage), number of sampling units (T), 
  total number of incidences (U), observed species richness (S.obs), 
  sample coverage estimates of the reference sample (SC(T)), sample coverage estimate for twice the reference sample size
- (SC(2T)), as well as the first ten species incidence frequency counts (Q1-Q10). For mean-PD and FD, output is similar to that
+ (SC(2T)), as well as the first five species incidence frequency counts (Q1-Q5). For mean-PD and FD, output is similar to that
  for abundance data.
 }
 \description{

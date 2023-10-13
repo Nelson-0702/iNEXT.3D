@@ -18,20 +18,20 @@ and can be meaningfully compared; see Chao et al. (2021) for a review of the uni
 
 \code{iNEXT.3D} also features two types of R/E sampling curves:
 
-* Sample-size-based R/E sampling curves:\code{iNEXT.3D} computes diversity estimates for rarefied and 
+* Sample-size-based R/E sampling curves: \code{iNEXT.3D} computes diversity estimates for rarefied and 
 extrapolated samples up to an appropriate size. This type of sampling curve plots the diversity estimates with respect to sample size.
 
 * Coverage-based R/E sampling curves: \code{iNEXT.3D} computes diversity estimates for rarefied and 
 extrapolated samples with sample completeness (as measured by sample coverage) up to an appropriate coverage. 
 This type of sampling curve plots the diversity estimates with respect to sample coverage. 
 
-\code{iNEXT.3D} also plots the above two types of sampling curves and a sample completeness curve by `ggiNEXT3D`. The sample completeness curve provides a bridge between these two types of curves.
+\code{iNEXT.3D} also plots the above two types of sampling curves and a sample completeness curve by `ggiNEXT3D`. The sample completeness curve provides a bridge between these two types of curves. \cr
 
-This package contains six main functions: \cr\cr
+This package contains six main functions: \cr
 
 1. \code{iNEXT3D} computing interpolation and extrapolation with order q for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size. \cr
 
-2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT.3D}. \cr
+2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT3D}. \cr
 
 3. \code{AO3D} computing empirical and asymptotic diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
 
@@ -51,4 +51,4 @@ Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 *	Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940. \cr\cr
 *	T.C. Hsieh, K. H. Ma, and Chao, A. (2016). iNEXT: An R package for rarefaction and extrapolation of species diversity (Hill numbers). Methods in Ecology and Evolution, 7, 1451-1456. \cr\cr
 }
-\keyword{ package }
+\keyword{package}
