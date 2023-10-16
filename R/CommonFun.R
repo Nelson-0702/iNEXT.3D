@@ -107,8 +107,8 @@ print.iNEXT3D <- function(x, ...){
     tmp <- lapply(1:length(Assemblages),function(i){
       # y_each <- subset(y, Assemblage==Assemblages[i])
       y_each <- y[y$Assemblage==Assemblages[i],]
-      m <- quantile(unlist(y_each[,2]), type = 1)
-      y_each[unlist(y_each[,2]) %in% m,]
+      m <- quantile(unlist(y_each[,3]), type = 1)
+      y_each[unlist(y_each[,3]) %in% m,]
     })
     do.call(rbind,tmp)
   })
