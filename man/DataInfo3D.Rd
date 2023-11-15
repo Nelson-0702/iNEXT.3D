@@ -65,56 +65,55 @@ of those singletons (g1) and of those doubletons (g2), and the reference time (R
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(Brazil)
-DataInfo3D(Brazil$data, diversity = 'TD', datatype = "abundance")
+data(Brazil_rainforest_data)
+DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-tree <- Brazil$tree
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+tree <- Brazil_rainforest_data$tree
 DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-distM <- Brazil$dist
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+distM <- Brazil_rainforest_data$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-distM <- Brazil$dist
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+distM <- Brazil_rainforest_data$dist
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 
 
 # diversity = 'TD' for incidence-based data
-data(fish)
-DataInfo3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+data(fish_incidence_data)
+DataInfo3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 
 
 # diversity = 'PD' for incidence-based data
-data(data.inc)
-data <- data.inc$data
-tree <- data.inc$tree
-nT <- data.inc$nT
-DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+tree <- fish_incidence_data$tree
+DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish)
-data <- fish$data
-distM <- fish$dist
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+distM <- fish_incidence_data$dist
 DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
            FDdistM = distM, FDtype = 'tau_values')
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish)
-data <- fish$data
-distM <- fish$dist
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+distM <- fish_incidence_data$dist
 DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'AUC')
 
 

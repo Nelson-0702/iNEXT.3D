@@ -79,7 +79,7 @@ a list of three objects: \cr
    \item{Reftime}{reference times for PD.}
    \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
- Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+ Similar output is obtained for \code{"$coverage_based"}. \cr
 \code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
    \item{Assemblage}{the name of assemblage.} 
    \item{Diversity}{the diversity order of q.}
@@ -96,66 +96,64 @@ a list of three objects: \cr
 }
 \examples{
 # diversity = 'TD' for abundance-based data
-data(Brazil)
-output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+data(Brazil_rainforest_data)
+output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 output1
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-tree <- Brazil$tree
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+tree <- Brazil_rainforest_data$tree
 output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
                    nboot = 30, PDtree = tree)
 output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-distM <- Brazil$dist
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+distM <- Brazil_rainforest_data$dist
 output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
                    FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil)
-data <- Brazil$data
-distM <- Brazil$dist
+data(Brazil_rainforest_data)
+data <- Brazil_rainforest_data$data
+distM <- Brazil_rainforest_data$dist
 output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 output4
 
 
 # diversity = 'TD' for incidence-based data
-data(fish)
-output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+data(fish_incidence_data)
+output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 output5
 
 
 # diversity = 'PD' for incidence-based data
-data(data.inc)
-data <- data.inc$data
-tree <- data.inc$tree
-nT <- data.inc$nT
-output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-                   nT = nT, PDtree = tree)
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+tree <- fish_incidence_data$tree
+output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", PDtree = tree)
 output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish)
-data <- fish$data
-distM <- fish$dist
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+distM <- fish_incidence_data$dist
 output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", 
                    FDdistM = distM, FDtype = 'tau_values')
 output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish)
-data <- fish$data
-distM <- fish$dist
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+distM <- fish_incidence_data$dist
 output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
 output8
 

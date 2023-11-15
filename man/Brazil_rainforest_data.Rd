@@ -1,5 +1,5 @@
-\name{Brazil}
-\alias{Brazil}
+\name{Brazil_rainforest_data}
+\alias{Brazil_rainforest_data}
 \docType{data}
 \title{
 Brazil rainforests data (datatype = "abundance")
@@ -8,7 +8,7 @@ Brazil rainforests data (datatype = "abundance")
   The dataset includes tree species abundace counts in two assemblages/habitats (Edge and Interior) collected from
   rainforests in Brazil by Magnago et al. (2014, 2015, 2017). \cr
 }
-\usage{data(Brazil)}
+\usage{data(Brazil_rainforest_data)}
 \format{
   A list includes three objects: \cr
    $ data: a data.frame with 425 tree species abundance data in two habitats: Edge and Interior. \cr

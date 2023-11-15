@@ -1,5 +1,5 @@
-\name{fish}
-\alias{fish}
+\name{fish_incidence_data}
+\alias{fish_incidence_data}
 \docType{data}
 \title{
 Species-by-site raw incidence data (datatype = "incidence_raw")
@@ -7,7 +7,7 @@ Species-by-site raw incidence data (datatype = "incidence_raw")
 \description{
   Hinkley's fish data consists of the species-by-site raw incidence (detection/non-detection) matrix in three time periods (1981-1985, 1987-1991, 2015-2019). Besides, it includes a phylogenetic tree and a species pairwise distance matrix.\cr
 }
-\usage{data(fish)}
+\usage{data(fish_incidence_data)}
 \format{
   A list includes three objects: \cr
    $ data: a list with three species-by-site raw incidence records for 78 species and 60 sampling units. \cr

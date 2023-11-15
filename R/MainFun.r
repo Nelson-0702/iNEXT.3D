@@ -39,56 +39,55 @@
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' DataInfo3D(Brazil$data, diversity = 'TD', datatype = "abundance")
+#' data(Brazil_rainforest_data)
+#' DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'tau_values')
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "abundance", FDdistM = distM, FDtype = 'AUC')
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' DataInfo3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+#' data(fish_incidence_data)
+#' DataInfo3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", nT = nT, PDtree = tree)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
+#' DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
 #'            FDdistM = distM, FDtype = 'tau_values')
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'AUC')
 #' 
 #'
@@ -207,7 +206,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
       
     }) %>% do.call(rbind,.)
     
-    
+    rownames(out) = NULL
   } 
   
   
@@ -325,7 +324,7 @@ NULL
 #'    \item{Reftime}{reference times for PD.}
 #'    \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
 #'    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
-#'  Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+#'  Similar output is obtained for \code{"$coverage_based"}. \cr
 #' \code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
 #'    \item{Assemblage}{the name of assemblage.} 
 #'    \item{Diversity}{the diversity order of q.}
@@ -340,66 +339,64 @@ NULL
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' data(Brazil_rainforest_data)
+#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
 #' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
 #'                    nboot = 30, PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+#' data(fish_incidence_data)
+#' output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 #' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-#'                    nT = nT, PDtree = tree)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
+#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", PDtree = tree)
 #' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
 #' output8
 #' 
@@ -487,8 +484,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     out$size_based$Assemblage <- as.character(out$size_based$Assemblage)
     out$coverage_based$Assemblage <- as.character(out$coverage_based$Assemblage)
-    out$size_based <- as_tibble(out$size_based)
-    out$coverage_based <- as_tibble(out$coverage_based)
+    # out$size_based <- as_tibble(out$size_based)
+    # out$coverage_based <- as_tibble(out$coverage_based)
     
     info <- DataInfo3D(data, diversity = 'TD', datatype, nT)
     
@@ -702,63 +699,62 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' output1 <- iNEXT3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' data(Brazil_rainforest_data)
+#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
 #' ggiNEXT3D(output1, facet.var = "Assemblage")
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
 #' output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
 #' ggiNEXT3D(output2, type = c(1, 3))
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(output3)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 #' ggiNEXT3D(output4)
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' output5 <- iNEXT3D(fish$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+#' data(fish_incidence_data)
+#' output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
 #' ggiNEXT3D(output5)
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nT = nT, PDtree = tree)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
+#' output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", PDtree = tree)
 #' ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
 #' ggiNEXT3D(output7)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' ggiNEXT3D(output8)
 #' 
@@ -867,7 +863,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
     
   } else if (type == 3) {
     
-    output <- x_list$coverage_based %>% data.frame
+    output <- x_list$coverage_based %>% tibble
     output$y.lwr <- output$qD.LCL
     output$y.upr <- output$qD.UCL
     id <- match(c("SC", "Method", "qD", "qD.LCL", "qD.UCL", "Assemblage", "Order.q", x_name), names(output), nomatch = 0)
@@ -1091,67 +1087,66 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' output1 <- estimate3D(Brazil$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+#' data(Brazil_rainforest_data)
+#' output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
 #' output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
 #'                       FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
 #' output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
 #'                       nboot = 0, FDdistM = distM)
 #' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' output5 <- estimate3D(fish$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", 
+#' data(fish_incidence_data)
+#' output5 <- estimate3D(fish_incidence_data$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", 
 #'                       base = "coverage")
 #' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
 #' output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-#'                       base = "size", nT = nT, PDtree = tree)
+#'                       base = "size", PDtree = tree)
 #' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", 
 #'                       FDdistM = distM, FDtype = 'tau_values')
 #' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
 #' output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
 #'                       nboot = 20, FDdistM = distM)
 #' output8
@@ -1303,6 +1298,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
       
     }
     out$qFD.LCL[out$qFD.LCL<0] <- 0
+    
+    out = data.frame(out)
   }
   
   return(out)
@@ -1311,7 +1308,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 
 #' Asymptotic diversity and observed diversity of order q
 #' 
-#' \code{AO3D}: The estimated asymptotic and observed diversity of order q 
+#' \code{ObsAsy3D}: The estimated asymptotic and observed diversity of order q 
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
@@ -1344,68 +1341,67 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
+#' data(Brazil_rainforest_data)
+#' output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
 #' output1
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
-#' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
+#' output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
 #'                 datatype = "abundance", nboot = 30, PDtree = tree)
 #' output2
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
-#' output3 <- AO3D(data, diversity = 'FD', datatype = "abundance", 
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
+#' output3 <- ObsAsy3D(data, diversity = 'FD', datatype = "abundance", 
 #'                 nboot = 50, FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
-#' output4 <- AO3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
+#' output4 <- ObsAsy3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
 #'                 datatype = "abundance", nboot = 20, FDdistM = distM)
 #' output4
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
+#' data(fish_incidence_data)
+#' output5 <- ObsAsy3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 #' output5
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' output6 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-#'                 datatype = "incidence_raw", nT = nT, PDtree = tree)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
+#' output6 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+#'                 datatype = "incidence_raw", PDtree = tree)
 #' output6
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
-#' output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
+#' output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
 #'                 FDdistM = distM, FDtype = 'tau_values')
 #' output7
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
-#' output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
+#' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' output8
 #' 
 #' 
@@ -1413,7 +1409,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 #' 
 #' @export
-AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
+ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
                  PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
@@ -1538,83 +1534,82 @@ AO3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundan
 
 #' ggplot2 extension for plotting q-profile, time-profile, and tau-profile
 #'
-#' \code{ggAO3D} the \code{\link[ggplot2]{ggplot}} extension for \code{\link{AO3D}} object to plot q-profile, time-profile, and tau-profile based on the output of \code{AO3D} using the ggplot2 package.\cr
-#' Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{AO3D}.
+#' \code{ggObsAsy3D} the \code{\link[ggplot2]{ggplot}} extension for \code{\link{ObsAsy3D}} object to plot q-profile, time-profile, and tau-profile based on the output of \code{ObsAsy3D} using the ggplot2 package.\cr
+#' Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{ObsAsy3D}.
 #' 
-#' @param output the output of the function \code{AO3D}.\cr
+#' @param output the output of the function \code{ObsAsy3D}.\cr
 #' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
 #' @return a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
 #' # diversity = 'TD' for abundance-based data
-#' data(Brazil)
-#' output1 <- AO3D(Brazil$data, diversity = 'TD', datatype = "abundance")
-#' ggAO3D(output1)
+#' data(Brazil_rainforest_data)
+#' output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
+#' ggObsAsy3D(output1)
 #' 
 #' 
 #' # diversity = 'PD' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' tree <- Brazil$tree
-#' output2 <- AO3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' tree <- Brazil_rainforest_data$tree
+#' output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
 #'                 nboot = 30, PDtree = tree, PDtype = "meanPD")
-#' ggAO3D(output2, profile = "q")
+#' ggObsAsy3D(output2, profile = "q")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
-#' output3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
+#' output3 <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
 #'                 FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
-#' ggAO3D(output3, profile = "tau")
+#' ggObsAsy3D(output3, profile = "tau")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-#' data(Brazil)
-#' data <- Brazil$data
-#' distM <- Brazil$dist
-#' output4 <- AO3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
-#' ggAO3D(output4)
+#' data(Brazil_rainforest_data)
+#' data <- Brazil_rainforest_data$data
+#' distM <- Brazil_rainforest_data$dist
+#' output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+#' ggObsAsy3D(output4)
 #' 
 #' 
 #' # diversity = 'TD' for incidence-based data
-#' data(fish)
-#' output5 <- AO3D(fish$data, diversity = 'TD', datatype = "incidence_raw")
-#' ggAO3D(output5)
+#' data(fish_incidence_data)
+#' output5 <- ObsAsy3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
+#' ggObsAsy3D(output5)
 #' 
 #' 
 #' # diversity = 'PD' for incidence-based data
-#' data(data.inc)
-#' data <- data.inc$data
-#' tree <- data.inc$tree
-#' nT <- data.inc$nT
-#' output6 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-#'                 nT = nT, PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
-#' ggAO3D(output6, profile = "time")
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' tree <- fish_incidence_data$tree
+#' output6 <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+#'                     PDtree = tree, PDreftime = seq(0.1, 1, length.out = 40), method = "Observed")
+#' ggObsAsy3D(output6, profile = "time")
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
-#' output7 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
+#' output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
 #'                 FDdistM = distM, FDtype = 'tau_values')
-#' ggAO3D(output7)
+#' ggObsAsy3D(output7)
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-#' data(fish)
-#' data <- fish$data
-#' distM <- fish$dist
-#' output8 <- AO3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
-#' ggAO3D(output8)
+#' data(fish_incidence_data)
+#' data <- fish_incidence_data$data
+#' distM <- fish_incidence_data$dist
+#' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' ggObsAsy3D(output8)
 #'
 #' @export
-ggAO3D <- function(output, profile = 'q'){
+ggObsAsy3D <- function(output, profile = 'q'){
   
   if (sum(unique(output$Method) %in% c("Asymptotic", "Observed")) == 0)
-    stop("Please use the output from specified function 'AO3D'")
+    stop("Please use the output from specified function 'ObsAsy3D'")
   
   if (!(profile %in% c('q', 'time', 'tau')))
     stop("Please select one of 'q', 'time', 'tau' profile.")
@@ -1631,7 +1626,7 @@ ggAO3D <- function(output, profile = 'q'){
     
     if ("Tau" %in% colnames(output)) class = 'FD' else class = 'FD(AUC)'
     
-  } else {stop("Please use the output from specified function 'AO3D'")}
+  } else {stop("Please use the output from specified function 'ObsAsy3D'")}
   
   ## TD & q-profile ##
   if (class == 'TD') {

@@ -174,7 +174,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e.=ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage', 'Order.q', 'SC','m', 'qPD', 'Method', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage', 'Order.q', 'SC','m', 'Method', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,m)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0
@@ -285,8 +285,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
     })
   }
   if(unconditional_var){
-    ans <- list(size_based = lapply(Estoutput, function(x) x$size_based) %>% do.call(rbind,.) %>% as_tibble,
-                coverage_based = lapply(Estoutput, function(x) x$coverage_based) %>% do.call(rbind,.) %>% as_tibble)
+    ans <- list(size_based = lapply(Estoutput, function(x) x$size_based) %>% do.call(rbind,.),
+                coverage_based = lapply(Estoutput, function(x) x$coverage_based) %>% do.call(rbind,.))
   }else{
     ans <- list(size_based = do.call(rbind,lapply(Estoutput, function(x) x$size_based)))
   }
@@ -583,12 +583,12 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
       output
     }) %>% do.call(rbind,.)
   }
-  Output <- tibble(Assemblage = rep(nms, each=length(reft)*length(q)),
-                   Order.q = rep(rep(q, each=length(reft)),length(datalist)),
-                   qPD = out[,1], s.e. = out[,2],qPD.LCL = out[,3], qPD.UCL = out[,4],
-                   Method='Observed',
-                   Reftime = rep(reft,length(q)*length(datalist)),
-                   Type=cal) %>%
+  Output <- data.frame(Assemblage = rep(nms, each=length(reft)*length(q)),
+                       Order.q = rep(rep(q, each=length(reft)),length(datalist)),
+                       qPD = out[,1], s.e. = out[,2],qPD.LCL = out[,3], qPD.UCL = out[,4],
+                       Method='Observed',
+                       Reftime = rep(reft,length(q)*length(datalist)),
+                       Type=cal) %>%
     arrange(Reftime)
   return(Output)
 }
@@ -675,9 +675,9 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       }else{
         ses <- rep(NA,length(est))
       }
-      est <- tibble(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
-                    qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
-                    Reftime = rep(reft,each = length(q)))
+      est <- data.frame(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
+                        qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
+                        Reftime = rep(reft,each = length(q)))
       est
     })
   }else if(datatype=="incidence_raw"){
@@ -735,9 +735,9 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
       }else{
         ses <- rep(NA,length(est))
       }
-      est <- tibble(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
-                    qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
-                    Reftime = rep(reft,each = length(q)))
+      est <- data.frame(Order.q = rep(q,tau_l), qPD = est, s.e. = ses,
+                        qPD.LCL = est - qtile*ses, qPD.UCL = est + qtile*ses,
+                        Reftime = rep(reft,each = length(q)))
       est
     })
   }
@@ -748,6 +748,8 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
            Method,Reftime,Type) %>%
     arrange(Reftime)
   Estoutput$qPD.LCL[Estoutput$qPD.LCL<0] = 0
+  rownames(Estoutput) = NULL
+  
   return(Estoutput)
 }
 

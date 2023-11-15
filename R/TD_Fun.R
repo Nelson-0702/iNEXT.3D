@@ -175,10 +175,10 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
     }
   }
   out_m <- data.frame("m"=rep(m,length(q)), "qTD"=Dq.hat, 
-                      "qTD.LCL"=Dq.hat-qtile*ses_m,
-                      "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
-                      "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
-  # out_m <- data.frame(out_m)
+                  "qTD.LCL"=Dq.hat-qtile*ses_m,
+                  "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+                  "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
+  
   out_m$Method <- ifelse(out_m$m<n, "Rarefaction", ifelse(out_m$m==n, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(m))
   id_m <- match(c("Order.q", "m", "Method", "qTD", "qTD.LCL", "qTD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
@@ -190,7 +190,7 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
   if(unconditional_var){
     out_C <- data.frame(Dq.hat_unc, 'qTD.LCL' = Dq.hat_unc$qTD-qtile*ses_C,
                        'qTD.UCL' = Dq.hat_unc$qTD+qtile*ses_C) 
-    id_C <- match(c("Order.q", "SC", "m", "qTD", "Method", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
+    id_C <- match(c("Order.q", "SC", "m", "Method", "qTD", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qTD.LCL[out_C$qTD.LCL<0] <- 0
   }else{
@@ -276,7 +276,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
   out_m <- data.frame("nT"=rep(t,length(q)), "qTD"=Dq.hat, 
                       "qTD.LCL"=Dq.hat-qtile*ses_m,
                       "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
-  # out_m <- data.frame(out_m)
+  
   out_m$Method <- ifelse(out_m$nT<nT, "Rarefaction", ifelse(out_m$nT==nT, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(t))
   id_m <- match(c("Order.q", "nT", "Method", "qTD", "qTD.LCL", "qTD.UCL", "SC", "SC.LCL", "SC.UCL"), names(out_m), nomatch = 0)
@@ -288,7 +288,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
   if(unconditional_var){
     out_C <- data.frame(Dq.hat_unc,'qTD.LCL' = Dq.hat_unc$qTD-qtile*ses_C,
                         'qTD.UCL' = Dq.hat_unc$qTD+qtile*ses_C) 
-    id_C <- match(c("Order.q", "SC","nT", "qTD", "Method", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
+    id_C <- match(c("Order.q", "SC","nT", "Method", "qTD", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qTD.LCL[out_C$qTD.LCL<0] <- 0
   }else{
@@ -929,7 +929,7 @@ TDinfo = function(data, datatype) {
       out <- data.frame(site="site.1", out)
       colnames(out) <-  c("Assemblage", "n", "S.obs", "SC(n)", "SC(2n)", paste("f",1:5, sep=""))
     }
-    out = as.data.frame(out)
+    # out = as.data.frame(out)
     
   }else if(datatype == "incidence_freq"){
     
@@ -948,8 +948,9 @@ TDinfo = function(data, datatype) {
       out <- data.frame(site="site.1", out)
       colnames(out) <-  c("Assemblage","T", "U", "S.obs", "SC(T)", "SC(2T)", paste("Q",1:5, sep=""))
     }
-    out = as.data.frame(out)
+    
   }
+  out
 }
 
 

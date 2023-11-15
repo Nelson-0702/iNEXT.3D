@@ -144,10 +144,10 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_cov <- rep(ses_cov,each = length(q)*length(tau))
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
-      tibble(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method, 
-             qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
-             SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
-             Tau = threshold) %>% 
+      data.frame(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method, 
+                 qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+                 SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
+                 Tau = threshold) %>% 
         arrange(Tau, Order.q)
     }) %>% do.call(rbind, .)
     
@@ -181,10 +181,10 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       ses_cov <- rep(ses_cov,each = length(q)*length(tau))
       ses_fd <- ses[-((length(ses)-length(m[[i]])+1):length(ses))]
       covm <- rep(covm,length(q)*length(tau))
-      tibble(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method,
-             qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
-             SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
-             Tau = threshold) %>% 
+      data.frame(Assemblage = sites[i], Order.q=orderq, m=rep(m[[i]],length(q)*length(tau)), Method=method,
+                 qFD=qFDm, s.e.=ses_fd, qFD.LCL=qFDm-qtile*ses_fd, qFD.UCL=qFDm+qtile*ses_fd,
+                 SC=covm, SC.s.e.=ses_cov, SC.LCL=covm-qtile*ses_cov, SC.UCL=covm+qtile*ses_cov,
+                 Tau = threshold) %>% 
         arrange(Tau,Order.q)
     }) %>% do.call(rbind, .)
   }
@@ -246,7 +246,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   }
   Assemblage = rep(names(datalist), each = length(q)*length(level)*length(tau))
   out <- out %>% mutate(Assemblage = Assemblage) %>% select(
-    Assemblage, Order.q, SC, m, qFD, Method, s.e., qFD.LCL, qFD.UCL, Tau
+    Assemblage, Order.q, SC, m, Method, qFD, s.e., qFD.LCL, qFD.UCL, Tau
   )
   rownames(out) <- NULL
   out
@@ -295,8 +295,8 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   SC <- rep(SC,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
-  tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC, Tau = threshold)
+  data.frame(m = m,Method = method,Order.q = order,
+             qFD = out,SC=SC, Tau = threshold)
 }
 
 
@@ -343,8 +343,8 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   SC <- rep(SC,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
   method[round(m) == n] = "Observed"
-  tibble(m = m,Method = method,Order.q = order,
-         qFD = out,SC=SC, Tau = threshold)
+  data.frame(m = m,Method = method,Order.q = order,
+             qFD = out,SC=SC, Tau = threshold)
 }
 
 
@@ -473,9 +473,9 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   }
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
-  Output <- tibble(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
-                   s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
-                   Method='Observed', Tau = tau_tmp)
+  Output <- data.frame(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), qFD = out[,1],
+                       s.e. = out[,2], qFD.LCL = out[,3], qFD.UCL = out[,4],
+                       Method='Observed', Tau = tau_tmp)
   Output
 }
 
@@ -650,10 +650,10 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
   Estoutput <- out %>% do.call(rbind,.) #%>% mutate(Assemblage = rep(names(datalist),each = length(q)))
   sites_tmp <- rep(sites,each = length(q)*length(tau))
   tau_tmp <- rep(rep(tau,each = length(q)),length(sites))
-  Estoutput <- tibble(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), 
-                      qFD = Estoutput[,1],
-                      s.e. = Estoutput[,2], qFD.LCL = Estoutput[,3], qFD.UCL = Estoutput[,4],
-                      Method = "Asymptotic", Tau = tau_tmp)
+  Estoutput <- data.frame(Assemblage = sites_tmp, Order.q = rep(q,length(tau)*length(sites)), 
+                          qFD = Estoutput[,1],
+                          s.e. = Estoutput[,2], qFD.LCL = Estoutput[,3], qFD.UCL = Estoutput[,4],
+                          Method = "Asymptotic", Tau = tau_tmp)
   Estoutput$qFD.LCL[Estoutput$qFD.LCL<0] = 0
   # return(list(Estoutput = Estoutput, info = info))
   return(Estoutput)
@@ -790,7 +790,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q','SC')) %>% mutate(
     s.e. = AUC_se, qFD.LCL = qFD - AUC_se * qtile, qFD.UCL = qFD + AUC_se * qtile,
     SC.s.e. = SC_se, SC.LCL = SC - SC_se * qtile, SC.UCL = SC + SC_se * qtile) %>% 
-    select(Assemblage, Order.q, SC, m, qFD, Method, s.e., qFD.LCL, qFD.UCL)
+    select(Assemblage, Order.q, SC, m, Method, qFD, s.e., qFD.LCL, qFD.UCL)
   AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC
 }
@@ -830,7 +830,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
           ungroup
       }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(sites,each = length(q)))
     }else{
-      ses <- tibble(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
+      ses <- data.frame(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
     }
   }else if(datatype=='incidence_freq'){
     if(nboot>1){
@@ -848,7 +848,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
           ungroup
       }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(sites,each = length(q)))
     }else{
-      ses <- tibble(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
+      ses <- data.frame(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
     }
   }
   
@@ -859,6 +859,8 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     select(-se)
   AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC = AUC %>% select(c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method'))
+  AUC = data.frame(AUC)
+  
   AUC
 }
 
@@ -896,7 +898,7 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
           ungroup
       }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(sites,each = length(q)))
     }else{
-      ses <- tibble(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
+      ses <- data.frame(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
     }
   }else if(datatype=='incidence_freq'){
     if(nboot>1){
@@ -914,7 +916,7 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
           ungroup
       }) %>% do.call(rbind,.) %>% mutate(Assemblage = rep(sites,each = length(q)))
     }else{
-      ses <- tibble(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
+      ses <- data.frame(Order.q = rep(q,length(datalist)), se = NA, Assemblage = rep(sites,each = length(q)))
     }
   }
   AUC <- left_join(x = AUC, y = ses, by = c('Assemblage','Order.q')) %>% mutate(s.e. = se, 
@@ -924,6 +926,8 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
     select(-se)
   AUC$qFD.LCL[AUC$qFD.LCL<0] <- 0
   AUC = AUC %>% select(c('Assemblage', 'Order.q', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL', 'Method'))
+  AUC = data.frame(AUC)
+  
   return(AUC)
 }
 
