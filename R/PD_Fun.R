@@ -274,7 +274,7 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD-qtile*ses_pd_unc,qPD.UCL = qPD+qtile*ses_pd_unc,
                                     s.e. = ses_pd_unc, Type=cal,
                                     Assemblage = nms[i])
-        id_C <- match(c('Assemblage', 'Order.q', 'SC','nT', 'qPD', 'Method', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
+        id_C <- match(c('Assemblage', 'Order.q', 'SC','nT', 'Method', 'qPD', 's.e.', 'qPD.LCL','qPD.UCL','Reftime',
                         'Type'), names(out_C), nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,Order.q,nT)
         out_C$qPD.LCL[out_C$qPD.LCL<0] <- 0

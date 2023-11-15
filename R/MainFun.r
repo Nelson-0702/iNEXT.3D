@@ -649,7 +649,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     }
     out <- tryCatch(FUN(e), error = function(e){return()})
     out$size_based = out$size_based %>% select(-c('s.e.', 'SC.s.e.'))
-    out$coverage_based = out$coverage_based %>% select(-('s.e.'))
+    out$coverage_based = out$coverage_based %>% data.frame %>% select(-('s.e.'))
     
     ## AsyEst table ##
     index <- rbind(AUCtable_est(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
