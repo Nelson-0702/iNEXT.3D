@@ -375,7 +375,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
       
       # emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
-      dmin = dij[x>0,x>0][dij[x>0,x>0] > 0] %>% min
+      dmin <- min(dij[x>0,x>0][lower.tri(dij[x>0,x>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile_MLE(x, q)
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
@@ -424,7 +424,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
       
       # emp <- FD_mle(ai_vi = data_aivi,q = q) %>% as.numeric()
-      dmin = dij[x[-1]>0,x[-1]>0][dij[x[-1]>0,x[-1]>0] > 0] %>% min
+      dmin <- min(dij[x[-1]>0,x[-1]>0][lower.tri(dij[x[-1]>0,x[-1]>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile_MLE.inc(x, q) %>% as.numeric()
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
@@ -542,7 +542,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       
       # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = n)
       # est <- est_info$est %>% as.numeric()
-      dmin = dij[x>0,x>0][dij[x>0,x>0] > 0] %>% min
+      dmin <- min(dij[x>0,x>0][lower.tri(dij[x>0,x>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile(x, q)
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
@@ -594,7 +594,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       
       # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = nT)
       # est <- est_info$est %>% as.numeric()
-      dmin = dij[x[-1]>0,x[-1]>0][dij[x[-1]>0,x[-1]>0] > 0] %>% min
+      dmin <- min(dij[x[-1]>0,x[-1]>0][lower.tri(dij[x[-1]>0,x[-1]>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile.inc(x, q) %>% as.numeric()
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
