@@ -33,9 +33,9 @@ This package contains six main functions: \cr
 
 2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT3D}. \cr
 
-3. \code{AO3D} computing asymptotic and observed (empirical) diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
+3. \code{ObsAsy3D} computing asymptotic and observed (empirical) diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
 
-4. \code{ggAO3D} visualizing the output from the function \code{AO3D}. \cr
+4. \code{ggObsAsy3D} visualizing the output from the function \code{ObsAsy3D}. \cr
 
 5. \code{estimate3D} computes taxonomic, phylogenetic, and functional diversity (Hill-Chao family with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr
 

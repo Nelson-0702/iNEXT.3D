@@ -356,8 +356,10 @@ out.FD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "FD",
 ```
 
 ``` r
-out.TD$DataInfo
-NULL
+out.TD$TDInfo
+  Assemblage    n S.obs     SC(n)    SC(2n)  f1 f2 f3 f4 f5
+1       Edge 1794   319 0.9387143 0.9744012 110 48 38 28 13
+2   Interior 2074   356 0.9407166 0.9728436 123 48 41 32 19
 ```
 
 Second part of output from function `iNEXT3D` is diversity estimates and
@@ -384,13 +386,13 @@ Here only show first six rows for taxonomic diversity:
 
 ``` r
 head(out.TD$TDiNextEst$size_based)
-  Assemblage Order.q   m      Method       qTD  qTD.LCL  qTD.UCL         SC     SC.LCL     SC.UCL
-1       Edge       0   1 Rarefaction   1.00000   1.0000   1.0000 0.01164071 0.01036041 0.01292101
-2       Edge       0  95 Rarefaction  66.30595  65.2988  67.3131 0.48409405 0.47153615 0.49665195
-3       Edge       0 189 Rarefaction 106.74321 104.6697 108.8167 0.63758443 0.62587083 0.64929804
-4       Edge       0 284 Rarefaction 137.02920 133.9685 140.0899 0.71845672 0.70793794 0.72897549
-5       Edge       0 378 Rarefaction 161.01036 157.0802 164.9405 0.76846379 0.75829144 0.77863614
-6       Edge       0 472 Rarefaction 181.07340 176.3356 185.8112 0.80314380 0.79278644 0.81350116
+  Assemblage Order.q   m      Method       qTD   qTD.LCL   qTD.UCL         SC     SC.LCL     SC.UCL
+1       Edge       0   1 Rarefaction   1.00000   1.00000   1.00000 0.01164071 0.01092485 0.01235657
+2       Edge       0  95 Rarefaction  66.30595  65.37725  67.23465 0.48409405 0.47156415 0.49662395
+3       Edge       0 189 Rarefaction 106.74321 104.71921 108.76721 0.63758443 0.62552422 0.64964465
+4       Edge       0 284 Rarefaction 137.02920 134.01159 140.04682 0.71845672 0.70738855 0.72952488
+5       Edge       0 378 Rarefaction 161.01036 157.09083 164.92989 0.76846379 0.75807630 0.77885128
+6       Edge       0 472 Rarefaction 181.07340 176.29921 185.84759 0.80314380 0.79318823 0.81309937
 ```
 
 The second data frame of list `$TDiNextEst` (as shown below for
@@ -405,24 +407,31 @@ Here only show first six rows for taxonomic diversity:
 
 ``` r
 head(out.TD$TDiNextEst$coverage_based)
-  Assemblage Order.q         SC         m      Method       qTD     qTD.LCL    qTD.UCL
-1       Edge       0 0.01164071   1.00000 Rarefaction   1.00000   0.9702311   1.029769
-2       Edge       0 0.48409405  94.99999 Rarefaction  66.30594  62.9183600  69.693525
-3       Edge       0 0.63758443 189.00000 Rarefaction 106.74321 101.3676446 112.118776
-4       Edge       0 0.71845672 284.00000 Rarefaction 137.02920 130.0825592 143.975842
-5       Edge       0 0.76846379 378.00002 Rarefaction 161.01037 152.6674065 169.353326
-6       Edge       0 0.80314380 472.00002 Rarefaction 181.07340 171.2819986 190.864810
+  Assemblage Order.q         SC         m      Method       qTD  qTD.LCL   qTD.UCL
+1       Edge       0 0.01164071   1.00000 Rarefaction   1.00000   1.0000   1.00000
+2       Edge       0 0.48409405  94.99999 Rarefaction  66.30594  63.0443  69.56758
+3       Edge       0 0.63758443 189.00000 Rarefaction 106.74321 101.4235 112.06289
+4       Edge       0 0.71845672 284.00000 Rarefaction 137.02920 130.0249 144.03355
+5       Edge       0 0.76846379 378.00002 Rarefaction 161.01037 152.4969 169.52380
+6       Edge       0 0.80314380 472.00002 Rarefaction 181.07340 171.1049 191.04195
 ```
 
-The output `$AsyEst` lists the diversity labels, the observed diversity,
-asymptotic diversity estimates, estimated bootstrap standard error
-(`s.e.`) and confidence intervals for diversity with q = 0, 1, and 2
-(`LCL`, `UCL`). The estimated asymptotic and observed diversity can also
-be computed via the function `ObsAsy3D()`. The output are shown below:
+The output `$TDAsyEst` lists the diversity labels, the observed
+diversity, asymptotic diversity estimates, estimated bootstrap standard
+error (`s.e.`) and confidence intervals for diversity with q = 0, 1, and
+2 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can
+also be computed via the function `ObsAsy3D()`. The output are shown
+below:
 
 ``` r
-out.TD$AsyEst
-NULL
+out.TD$TDAsyEst
+  Assemblage Taxonomic Diversity Taxonomic Observed Taxonomic Estimator      s.e.       LCL       UCL
+1       Edge    Species richness          319.00000           444.97141 27.631000 390.81565 499.12717
+2       Edge   Shannon diversity          155.38611           177.99972  3.335778 171.46171 184.53772
+3       Edge   Simpson diversity           82.02345            85.90541  4.622618  76.84524  94.96557
+4   Interior    Species richness          356.00000           513.51776 21.914898 470.56535 556.47017
+5   Interior   Shannon diversity          163.51447           186.98301  7.714017 171.86381 202.10220
+6   Interior   Simpson diversity           72.15305            74.71763  5.472373  63.99198  85.44329
 ```
 
 ### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
@@ -658,12 +667,12 @@ to the rarefaction part whereas the others correspond to extrapolation.
 estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
            base = "coverage", level = 0.995)
   Assemblage Order.q    SC        m        Method       qTD      s.e.   qTD.LCL   qTD.UCL
-1       Edge       0 0.995 6944.000 Extrapolation 434.69401 26.194443 383.35385 486.03418
-2       Edge       1 0.995 6944.000 Extrapolation 176.09987  7.013085 162.35448 189.84527
-3       Edge       2 0.995 6944.000 Extrapolation  84.86771  6.389158  72.34519  97.39023
-4   Interior       0 0.995 8643.312 Extrapolation 500.23261 26.015174 449.24380 551.22141
-5   Interior       1 0.995 8643.312 Extrapolation 185.36031  5.652805 174.28102 196.43960
-6   Interior       2 0.995 8643.312 Extrapolation  74.08576  4.507849  65.25054  82.92099
+1       Edge       0 0.995 6944.000 Extrapolation 434.69401 25.289606 385.12730 484.26073
+2       Edge       1 0.995 6944.000 Extrapolation 176.09987  5.341759 165.63022 186.56953
+3       Edge       2 0.995 6944.000 Extrapolation  84.86771  4.620648  75.81141  93.92402
+4   Interior       0 0.995 8643.312 Extrapolation 500.23261 23.538804 454.09740 546.36782
+5   Interior       1 0.995 8643.312 Extrapolation 185.36031  5.760025 174.07087 196.64975
+6   Interior       2 0.995 8643.312 Extrapolation  74.08576  4.239065  65.77735  82.39418
 ```
 
 ### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: ObsAsy3D
@@ -688,16 +697,16 @@ out1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abun
 
 head(out1, 10)
    Assemblage Order.q       qTD      s.e.   qTD.LCL  qTD.UCL     Method
-1        Edge     0.0 444.97141 22.648074 400.58200 489.3608 Asymptotic
-2        Edge     0.2 375.27048 15.907584 344.09219 406.4488 Asymptotic
-3        Edge     0.4 312.45184 10.773268 291.33662 333.5671 Asymptotic
-4        Edge     0.6 258.37946  7.416983 243.84244 272.9165 Asymptotic
-5        Edge     0.8 213.72995  5.628195 202.69889 224.7610 Asymptotic
-6        Edge     1.0 177.99972  4.858594 168.47705 187.5224 Asymptotic
-7        Edge     1.2 149.91442  4.576046 140.94554 158.8833 Asymptotic
-8        Edge     1.4 127.94456  4.498629 119.12741 136.7617 Asymptotic
-9        Edge     1.6 110.67216  4.514379 101.82414 119.5202 Asymptotic
-10       Edge     1.8  96.94807  4.571141  87.98879 105.9073 Asymptotic
+1        Edge     0.0 444.97141 34.206345 377.92821 512.0146 Asymptotic
+2        Edge     0.2 375.27048 23.567431 329.07917 421.4618 Asymptotic
+3        Edge     0.4 312.45184 15.615533 281.84595 343.0577 Asymptotic
+4        Edge     0.6 258.37946 10.451587 237.89472 278.8642 Asymptotic
+5        Edge     0.8 213.72995  7.541398 198.94909 228.5108 Asymptotic
+6        Edge     1.0 177.99972  5.984010 166.27127 189.7282 Asymptotic
+7        Edge     1.2 149.91442  5.078316 139.96111 159.8677 Asymptotic
+8        Edge     1.4 127.94456  4.514335 119.09663 136.7925 Asymptotic
+9        Edge     1.6 110.67216  4.183495 102.47266 118.8717 Asymptotic
+10       Edge     1.8  96.94807  4.020864  89.06732 104.8288 Asymptotic
 ```
 
 ### GRAPHIC DISPLAYS FUNCTION: ggObsAsy3D()
