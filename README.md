@@ -3,7 +3,7 @@
 # iNEXT.3D (R package)
 
 <h5 align="right">
-Latest version: 2023-08-05
+Latest version: 2023-11-16
 </h5>
 <font color="394CAE">
 <h3 color="394CAE" style="font-weight: bold">
@@ -88,7 +88,7 @@ library(ggplot2)
 In this document, here provide a quick introduction demonstrating how to
 run the package `iNEXT.3D` (iNterpolation and EXTrapolation in three
 Dimensions). `iNEXT.3D` has several main functions: `iNEXT3D`,
-`ggiNEXT3D`, `AO3D`, `ggAO3D`, `estimate3D`, and `DataInfo3D.`
+`ggiNEXT3D`, `ObsAsy3D`, `ggObsAsy3D`, `estimate3D`, and `DataInfo3D.`
 
 ### MAIN FUNCTION: iNEXT3D()
 
@@ -340,27 +340,24 @@ Three types of data are supported:
     frequencies.
 
 ``` r
-data("dunes")
+data("Brazil_rainforest_data")
 
-out.TD <- iNEXT3D(data = dunes$data, diversity = "TD", 
-               q = c(0, 1, 2), datatype = "abundance", 
-               nboot = 10)
-out.PD <- iNEXT3D(data = dunes$data, diversity = "PD", 
-               q = c(0, 1, 2), datatype = "abundance", 
-               PDtree = dunes$tree, 
-               nboot = 10)
-out.FD <- iNEXT3D(data = dunes$data, diversity = "FD", 
-               q = c(0, 1, 2), datatype = "abundance", 
-               FDdistM = dunes$dist,
-               nboot = 5)
+out.TD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "TD", 
+                  q = c(0, 1, 2), datatype = "abundance", 
+                  nboot = 10)
+out.PD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "PD", 
+                  q = c(0, 1, 2), datatype = "abundance", 
+                  PDtree = Brazil_rainforest_data$tree, 
+                  nboot = 10)
+out.FD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "FD", 
+                  q = c(0, 1, 2), datatype = "abundance", 
+                  FDdistM = Brazil_rainforest_data$dist,
+                  nboot = 5)
 ```
 
 ``` r
 out.TD$DataInfo
-  Assemblage    n S.obs     SC f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
-1         EM  373    17 0.9920  3  1  1  0  0  1  0  1  1   1
-2         MO 1490    39 0.9987  2  1  1  4  2  2  3  1  1   1
-3         TR 1059    42 0.9962  4  2  4  2  2  2  0  1  2   2
+NULL
 ```
 
 Second part of output from function `iNEXT3D` is diversity estimates and
@@ -369,7 +366,7 @@ in “EM” assemblage, corresponding to sample sizes m = 1, 20, 40, …, 372,
 373, 374, …, 746), which locates the reference sample size at the
 mid-point of the selected knots. The diversity can be based on
 sample-size-based and sample coverage-based. The first data frame of
-list `$iNextEst` (as shown below for ‘size_based’) includes the sample
+list `$TDiNextEst` (as shown below for ‘size_based’) includes the sample
 size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`,
 depending on whether the size `m` is less than, equal to, or greater
 than the reference sample size), the diversity order (`Order.q`), the
@@ -386,19 +383,17 @@ sample coverage estimates.
 Here only show first six rows for taxonomic diversity:
 
 ``` r
-head(out.TD$iNextEst$size_based)
-# A tibble: 6 x 10
-  Assemblage     m Method      Order.q    qD qD.LCL qD.UCL    SC SC.LCL SC.UCL
-  <chr>      <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl>
-1 EM             1 Rarefaction       0  1      1.00   1    0.136  0.123  0.149
-2 EM            20 Rarefaction       0  8.22   7.68   8.77 0.837  0.813  0.860
-3 EM            40 Rarefaction       0 10.6    9.70  11.5  0.915  0.900  0.931
-4 EM            59 Rarefaction       0 11.9   10.8   13.0  0.945  0.932  0.957
-5 EM            79 Rarefaction       0 12.8   11.5   14.1  0.962  0.951  0.973
-6 EM            98 Rarefaction       0 13.4   12.0   14.9  0.972  0.961  0.982
+head(out.TD$TDiNextEst$size_based)
+  Assemblage Order.q   m      Method       qTD  qTD.LCL  qTD.UCL         SC     SC.LCL     SC.UCL
+1       Edge       0   1 Rarefaction   1.00000   1.0000   1.0000 0.01164071 0.01036041 0.01292101
+2       Edge       0  95 Rarefaction  66.30595  65.2988  67.3131 0.48409405 0.47153615 0.49665195
+3       Edge       0 189 Rarefaction 106.74321 104.6697 108.8167 0.63758443 0.62587083 0.64929804
+4       Edge       0 284 Rarefaction 137.02920 133.9685 140.0899 0.71845672 0.70793794 0.72897549
+5       Edge       0 378 Rarefaction 161.01036 157.0802 164.9405 0.76846379 0.75829144 0.77863614
+6       Edge       0 472 Rarefaction 181.07340 176.3356 185.8112 0.80314380 0.79278644 0.81350116
 ```
 
-The second data frame of list `$iNextEst` (as shown below for
+The second data frame of list `$TDiNextEst` (as shown below for
 ‘coverage_based’) includes the sample coverage estimate (‘SC’), the
 sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or
 `Extrapolation`, depending on whether the size `m` is less than, equal
@@ -409,36 +404,25 @@ confidence limits of diversity conditioning on sample coverage estimate.
 Here only show first six rows for taxonomic diversity:
 
 ``` r
-head(out.TD$iNextEst$coverage_based)
-# A tibble: 6 x 8
-  Assemblage    SC     m Method      Order.q    qD qD.LCL qD.UCL
-  <chr>      <dbl> <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl>
-1 EM         0.136   1   Rarefaction       0  1     0.949   1.05
-2 EM         0.837  20.0 Rarefaction       0  8.22  7.22    9.23
-3 EM         0.915  40.0 Rarefaction       0 10.6   9.14   12.0 
-4 EM         0.945  59.0 Rarefaction       0 11.9  10.2    13.6 
-5 EM         0.962  79.0 Rarefaction       0 12.8  10.9    14.7 
-6 EM         0.972  98.0 Rarefaction       0 13.4  11.2    15.7 
+head(out.TD$TDiNextEst$coverage_based)
+  Assemblage Order.q         SC         m      Method       qTD     qTD.LCL    qTD.UCL
+1       Edge       0 0.01164071   1.00000 Rarefaction   1.00000   0.9702311   1.029769
+2       Edge       0 0.48409405  94.99999 Rarefaction  66.30594  62.9183600  69.693525
+3       Edge       0 0.63758443 189.00000 Rarefaction 106.74321 101.3676446 112.118776
+4       Edge       0 0.71845672 284.00000 Rarefaction 137.02920 130.0825592 143.975842
+5       Edge       0 0.76846379 378.00002 Rarefaction 161.01037 152.6674065 169.353326
+6       Edge       0 0.80314380 472.00002 Rarefaction 181.07340 171.2819986 190.864810
 ```
 
 The output `$AsyEst` lists the diversity labels, the observed diversity,
 asymptotic diversity estimates, estimated bootstrap standard error
 (`s.e.`) and confidence intervals for diversity with q = 0, 1, and 2
 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also
-be computed via the function `AO3D()`. The output are shown below:
+be computed via the function `ObsAsy3D()`. The output are shown below:
 
 ``` r
 out.TD$AsyEst
-  Assemblage         Diversity  Observed Estimator      s.e.       LCL       UCL
-1         EM  Species richness 17.000000 21.487936 8.3226277 17.000000 37.799986
-2         EM Shannon diversity  9.272102  9.541765 0.4885346  8.584255 10.499275
-3         EM Simpson diversity  7.218106  7.340810 0.4045811  6.547846  8.133775
-4         MO  Species richness 39.000000 40.998658 4.4043657 39.000000 49.631056
-5         MO Shannon diversity 19.712107 19.987465 0.4541758 19.097297 20.877634
-6         MO Simpson diversity 13.979950 14.102888 0.4230610 13.273704 14.932073
-7         TR  Species richness 42.000000 45.996223 7.3321687 42.000000 60.367009
-8         TR Shannon diversity 23.941938 24.481173 0.7385748 23.033593 25.928753
-9         TR Simpson diversity 18.605455 18.920295 0.6452699 17.655589 20.185000
+NULL
 ```
 
 ### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
@@ -528,27 +512,27 @@ ggiNEXT3D(out.TD, type = 3, facet.var = "Order.q")
 Incidence raw data is allowed for three diversity dimensions. For
 illustration, use the Hinkley’s fish data (the dataset is included in
 the package) at three time periods (1981-1985, 1987-1991 and 2015-2019).
-This data set (`fish`) includes a list with three matrices; each matrix
-is a species-by-sampling-unit data. Here only use taxonomic diversity
-(TD) as demonstration below.
+This data set (`fish_incidence_data`) includes a list with three
+matrices; each matrix is a species-by-sampling-unit data. Here only use
+taxonomic diversity (TD) as demonstration below.
 
 ``` r
-data("fish")
-head(fish$data$`1981-1985`)
+data("fish_incidence_data")
+head(fish_incidence_data$data$`1981-1985`)
                     1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61
 Agonus_cataphractus 0 0 1 0 0 0 0 0 0  0  0  0  0  0  0  0  0  0  0  0  1  1  0  0  1  0  1  1  1  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  1  0  1  0  0  1  0  1  0  0  0  0  1  1  0
 Alosa_fallax        0 0 0 0 0 0 0 0 1  0  0  0  1  0  0  0  0  0  1  1  0  1  0  1  1  0  1  0  0  1  1  1  1  1  1  0  1  0  0  1  1  1  0  1  1  1  1  1  0  0  1  1  1  1  1  0  0  0  0  1
-Ammodytes_marinus   0 0 0 0 0 0 0 0 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
 Ammodytes_tobianus  0 0 0 0 0 0 1 0 0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
 Anguilla_anguilla   1 1 1 1 0 0 0 1 0  1  0  1  0  1  1  0  0  0  1  0  0  1  0  1  1  1  1  0  0  0  1  0  1  1  0  0  1  1  0  1  0  0  0  0  1  1  1  0  1  1  1  1  1  1  0  0  0  0  0  0
 Aphia_minuta        0 0 0 0 1 1 0 0 0  0  0  0  0  0  1  1  1  1  1  0  0  0  0  0  0  0  1  1  1  1  1  0  1  0  0  0  0  0  0  0  1  1  1  0  0  0  0  0  0  0  1  1  1  1  1  1  0  0  0  0
+Atherina_boyeri     0 0 0 0 0 0 0 0 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  1  0  0  1  0  0  0  0  0  0  0  0  0
 ```
 
 ``` r
-# fish.tree = fish$tree  ## for PD
-# fish.dis = fish$dist   ## for FD
+# fish.tree = fish_incidence_data$tree  ## for PD
+# fish.dis = fish_incidence_data$dist   ## for FD
 
-out.raw <- iNEXT3D(data = fish$data, diversity = "TD",
+out.raw <- iNEXT3D(data = fish_incidence_data$data, diversity = "TD",
                    q = c(0, 1, 2), datatype = "incidence_raw", nboot = 30)
 ggiNEXT3D(out.raw, type = 1)
 ```
@@ -576,11 +560,11 @@ frequencies in each assemblage. Here only use taxonomic diversity (TD)
 for demonstration below.
 
 ``` r
-fish.freq = cbind(c( ncol(fish$data$`1981-1985`), rowSums(fish$data$`1981-1985`) ),
-                  c( ncol(fish$data$`1987-1991`), rowSums(fish$data$`1987-1991`) ),
-                  c( ncol(fish$data$`2015-2019`), rowSums(fish$data$`2015-2019`) ))
+fish.freq = cbind(c( ncol(fish_incidence_data$data$`1981-1985`), rowSums(fish_incidence_data$data$`1981-1985`) ),
+                  c( ncol(fish_incidence_data$data$`1987-1991`), rowSums(fish_incidence_data$data$`1987-1991`) ),
+                  c( ncol(fish_incidence_data$data$`2015-2019`), rowSums(fish_incidence_data$data$`2015-2019`) ))
 rownames(fish.freq)[1] = "sample units"
-colnames(fish.freq) = names(fish$data)
+colnames(fish.freq) = names(fish_incidence_data$data)
 ```
 
 ``` r
@@ -589,9 +573,9 @@ head(fish.freq)
 sample units               60        60        60
 Agonus_cataphractus        14        19        21
 Alosa_fallax               29        22        18
-Ammodytes_marinus           0         0         0
 Ammodytes_tobianus          4         2         8
 Anguilla_anguilla          30        29         8
+Aphia_minuta               22        13        18
 ```
 
 Note that incidence-frequency data (`datatype = "incidence_freq`) is
@@ -640,11 +624,10 @@ ten abundance/incidence frequency counts when `diversity = TD`. And so
 on for PD, FD.
 
 ``` r
-DataInfo3D(dunes$data, diversity = 'TD', datatype = "abundance")
-  Assemblage    n S.obs     SC f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
-1         EM  373    17 0.9920  3  1  1  0  0  1  0  1  1   1
-2         MO 1490    39 0.9987  2  1  1  4  2  2  3  1  1   1
-3         TR 1059    42 0.9962  4  2  4  2  2  2  0  1  2   2
+DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
+  Assemblage    n S.obs     SC(n)    SC(2n)  f1 f2 f3 f4 f5
+1       Edge 1794   319 0.9387143 0.9744012 110 48 38 28 13
+2   Interior 2074   356 0.9407166 0.9728436 123 48 41 32 19
 ```
 
 ### POINT ESTIMATION FUNCTION: estimate3D()
@@ -667,116 +650,112 @@ size among all samples extrapolated to double reference sizes (when
 extrapolated to double reference sizes (when `base = "coverage"`).
 
 For example, the following command returns the taxonomic diversity
-(‘TD’) with a specified level of sample coverage = 99.5% for the dunes
-data. For some assemblages, this coverage value corresponds to the
-rarefaction part whereas the others correspond to extrapolation.
+(‘TD’) with a specified level of sample coverage = 99.5% for the Brazil
+rainforest data. For some assemblages, this coverage value corresponds
+to the rarefaction part whereas the others correspond to extrapolation.
 
 ``` r
-estimate3D(dunes$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
+estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
            base = "coverage", level = 0.995)
-  Assemblage    SC        m        Method Order.q        qD      s.e.    qD.LCL    qD.UCL
-1         EM 0.995 637.4836 Extrapolation       0 18.692936 4.0371150 10.780336 26.605536
-2         EM 0.995 637.4836 Extrapolation       1  9.400018 0.4665542  8.485589 10.314448
-3         EM 0.995 637.4836 Extrapolation       2  7.268513 0.3289014  6.623878  7.913148
-4         MO 0.995 732.4154   Rarefaction       0 37.191467 1.2054378 34.828853 39.554082
-5         MO 0.995 732.4154   Rarefaction       1 19.428728 0.4542729 18.538369 20.319086
-6         MO 0.995 732.4154   Rarefaction       2 13.855022 0.4588017 12.955788 14.754257
-7         TR 0.995 853.3564   Rarefaction       0 41.115774 2.5486280 36.120555 46.110993
-8         TR 0.995 853.3564   Rarefaction       1 23.815218 0.6731344 22.495899 25.134537
-9         TR 0.995 853.3564   Rarefaction       2 18.531144 0.6644563 17.228834 19.833455
+  Assemblage Order.q    SC        m        Method       qTD      s.e.   qTD.LCL   qTD.UCL
+1       Edge       0 0.995 6944.000 Extrapolation 434.69401 26.194443 383.35385 486.03418
+2       Edge       1 0.995 6944.000 Extrapolation 176.09987  7.013085 162.35448 189.84527
+3       Edge       2 0.995 6944.000 Extrapolation  84.86771  6.389158  72.34519  97.39023
+4   Interior       0 0.995 8643.312 Extrapolation 500.23261 26.015174 449.24380 551.22141
+5   Interior       1 0.995 8643.312 Extrapolation 185.36031  5.652805 174.28102 196.43960
+6   Interior       2 0.995 8643.312 Extrapolation  74.08576  4.507849  65.25054  82.92099
 ```
 
-### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: AO3D
+### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: ObsAsy3D
 
 ``` r
-AO3D(data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
-     nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
-     PDtree,PDreftime = NULL,PDtype = "meanPD",
-     FDdistM,FDtype = "AUC",FDtau = NULL)
+ObsAsy3D(data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
+         nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
+         PDtree,PDreftime = NULL,PDtype = "meanPD",
+         FDdistM,FDtype = "AUC",FDtau = NULL)
 ```
 
-The function `AO3D()` compute three diversity dimensions (TD, PD, FD)
-for empirical (observed) diversity and estimated asymptotic diversity
-with any diversity order. For example, the following commands returns
-empirical and asymptotic taxonomic diversity (‘TD’) for dunes data,
-along with its confidence interval at diversity order q from 0 to 2.
-Here only show the first ten rows.
+The function `ObsAsy3D()` compute three diversity dimensions (TD, PD,
+FD) for empirical (observed) diversity and estimated asymptotic
+diversity with any diversity order. For example, the following commands
+returns empirical and asymptotic taxonomic diversity (‘TD’) for Brazil
+rainforest data, along with its confidence interval at diversity order q
+from 0 to 2. Here only show the first ten rows.
 
 ``` r
-out1 <- AO3D(dunes$data, diversity = 'TD', datatype = "abundance", 
-             method = c("Asymptotic", "Observed"), nboot = 30, conf = 0.95)
+out1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance", 
+                 method = c("Asymptotic", "Observed"), nboot = 30, conf = 0.95)
 
 head(out1, 10)
-   Order.q        qD      s.e.    qD.LCL    qD.UCL Assemblage     Method
-1      0.0 21.487936 3.4359036 14.753688 28.222183         EM Asymptotic
-2      0.2 16.936433 1.8940908 13.224083 20.648783         EM Asymptotic
-3      0.4 13.885407 1.0326885 11.861374 15.909439         EM Asymptotic
-4      0.6 11.862781 0.6144771 10.658428 13.067134         EM Asymptotic
-5      0.8 10.496859 0.4424516  9.629670 11.364049         EM Asymptotic
-6      1.0  9.541765 0.3810451  8.794930 10.288600         EM Asymptotic
-7      1.2  8.847719 0.3584067  8.145255  9.550183         EM Asymptotic
-8      1.4  8.325449 0.3474795  7.644401  9.006496         EM Asymptotic
-9      1.6  7.920890 0.3401920  7.254126  8.587654         EM Asymptotic
-10     1.8  7.600095 0.3344821  6.944522  8.255668         EM Asymptotic
+   Assemblage Order.q       qTD      s.e.   qTD.LCL  qTD.UCL     Method
+1        Edge     0.0 444.97141 22.648074 400.58200 489.3608 Asymptotic
+2        Edge     0.2 375.27048 15.907584 344.09219 406.4488 Asymptotic
+3        Edge     0.4 312.45184 10.773268 291.33662 333.5671 Asymptotic
+4        Edge     0.6 258.37946  7.416983 243.84244 272.9165 Asymptotic
+5        Edge     0.8 213.72995  5.628195 202.69889 224.7610 Asymptotic
+6        Edge     1.0 177.99972  4.858594 168.47705 187.5224 Asymptotic
+7        Edge     1.2 149.91442  4.576046 140.94554 158.8833 Asymptotic
+8        Edge     1.4 127.94456  4.498629 119.12741 136.7617 Asymptotic
+9        Edge     1.6 110.67216  4.514379 101.82414 119.5202 Asymptotic
+10       Edge     1.8  96.94807  4.571141  87.98879 105.9073 Asymptotic
 ```
 
-### GRAPHIC DISPLAYS FUNCTION: ggAO3D()
+### GRAPHIC DISPLAYS FUNCTION: ggObsAsy3D()
 
 Plots q-profile, time-profile, and tau-profile based on the outcome of
-AO3D using the ggplot2 package.
+ObsAsy3D using the ggplot2 package.
 
-The function ggAO3D(), which extends ggplot2 with default arguments, is
-described as follows:
+The function ggObsAsy3D(), which extends ggplot2 with default arguments,
+is described as follows:
 
 ``` r
-ggAO3D(outcome, profile = "q")
+ggObsAsy3D(outcome, profile = "q")
 ```
 
-`ggAO3D` plots q-profile, time-profile, and tau-profile based on
-`ggplot2`. Here `outcome` is the object from the function `AO3D`, and
-`profile` is a profile selection versus to diversity. Default is
+`ggObsAsy3D` plots q-profile, time-profile, and tau-profile based on
+`ggplot2`. Here `outcome` is the object from the function `ObsAsy3D`,
+and `profile` is a profile selection versus to diversity. Default is
 `profile = "q"`. Note that `profile = "time"` is allowed for only when
 diversity = “PD” and `profile = "tau"` profile is allowed for only when
 `diversity = "FD"` and `FDtype = "tau_values"`.
 
 ``` r
 # q-profile curves
-ggAO3D(out1,profile = "q")
+ggObsAsy3D(out1,profile = "q")
 ```
 
 <img src="README/README-unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" />
 
-The argument `profile = "time"` in `ggAO3D` function creates a separate
-plot for each diversity order q. Therefore the different assemblages
-will be represented by different color lines.
+The argument `profile = "time"` in `ggObsAsy3D` function creates a
+separate plot for each diversity order q. Therefore the different
+assemblages will be represented by different color lines.
 
 ``` r
 # time-profile curves, separating by "Order.q"
-data(data.inc)
-data <- data.inc$data
-tree <- data.inc$tree
-nT <- data.inc$nT
+data(fish_incidence_data)
+data <- fish_incidence_data$data
+tree <- fish_incidence_data$tree
 
-out2 <- AO3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-             nT = nT, nboot = 30, method = c("Asymptotic", "Observed"), 
-             PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
-ggAO3D(out2, profile = "time")
+out2 <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                 nboot = 30, method = c("Asymptotic", "Observed"), 
+                 PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
+ggObsAsy3D(out2, profile = "time")
 ```
 
 <img src="README/README-unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" />
 
-The argument `profile = "tau"` in `ggAO3D` function creates a separate
-plot for each diversity order q. Therefore the different assemblages
-will be represented by different color lines.
+The argument `profile = "tau"` in `ggObsAsy3D` function creates a
+separate plot for each diversity order q. Therefore the different
+assemblages will be represented by different color lines.
 
 ``` r
 # tau-profile curves, separating by "Order.q"
-data <- dunes$data
-distM <- dunes$dist
+data <- Brazil_rainforest_data$data
+distM <- Brazil_rainforest_data$dist
 
-out3 <- AO3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, method = c("Asymptotic", "Observed"), 
-             FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
-ggAO3D(out3, profile = "tau")
+out3 <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, 
+                 method = c("Asymptotic", "Observed"), FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
+ggObsAsy3D(out3, profile = "tau")
 ```
 
 <img src="README/README-unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" />
