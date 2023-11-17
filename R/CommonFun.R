@@ -7,7 +7,10 @@
 # data(ciliates)
 # as.incfreq(ciliates)
 as.incfreq <- function(data, nT = NULL) {
+  
   if (inherits(data, c("data.frame", "matrix"))) {
+    if (sum(data > 1) != 0) stop("The data for datatype = 'incidence_raw' can only contain values zero (undetected) or one (detected). Please transform values to zero or one.", call. = FALSE)
+    
     if(is.null(nT)) nT = ncol(data)
     if(inherits(nT, 'data.frame')) nT = unlist(nT)
     mydata = list()
@@ -27,7 +30,10 @@ as.incfreq <- function(data, nT = NULL) {
       return(out)
     })
   } else if (inherits(data, "list")) 
-    data <- lapply(data, function(i) c('nT' = ncol(i), rowSums(i)))
+    data <- lapply(data, function(i) {
+      if (sum(i > 1) != 0) stop("The data for datatype = 'incidence_raw' can only contain values zero (undetected) or one (detected). Please transform values to zero or one.", call. = FALSE)
+      c('nT' = ncol(i), rowSums(i))}
+      )
   if (length(data) == 1) data = data[[1]]
   return(data)
 }
@@ -144,6 +150,7 @@ print.iNEXT3D <- function(x, ...){
 # @export
 
 check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.inci = TRUE) {
+  
   if(datatype == "incidence") stop('Please try datatype = "incidence_freq" or datatype = "incidence_raw".')  
   DATATYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)))
@@ -153,9 +160,10 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   datatype <- match.arg(datatype, DATATYPE)
   
   if (datatype == "incidence_raw" & raw.to.inci == TRUE) {
+    
     if (!inherits(data, "list")) 
       data = as.incfreq(data, nT = nT) else if (length(data) != 1)
-      data = as.incfreq(data, nT = nT) else {
+        data = as.incfreq(data, nT = nT) else {
         tmp = names(data)
         data = list(as.incfreq(data, nT = nT))
         names(data) = tmp
@@ -192,6 +200,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     }
     
     if (ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
+    if (sum(data > 1) != 0) stop("The data for datatype = 'incidence_raw' can only contain values zero (undetected) or one (detected). Please transform values to zero or one.", call. = FALSE)
   }
   
   if (datatype != "incidence_raw") {
