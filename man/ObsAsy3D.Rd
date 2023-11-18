@@ -18,7 +18,8 @@ ObsAsy3D(
   PDtype = "meanPD",
   FDdistM,
   FDtype = "AUC",
-  FDtau = NULL
+  FDtau = NULL,
+  FDcut_number = 50
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ ObsAsy3D(
 \item{FDtype}{(argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
 \item{FDtau}{(argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+
+\item{FDcut_number}{(argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.}
 }
 \value{
 a table of diversity table including the following arguments: 

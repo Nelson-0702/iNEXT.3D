@@ -296,6 +296,7 @@ NULL
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @importFrom reshape2 dcast
 #' @import ape
@@ -407,7 +408,7 @@ NULL
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 #' @export
 iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
-                    PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                    PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -632,7 +633,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
       if(inherits(dat, "list")){
         ## size-based
         temp1 = AUCtable_iNextFD(datalist = dat, dij = dist, q = q, datatype = datatype,
-                                 tau = NULL, nboot = nboot, conf = conf, m = size)
+                                 tau = NULL, nboot = nboot, conf = conf, m = size, FDcut_number = FDcut_number)
         temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
         temp1$SC.UCL[temp1$SC.UCL>1] <- 1
         if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nT'
@@ -640,7 +641,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
         ## coverage-based
         temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = dist, q = q, datatype = datatype,
                                                                   level = unique(Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
-                                                                  nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
+                                                                  nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number)) %>% do.call(rbind,.)
         temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
         if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nT'
         
@@ -656,9 +657,9 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     ## AsyEst table ##
     index <- rbind(AUCtable_est(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
-                                nboot = nboot, conf = conf, tau = NULL),
+                                nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number),
                    AUCtable_mle(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
-                                nboot = nboot, conf = conf, tau = NULL))
+                                nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number))
     index = index[order(index$Assemblage),]
     LCL <- index$qFD.LCL[index$Method=='Asymptotic']
     UCL <- index$qFD.UCL[index$Method=='Asymptotic']
@@ -1071,6 +1072,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @return a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
 #' \item{Assemblage}{the assemblage name}
@@ -1159,7 +1161,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @export
 estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
-                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1285,7 +1287,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     if (base == 'size') {
       
       out = AUCtable_iNextFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                             tau = NULL, nboot = nboot, conf = conf, m = lapply(1:length(dat), function(i) level)) %>% 
+                             tau = NULL, nboot = nboot, conf = conf, m = lapply(1:length(dat), function(i) level),
+                             FDcut_number = FDcut_number) %>% 
         select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
       out$qFD.LCL[out$qFD.LCL<0] <- 0
       # out$SC.LCL[out$SC.LCL<0] <- 0
@@ -1296,7 +1299,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     } else if (base == 'coverage') {
       
       out <- AUCtable_invFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                            level = level, nboot = nboot, conf = conf, tau = NULL)
+                            level = level, nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number)
       if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       
     }
@@ -1328,6 +1331,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @return a table of diversity table including the following arguments: 
 #' \item{Assemblage}{the assemblage name.}
@@ -1412,7 +1416,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' @export
 ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
-                 PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                 PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1519,15 +1523,15 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
     
     if (sum(method == "Asymptotic") == length(method)) 
       out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                         nboot = nboot, conf = conf,  tau = NULL) else if (sum(method == "Observed") == length(method)) 
+                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number) else if (sum(method == "Observed") == length(method)) 
                            
                            out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                              nboot = nboot, conf = conf, tau = NULL) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
+                                              nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
                                                 
                                                 out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                         nboot = nboot, conf = conf, tau = NULL), 
+                                                                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number), 
                                                             AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                         nboot = nboot, conf = conf, tau = NULL))
+                                                                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number))
     
   }
   

@@ -661,7 +661,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 
 
 AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
-                         nboot=0, conf=0.95, m) {
+                         nboot=0, conf=0.95, m, FDcut_number) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
@@ -670,7 +670,7 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = 100)
+    tau <- seq(0,1,length.out = FDcut_number)
   }
   AUC <- iNextFD(datalist,dij,q,datatype,tau,nboot = 0,m = m) %>%
     group_by(Assemblage,Order.q,m) %>% 
@@ -733,11 +733,11 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
 }
 
 
-AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot = 0, conf = 0.95, tau=NULL){
+AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot = 0, conf = 0.95, tau = NULL, FDcut_number){
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = 100)
+    tau <- seq(0,1,length.out = FDcut_number)
   }
   AUC <- invChatFD(datalist,dij,q,datatype,level,nboot = 0,tau = tau) %>%
     group_by(Assemblage,Order.q,SC) %>% 
@@ -797,7 +797,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
 
 
 AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
-                         nboot=0, conf=0.95) {
+                         nboot=0, conf=0.95, FDcut_number) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
@@ -806,7 +806,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = 100)
+    tau <- seq(0,1,length.out = FDcut_number)
   }
   #q_int <- c(0, 1, 2)
   
@@ -866,7 +866,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
 
 
 AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
-                         nboot=0, conf=0.95) {
+                         nboot=0, conf=0.95, FDcut_number) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
@@ -875,7 +875,7 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = 100)
+    tau <- seq(0,1,length.out = FDcut_number)
   }
   #q_int <- c(0, 1, 2)
   AUC <- FDtable_est(datalist,dij,tau,q,datatype,nboot = 0) %>%
