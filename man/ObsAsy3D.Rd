@@ -23,14 +23,13 @@ ObsAsy3D(
 }
 \arguments{
 \item{data}{(a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-(b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-(c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.}
+(b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.}
 
 \item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.}
 
 \item{q}{a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).}
 
-\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)}
+\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.}
 
@@ -79,7 +78,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
 output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-                    datatype = "abundance", nboot = 30, PDtree = tree)
+                    datatype = "abundance", nboot = 10, PDtree = tree)
 output2
 
 
@@ -96,8 +95,8 @@ output3
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output4 <- ObsAsy3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
-                    datatype = "abundance", nboot = 20, FDdistM = distM)
+output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
+                    datatype = "abundance", nboot = 10, FDdistM = distM)
 output4
 
 
@@ -129,7 +128,7 @@ output7
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 10, FDdistM = distM)
 output8
 
 
