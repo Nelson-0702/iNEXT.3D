@@ -546,11 +546,12 @@ check.level <- function(data, datatype, base, level) {
 
 check.FDcut_number <- function(FDcut_number) {
   
-  if(!inherits(FDcut_number, "numeric"))
-    stop("invalid class of FDcut_number, FDcut_number should be a postive integer of numeric object", call. = FALSE)
-  if(FDcut_number < 0){
-    stop("ambigous of FDcut_number, we only compute postive integer of FDcut_number", call. = FALSE)
-  }
+  if (!inherits(FDcut_number, "numeric"))
+    stop("invalid class of FD cut number, FDcut_number should be a postive value.", call. = FALSE)
+  if (FDcut_number < 2)
+    stop("invalid FDcut_number, FDcut_number should be a postive value larger than one.", call. = FALSE)
+  if (length(FDcut_number) > 1)
+    stop("FDcut_number only accept a value instead of a vector.", call. = FALSE)
   
   return(FDcut_number)
 }
