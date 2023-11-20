@@ -151,7 +151,9 @@ print.iNEXT3D <- function(x, ...){
 
 check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.inci = TRUE) {
   
-  if(datatype == "incidence") stop('Please try datatype = "incidence_raw".') #datatype = "incidence_freq" or   
+  if(datatype == "incidence") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
+  if(datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
+  
   DATATYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)))
     stop("invalid datatype")
@@ -542,4 +544,14 @@ check.level <- function(data, datatype, base, level) {
   return(level)
 }
 
+check.FDcut_number <- function(FDcut_number) {
+  
+  if(!inherits(FDcut_number, "numeric"))
+    stop("invalid class of FDcut_number, FDcut_number should be a postive integer of numeric object", call. = FALSE)
+  if(FDcut_number < 0){
+    stop("ambigous of FDcut_number, we only compute postive integer of FDcut_number", call. = FALSE)
+  }
+  
+  return(FDcut_number)
+}
 

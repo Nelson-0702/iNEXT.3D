@@ -108,7 +108,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
 output2 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
-                   nboot = 30, PDtree = tree)
+                   nboot = 20, PDtree = tree)
 output2
 
 
@@ -116,7 +116,7 @@ output2
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, 
+output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 20, 
                    FDdistM = distM, FDtype = 'tau_values')
 output3
 
@@ -125,13 +125,13 @@ output3
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, FDdistM = distM)
+output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
 output4
 
 
 # diversity = 'TD' for incidence-based data
 data(fish_incidence_data)
-output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = 1, datatype = "incidence_raw")
+output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = c(0, 1, 2), datatype = "incidence_raw")
 output5
 
 
@@ -139,7 +139,7 @@ output5
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
-output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", PDtree = tree)
+output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nboot = 20, PDtree = tree)
 output6
 
 
@@ -147,7 +147,7 @@ output6
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", 
+output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
                    FDdistM = distM, FDtype = 'tau_values')
 output7
 
@@ -156,7 +156,7 @@ output7
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 10)
+output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 20)
 output8
 
 

@@ -30,7 +30,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
 output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
-                nboot = 30, PDtree = tree, PDtype = "meanPD")
+                nboot = 20, PDtree = tree, PDtype = "meanPD")
 ggObsAsy3D(output2, profile = "q")
 
 
@@ -39,7 +39,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
 output3 <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 0, 
-                FDtau = seq(0, 0.6, 0.1), FDdistM = distM, FDtype = 'tau_values')
+                FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
 ggObsAsy3D(output3, profile = "tau")
 
 
@@ -47,7 +47,7 @@ ggObsAsy3D(output3, profile = "tau")
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 0, FDdistM = distM)
+output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 10, FDdistM = distM)
 ggObsAsy3D(output4)
 
 
@@ -61,7 +61,7 @@ ggObsAsy3D(output5)
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
-output6 <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+output6 <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", nboot = 20, 
                     PDtree = tree, PDreftime = seq(0.1, 1, length.out = 40), method = "Observed")
 ggObsAsy3D(output6, profile = "time")
 
@@ -70,8 +70,8 @@ ggObsAsy3D(output6, profile = "time")
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
-                FDdistM = distM, FDtype = 'tau_values')
+output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                    FDdistM = distM, FDtype = 'tau_values')
 ggObsAsy3D(output7)
 
 

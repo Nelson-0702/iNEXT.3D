@@ -81,7 +81,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
 output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-                    datatype = "abundance", nboot = 10, PDtree = tree)
+                    datatype = "abundance", nboot = 20, PDtree = tree)
 output2
 
 
@@ -90,7 +90,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
 output3 <- ObsAsy3D(data, diversity = 'FD', datatype = "abundance", 
-                    nboot = 50, FDdistM = distM, FDtype = 'tau_values')
+                    nboot = 20, FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
@@ -114,7 +114,7 @@ data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
 output6 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-                    datatype = "incidence_raw", PDtree = tree)
+                    datatype = "incidence_raw", nboot = 20, PDtree = tree)
 output6
 
 
@@ -123,7 +123,7 @@ data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
-                    FDdistM = distM, FDtype = 'tau_values')
+                    nboot = 20, FDdistM = distM, FDtype = 'tau_values')
 output7
 
 
@@ -131,7 +131,7 @@ output7
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 10, FDdistM = distM)
+output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 output8
 
 

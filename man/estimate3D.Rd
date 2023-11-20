@@ -106,7 +106,7 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
 output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-                      nboot = 10, FDdistM = distM)
+                      nboot = 20, FDdistM = distM)
 output4
 
 
@@ -140,7 +140,7 @@ data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-                      nboot = 10, FDdistM = distM)
+                      nboot = 20, FDdistM = distM)
 output8
 
 

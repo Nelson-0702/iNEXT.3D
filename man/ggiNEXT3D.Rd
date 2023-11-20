@@ -43,7 +43,7 @@ ggiNEXT3D(output1, facet.var = "Assemblage")
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
-output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 30, PDtree = tree)
+output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 20, PDtree = tree)
 ggiNEXT3D(output2, type = c(1, 3))
 
 
@@ -51,7 +51,7 @@ ggiNEXT3D(output2, type = c(1, 3))
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 20, 
                    FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(output3)
 
@@ -74,7 +74,8 @@ ggiNEXT3D(output5)
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
-output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", PDtree = tree)
+output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                   nboot = 20, PDtree = tree)
 ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
 
 
@@ -82,7 +83,8 @@ ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", FDdistM = distM, FDtype = 'tau_values')
+output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot= 20,
+                   FDdistM = distM, FDtype = 'tau_values')
 ggiNEXT3D(output7)
 
 
