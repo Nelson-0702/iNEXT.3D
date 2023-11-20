@@ -2,10 +2,10 @@
 #' 
 #' \code{DataInfo3D} Provides basic data information
 #' 
-#' @param data a \code{matrix}, \code{data.frame} (species by sites), or \code{list} of species abundance/incidence frequencies.\cr 
-#' If \code{datatype = "incidence_freq"}, then the first entry of the input data must be total number of sampling units in each column or list.
+#' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
+#' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
 #' @param diversity selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
 #' @param nT needed only when \code{datatype = "incidence_raw"}, a sequence of named nonnegative integers specifying the number of sampling units in each assemblage. \cr
 #' If \code{names(nT) = NULL}, then assemblage are automatically named as "assemblage1", "assemblage2",..., etc. \cr
 #' It is necessary when \code{diversity = 'PD'} and \code{datatype = "incidence_raw"}.
@@ -107,7 +107,8 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
   
   if (diversity == 'PD') {
     
-    if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    # if (datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
     checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
     datatype = checkdatatype[[1]]
@@ -177,24 +178,25 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
                             'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
                             'Tau' = tau)
           
-        } else if (datatype == "incidence_freq") {
-          
+        } 
+        else if (datatype == "incidence_freq") {
+
           nT = x[1]
           x = x[-1]
           U <- sum(x)
           Q1 = sum(x == 1)
           Q2 = sum(x == 2)
-          Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2) 
+          Q0.hat <- ifelse(Q2 == 0, (nT-1) / nT * Q1 * (Q1-1) / 2, (nT-1) / nT * Q1^2 / 2 / Q2)
           A <- ifelse(Q1 > 0, nT * Q0.hat / (nT * Q0.hat + Q1), 1)
           Chat <- 1 - Q1/U * A
           Chat2T <- Coverage(c(nT,x), "incidence_freq", 2*nT)
-          
-          multiple = tibble('Assemblage' = names(dat)[i], 
-                            'T' = nT, 
+
+          multiple = tibble('Assemblage' = names(dat)[i],
+                            'T' = nT,
                             'U' = U,
-                            'S.obs' = sum(x > 0), 
+                            'S.obs' = sum(x > 0),
                             'SC(T)' = Chat, 'SC(2T)' = Chat2T,
-                            'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2), 
+                            'a1*' = sum(aivi$ai == 1), 'a2*' = sum(aivi$ai == 2),
                             'h1' = sum(aivi$vi[aivi$ai == 1,]), 'h2' = sum(aivi$vi[aivi$ai == 2,]),
                             'Tau' = tau)
         }
@@ -226,10 +228,11 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
         
         tmp <- matrix(i/sum(i),ncol =1)
         
-      }else if(datatype=='incidence_freq'){
-        
+      }
+      else if(datatype=='incidence_freq'){
+
         tmp <- matrix(i[-1]/sum(i[-1]), ncol = 1)
-        
+
       }
       
       dmean <- sum ( (tmp %*% t(tmp) ) * distM)
@@ -272,11 +275,10 @@ NULL
 #' \code{iNEXT3D}: Interpolation and extrapolation of Hill-Chao number with order q
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
+#' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is c(0, 1, 2).
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
 #' @param size an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
 #' If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}.
 #' @param endpoint an integer specifying the sample size that is the \code{endpoint} for rarefaction/extrapolation. 
@@ -294,6 +296,7 @@ NULL
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @importFrom reshape2 dcast
 #' @import ape
@@ -357,7 +360,7 @@ NULL
 #' data(Brazil_rainforest_data)
 #' data <- Brazil_rainforest_data$data
 #' distM <- Brazil_rainforest_data$dist
-#' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 30, 
+#' output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, 
 #'                    FDdistM = distM, FDtype = 'tau_values')
 #' output3
 #' 
@@ -366,7 +369,7 @@ NULL
 #' data(Brazil_rainforest_data)
 #' data <- Brazil_rainforest_data$data
 #' distM <- Brazil_rainforest_data$dist
-#' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+#' output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, FDdistM = distM)
 #' output4
 #' 
 #' 
@@ -397,7 +400,7 @@ NULL
 #' data(fish_incidence_data)
 #' data <- fish_incidence_data$data
 #' distM <- fish_incidence_data$dist
-#' output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 0)
+#' output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 10)
 #' output8
 #' 
 #' 
@@ -405,7 +408,7 @@ NULL
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 #' @export
 iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
-                    PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                    PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -434,14 +437,14 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
       if(datatype == "incidence_freq"){
         t <- x[1]
         y <- x[-1]
-        
+
         if(t>sum(y)){
-          warning("Insufficient data to provide reliable estimators and associated s.e.") 
+          warning("Insufficient data to provide reliable estimators and associated s.e.")
         }
-        
+
         if(sum(x)==0) stop("Zero incidence frequencies in one or more sample sites")
-        
-        out <- iNEXT.Sam(Spec=x, q=q, t=size, endpoint=ifelse(is.null(endpoint), 2*max(x), endpoint), knots=knots, nboot=nboot, conf=conf)  
+
+        out <- iNEXT.Sam(Spec=x, q=q, t=size, endpoint=ifelse(is.null(endpoint), 2*max(x), endpoint), knots=knots, nboot=nboot, conf=conf)
       }
       
       if(unconditional_var){
@@ -495,7 +498,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
   
   if (diversity == 'PD') {
     
-    if(datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    # if (datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
     checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
     datatype = checkdatatype[[1]]
@@ -629,7 +633,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
       if(inherits(dat, "list")){
         ## size-based
         temp1 = AUCtable_iNextFD(datalist = dat, dij = dist, q = q, datatype = datatype,
-                                 tau = NULL, nboot = nboot, conf = conf, m = size)
+                                 tau = NULL, nboot = nboot, conf = conf, m = size, FDcut_number = FDcut_number)
         temp1$qFD.LCL[temp1$qFD.LCL<0] <- 0; temp1$SC.LCL[temp1$SC.LCL<0] <- 0
         temp1$SC.UCL[temp1$SC.UCL>1] <- 1
         if (datatype == 'incidence_freq') colnames(temp1)[colnames(temp1) == 'm'] = 'nT'
@@ -637,7 +641,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
         ## coverage-based
         temp2 <- lapply(1:length(dat), function(i) AUCtable_invFD(datalist = dat[i], dij = dist, q = q, datatype = datatype,
                                                                   level = unique(Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
-                                                                  nboot = nboot, conf = conf, tau = NULL)) %>% do.call(rbind,.)
+                                                                  nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number)) %>% do.call(rbind,.)
         temp2$qFD.LCL[temp2$qFD.LCL<0] <- 0
         if (datatype == 'incidence_freq') colnames(temp2)[colnames(temp2) == 'm'] = 'nT'
         
@@ -653,9 +657,9 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     
     ## AsyEst table ##
     index <- rbind(AUCtable_est(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
-                                nboot = nboot, conf = conf, tau = NULL),
+                                nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number),
                    AUCtable_mle(datalist = dat, dij = dist, q = c(0, 1, 2), datatype = datatype,
-                                nboot = nboot, conf = conf, tau = NULL))
+                                nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number))
     index = index[order(index$Assemblage),]
     LCL <- index$qFD.LCL[index$Method=='Asymptotic']
     UCL <- index$qFD.UCL[index$Method=='Asymptotic']
@@ -1051,11 +1055,10 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' \code{estimate3D}: computes diversity (Hill-Chao number with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
+#' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is c(0, 1, 2).
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
 #' @param base selection of sample-size-based (\code{base = "size"}) or coverage-based (\code{base = "coverage"}) rarefaction and extrapolation.
 #' @param level A numerical vector specifying the particular sample sizes or sample coverages (between 0 and 1). \cr
 #' If \code{base = "coverage"} (default) and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes. \cr
@@ -1069,6 +1072,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @return a \code{data.frame} of diversity table including the following arguments: (when \code{base = "coverage"})
 #' \item{Assemblage}{the assemblage name}
@@ -1114,7 +1118,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data <- Brazil_rainforest_data$data
 #' distM <- Brazil_rainforest_data$dist
 #' output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-#'                       nboot = 0, FDdistM = distM)
+#'                       nboot = 10, FDdistM = distM)
 #' output4
 #' 
 #' 
@@ -1148,7 +1152,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data <- fish_incidence_data$data
 #' distM <- fish_incidence_data$dist
 #' output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-#'                       nboot = 20, FDdistM = distM)
+#'                       nboot = 10, FDdistM = distM)
 #' output8
 #' 
 #' 
@@ -1157,7 +1161,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @export
 estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "coverage", level = NULL, nboot = 50, conf = 0.95, nT = NULL, 
-                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                       PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1185,7 +1189,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
   
   if (diversity == 'PD') {
     
-    if(datatype == "incidence_freq") stop ("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    # if (datatype == "incidence_freq") stop ("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
     checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
     datatype = checkdatatype[[1]]
@@ -1282,7 +1287,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     if (base == 'size') {
       
       out = AUCtable_iNextFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                             tau = NULL, nboot = nboot, conf = conf, m = lapply(1:length(dat), function(i) level)) %>% 
+                             tau = NULL, nboot = nboot, conf = conf, m = lapply(1:length(dat), function(i) level),
+                             FDcut_number = FDcut_number) %>% 
         select(-c('SC.s.e.', 'SC.LCL', 'SC.UCL'))
       out$qFD.LCL[out$qFD.LCL<0] <- 0
       # out$SC.LCL[out$SC.LCL<0] <- 0
@@ -1293,7 +1299,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     } else if (base == 'coverage') {
       
       out <- AUCtable_invFD(datalist = dat, dij = FDdistM, q = q, datatype = datatype,
-                            level = level, nboot = nboot, conf = conf, tau = NULL)
+                            level = level, nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number)
       if (datatype == 'incidence_freq') colnames(out)[colnames(out) == 'm'] = 'nT'
       
     }
@@ -1311,11 +1317,10 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' \code{ObsAsy3D}: The estimated asymptotic and observed diversity of order q 
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
-#' (b) For \code{datatype = "incidence_freq"}, data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. \cr
-#' (c) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
+#' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input. 
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is seq(0, 2, by = 0.2).
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}), sampling-unit-based incidence frequencies data (\code{datatype = "incidence_freq"}), or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection)
+#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
 #' @param nT (required only when \code{datatype = "incidence_raw"} and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
@@ -1326,6 +1331,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param FDdistM (required argument only for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
+#' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is FDcut_number = 50 A larger value can be set to obtain more accurate AUC value.
 #' 
 #' @return a table of diversity table including the following arguments: 
 #' \item{Assemblage}{the assemblage name.}
@@ -1351,7 +1357,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data <- Brazil_rainforest_data$data
 #' tree <- Brazil_rainforest_data$tree
 #' output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
-#'                     datatype = "abundance", nboot = 30, PDtree = tree)
+#'                     datatype = "abundance", nboot = 10, PDtree = tree)
 #' output2
 #' 
 #' 
@@ -1368,8 +1374,8 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data(Brazil_rainforest_data)
 #' data <- Brazil_rainforest_data$data
 #' distM <- Brazil_rainforest_data$dist
-#' output4 <- ObsAsy3D(data[,1:2], diversity = 'FD', q = seq(0, 2, 0.5), 
-#'                     datatype = "abundance", nboot = 20, FDdistM = distM)
+#' output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
+#'                     datatype = "abundance", nboot = 10, FDdistM = distM)
 #' output4
 #' 
 #' 
@@ -1401,7 +1407,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data(fish_incidence_data)
 #' data <- fish_incidence_data$data
 #' distM <- fish_incidence_data$dist
-#' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+#' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 10, FDdistM = distM)
 #' output8
 #' 
 #' 
@@ -1410,7 +1416,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' @export
 ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95, nT = NULL, method = c('Asymptotic', 'Observed'),
-                 PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL) {
+                 PDtree, PDreftime = NULL, PDtype = 'meanPD', FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50) {
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) ) 
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1437,8 +1443,9 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
   
   if (diversity == "PD") {
     
-    if (datatype == "incidence_freq") 
-      stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    # if (datatype == "incidence_freq")
+    #   stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
+    if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
     checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F)
     datatype = checkdatatype[[1]]
@@ -1516,15 +1523,15 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
     
     if (sum(method == "Asymptotic") == length(method)) 
       out = AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                         nboot = nboot, conf = conf,  tau = NULL) else if (sum(method == "Observed") == length(method)) 
+                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number) else if (sum(method == "Observed") == length(method)) 
                            
                            out = AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                              nboot = nboot, conf = conf, tau = NULL) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
+                                              nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number) else if (sum(method == c("Asymptotic", "Observed")) == length(method)) 
                                                 
                                                 out = rbind(AUCtable_est(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                         nboot = nboot, conf = conf, tau = NULL), 
+                                                                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number), 
                                                             AUCtable_mle(datalist = dat, dij = distM, q = q, datatype = datatype, 
-                                                                         nboot = nboot, conf = conf, tau = NULL))
+                                                                         nboot = nboot, conf = conf, tau = NULL, FDcut_number = FDcut_number))
     
   }
   
