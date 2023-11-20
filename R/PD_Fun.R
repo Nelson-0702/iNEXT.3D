@@ -3,7 +3,8 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   if(sum(m>nt)>0){
     #Extrapolation
     RPD_m <- RPD(ai,Lis,nt,nt-1,q)
-    obs <- RPD(ai, Lis, nt,nt, q)
+    # obs <- RPD(ai, Lis, nt,nt, q)
+    obs <- PD.Tprofile(ai, Lis, q = q, reft = reft, cal = "PD", nt = nt) %>% matrix(., nrow = length(reft)) %>% t
     EPD = function(m,obs,asy){
       m = m-nt
       out <- sapply(1:ncol(Lis), function(i){
@@ -31,7 +32,8 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
     #asymptotic value
     asy <- matrix(PhD.q.est(ai = ai,Lis = Lis,q = q, nt = nt, reft = reft, cal = 'PD'),nrow = length(q),ncol = length(t_bars))
   }else if (sum(m==nt)>0){
-    obs <- RPD(ai, Lis, nt,nt, q)
+    # obs <- RPD(ai, Lis, nt,nt, q)
+    obs <- PD.Tprofile(ai, Lis, q = q, reft = reft, cal = "PD", nt = nt) %>% matrix(., nrow = length(reft)) %>% t
   }
   
   if (sum(m < nt) != 0) {
