@@ -661,7 +661,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 
 
 AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
-                         nboot=0, conf=0.95, m, FDcut_number) {
+                         nboot=0, conf=0.95, m, FDcut_number = NULL) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
@@ -733,7 +733,7 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
 }
 
 
-AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot = 0, conf = 0.95, tau = NULL, FDcut_number){
+AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot = 0, conf = 0.95, tau = NULL, FDcut_number = NULL){
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   if(is.null(tau)){
@@ -797,7 +797,7 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
 
 
 AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
-                         nboot=0, conf=0.95, FDcut_number) {
+                         nboot=0, conf=0.95, FDcut_number = NULL) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
@@ -866,7 +866,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
 
 
 AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
-                         nboot=0, conf=0.95, FDcut_number) {
+                         nboot=0, conf=0.95, FDcut_number = NULL) {
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   # dmin <- min(dij[dij>0])
