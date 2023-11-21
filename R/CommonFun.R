@@ -152,7 +152,7 @@ print.iNEXT3D <- function(x, ...){
 check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.inci = TRUE) {
   
   if(datatype == "incidence") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
-  if(datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
+  # if(datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
   
   DATATYPE <- c("abundance", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, DATATYPE)))
