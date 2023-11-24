@@ -71,7 +71,7 @@ FD.m.est = function(ai_vi, m, q, nT){
     return(out)
   }
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
-  asy <- FD_est(ai_vi,q,nT)$est
+  asy <- FD_est(ai_vi,q,nT)
   obs <- FD_mle(ai_vi,q)
   out <- sapply(1:ncol(ai_vi$ai), function(i){
     av = cbind(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
@@ -482,6 +482,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 
 FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai and vi
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
+  
   Sub <- function(q,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas){
     if(q==0){
       ans <- FD_obs+FDq0(nT,f1,f2,h1,h2,A)
@@ -500,35 +501,38 @@ FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai an
     }
     return(ans)
   }
+  
   out <- sapply(1:ncol(ai_vi$ai), function(i){
-    av = tibble(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
-    FD_obs <- sum(av[,2])
-    f1 <- sum(av[,1]==1); h1 <- ifelse(f1>0,sum(av[av[,1]==1,2]),0)
-    f2 <- sum(av[,1]==2); h2 <- ifelse(f2>0,sum(av[av[,1]==2,2]),0)
-    if(f2 > 0){
-      A = 2*f2/((nT-1)*f1+2*f2)
-    }else if(f2 == 0 & f1 > 0){
-      A = 2/((nT-1)*(f1-1)+2)
-    }else{
-      A = 1
-    }
-    if(sum(abs(q-round(q))!=0)>0 | max(q)>2) {
-      avtab <- av %>% group_by(ai, vi) %>% summarise(n_group = n()) %>% as.matrix()
-      deltas <- sapply(0:(nT-1), function(k){
-        del_tmp <- avtab[avtab[,1]<=(nT-k),,drop=FALSE]
-        delta(del_tmp,k,nT)
-      })
-    }else{
-      deltas <- 0
-      avtab <- av %>% group_by(ai, vi) %>% summarise(n_group = n()) %>% as.matrix()
-    }
-    c(nT,nrow(ai_vi$ai),FD_obs,f1,f2,h1,h2,
-      sapply(q, function(qq) Sub(qq,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas)))
+    
+    if (sum(ai_vi$ai[,i] == 1) != 0) {
+      
+      av = tibble(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
+      FD_obs <- sum(av[,2])
+      f1 <- sum(av[,1]==1); h1 <- ifelse(f1>0,sum(av[av[,1]==1,2]),0)
+      f2 <- sum(av[,1]==2); h2 <- ifelse(f2>0,sum(av[av[,1]==2,2]),0)
+      if(f2 > 0){
+        A = 2*f2/((nT-1)*f1+2*f2)
+      }else if(f2 == 0 & f1 > 0){
+        A = 2/((nT-1)*(f1-1)+2)
+      }else{
+        A = 1
+      }
+      if(sum(abs(q-round(q))!=0)>0 | max(q)>2) {
+        avtab <- av %>% group_by(ai, vi) %>% summarise(n_group = n()) %>% as.matrix()
+        deltas <- sapply(0:(nT-1), function(k){
+          del_tmp <- avtab[avtab[,1]<=(nT-k),,drop=FALSE]
+          delta(del_tmp,k,nT)
+        })
+      }else{
+        deltas <- 0
+        avtab <- av %>% group_by(ai, vi) %>% summarise(n_group = n()) %>% as.matrix()
+      }
+      c(sapply(q, function(qq) Sub(qq,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas)))
+      
+    } else FD_mle(list('ai' = ai_vi$ai[, i, drop = FALSE], 'vi' = ai_vi$vi[, i, drop = FALSE]), q) %>% c
   }) 
-  out = matrix(out,ncol = ncol(ai_vi$ai))
-  info = t(out[(1:7),])
-  colnames(info) = c('nT','S.obs','FD.obs','f1','f2','h1','h2')
-  list(est = out[-(1:7),,drop=F], info = info)
+  
+  matrix(out,ncol = ncol(ai_vi$ai))
 }
 
 
@@ -540,16 +544,15 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
       
-      # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = n)
-      # est <- est_info$est %>% as.numeric()
+      # est <- FD_est(ai_vi = data_aivi,q = q,nT = n)
       dmin <- min(dij[x>0,x>0][lower.tri(dij[x>0,x>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile(x, q)
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
         est <- c(rep(TDq, sum(tau <= dmin)),
-                 FD_est(ai_vi = data_aivi.trun,q = q,nT = n)$est %>% as.numeric())
+                 FD_est(ai_vi = data_aivi.trun,q = q,nT = n) %>% as.numeric())
       } else if (sum(tau > dmin)!= 0) {
-        est <- FD_est(ai_vi = data_aivi,q = q,nT = n)$est %>% as.numeric()
+        est <- FD_est(ai_vi = data_aivi,q = q,nT = n) %>% as.numeric()
       } else {
         TDq = Diversity_profile(x, q)
         est <- rep(TDq, length(tau))
@@ -563,14 +566,14 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         Boot.X = rmultinom(nboot, n, p_hat)
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          # FD_est(ai_vi = Boot_aivi,q = q,nT = n)$est %>% as.numeric()
+          # FD_est(ai_vi = Boot_aivi,q = q,nT = n) %>% as.numeric()
           if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
             TDqb = Diversity_profile(Boot.X[,B], q)
             data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
             c(rep(TDqb, sum(tau <= dmin)),
-              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = n)$est %>% as.numeric())
+              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = n) %>% as.numeric())
           } else if (sum(tau > dmin)!= 0) {
-            FD_est(ai_vi = Boot_aivi,q = q,nT = n)$est %>% as.numeric()
+            FD_est(ai_vi = Boot_aivi,q = q,nT = n) %>% as.numeric()
           } else {
             TDqb = Diversity_profile(Boot.X[,B], q)
             rep(TDqb, length(tau))
@@ -593,15 +596,14 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
       
       # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = nT)
-      # est <- est_info$est %>% as.numeric()
       dmin <- min(dij[x[-1]>0,x[-1]>0][lower.tri(dij[x[-1]>0,x[-1]>0])])
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
         TDq = Diversity_profile.inc(x, q) %>% as.numeric()
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
         est <- c(rep(TDq, sum(tau <= dmin)),
-                 FD_est(ai_vi = data_aivi.trun,q = q,nT = nT)$est %>% as.numeric())
+                 FD_est(ai_vi = data_aivi.trun,q = q,nT = nT) %>% as.numeric())
       } else if (sum(tau > dmin)!= 0) {
-        est <- FD_est(ai_vi = data_aivi,q = q,nT = nT)$est %>% as.numeric()
+        est <- FD_est(ai_vi = data_aivi,q = q,nT = nT) %>% as.numeric()
       } else {
         TDq = Diversity_profile.inc(x, q) %>% as.numeric()
         est <- rep(TDq, length(tau))
@@ -615,14 +617,14 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           
-          # FD_est(ai_vi = Boot_aivi,q = q,nT = nT)$est %>% as.numeric()
+          # FD_est(ai_vi = Boot_aivi,q = q,nT = nT) %>% as.numeric()
           if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
             TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
             data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
             c(rep(TDqb, sum(tau <= dmin)),
-              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = nT)$est %>% as.numeric())
+              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = nT) %>% as.numeric())
           } else if (sum(tau > dmin)!= 0) {
-            FD_est(ai_vi = Boot_aivi,q = q,nT = nT)$est %>% as.numeric()
+            FD_est(ai_vi = Boot_aivi,q = q,nT = nT) %>% as.numeric()
           } else {
             TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
             rep(TDqb, length(tau))

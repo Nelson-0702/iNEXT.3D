@@ -759,69 +759,76 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
 
 
 PhD.q.est = function(ai,Lis, q, nt, reft, cal){
-  t_bars <- as.numeric(t(ai) %*% Lis/nt)
-  S <- length(ai)
-  if(1 %in% q){
-    ai_h1_I <- ai<=(nt-1)
-    h1_pt2 <- rep(0,S)
-    ai_h1 <- ai[ai_h1_I]
-    h1_pt2[ai_h1_I] <- tibble(ai = ai) %>% .[ai_h1_I,] %>% mutate(diga = digamma(nt)-digamma(ai)) %>%
-      apply(., 1, prod)/nt
-  }
-  if(2 %in% q){
-    q2_pt2 <- unlist(ai*(ai-1)/nt/(nt-1))
-  }
-  if(sum(abs(q-round(q))!=0)>0 | max(q)>2) {
-    deltas_pt2 <- sapply(0:(nt-1), function(k){
-      ai_delt_I <- ai<=(nt-k)
-      deltas_pt2 <- rep(0,S)
-      deltas_pt2[ai_delt_I] <- delta_part2(ai = ai[ai_delt_I],k = k,n = nt)
-      deltas_pt2
-    }) %>% t() # n x S matrix of delta (2nd part)
-  }
-  Sub <- function(q,f1,f2,A,g1,g2,PD_obs,t_bar,Li){
-    if(q==0){
-      ans <- PD_obs+PDq0(nt,f1,f2,g1,g2)
-    }else if(q==1){
-      h2 <- PDq1_2(nt,g1,A)
-      h1 <- sum(Li*h1_pt2)
-      h <- h1+h2
-      ans <- t_bar*exp(h/t_bar)
-    }else if(q==2){
-      #ans <- PDq2(as.matrix(tmpaL),nt,t_bar)
-      ans <- t_bar^2/sum(Li*q2_pt2)
-    }else{
-      # timea <- Sys.time()
-      k <- 0:(nt-1)
-      deltas <- as.numeric(deltas_pt2 %*% Li)
-      a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
-      b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
-      ans <- ((a+b)/(t_bar^q))^(1/(1-q))
-      # timeb <- Sys.time()
-      # print(timeb-timea)
-    }
-    return(ans)
-  }
-  est <- sapply(1:ncol(Lis),function(i){
-    Li = Lis[,i]
-    I1 <- which(ai==1&Li>0);I2 <- which(ai==2&Li>0)
-    f1 <- length(I1);f2 <- length(I2)
-    A <- ifelse(f2 > 0, 2*f2/((nt-1)*f1+2*f2), ifelse(f1 > 0, 2/((nt-1)*(f1-1)+2), 1))
-    t_bar <- t_bars[i]
-    PD_obs <- sum(Li)
-    g1 <- sum(Li[I1])
-    g2 <- sum(Li[I2])
-    est <- sapply(q, function(q_) Sub(q = q_,f1 = f1, f2 = f2, A = A,g1 = g1,g2 = g2,PD_obs = PD_obs,t_bar = t_bar,Li = Li))
-  })
   
-  if(length(q) == 1 & ncol(Lis) == 1) est = as.matrix(est)
-  if(cal=='PD'){
-    est <- as.numeric(est)
-  }else if (cal=='meanPD'){
-    est <- as.numeric(sapply(1:length(reft), function(i){
-      est[,i]/reft[i]
-    }))
-  }
+  if (sum(ai == 1) != 0) {
+    
+    t_bars <- as.numeric(t(ai) %*% Lis/nt)
+    S <- length(ai)
+    if(1 %in% q){
+      ai_h1_I <- ai<=(nt-1)
+      h1_pt2 <- rep(0,S)
+      ai_h1 <- ai[ai_h1_I]
+      h1_pt2[ai_h1_I] <- tibble(ai = ai) %>% .[ai_h1_I,] %>% mutate(diga = digamma(nt)-digamma(ai)) %>%
+        apply(., 1, prod)/nt
+    }
+    if(2 %in% q){
+      q2_pt2 <- unlist(ai*(ai-1)/nt/(nt-1))
+    }
+    if(sum(abs(q-round(q))!=0)>0 | max(q)>2) {
+      deltas_pt2 <- sapply(0:(nt-1), function(k){
+        ai_delt_I <- ai<=(nt-k)
+        deltas_pt2 <- rep(0,S)
+        deltas_pt2[ai_delt_I] <- delta_part2(ai = ai[ai_delt_I],k = k,n = nt)
+        deltas_pt2
+      }) %>% t() # n x S matrix of delta (2nd part)
+    }
+    Sub <- function(q,f1,f2,A,g1,g2,PD_obs,t_bar,Li){
+      if(q==0){
+        ans <- PD_obs+PDq0(nt,f1,f2,g1,g2)
+      }else if(q==1){
+        h2 <- PDq1_2(nt,g1,A)
+        h1 <- sum(Li*h1_pt2)
+        h <- h1+h2
+        ans <- t_bar*exp(h/t_bar)
+      }else if(q==2){
+        #ans <- PDq2(as.matrix(tmpaL),nt,t_bar)
+        ans <- t_bar^2/sum(Li*q2_pt2)
+      }else{
+        # timea <- Sys.time()
+        k <- 0:(nt-1)
+        deltas <- as.numeric(deltas_pt2 %*% Li)
+        a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
+        b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
+        ans <- ((a+b)/(t_bar^q))^(1/(1-q))
+        # timeb <- Sys.time()
+        # print(timeb-timea)
+      }
+      return(ans)
+    }
+    est <- sapply(1:ncol(Lis),function(i){
+      Li = Lis[,i]
+      I1 <- which(ai==1&Li>0);I2 <- which(ai==2&Li>0)
+      f1 <- length(I1);f2 <- length(I2)
+      A <- ifelse(f2 > 0, 2*f2/((nt-1)*f1+2*f2), ifelse(f1 > 0, 2/((nt-1)*(f1-1)+2), 1))
+      t_bar <- t_bars[i]
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      est <- sapply(q, function(q_) Sub(q = q_,f1 = f1, f2 = f2, A = A,g1 = g1,g2 = g2,PD_obs = PD_obs,t_bar = t_bar,Li = Li))
+    })
+    
+    if(length(q) == 1 & ncol(Lis) == 1) est = as.matrix(est)
+    
+    if(cal=='PD'){
+      est <- as.numeric(est)
+    }else if (cal=='meanPD'){
+      est <- as.numeric(sapply(1:length(reft), function(i){
+        est[,i]/reft[i]
+      }))
+    }
+    
+  } else est <- PD.Tprofile(ai, Lis, q = q, reft = reft, cal = cal, nt = nt) %>% t %>% c
+  
   return(est)
 }
 
