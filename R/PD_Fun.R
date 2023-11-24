@@ -21,8 +21,10 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
         outq <- sapply(1:length(q), function(i){
           if( q[i]!=2 ) {
             obs_i[i]+(asy_i[i]-obs_i[i])*(1-(1-beta[i])^m)
-          }else if( q[i] == 2 ){
+          }else if( q[i] == 2 & beta[i] != 0 ){
             1/sum( (Li/(t_bar)^2)*((1/(nt+m))*(ai/nt)+((nt+m-1)/(nt+m))*(ai*(ai-1)/(nt*(nt-1)))) )
+          }else if( q[i] == 2 & beta[i] == 0 ){
+            asy_i[i]
           }
         })
         outq

@@ -20,7 +20,7 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
   })
   #beta
   beta <- rep(0,length(qs))
-  beta0plus <- which(asy != RFD_m)
+  beta0plus <- which(asy != obs)
   beta[beta0plus] <- (obs[beta0plus]-RFD_m[beta0plus])/(asy[beta0plus]-RFD_m[beta0plus])
   #Extrapolation, 
   ETD = function(m,qs){
@@ -28,8 +28,10 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
     out <- sapply(1:length(qs), function(i){
       if( qs[i] != 2) {
         obs[i]+(asy[i]-obs[i])*(1-(1-beta[i])^m)
-      }else if( qs[i] == 2 ){
+      }else if( qs[i] == 2 & beta[i] != 0 ){
         1/ ((1/(n+m))+(1-1/(n+m))*sum(ifi[,2]*ifi[,1]/n*(ifi[,1]-1)/(n-1)) )
+      }else if( qs[i] == 2 & beta[i] == 0 ){
+        asy[i]
       } 
     })
     return(out)
@@ -78,15 +80,18 @@ TD.m.est_inc <- function(y, t_, qs){
   beta <- rep(0,length(qs))
   # beta0plus <- which(asy != obs)
   # beta[beta0plus] <- (Dn1[beta0plus]-obs[beta0plus])/(asy[beta0plus]-obs[beta0plus])
-  beta0plus <- which(asy != RFD_m)
+  beta0plus <- which(asy != obs)
   beta[beta0plus] <- (obs[beta0plus]-RFD_m[beta0plus])/(asy[beta0plus]-RFD_m[beta0plus])
+  beta[beta == -Inf] = 1
   ETD = function(m,qs){
     m = m-nT
     out <- sapply(1:length(qs), function(i){
       if( qs[i] != 2) {
         obs[i]+(asy[i]-obs[i])*(1-(1-beta[i])^m)
-      }else if( qs[i] == 2 ){
+      }else if( qs[i] == 2 & beta[i] != 0 ){
         1/ ((1/(nT+m))*(nT/U)+(1-1/(nT+m))*sum(iQi[,2]*iQi[,1]/(U^2)*(iQi[,1]-1)/(1-1/nT)) )
+      }else if( qs[i] == 2 & beta[i] == 0 ){
+        asy[i]
       } 
     })
     return(out)
@@ -175,9 +180,9 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
     }
   }
   out_m <- data.frame("m"=rep(m,length(q)), "qTD"=Dq.hat, 
-                  "qTD.LCL"=Dq.hat-qtile*ses_m,
-                  "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
-                  "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
+                      "qTD.LCL"=Dq.hat-qtile*ses_m,
+                      "qTD.UCL"=Dq.hat+qtile*ses_m,"SC"=rep(C.hat,length(q)), 
+                      "SC.LCL"=C.hat-qtile*ses_C_on_m, "SC.UCL"=C.hat+qtile*ses_C_on_m)
   
   out_m$Method <- ifelse(out_m$m<n, "Rarefaction", ifelse(out_m$m==n, "Observed", "Extrapolation"))
   out_m$Order.q <- rep(q,each = length(m))
@@ -671,7 +676,7 @@ Diversity_profile.inc <- function(data,q){
       qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT))
     }
     
-  } else qD = Diversity_profile_MLE(data, q)
+  } else qD = Diversity_profile_MLE.inc(data, q)
   
   
   return(qD)

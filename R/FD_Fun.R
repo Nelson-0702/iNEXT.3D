@@ -58,21 +58,23 @@ data_transform <- function(data, dij, tau, datatype, integer = FALSE, truncate =
 }
 
 
-FD.m.est = function(ai_vi, m, q, nT){
+FD.m.est = function(ai_vi, m, q, nT, ai_vi_MLE){
   EFD = function(m,qs,obs,asy,beta,av){
     m = m-nT
     out <- sapply(1:length(qs), function(i){
       if( qs[i] != 2 ) {
         obs[i]+(asy[i]-obs[i])*(1-(1-beta[i])^m)
-      }else if( qs[i] == 2 ){
+      }else if( qs[i] == 2 & beta[i] != 0 ){
         V_bar^2/sum( (av[,2])*((1/(nT+m))*(av[,1]/nT)+((nT+m-1)/(nT+m))*(av[,1]*(av[,1]-1)/(nT*(nT-1)))) )
+      }else if( qs[i] == 2 & beta[i] == 0 ){
+        asy[i]
       } 
     })
     return(out)
   }
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
-  asy <- FD_est(ai_vi,q,nT)
-  obs <- FD_mle(ai_vi,q)
+  asy <- FD_est(ai_vi,q,nT,ai_vi_MLE)
+  obs <- FD_mle(ai_vi_MLE,q)
   out <- sapply(1:ncol(ai_vi$ai), function(i){
     av = cbind(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
     RFD_m = RFD(av, nT, nT-1, q, V_bar)
@@ -119,7 +121,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       x <- datalist[[i]]
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = n) %>% as.numeric()
+      data_aivi_MLE <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
+      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = n, ai_vi_MLE = data_aivi_MLE) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]])
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
@@ -128,7 +131,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
         Boot.X = rmultinom(nboot, n, p_hat)
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = n) %>%
+          Boot_aivi_MLE <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype)
+          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = n,ai_vi_MLE = Boot_aivi_MLE) %>%
             as.numeric()
           covm_b = Coverage(Boot.X[,B], datatype, m[[i]])
           return(c(qFDm_b,covm_b))
@@ -157,7 +161,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
       x <- datalist[[i]]
       nT=x[1]
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = nT) %>% as.numeric()
+      data_aivi_MLE <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
+      qFDm <- FD.m.est(ai_vi = data_aivi,m = m[[i]],q = q,nT = nT,ai_vi_MLE = data_aivi_MLE) %>% as.numeric()
       covm = Coverage(x, datatype, m[[i]])
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x,distance = dij,datatype = datatype)
@@ -166,7 +171,8 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = nT) %>% as.numeric()
+          Boot_aivi_MLE <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype)
+          qFDm_b <- FD.m.est(ai_vi = Boot_aivi,m = m[[i]],q = q,nT = nT,ai_vi_MLE = Boot_aivi_MLE) %>% as.numeric()
           covm_b = Coverage(Boot.X, datatype, m[[i]])
           return(c(qFDm_b,covm_b))
         }) %>% apply(., 1, sd)
@@ -202,7 +208,9 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
   if(datatype=='abundance'){
     out <- lapply(datalist,function(x_){
       data_aivi <- data_transform(data = x_,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      est <- invChatFD_abu(ai_vi = data_aivi,data_ = x_,q = q,Cs = level,tau = tau)
+      data_aivi_MLE <- data_transform(data = x_,dij = dij,tau = tau,datatype = datatype)
+      
+      est <- invChatFD_abu(ai_vi = data_aivi,data_ = x_,q = q,Cs = level,tau = tau, ai_vi_MLE = data_aivi_MLE)
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x_,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -211,7 +219,9 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
         Boot.X = rmultinom(nboot, n, p_hat)
         ses <- sapply(1:nboot, function(B){
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          invChatFD_abu(ai_vi = Boot_aivi,data_ = Boot.X[,B],q = q,Cs = level,tau = tau)$qFD
+          Boot_aivi_MLE <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype)
+          
+          invChatFD_abu(ai_vi = Boot_aivi,data_ = Boot.X[,B],q = q,Cs = level,tau = tau, ai_vi_MLE = Boot_aivi_MLE)$qFD
         })
         
         if (length(q) == 1) ses = matrix(ses, nrow = 1)
@@ -225,7 +235,9 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
     out <- lapply(datalist,function(x_){
       nT=x_[1]
       data_aivi <- data_transform(data = x_,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
-      est <- invChatFD_inc(ai_vi = data_aivi,data_ = x_,q = q,Cs = level,tau = tau)
+      data_aivi_MLE <- data_transform(data = x_,dij = dij,tau = tau,datatype = datatype)
+      
+      est <- invChatFD_inc(ai_vi = data_aivi,data_ = x_,q = q,Cs = level,tau = tau, ai_vi_MLE = data_aivi_MLE)
       if(nboot>1){
         BT <- EstiBootComm.Func(data = x_,distance = dij,datatype = datatype)
         p_hat = BT[[1]]
@@ -233,7 +245,9 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
-          invChatFD_inc(ai_vi = Boot_aivi,data_ = Boot.X,q = q,Cs = level,tau = tau)$qFD
+          Boot_aivi_MLE <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype)
+          
+          invChatFD_inc(ai_vi = Boot_aivi,data_ = Boot.X,q = q,Cs = level,tau = tau, ai_vi_MLE = Boot_aivi_MLE)$qFD
         })
         
         if (length(q) == 1) ses = matrix(ses, nrow = 1)
@@ -253,7 +267,7 @@ invChatFD <- function(datalist, dij, q, datatype, level, nboot, conf = 0.95, tau
 }
 
 
-invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
+invChatFD_abu <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
   n <- sum(data_)
   refC = Coverage(data_, 'abundance', n)
   f <- function(m, cvrg) abs(Coverage(data_, 'abundance', m) - cvrg)
@@ -286,7 +300,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
   })
   mm[mm < 1] <- 1
   SC <- Cs
-  out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
+  out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n,ai_vi_MLE = ai_vi_MLE)
   out <- as.vector(out)
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,length(q)*length(tau))
@@ -300,7 +314,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau){
 }
 
 
-invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
+invChatFD_inc <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
   n <- data_[1]
   refC = Coverage(data_, 'incidence_freq', n)
   f <- function(m, cvrg) abs(Coverage(data_, 'incidence_freq', m) - cvrg)
@@ -334,7 +348,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau){
   })
   mm[mm < 1] <- 1
   SC <- Cs
-  out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n)
+  out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n,ai_vi_MLE = ai_vi_MLE)
   out <- as.vector(out)
   method <- ifelse(mm>n,'Extrapolation',ifelse(mm<n,'Rarefaction','Observed'))
   method <- rep(method,length(q)*length(tau))
@@ -480,7 +494,7 @@ FDtable_mle <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
 }
 
 
-FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai and vi
+FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elements: ai and vi
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
   
   Sub <- function(q,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas){
@@ -529,7 +543,7 @@ FD_est = function(ai_vi, q, nT){ # ai_vi is array containing two elements: ai an
       }
       c(sapply(q, function(qq) Sub(qq,FD_obs,nT,f1,f2,h1,h2,A,av,avtab,deltas)))
       
-    } else FD_mle(list('ai' = ai_vi$ai[, i, drop = FALSE], 'vi' = ai_vi$vi[, i, drop = FALSE]), q) %>% c
+    } else FD_mle(list('ai' = ai_vi_MLE$ai[, i, drop = FALSE], 'vi' = ai_vi_MLE$vi[, i, drop = FALSE]), q) %>% c
   }) 
   
   matrix(out,ncol = ncol(ai_vi$ai))
@@ -543,16 +557,23 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
     out <- lapply(datalist, function(x){
       n=sum(x)
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
+      data_aivi_MLE <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
       
       # est <- FD_est(ai_vi = data_aivi,q = q,nT = n)
       dmin <- min(dij[x>0,x>0][lower.tri(dij[x>0,x>0])])
+      
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        
         TDq = Diversity_profile(x, q)
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        data_aivi_MLE.trun = list('ai' = data_aivi_MLE$ai[,tau > dmin], 'vi' = data_aivi_MLE$vi[,tau > dmin])
+        
         est <- c(rep(TDq, sum(tau <= dmin)),
-                 FD_est(ai_vi = data_aivi.trun,q = q,nT = n) %>% as.numeric())
+                 FD_est(ai_vi = data_aivi.trun, q = q, nT = n, ai_vi_MLE = data_aivi_MLE.trun) %>% as.numeric())
+        
       } else if (sum(tau > dmin)!= 0) {
-        est <- FD_est(ai_vi = data_aivi,q = q,nT = n) %>% as.numeric()
+        est <- FD_est(ai_vi = data_aivi, q = q, nT = n, ai_vi_MLE = data_aivi_MLE) %>% as.numeric()
+        
       } else {
         TDq = Diversity_profile(x, q)
         est <- rep(TDq, length(tau))
@@ -564,16 +585,27 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         p_hat = BT[[1]]
         dij_boot = BT[[2]]
         Boot.X = rmultinom(nboot, n, p_hat)
+        
         ses <- sapply(1:nboot, function(B){
+          dmin <- min(dij_boot[Boot.X[,B]>0,Boot.X[,B]>0][lower.tri(dij_boot[Boot.X[,B]>0,Boot.X[,B]>0])])
+          
           Boot_aivi <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
+          Boot_aivi_MLE <- data_transform(data = Boot.X[,B],dij = dij_boot,tau = tau,datatype = datatype)
+          
           # FD_est(ai_vi = Boot_aivi,q = q,nT = n) %>% as.numeric()
+          
           if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            
             TDqb = Diversity_profile(Boot.X[,B], q)
             data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            data_aivi_MLE.trun.b = list('ai' = Boot_aivi_MLE$ai[,tau > dmin], 'vi' = Boot_aivi_MLE$vi[,tau > dmin])
+            
             c(rep(TDqb, sum(tau <= dmin)),
-              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = n) %>% as.numeric())
+              FD_est(ai_vi = data_aivi.trun.b, q = q, nT = n, ai_vi_MLE = data_aivi_MLE.trun.b) %>% as.numeric())
+            
           } else if (sum(tau > dmin)!= 0) {
-            FD_est(ai_vi = Boot_aivi,q = q,nT = n) %>% as.numeric()
+            FD_est(ai_vi = Boot_aivi,q = q,nT = n, ai_vi_MLE = Boot_aivi_MLE) %>% as.numeric()
+            
           } else {
             TDqb = Diversity_profile(Boot.X[,B], q)
             rep(TDqb, length(tau))
@@ -590,20 +622,29 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
       # list(estimates = output,info = est_info$info)
       output
     }) 
+    
   }else if(datatype=="incidence_freq"){
+    
     out <- lapply(datalist, function(x){
       nT=x[1]
       data_aivi <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype, integer = TRUE)
+      data_aivi_MLE <- data_transform(data = x,dij = dij,tau = tau,datatype = datatype)
       
       # est_info <- FD_est(ai_vi = data_aivi,q = q,nT = nT)
       dmin <- min(dij[x[-1]>0,x[-1]>0][lower.tri(dij[x[-1]>0,x[-1]>0])])
+      
       if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+        
         TDq = Diversity_profile.inc(x, q) %>% as.numeric()
         data_aivi.trun = list('ai' = data_aivi$ai[,tau > dmin], 'vi' = data_aivi$vi[,tau > dmin])
+        data_aivi_MLE.trun = list('ai' = data_aivi_MLE$ai[,tau > dmin], 'vi' = data_aivi_MLE$vi[,tau > dmin])
+        
         est <- c(rep(TDq, sum(tau <= dmin)),
-                 FD_est(ai_vi = data_aivi.trun,q = q,nT = nT) %>% as.numeric())
+                 FD_est(ai_vi = data_aivi.trun, q = q, nT = nT, ai_vi_MLE = data_aivi_MLE.trun) %>% as.numeric())
+        
       } else if (sum(tau > dmin)!= 0) {
-        est <- FD_est(ai_vi = data_aivi,q = q,nT = nT) %>% as.numeric()
+        est <- FD_est(ai_vi = data_aivi, q = q, nT = nT, ai_vi_MLE = data_aivi_MLE) %>% as.numeric()
+        
       } else {
         TDq = Diversity_profile.inc(x, q) %>% as.numeric()
         est <- rep(TDq, length(tau))
@@ -615,16 +656,24 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         dij_boot = BT[[2]]
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
-          Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
+          Boot_aivi <- data_transform(data = Boot.X, dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
+          Boot_aivi_MLE <- data_transform(data = Boot.X, dij = dij_boot,tau = tau,datatype = datatype)
+          
+          dmin <- min(dij_boot[Boot.X[-1]>0,Boot.X[-1]>0][lower.tri(dij_boot[Boot.X[-1]>0,Boot.X[-1]>0])])
           
           # FD_est(ai_vi = Boot_aivi,q = q,nT = nT) %>% as.numeric()
           if (sum(tau <= dmin) != 0 & sum(tau > dmin) != 0) {
+            
             TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
             data_aivi.trun.b = list('ai' = Boot_aivi$ai[,tau > dmin], 'vi' = Boot_aivi$vi[,tau > dmin])
+            data_aivi_MLE.trun.b = list('ai' = Boot_aivi_MLE$ai[,tau > dmin], 'vi' = Boot_aivi_MLE$vi[,tau > dmin])
+            
             c(rep(TDqb, sum(tau <= dmin)),
-              FD_est(ai_vi = data_aivi.trun.b,q = q,nT = nT) %>% as.numeric())
+              FD_est(ai_vi = data_aivi.trun.b, q = q, nT = nT, ai_vi_MLE = data_aivi_MLE.trun.b) %>% as.numeric())
+            
           } else if (sum(tau > dmin)!= 0) {
-            FD_est(ai_vi = Boot_aivi,q = q,nT = nT) %>% as.numeric()
+            FD_est(ai_vi = Boot_aivi, q = q, nT = nT, ai_vi_MLE = Boot_aivi_MLE) %>% as.numeric()
+            
           } else {
             TDqb = Diversity_profile.inc(Boot.X, q) %>% as.numeric()
             rep(TDqb, length(tau))
