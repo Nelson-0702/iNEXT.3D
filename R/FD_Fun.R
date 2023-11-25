@@ -721,7 +721,8 @@ AUCtable_iNextFD <- function(datalist, dij, q = c(0,1,2), datatype, tau=NULL,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = FDcut_number)
+    # tau <- seq(0,1,length.out = FDcut_number)
+    tau <- seq(1e-8,1,length.out = FDcut_number)
   }
   AUC <- iNextFD(datalist,dij,q,datatype,tau,nboot = 0,m = m) %>%
     group_by(Assemblage,Order.q,m) %>% 
@@ -788,7 +789,8 @@ AUCtable_invFD <- function(datalist, dij, q = c(0,1,2), datatype, level, nboot =
   qtile <- qnorm(1-(1-conf)/2)
   sites <- names(datalist)
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = FDcut_number)
+    # tau <- seq(0,1,length.out = FDcut_number)
+    tau <- seq(1e-8,1,length.out = FDcut_number)
   }
   AUC <- invChatFD(datalist,dij,q,datatype,level,nboot = 0,tau = tau) %>%
     group_by(Assemblage,Order.q,SC) %>% 
@@ -858,6 +860,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   # }
   if(is.null(tau)){
     tau <- seq(0,1,length.out = FDcut_number)
+    tau <- seq(1e-8,1,length.out = FDcut_number)
   }
   #q_int <- c(0, 1, 2)
   
@@ -926,7 +929,8 @@ AUCtable_est <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = FDcut_number)
+    # tau <- seq(0,1,length.out = FDcut_number)
+    tau <- seq(1e-8,1,length.out = FDcut_number)
   }
   #q_int <- c(0, 1, 2)
   AUC <- FDtable_est(datalist,dij,tau,q,datatype,nboot = 0) %>%
