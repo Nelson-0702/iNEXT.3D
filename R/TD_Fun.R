@@ -609,7 +609,7 @@ Diversity_profile <- function(x,q){
   f1 = sum(x==1)
   f2 = sum(x==2)
   
-  if (f1 != 0) {
+  if ((f1 != 0) | (f2 == 0 & f1 > 1)) {
     
     p1 = ifelse(f2>0,2*f2/((n-1)*f1+2*f2),ifelse(f1>0,2/((n-1)*(f1-1)+2),1))
     sortx = sort(unique(x))
@@ -651,7 +651,7 @@ Diversity_profile.inc <- function(data,q){
   Q2 <- sum(Yi==2)
   Sobs <- length(Yi)
   
-  if (Q1 != 0) {
+  if ((Q1 != 0) | (Q2 == 0 & Q1 > 1)) {
     
     if(Q2>0 & Q1>0){
       A <- 2*Q2/((nT-1)*Q1+2*Q2)
