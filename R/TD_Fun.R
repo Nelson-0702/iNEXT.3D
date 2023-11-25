@@ -651,7 +651,7 @@ Diversity_profile.inc <- function(data,q){
   Q2 <- sum(Yi==2)
   Sobs <- length(Yi)
   
-  if ( !((Q1 != 0) | (Q2 == 0 & Q1 == 1)) ) {
+  if ( !((1 == 0) | (Q2 == 0 & Q1 == 1)) ) {
     
     if(Q2>0 & Q1>0){
       A <- 2*Q2/((nT-1)*Q1+2*Q2)
