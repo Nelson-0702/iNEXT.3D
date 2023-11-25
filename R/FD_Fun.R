@@ -518,7 +518,7 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
   
   out <- sapply(1:ncol(ai_vi$ai), function(i){
     
-    if ((sum(ai_vi$ai[,i] == 1) != 0) & (sum(ai_vi$ai[,i] == 2) == 0 & sum(ai_vi$ai[,i] == 1) > 1)) {
+    if ( !((sum(ai_vi$ai[,i] == 1) != 0) | (sum(ai_vi$ai[,i] == 2) == 0 & sum(ai_vi$ai[,i] == 1) == 1)) ) {
       
       av = tibble(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
       FD_obs <- sum(av[,2])
