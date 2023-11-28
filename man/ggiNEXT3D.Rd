@@ -33,6 +33,7 @@ a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 }
 \examples{
+\dontrun{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
@@ -94,5 +95,7 @@ data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 ggiNEXT3D(output8)
+}
+
 
 }

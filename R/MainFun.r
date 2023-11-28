@@ -341,6 +341,7 @@ NULL
 #' 
 #' 
 #' @examples
+#' \dontrun{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
@@ -402,6 +403,7 @@ NULL
 #' distM <- fish_incidence_data$dist
 #' output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 20)
 #' output8
+#' }
 #' 
 #' 
 #' @references
@@ -712,6 +714,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' 
 #' 
 #' @examples
+#' \dontrun{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
@@ -773,6 +776,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' distM <- fish_incidence_data$dist
 #' output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' ggiNEXT3D(output8)
+#' }
+#' 
 #' 
 #' @export
 ggiNEXT3D = function(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
@@ -1102,6 +1107,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' 
 #' @examples
+#' \dontrun{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
@@ -1166,6 +1172,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
 #'                       nboot = 20, FDdistM = distM)
 #' output8
+#' }
 #' 
 #' 
 #' @references
@@ -1358,6 +1365,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' 
 #' 
 #' @examples
+#' \dontrun{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
@@ -1421,6 +1429,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' distM <- fish_incidence_data$dist
 #' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' output8
+#' }
 #' 
 #' 
 #' @references
@@ -1562,6 +1571,7 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' @return a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
+#' \dontrun{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
@@ -1624,7 +1634,9 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' distM <- fish_incidence_data$dist
 #' output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 #' ggObsAsy3D(output8)
-#'
+#' }
+#' 
+#' 
 #' @export
 ggObsAsy3D <- function(output, profile = 'q'){
   

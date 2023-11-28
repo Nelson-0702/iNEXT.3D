@@ -97,6 +97,7 @@ a list of three objects: \cr
 \code{iNEXT3D}: Interpolation and extrapolation of Hill-Chao number with order q
 }
 \examples{
+\dontrun{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
@@ -158,6 +159,7 @@ data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output8 <- iNEXT3D(data, diversity = 'FD', FDdistM = distM, datatype = "incidence_raw", nboot = 20)
 output8
+}
 
 
 }

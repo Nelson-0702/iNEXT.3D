@@ -78,6 +78,7 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 \code{estimate3D}: computes diversity (Hill-Chao number with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
+\dontrun{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
@@ -142,6 +143,7 @@ distM <- fish_incidence_data$dist
 output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
                       nboot = 20, FDdistM = distM)
 output8
+}
 
 
 }

@@ -70,6 +70,7 @@ a table of diversity table including the following arguments:
 \code{ObsAsy3D}: The estimated asymptotic and observed diversity of order q
 }
 \examples{
+\dontrun{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
@@ -133,6 +134,7 @@ data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
 output8
+}
 
 
 }
