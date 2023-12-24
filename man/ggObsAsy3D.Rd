@@ -19,7 +19,7 @@ a figure of asymptotic and observed diversity in q-profile, time-profile, or tau
 Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{ObsAsy3D}.
 }
 \examples{
-\dontrun{
+\donttest{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
@@ -48,7 +48,8 @@ ggObsAsy3D(output3, profile = "tau")
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 10, FDdistM = distM)
+output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", nboot = 10, 
+                    FDdistM = distM, FDtype = 'AUC')
 ggObsAsy3D(output4)
 
 
@@ -80,7 +81,8 @@ ggObsAsy3D(output7)
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                    FDdistM = distM, FDtype = 'AUC')
 ggObsAsy3D(output8)
 }
 

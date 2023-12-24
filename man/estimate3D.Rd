@@ -78,10 +78,11 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 \code{estimate3D}: computes diversity (Hill-Chao number with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
-\dontrun{
+\donttest{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
-output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", base = "size")
+output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
+                      datatype = "abundance", base = "size")
 output1
 
 
@@ -107,14 +108,14 @@ data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
 output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-                      nboot = 20, FDdistM = distM)
+                      nboot = 20, FDdistM = distM, FDtype = 'AUC')
 output4
 
 
 # diversity = 'TD' for incidence-based data
 data(fish_incidence_data)
-output5 <- estimate3D(fish_incidence_data$data, diversity = 'TD', q = c(0,1,2), datatype = "incidence_raw", 
-                      base = "coverage")
+output5 <- estimate3D(fish_incidence_data$data, diversity = 'TD', q = c(0,1,2), 
+                      datatype = "incidence_raw", base = "coverage")
 output5
 
 
@@ -122,8 +123,7 @@ output5
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
-output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-                      base = "size", PDtree = tree)
+output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", PDtree = tree)
 output6
 
 
@@ -141,7 +141,7 @@ data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
 output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-                      nboot = 20, FDdistM = distM)
+                      nboot = 20, FDdistM = distM, FDtype = 'AUC')
 output8
 }
 
