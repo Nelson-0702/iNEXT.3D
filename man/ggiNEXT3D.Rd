@@ -33,7 +33,7 @@ a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 \code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 }
 \examples{
-\dontrun{
+\donttest{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
 output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
@@ -44,7 +44,8 @@ ggiNEXT3D(output1, facet.var = "Assemblage")
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
-output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", nboot = 20, PDtree = tree)
+output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
+                   nboot = 20, PDtree = tree)
 ggiNEXT3D(output2, type = c(1, 3))
 
 
@@ -61,7 +62,8 @@ ggiNEXT3D(output3)
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 distM <- Brazil_rainforest_data$dist
-output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, FDdistM = distM)
+output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+                   FDdistM = distM, FDtype = 'AUC')
 ggiNEXT3D(output4)
 
 
@@ -93,7 +95,8 @@ ggiNEXT3D(output7)
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 distM <- fish_incidence_data$dist
-output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, FDdistM = distM)
+output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                   FDdistM = distM, FDtype = 'AUC')
 ggiNEXT3D(output8)
 }
 
