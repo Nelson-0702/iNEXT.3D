@@ -6,7 +6,7 @@
 Interpolation and Extrapolation for three dimensions of biodiversity
 }
 \description{
-\code{iNEXT.3D} (Interpolation and Extrapolation for three dimensions of biodiversity) is a sequel to iNEXT (Hsieh et al., 2016). 
+\code{iNEXT.3D} (iNterpolation and EXTrapolation for three dimensions of biodiversity) is a sequel to iNEXT (Hsieh et al., 2016). 
 Here the three dimensions (3D) of diversity includes taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). An online version "iNEXT.3D Online"
 (https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background.
 
