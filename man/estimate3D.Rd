@@ -90,7 +90,8 @@ output1
 data(Brazil_rainforest_data)
 data <- Brazil_rainforest_data$data
 tree <- Brazil_rainforest_data$tree
-output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
+output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
+                      base = "coverage", PDtree = tree)
 output2
 
 
@@ -123,7 +124,8 @@ output5
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
-output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", PDtree = tree)
+output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+                      base = "size", PDtree = tree)
 output6
 
 

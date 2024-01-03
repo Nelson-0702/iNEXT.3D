@@ -97,11 +97,13 @@ data(fish_incidence_data)
 DataInfo3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 
 
+\donttest{
 # diversity = 'PD' for incidence-based data
 data(fish_incidence_data)
 data <- fish_incidence_data$data
 tree <- fish_incidence_data$tree
 DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
+}
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data

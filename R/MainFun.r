@@ -71,11 +71,13 @@
 #' DataInfo3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 #' 
 #' 
+#' \donttest{
 #' # diversity = 'PD' for incidence-based data
 #' data(fish_incidence_data)
 #' data <- fish_incidence_data$data
 #' tree <- fish_incidence_data$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
+#' }
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
@@ -347,7 +349,8 @@ NULL
 #' \donttest{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
-#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
+#'                    datatype = "abundance")
 #' output1
 #' 
 #' 
@@ -380,7 +383,8 @@ NULL
 #' 
 #' # diversity = 'TD' for incidence-based data
 #' data(fish_incidence_data)
-#' output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = c(0, 1, 2), datatype = "incidence_raw")
+#' output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = c(0, 1, 2), 
+#'                    datatype = "incidence_raw")
 #' output5
 #' 
 #' 
@@ -723,7 +727,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' \donttest{
 #' # diversity = 'TD' for abundance-based data
 #' data(Brazil_rainforest_data)
-#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+#' output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
+#'                    datatype = "abundance")
 #' ggiNEXT3D(output1, facet.var = "Assemblage")
 #' 
 #' 
@@ -1128,7 +1133,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data(Brazil_rainforest_data)
 #' data <- Brazil_rainforest_data$data
 #' tree <- Brazil_rainforest_data$tree
-#' output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
+#' output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
+#'                       base = "coverage", PDtree = tree)
 #' output2
 #' 
 #' 
@@ -1161,7 +1167,8 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data(fish_incidence_data)
 #' data <- fish_incidence_data$data
 #' tree <- fish_incidence_data$tree
-#' output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", PDtree = tree)
+#' output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+#'                       base = "size", PDtree = tree)
 #' output6
 #' 
 #' 

@@ -100,7 +100,8 @@ a list of three objects: \cr
 \donttest{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_data)
-output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance")
+output1 <- iNEXT3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
+                   datatype = "abundance")
 output1
 
 
@@ -133,7 +134,8 @@ output4
 
 # diversity = 'TD' for incidence-based data
 data(fish_incidence_data)
-output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = c(0, 1, 2), datatype = "incidence_raw")
+output5 <- iNEXT3D(fish_incidence_data$data, diversity = 'TD', q = c(0, 1, 2), 
+                   datatype = "incidence_raw")
 output5
 
 
