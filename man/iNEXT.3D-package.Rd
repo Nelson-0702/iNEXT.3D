@@ -11,10 +11,10 @@ Here the three dimensions (3D) of diversity includes taxonomic diversity (TD), p
 (https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background.
 
 A unified framework based on Hill numbers (for TD) and their generalizations (Hill-Chao numbers, for PD and FD) 
-is adopted to quantify 3D. In this framework, TD quantifies the effective number of species, mean-PD (PD divided by 
+is adopted to quantify 3D. In this framework, TD quantifies the effective number of species, PD quantifies the effective total branch length, mean-PD (PD divided by 
 tree depth) quantifies the effective number of lineages, and FD quantifies the effective number of virtual functional 
-groups (or functional "species"). Thus, TD, mean-PD, and FD are all in the same units of species/lineage equivalents
-and can be meaningfully compared; see Chao et al. (2021) for a review of the unified framework. 
+groups (or functional “species”). Thus, TD, mean-PD, and FD are all in the same units of species/lineage equivalents 
+and can be meaningfully compared; see Chao et al. (2014) for the basic standardization theory for TD, and Chao et al. (2021) for a review of the unified theory for 3D. 
 
 \code{iNEXT.3D} also features two types of R/E sampling curves:
 
