@@ -43,11 +43,13 @@
 #' DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
 #' 
 #' 
+#' \donttest{
 #' # diversity = 'PD' for abundance-based data
 #' data(Brazil_rainforest_data)
 #' data <- Brazil_rainforest_data$data
 #' tree <- Brazil_rainforest_data$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
+#' }
 #' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
