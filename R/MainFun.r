@@ -42,7 +42,6 @@
 #' data(Brazil_rainforest_data)
 #' DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
 #' 
-#' 
 #' \donttest{
 #' # diversity = 'PD' for abundance-based data
 #' data(Brazil_rainforest_data)
@@ -50,7 +49,6 @@
 #' tree <- Brazil_rainforest_data$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 #' }
-#' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
 #' data(Brazil_rainforest_data)
@@ -72,7 +70,6 @@
 #' data(fish_incidence_data)
 #' DataInfo3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
 #' 
-#' 
 #' \donttest{
 #' # diversity = 'PD' for incidence-based data
 #' data(fish_incidence_data)
@@ -80,7 +77,6 @@
 #' tree <- fish_incidence_data$tree
 #' DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
 #' }
-#' 
 #' 
 #' # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
 #' data(fish_incidence_data)
