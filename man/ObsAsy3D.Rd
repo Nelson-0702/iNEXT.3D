@@ -72,66 +72,72 @@ a table of diversity table including the following arguments:
 \examples{
 \donttest{
 # diversity = 'TD' for abundance-based data
-data(Brazil_rainforest_data)
-output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
+data(Brazil_rainforest_abun_data)
+output1 <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', datatype = "abundance")
 output1
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-tree <- Brazil_rainforest_data$tree
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
 output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
                     nboot = 20, PDtree = tree)
 output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
 output3 <- ObsAsy3D(data, diversity = 'FD', datatype = "abundance", 
                     nboot = 20, FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
 output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", 
                     nboot = 10, FDdistM = distM, FDtype = 'AUC')
 output4
 
 
 # diversity = 'TD' for incidence-based data
-data(fish_incidence_data)
-output5 <- ObsAsy3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
+data(Fish_incidence_data)
+output5 <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
 output5
 
 
 # diversity = 'PD' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-tree <- fish_incidence_data$tree
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
 output6 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", 
                     nboot = 20, PDtree = tree)
 output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
 output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
                     nboot = 20, FDdistM = distM, FDtype = 'tau_values')
 output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
 output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
                     nboot = 20, FDdistM = distM, FDtype = 'AUC')
 output8

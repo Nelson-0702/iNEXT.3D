@@ -80,68 +80,74 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 \examples{
 \donttest{
 # diversity = 'TD' for abundance-based data
-data(Brazil_rainforest_data)
-output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
+data(Brazil_rainforest_abun_data)
+output1 <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
                       datatype = "abundance", base = "size")
 output1
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-tree <- Brazil_rainforest_data$tree
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
 output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
                       base = "coverage", PDtree = tree)
 output2
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
 output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
                       FDdistM = distM, FDtype = 'tau_values')
 output3
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
 output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
                       nboot = 20, FDdistM = distM, FDtype = 'AUC')
 output4
 
 
 # diversity = 'TD' for incidence-based data
-data(fish_incidence_data)
-output5 <- estimate3D(fish_incidence_data$data, diversity = 'TD', q = c(0,1,2), 
+data(Fish_incidence_data)
+output5 <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,1,2), 
                       datatype = "incidence_raw", base = "coverage")
 output5
 
 
 # diversity = 'PD' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-tree <- fish_incidence_data$tree
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
 output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
                       base = "size", PDtree = tree)
 output6
 
 
 # diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
 output7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", 
                       FDdistM = distM, FDtype = 'tau_values')
 output7
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
 output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
                       nboot = 20, FDdistM = distM, FDtype = 'AUC')
 output8

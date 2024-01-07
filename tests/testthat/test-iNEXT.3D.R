@@ -1,15 +1,15 @@
 context("iNEXT3D")
 test_that("iNEXT3D for abundance-based data", {
   # Test input by a demo data
-  data("Brazil_rainforest_data")
-  out <- iNEXT3D(Brazil_rainforest_data$data, q = 0, datatype = "abundance")
+  data("Brazil_rainforest_abun_data")
+  out <- iNEXT3D(Brazil_rainforest_abun_data, q = 0, datatype = "abundance")
   expect_is(out, "iNEXT3D")
   expect_output(str(out), "List of 3")
   expect_equal(names(out$TDInfo)[2], "n")
-  expect_equal(nrow(out$TDInfo), length(Brazil_rainforest_data$data))
+  expect_equal(nrow(out$TDInfo), length(Brazil_rainforest_abun_data))
   
   # Test input by a vector
-  x <- Brazil_rainforest_data$data$Edge
+  x <- Brazil_rainforest_abun_data$Edge
   out <- iNEXT3D(x, q = 0, datatype = "abundance")
   expect_is(out, "iNEXT3D")
   expect_output(str(out), "List of 3")
@@ -28,15 +28,15 @@ test_that("iNEXT3D for abundance-based data", {
 
 test_that("iNEXT3D for sampling-unit-based incidence frequencies data", {
   # Test input by a demo data
-  data("fish_incidence_data")
-  out <- iNEXT3D(fish_incidence_data$data, q = 0, datatype = "incidence_raw")
+  data("Fish_incidence_data")
+  out <- iNEXT3D(Fish_incidence_data, q = 0, datatype = "incidence_raw")
   expect_is(out, "iNEXT3D")
   expect_output(str(out), "List of 3")
   expect_equal(names(out$TDInfo)[2], "T")
-  expect_equal(nrow(out$TDInfo), length(fish_incidence_data$data))
+  expect_equal(nrow(out$TDInfo), length(Fish_incidence_data))
   
   # # Test input by a vector
-  # out <- iNEXT3D(c(ncol(fish_incidence_data$data$`2013-2015`), rowSums(fish_incidence_data$data$`2013-2015`)), q = 0, datatype = "incidence_freq")
+  # out <- iNEXT3D(c(ncol(Fish_incidence_data$`2013-2015`), rowSums(Fish_incidence_data$`2013-2015`)), q = 0, datatype = "incidence_freq")
   # expect_is(out, "iNEXT3D")
   # expect_output(str(out), "List of 3")
   # expect_equal(names(out$TDInfo)[2], "T")
