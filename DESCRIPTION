@@ -2,10 +2,10 @@ Package: iNEXT.3D
 Type: Package
 Title: Interpolation and Extrapolation for Three Dimensions of Biodiversity
 Version: 1.0.1
-Author: Anne Chao and K.-H. Hu
+Author: Anne Chao and Hu, K.-H.
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 URL: https://sites.google.com/view/chao-lab-website/software/inext-3d
-Description: iNEXT.3D is a sequel to iNEXT. Here the three dimensions (3D) of diversity includes taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). A unified framework based on Hill numbers (for TD) and their generalizations (Hill-Chao numbers, for PD and FD) is adopted to quantify 3D. In this framework, TD quantifies the effective number of species, PD quantifies the effective total branch length, mean-PD (PD divided by tree depth) quantifies the effective number of lineages, and FD quantifies the effective number of virtual functional groups (or functional "species"). Thus, TD, mean-PD, and FD are all in the same units of species/lineage equivalents and can be meaningfully compared.
+Description: As a sequel to 'iNEXT', the 'iNEXT. 3D' package provides functions to compute standardized taxonomic, phylogenetic, and functional diversity (3D) estimates with a common sample size or sample coverage. The package also features size- and coverage-based rarefaction and extrapolation sampling curves to facilitate rigorous comparison of 3D across individual assemblages.
 License: GPL (>= 3)
 Depends: R (>= 4.0)
 Imports:

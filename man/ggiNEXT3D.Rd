@@ -34,9 +34,9 @@ a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 \donttest{
 # diversity = 'TD' for abundance-based data
 data(Brazil_rainforest_abun_data)
-output1 <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-                   datatype = "abundance")
-ggiNEXT3D(output1, facet.var = "Assemblage")
+output_iNEXT_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+                                datatype = "abundance")
+ggiNEXT3D(output_iNEXT_TD_abun, facet.var = "Assemblage")
 
 
 # diversity = 'PD' for abundance-based data
@@ -44,19 +44,9 @@ data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
-output2 <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
-                   nboot = 20, PDtree = tree)
-ggiNEXT3D(output2, type = c(1, 3))
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil_rainforest_abun_data)
-data(Brazil_rainforest_distance_matrix)
-data <- Brazil_rainforest_abun_data
-distM <- Brazil_rainforest_distance_matrix
-output3 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 20, 
-                   FDdistM = distM, FDtype = 'tau_values')
-ggiNEXT3D(output3)
+output_iNEXT_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
+                                nboot = 20, PDtree = tree)
+ggiNEXT3D(output_iNEXT_PD_abun, type = c(1, 3))
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
@@ -64,15 +54,16 @@ data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
-output4 <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
-                   FDdistM = distM, FDtype = 'AUC')
-ggiNEXT3D(output4)
+output_iNEXT_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+                                FDdistM = distM, FDtype = 'AUC')
+ggiNEXT3D(output_iNEXT_FD_abun)
 
 
 # diversity = 'TD' for incidence-based data
 data(Fish_incidence_data)
-output5 <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, datatype = "incidence_raw")
-ggiNEXT3D(output5)
+output_iNEXT_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
+                                datatype = "incidence_raw")
+ggiNEXT3D(output_iNEXT_TD_inci)
 
 
 # diversity = 'PD' for incidence-based data
@@ -80,19 +71,9 @@ data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
-output6 <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-                   nboot = 20, PDtree = tree)
-ggiNEXT3D(output6, facet.var = "Order.q", color.var = "Assemblage")
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(Fish_incidence_data)
-data(Fish_distance_matrix)
-data <- Fish_incidence_data
-distM <- Fish_distance_matrix
-output7 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot= 20,
-                   FDdistM = distM, FDtype = 'tau_values')
-ggiNEXT3D(output7)
+output_iNEXT_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                                nboot = 20, PDtree = tree)
+ggiNEXT3D(output_iNEXT_PD_inci, facet.var = "Order.q", color.var = "Assemblage")
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
@@ -100,9 +81,9 @@ data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
-output8 <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
-                   FDdistM = distM, FDtype = 'AUC')
-ggiNEXT3D(output8)
+output_iNEXT_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                                FDdistM = distM, FDtype = 'AUC')
+ggiNEXT3D(output_iNEXT_FD_inci)
 }
 
 

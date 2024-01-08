@@ -11,7 +11,7 @@ citEntry(
 		 year = year,
 		 note = note,
 		 url = "https://sites.google.com/view/chao-lab-website/software/inext-3d/",
-		 textVersion = paste("Anne Chao. and K.-H. Hu", year, "iNEXT.3D: Interpolation and Extrapolation for three dimensions of diversity.", note, "URL: https://sites.google.com/view/chao-lab-website/software/inext-3d/.")
+		 textVersion = paste("Chao, A. and Hu, K.-H.", year, "iNEXT.3D: Interpolation and Extrapolation for three dimensions of diversity.", note, "URL: https://sites.google.com/view/chao-lab-website/software/inext-3d/.")
 )
 
 citEntry(

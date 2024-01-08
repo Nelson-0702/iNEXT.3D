@@ -16,16 +16,21 @@ tree depth) quantifies the effective number of lineages, and FD quantifies the e
 groups (or functional "species"). Thus, TD, mean-PD, and FD are all in the same units of species/lineage equivalents 
 and can be meaningfully compared; see Chao et al. (2014) for the basic standardization theory for TD, and Chao et al. (2021) for a review of the unified theory for 3D.
 
-\code{iNEXT.3D} also features two types of R/E sampling curves:
+For each of the three dimensions of biodiversity, \code{iNEXT.3D} features two statistical analyses (non-asymptotic and asymptotic):
 
-* Sample-size-based R/E sampling curves: \code{iNEXT.3D} computes diversity estimates for rarefied and 
-extrapolated samples up to an appropriate size. This type of sampling curve plots the diversity estimates with respect to sample size.
+(1) A non-asymptotic approach based on interpolation and extrapolation for 3D diversity (i.e., Hill-Chao numbers)
 
-* Coverage-based R/E sampling curves: \code{iNEXT.3D} computes diversity estimates for rarefied and 
-extrapolated samples with sample completeness (as measured by sample coverage) up to an appropriate coverage. 
-This type of sampling curve plots the diversity estimates with respect to sample coverage. 
+\code{iNEXT.3D} computes the estimated 3D diversity for standardized samples with a common sample size or sample completeness. This approach aims to compare diversity estimates for equally-large (with a common sample size) or equally-complete (with a common sample coverage) samples; it is based on the seamless rarefaction and extrapolation (R/E) sampling curves of Hill-Chao numbers for q = 0, 1 and 2. For each dimension of biodiversity, \code{iNEXT.3D} offers three types of R/E sampling curves:
 
-\code{iNEXT.3D} also plots the above two types of sampling curves and a sample completeness curve by `ggiNEXT3D`. The sample completeness curve provides a bridge between these two types of curves. \cr
+* Sample-size-based (or size-based) R/E sampling curves: This type of sampling curve plots the diversity estimates with respect to sample size.
+
+* Coverage-based R/E sampling curves: This type of sampling curve plots the diversity estimates with respect to sample coverage.
+
+* Sample completeness curve: This curve depicts how sample coverage varies with sample size. The sample completeness curve provides a bridge between the size- and coverage-based R/E sampling curves.
+
+(2) An asymptotic approach to infer asymptotic 3D diversity (i.e., Hill-Chao numbers)
+
+\code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds.   \cr
 
 This package contains six main functions: \cr
 
