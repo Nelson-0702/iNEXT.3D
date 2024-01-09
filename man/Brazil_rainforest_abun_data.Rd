@@ -1,19 +1,18 @@
-\name{Brazil_rainforest_data}
-\alias{Brazil_rainforest_data}
+\name{Brazil_rainforest_abun_data}
+\alias{Brazil_rainforest_abun_data}
 \docType{data}
 \title{
-Brazil rainforests data (datatype = "abundance")
+Brazil rainforests abun data (datatype = "abundance")
 }
 \description{
   The dataset includes tree species abundace counts in two assemblages/habitats (Edge and Interior) collected from
   rainforests in Brazil by Magnago et al. (2014, 2015, 2017). \cr
 }
-\usage{data(Brazil_rainforest_data)}
+\usage{data(Brazil_rainforest_abun_data)}
 \format{
-  A list includes three objects: \cr
-   $ data: a data.frame with 425 tree species abundance data in two habitats: Edge and Interior. \cr
-   $ dist: a symmetric distance matrix. \cr
-   $ tree: a phylo object giving the phylogenetic tree in Newick format. \cr
+  \code{Brazil_rainforest_abun_data} is a data.frame with 425 tree species abundance data in two habitats: Edge and Interior. \cr
+  $ Edge: int 11 110 36 12 2 7 11 1 1 0 ... \cr
+  $ Interior: int 21 11 7 1 0 1 11 13 1 2 ... \cr
  }
 \references{
 Magnago, L. F. S., Edwards, D. P., Edwards, F. A., Magrach, A., Martins, S. V., & Laurance, W. F. 2014. Functional attributes change but functional richness is unchanged after fragmentation of Brazilian Atlantic forests. Journal of Ecology 102: 475-485. \cr\cr

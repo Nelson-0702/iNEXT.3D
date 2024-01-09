@@ -72,69 +72,58 @@ a table of diversity table including the following arguments:
 \examples{
 \donttest{
 # diversity = 'TD' for abundance-based data
-data(Brazil_rainforest_data)
-output1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
-output1
+data(Brazil_rainforest_abun_data)
+output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
+                                  datatype = "abundance")
+output_ObsAsy_TD_abun
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-tree <- Brazil_rainforest_data$tree
-output2 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "abundance", 
-                    nboot = 20, PDtree = tree)
-output2
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
-output3 <- ObsAsy3D(data, diversity = 'FD', datatype = "abundance", 
-                    nboot = 20, FDdistM = distM, FDtype = 'tau_values')
-output3
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+                                  datatype = "abundance", nboot = 20, PDtree = tree)
+output_ObsAsy_PD_abun
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
-output4 <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), datatype = "abundance", 
-                    nboot = 10, FDdistM = distM, FDtype = 'AUC')
-output4
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
+                                  datatype = "abundance", nboot = 10, FDdistM = distM, 
+                                  FDtype = 'AUC')
+output_ObsAsy_FD_abun
 
 
 # diversity = 'TD' for incidence-based data
-data(fish_incidence_data)
-output5 <- ObsAsy3D(fish_incidence_data$data, diversity = 'TD', datatype = "incidence_raw")
-output5
+data(Fish_incidence_data)
+output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', 
+                                  datatype = "incidence_raw")
+output_ObsAsy_TD_inci
 
 
 # diversity = 'PD' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-tree <- fish_incidence_data$tree
-output6 <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), datatype = "incidence_raw", 
-                    nboot = 20, PDtree = tree)
-output6
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
-output7 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
-                    nboot = 20, FDdistM = distM, FDtype = 'tau_values')
-output7
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+                                  datatype = "incidence_raw", nboot = 20, PDtree = tree)
+output_ObsAsy_PD_inci
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
-output8 <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
-                    nboot = 20, FDdistM = distM, FDtype = 'AUC')
-output8
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_ObsAsy_FD_inci <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                                  nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_ObsAsy_FD_inci
 }
 
 

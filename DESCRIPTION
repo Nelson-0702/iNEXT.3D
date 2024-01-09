@@ -2,16 +2,15 @@ Package: iNEXT.3D
 Type: Package
 Title: Interpolation and Extrapolation for Three Dimensions of Biodiversity
 Version: 1.0.1
-Author: Anne Chao and K.-H. Hu
-Description: 
-License: GPL (>= 3)
-URL: https://chao.stat.nthu.edu.tw/wordpress/software_download/inext-3d/
+Author: Anne Chao and Kai-Hsiang Hu
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
-Depends:
-    R (>= 4.0)
+URL: https://sites.google.com/view/chao-lab-website/software/inext-3d
+Description: As a sequel to 'iNEXT', the 'iNEXT. 3D' package provides functions to compute standardized taxonomic, phylogenetic, and functional diversity (3D) estimates with a common sample size or sample coverage. Hill numbers and their generalizations are used to quantify 3D. The package also features size- and coverage-based rarefaction and extrapolation sampling curves to facilitate rigorous comparison of 3D diversity across individual assemblages.
+License: GPL (>= 3)
+Depends: R (>= 4.0)
 Imports:
     stats,
-    graphics,
+    tibble,
     ggplot2,
     reshape2,
     tidytree,
@@ -19,14 +18,14 @@ Imports:
     dplyr,
     ape,
     Rcpp
-BugReports: https://github.com/KaiHsiangHu/iNEXT.3D/issues
-LazyLoad: yes
-RoxygenNote: 7.2.3
 Suggests: testthat,
     knitr,
     rmarkdown,
     gridExtra,
     ggthemes
+BugReports: https://github.com/KaiHsiangHu/iNEXT.3D/issues
+LazyLoad: yes
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 ByteCompile: true
 LinkingTo: Rcpp

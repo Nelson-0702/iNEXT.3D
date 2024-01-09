@@ -80,69 +80,57 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 \examples{
 \donttest{
 # diversity = 'TD' for abundance-based data
-data(Brazil_rainforest_data)
-output1 <- estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), 
-                      datatype = "abundance", base = "size")
-output1
+data(Brazil_rainforest_abun_data)
+output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+                                 datatype = "abundance", base = "size")
+output_est_TD_abun
 
 
 # diversity = 'PD' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-tree <- Brazil_rainforest_data$tree
-output2 <- estimate3D(data, diversity = 'PD', datatype = "abundance", base = "coverage", PDtree = tree)
-output2
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
-output3 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "size", 
-                      FDdistM = distM, FDtype = 'tau_values')
-output3
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
+                                 base = "coverage", PDtree = tree)
+output_est_PD_abun
 
 
 # diversity = 'FD' & FDtype = 'AUC' for abundance-based data
-data(Brazil_rainforest_data)
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
-output4 <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-                      nboot = 20, FDdistM = distM, FDtype = 'AUC')
-output4
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
+                                 nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_est_FD_abun
 
 
 # diversity = 'TD' for incidence-based data
-data(fish_incidence_data)
-output5 <- estimate3D(fish_incidence_data$data, diversity = 'TD', q = c(0,1,2), 
-                      datatype = "incidence_raw", base = "coverage")
-output5
+data(Fish_incidence_data)
+output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,1,2), 
+                                 datatype = "incidence_raw", base = "coverage")
+output_est_TD_inci
 
 
 # diversity = 'PD' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-tree <- fish_incidence_data$tree
-output6 <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", base = "size", PDtree = tree)
-output6
-
-
-# diversity = 'FD' & FDtype = 'tau_values' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
-output7 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "coverage", 
-                      FDdistM = distM, FDtype = 'tau_values')
-output7
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+                                 base = "size", PDtree = tree)
+output_est_PD_inci
 
 
 # diversity = 'FD' & FDtype = 'AUC' for incidence-based data
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-distM <- fish_incidence_data$dist
-output8 <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-                      nboot = 20, FDdistM = distM, FDtype = 'AUC')
-output8
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
+                                 nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_est_FD_inci
 }
 
 
