@@ -74,7 +74,7 @@ FD.m.est = function(ai_vi, m, q, nT, ai_vi_MLE){
   }
   V_bar <- sum(ai_vi$ai[,1]*ai_vi$vi[,1])/nT
   asy <- FD_est(ai_vi,q,nT,ai_vi_MLE)
-  obs <- FD_mle(ai_vi_MLE,q)
+  obs <- FD_mle(ai_vi,q)
   out <- sapply(1:ncol(ai_vi$ai), function(i){
     av = cbind(ai = ai_vi$ai[,i], vi = ai_vi$vi[,i])
     RFD_m = RFD(av, nT, nT-1, q, V_bar)
