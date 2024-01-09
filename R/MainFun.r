@@ -1111,7 +1111,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data <- Brazil_rainforest_abun_data
 #' tree <- Brazil_rainforest_phylo_tree
 #' output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
-#'                                  base = "coverage", PDtree = tree)
+#'                                  level = c(1500, 3500), base = "size", PDtree = tree)
 #' output_est_PD_abun
 #' 
 #' 
@@ -1120,8 +1120,9 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data(Brazil_rainforest_distance_matrix)
 #' data <- Brazil_rainforest_abun_data
 #' distM <- Brazil_rainforest_distance_matrix
-#' output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-#'                                  nboot = 20, FDdistM = distM, FDtype = 'AUC')
+#' output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
+#'                                  level = c(0.93, 0.97), base = "coverage", nboot = 10, 
+#'                                  FDdistM = distM, FDtype = 'AUC')
 #' output_est_FD_abun
 #' 
 #' 
@@ -1138,7 +1139,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data <- Fish_incidence_data
 #' tree <- Fish_phylo_tree
 #' output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-#'                                  base = "size", PDtree = tree)
+#'                                  level = c(0.975, 0.99), base = "coverage", PDtree = tree)
 #' output_est_PD_inci
 #' 
 #' 
@@ -1147,8 +1148,9 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' data(Fish_distance_matrix)
 #' data <- Fish_incidence_data
 #' distM <- Fish_distance_matrix
-#' output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-#'                                  nboot = 20, FDdistM = distM, FDtype = 'AUC')
+#' output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
+#'                                  level = c(30, 70), base = "size", nboot = 10, 
+#'                                  FDdistM = distM, FDtype = 'AUC')
 #' output_est_FD_inci
 #' }
 #' 

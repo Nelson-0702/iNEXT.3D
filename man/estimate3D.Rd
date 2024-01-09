@@ -92,7 +92,7 @@ data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
 output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
-                                 base = "coverage", PDtree = tree)
+                                 level = c(1500, 3500), base = "size", PDtree = tree)
 output_est_PD_abun
 
 
@@ -101,8 +101,9 @@ data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
-output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", base = "coverage", 
-                                 nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
+                                 level = c(0.93, 0.97), base = "coverage", nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
 output_est_FD_abun
 
 
@@ -119,7 +120,7 @@ data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
 output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-                                 base = "size", PDtree = tree)
+                                 level = c(0.975, 0.99), base = "coverage", PDtree = tree)
 output_est_PD_inci
 
 
@@ -128,8 +129,9 @@ data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
-output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", base = "size", 
-                                 nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                                 level = c(30, 70), base = "size", nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
 output_est_FD_inci
 }
 

@@ -32,23 +32,23 @@ For each of the three dimensions of biodiversity, \code{iNEXT.3D} features two s
 
 \code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds.   \cr
 
-This package contains six main functions: \cr
+There are six main functions in this package: \cr
 
-1. \code{iNEXT3D} computing interpolation and extrapolation with order q for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size. \cr
+1. \code{iNEXT3D} Computes 3D diversity estimates of order q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample coverage values and sample sizes. \cr
 
-2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT3D}. \cr
+2. \code{ggiNEXT3D} Visualizes the output from the function \code{iNEXT3D}. \cr
 
-3. \code{ObsAsy3D} computing asymptotic and observed (empirical) diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
+3. \code{ObsAsy3D} Computes observed and asymptotic diversity of order q for 3D diversity. \cr
 
-4. \code{ggObsAsy3D} visualizing the output from the function \code{ObsAsy3D}. \cr
+4. \code{ggObsAsy3D} Visualizes the output from the function \code{ObsAsy3D}. \cr
 
-5. \code{estimate3D} computes taxonomic, phylogenetic, and functional diversity (Hill-Chao family with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr
+5. \code{estimate3D} Computes 3D diversity of order q = 0, 1 and 2 with a particular user-specified level of sample size or sample coverage. \cr
 
-6. \code{DataInfo3D} provides basic data information. \cr
+6. \code{DataInfo3D} Provides basic data information. \cr
 
 }
 \author{
-Anne Chao, K.H. Hu \cr
+Anne Chao, Kai-Hsiang Hu \cr
 
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 }

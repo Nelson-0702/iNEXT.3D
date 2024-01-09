@@ -10,7 +10,7 @@ Brazil rainforests abun data (datatype = "abundance")
 }
 \usage{data(Brazil_rainforest_abun_data)}
 \format{
-  \code{Brazil_rainforest_abun_data} is a data.frame with 425 tree species abundance data in two habitats: Edge and Interior. \cr
+  \code{Brazil_rainforest_abun_data} is a species-by-assemblage data.frame with 425 tree species(rows) abundance data in two habitats(columns): Edge and Interior. \cr
   $ Edge: int 11 110 36 12 2 7 11 1 1 0 ... \cr
   $ Interior: int 21 11 7 1 0 1 11 13 1 2 ... \cr
  }
