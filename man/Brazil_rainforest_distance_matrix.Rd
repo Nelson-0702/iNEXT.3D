@@ -5,7 +5,7 @@
 Species pairwise distance matrix for species in the dataset \code{Brazil_rainforest_abun_data}
 }
 \description{
-  This dataset includes a tree species pairwise symmetric distance matrix for 425 species listed in the \code{Brazil_rainforest_abun_data} dataset. Each element in the matrix represents a Gower distance between two species computed from species traits. \cr
+  This dataset includes a tree species pairwise symmetric distance matrix for 425 species listed in the dataset \code{Brazil_rainforest_abun_data}. Each element in the matrix represents a Gower distance between two species computed from species traits. \cr
 }
 \usage{data(Brazil_rainforest_distance_matrix)}
 \format{

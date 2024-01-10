@@ -5,7 +5,7 @@ Version: 1.0.1
 Author: Anne Chao and Kai-Hsiang Hu
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 URL: https://sites.google.com/view/chao-lab-website/software/inext-3d
-Description: As a sequel to 'iNEXT', the 'iNEXT. 3D' package provides functions to compute standardized taxonomic, phylogenetic, and functional diversity (3D) estimates with a common sample size or sample coverage. Hill numbers and their generalizations are used to quantify 3D. The package also features size- and coverage-based rarefaction and extrapolation sampling curves to facilitate rigorous comparison of 3D diversity across individual assemblages.
+Description: 'iNEXT.3D' extends 'iNEXT' to include three dimensions (3D) of biodiversity, i.e., taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). This package provides functions to compute standardized 3D diversity estimates with a common sample size or sample coverage. A unified framework based on Hill numbers and their generalizations (Hill-Chao numbers) are used to quantify 3D. All 3D estimates are in the same units of species/lineage equivalents and can be meaningfully compared. The package features size- and coverage-based rarefaction and extrapolation sampling curves to facilitate rigorous comparison of 3D diversity across individual assemblages. Asymptotic 3D diversity estimates are also provided.
 License: GPL (>= 3)
 Depends: R (>= 4.0)
 Imports:
