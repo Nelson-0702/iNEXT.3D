@@ -7,83 +7,83 @@
 ggiNEXT3D(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")
 }
 \arguments{
-\item{output}{an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.}
+\item{output}{an \code{iNEXT3D} object computed by \code{iNEXT3D}.}
 
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
 sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
 
 \item{facet.var}{create a separate plot for each value of a specified variable: 
-no separation \cr (\code{facet.var = "None"}); 
+no separation (\code{facet.var = "None"}); 
 a separate plot for each diversity order (\code{facet.var = "Order.q"}); 
 a separate plot for each assemblage (\code{facet.var = "Assemblage"}); 
-a separate plot for each combination of order x assemblage (\code{facet.var = "Both"}).}
+a separate plot for each combination of diversity order and assemblage (\code{facet.var = "Both"}).}
 
 \item{color.var}{create curves in different colors for values of a specified variable:
 all curves are in the same color (\code{color.var = "None"}); 
 use different colors for diversity orders (\code{color.var = "Order.q"}); 
-use different colors for sites (\code{color.var = "Assemblage"}); 
-use different colors for combinations of order x assemblage (\code{color.var = "Both"}).}
+use different colors for assemblages/sites (\code{color.var = "Assemblage"}); 
+use different colors for combinations of diversity order and assemblage (\code{color.var = "Both"}).}
 }
 \value{
-a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
+a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\code{type = 1}), sample completeness curve (\code{type = 2}), and coverage-based rarefaction/extrapolation curve (\code{type = 3}).
 }
 \description{
-\code{ggiNEXT3D}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT3D}} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+\code{ggiNEXT3D} is a \code{ggplot} extension for \code{iNEXT3D} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve.
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance-based data
+# diversity = 'TD' for abundance data
 data(Brazil_rainforest_abun_data)
-output_iNEXT_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
                                 datatype = "abundance")
-ggiNEXT3D(output_iNEXT_TD_abun, facet.var = "Assemblage")
+ggiNEXT3D(output_TD_abun, facet.var = "Assemblage")
 
 
-# diversity = 'PD' for abundance-based data
+# diversity = 'PD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
-output_iNEXT_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
+output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
                                 nboot = 20, PDtree = tree)
-ggiNEXT3D(output_iNEXT_PD_abun, type = c(1, 3))
+ggiNEXT3D(output_PD_abun, type = c(1, 3))
 
 
-# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
+# diversity = 'FD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
-output_iNEXT_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
+output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
                                 FDdistM = distM, FDtype = 'AUC')
-ggiNEXT3D(output_iNEXT_FD_abun)
+ggiNEXT3D(output_FD_abun)
 
 
-# diversity = 'TD' for incidence-based data
+# diversity = 'TD' for incidence data
 data(Fish_incidence_data)
-output_iNEXT_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
+output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
                                 datatype = "incidence_raw")
-ggiNEXT3D(output_iNEXT_TD_inci)
+ggiNEXT3D(output_TD_inci)
 
 
-# diversity = 'PD' for incidence-based data
+# diversity = 'PD' for incidence data
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
-output_iNEXT_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+output_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
                                 nboot = 20, PDtree = tree)
-ggiNEXT3D(output_iNEXT_PD_inci, facet.var = "Order.q", color.var = "Assemblage")
+ggiNEXT3D(output_PD_inci, facet.var = "Order.q", color.var = "Assemblage")
 
 
-# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
+# diversity = 'FD' for incidence data
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
-output_iNEXT_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+output_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
                                 FDdistM = distM, FDtype = 'AUC')
-ggiNEXT3D(output_iNEXT_FD_inci)
+ggiNEXT3D(output_FD_inci)
 }
 
 

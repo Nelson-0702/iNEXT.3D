@@ -15,30 +15,30 @@ ggObsAsy3D(output, profile = "q")
 a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 }
 \description{
-\code{ggObsAsy3D} the \code{\link[ggplot2]{ggplot}} extension for \code{\link{ObsAsy3D}} object to plot q-profile, time-profile, and tau-profile based on the output of \code{ObsAsy3D} using the ggplot2 package.\cr
-Note, it will only show the confidence interval of 'Asymptotic' when setting \code{method = "both"} in \code{ObsAsy3D}.
+\code{ggObsAsy3D} is a \code{ggplot} extension for \code{ObsAsy3D} object to plot q-profile, time-profile, and tau-profile based on the output of \code{ObsAsy3D} using the ggplot2 package.\cr
+Note, it will only show the confidence interval of \code{'Asymptotic'} when setting \code{method = "both"} in \code{ObsAsy3D}.
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance-based data
+# diversity = 'TD' for abundance data
 data(Brazil_rainforest_abun_data)
 output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
                                   datatype = "abundance")
 ggObsAsy3D(output_ObsAsy_TD_abun)
 
 
-# diversity = 'PD' for abundance-based data
+# diversity = 'PD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
-output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.25), 
+output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.5), 
                                   datatype = "abundance", nboot = 20, PDtree = tree, 
                                   PDtype = "meanPD")
 ggObsAsy3D(output_ObsAsy_PD_abun, profile = "q")
 
 
-# diversity = 'FD' & FDtype = 'AUC' for abundance-based data
+# diversity = 'FD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
@@ -49,13 +49,13 @@ output_ObsAsy_FD_abun <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5),
 ggObsAsy3D(output_ObsAsy_FD_abun)
 
 
-# diversity = 'TD' for incidence-based data
+# diversity = 'TD' for incidence data
 data(Fish_incidence_data)
 output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
 ggObsAsy3D(output_ObsAsy_TD_inci)
 
 
-# diversity = 'PD' for incidence-based data
+# diversity = 'PD' for incidence data
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
@@ -66,7 +66,7 @@ output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2),
 ggObsAsy3D(output_ObsAsy_PD_inci, profile = "time")
 
 
-# diversity = 'FD' & FDtype = 'AUC' for incidence-based data
+# diversity = 'FD' for incidence data
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data

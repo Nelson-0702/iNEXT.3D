@@ -293,7 +293,7 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
   if(unconditional_var){
     out_C <- data.frame(Dq.hat_unc,'qTD.LCL' = Dq.hat_unc$qTD-qtile*ses_C,
                         'qTD.UCL' = Dq.hat_unc$qTD+qtile*ses_C) 
-    id_C <- match(c("Order.q", "SC","nT", "Method", "qTD", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
+    id_C <- match(c("Order.q", "SC", "nT", "Method", "qTD", "qTD.LCL", "qTD.UCL"), names(out_C), nomatch = 0)
     out_C <- out_C[, id_C]
     out_C$qTD.LCL[out_C$qTD.LCL<0] <- 0
   }else{
