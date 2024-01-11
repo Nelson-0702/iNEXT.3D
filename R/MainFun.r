@@ -796,7 +796,7 @@ ggiNEXT3D = function(output, type = 1:3, facet.var = "Assemblage", color.var = "
   if(facet.var == "Assemblage") color.var <- "Order.q"
   
   if ('m' %in% colnames(plottable$size_based) & 'm' %in% colnames(plottable$coverage_based)) datatype = 'abundance'
-  if ('nT' %in% colnames(plottable$size_based) & 'nT' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
+  if ('mT' %in% colnames(plottable$size_based) & 'mT' %in% colnames(plottable$coverage_based)) datatype = 'incidence'
   
   
   out = lapply(type, function(i) type_plot(x_list = plottable, i, class, datatype, facet.var, color.var))
