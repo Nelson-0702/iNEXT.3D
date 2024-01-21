@@ -61,16 +61,16 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 }
 \value{
 a data.frame of diversity table including the following arguments: (when \code{base = "coverage"})
-\item{Assemblage}{the assemblage name}
+\item{Assemblage}{the name of assemblage.}
 \item{Order.q}{the diversity order of q.}
 \item{SC}{the target standardized coverage value.}
 \item{m, mT}{the corresponding sample size (or sampling units) for the standardized coverage value.}
-\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{size = infinity}) represents the estimated asymptotic diversity.}
 \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
 \item{s.e.}{standard error of diversity estimate.}
-\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level. (with a default value of 0.95)}
-\item{Reftime}{reference times for PD.}
-\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{Reftime}{the reference times for PD.}
+\item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
 \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
 Similar output is obtained for \code{base = "size"}. \cr\cr
 }
@@ -79,14 +79,14 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance data with two target coverages (93\% and 97\%)
+# Taxonomic diversity for abundance data with two target coverages (93\% and 97\%)
 data(Brazil_rainforest_abun_data)
-output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
                                  datatype = "abundance", base = "coverage", level = c(0.93, 0.97))
 output_est_TD_abun
 
 
-# diversity = 'PD' for abundance data with two target sizes (1500 and 3500)
+# Phylogenetic diversity for abundance data with two target sizes (1500 and 3500)
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
@@ -96,7 +96,7 @@ output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance",
 output_est_PD_abun
 
 
-# diversity = 'FD' for abundance data with two target coverages (93\% and 97\%)
+# Functional diversity for abundance data with two target coverages (93\% and 97\%)
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
@@ -107,7 +107,7 @@ output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance",
 output_est_FD_abun
 
 
-# diversity = 'TD' for incidence data with two target coverages (97.5\% and 99\%)
+# Taxonomic diversity for incidence data with two target coverages (97.5\% and 99\%)
 data(Fish_incidence_data)
 output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
                                  datatype = "incidence_raw", base = "coverage", 
@@ -115,7 +115,7 @@ output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,
 output_est_TD_inci
 
 
-# diversity = 'PD' for incidence data with two target coverages (97.5\% and 99\%)
+# Phylogenetic diversity for incidence data with two target coverages (97.5\% and 99\%)
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
@@ -125,7 +125,7 @@ output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_r
 output_est_PD_inci
 
 
-# diversity = 'FD' for incidence data with two target number of sampling units (30 and 70)
+# Functional diversity for incidence data with two target number of sampling units (30 and 70)
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data

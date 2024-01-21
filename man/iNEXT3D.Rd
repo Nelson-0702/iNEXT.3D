@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.r
 \name{iNEXT3D}
 \alias{iNEXT3D}
-\title{iNterpolation and EXTrapolation of Hill-Chao number}
+\title{iNterpolation and EXTrapolation with three dimensions of biodiversity}
 \usage{
 iNEXT3D(
   data,
@@ -35,10 +35,10 @@ iNEXT3D(
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
 \item{size}{an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed. 
-If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}.}
+If \code{NULL}, then diversity estimates will be computed for those sample sizes determined by the specified/default \code{endpoint} and \code{knots}.}
 
 \item{endpoint}{an integer specifying the sample size that is the \code{endpoint} for rarefaction/extrapolation. 
-If NULL, then \code{endpoint} \code{=} double reference sample size.}
+If \code{NULL}, then \code{endpoint} \code{=} double reference sample size.}
 
 \item{knots}{an integer specifying the number of equally-spaced \code{knots} (say K, default is 40) between size 1 and the \code{endpoint};
 each knot represents a particular sample size for which diversity estimate will be calculated.  
@@ -75,12 +75,12 @@ a list of three objects: \cr
    \item{m, mT}{the target number of sample size (or sampling units).}
    \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target sample size is less than, equal to, or greater than the size of the reference sample.}
    \item{qTD, qPD, qFD}{the estimated diversity estimate.}
-   \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity.}
+   \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
    \item{SC}{the standardized coverage value.}
-   \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for coverage.}
-   \item{Reftime}{reference times for PD.}
-   \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
-   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+   \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for coverage at the specified level (with a default value of 0.95).}
+   \item{Reftime}{the reference times for PD.}
+   \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
+   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
  Similar output is obtained for \code{"$coverage_based"}. \cr
 \code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
    \item{Assemblage}{the name of assemblage.} 
@@ -88,67 +88,67 @@ a list of three objects: \cr
    \item{TD_obs, PD_obs, FD_obs}{the observed diversity.}
    \item{TD_asy, PD_asy, FD_asy}{the asymptotic diversity estimate.}
    \item{s.e.}{standard error of asymptotic diversity.}
-   \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for asymptotic diversity.}
-   \item{Reftime}{reference times for PD.}
-   \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
-   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+   \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for asymptotic diversity at the specified level (with a default value of 0.95).}
+   \item{Reftime}{the reference times for PD.}
+   \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
+   \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
 }
 \description{
-\code{iNEXT3D} computes standardized 3D estimates with a common sample size or sample coverage with order q = 0, 1 and 2.
+\code{iNEXT3D} computes standardized 3D estimates with a common sample size or sample coverage for orders q = 0, 1 and 2.
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance data
+# Compute estimates of taxonomic diversity for abundance data with order q = 0, 1, 2
 data(Brazil_rainforest_abun_data)
-output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-                                datatype = "abundance")
+output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
+                          datatype = "abundance")
 output_TD_abun
 
 
-# diversity = 'PD' for abundance data
+# Compute estimates of phylogenetic diversity for abundance data with order q = 0, 1, 2
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
 output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
-                                nboot = 20, PDtree = tree)
+                          nboot = 20, PDtree = tree)
 output_PD_abun
 
 
-# diversity = 'FD' for abundance data
+# Compute estimates of functional diversity for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
 output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
-                                FDdistM = distM, FDtype = 'AUC')
+                          FDdistM = distM, FDtype = 'AUC')
 output_FD_abun
 
 
-# diversity = 'TD' for incidence data
+# Compute estimates of taxonomic diversity for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
 output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
-                                datatype = "incidence_raw")
+                          datatype = "incidence_raw")
 output_TD_inci
 
 
-# diversity = 'PD' for incidence data
+# Compute estimates of phylogenetic diversity for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
 output_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), 
-                                datatype = "incidence_raw", nboot = 20, PDtree = tree)
+                          datatype = "incidence_raw", nboot = 20, PDtree = tree)
 output_PD_inci
 
 
-# diversity = 'FD' for incidence data
+# Compute estimates of functional diversity for incidence data
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
 output_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
-                                FDdistM = distM, FDtype = 'AUC')
+                          FDdistM = distM, FDtype = 'AUC')
 output_FD_inci
 }
 

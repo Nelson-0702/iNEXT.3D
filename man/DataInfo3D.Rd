@@ -61,12 +61,12 @@ for abundance data.
 \code{DataInfo3D} provides basic data information for 3D diversity based on a reference sample.
 }
 \examples{
-# diversity = 'TD' for abundance data
+# Taxonomic diversity for abundance data
 data(Brazil_rainforest_abun_data)
 DataInfo3D(Brazil_rainforest_abun_data, diversity = 'TD', datatype = "abundance")
 
 \donttest{
-# diversity = 'PD' for abundance data
+# Phylogenetic diversity for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
@@ -74,21 +74,29 @@ tree <- Brazil_rainforest_phylo_tree
 DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
 }
 
-# diversity = 'FD' for abundance data
+# Functional diversity for abundance data with FDtype = 'AUC'
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
 DataInfo3D(data, diversity = 'FD', datatype = "abundance", 
            FDdistM = distM, FDtype = 'AUC')
+           
+# Functional diversity for abundance data with FDtype = 'tau_values'
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+DataInfo3D(data, diversity = 'FD', datatype = "abundance", 
+           FDdistM = distM, FDtype = 'tau_values')
 
 
-# diversity = 'TD' for incidence data
+# Taxonomic diversity for incidence data
 data(Fish_incidence_data)
 DataInfo3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
 
 \donttest{
-# diversity = 'PD' for incidence data
+# Phylogenetic diversity for incidence data
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
@@ -96,13 +104,21 @@ tree <- Fish_phylo_tree
 DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
 }
 
-# diversity = 'FD' for incidence data
+# Functional diversity for incidence data with FDtype = 'AUC'
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
 DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
            FDdistM = distM, FDtype = 'AUC')
+           
+# Functional diversity for incidence data with FDtype = 'tau_values'
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
+           FDdistM = distM, FDtype = 'tau_values')
 
 
 }
