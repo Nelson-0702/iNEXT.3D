@@ -28,7 +28,7 @@ ObsAsy3D(
 
 \item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.}
 
-\item{q}{a numerical vector specifying the diversity orders. Default is \code{c(0, 1, 2)}.}
+\item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, by = 0.2)}.}
 
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
@@ -36,7 +36,7 @@ ObsAsy3D(
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{method}{computing type. Select \code{'Asymptotic'} or \code{'Observed'}.}
 
@@ -67,7 +67,7 @@ a table of diversity table including the following arguments:
 \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 }
 \description{
-\code{ObsAsy3D}: The estimated asymptotic and observed diversity of order q
+\code{ObsAsy3D} computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; these 3D values with different order q can be used to depict a q-profile in the \code{ggObsAsy3D} function. It also computes observed and asymptotic PD for various reference times by specifying the argument \code{PDreftime}; these PD values with different reference times can be used to depict a time-profile in the \code{ggObsAsy3D} function. It also computes observed and asymptotic FD for various threshold tau levels by specifying the argument \code{FDtau}; these FD values with different threshold levels can be used to depict a tau-profile in the \code{ggObsAsy3D} function.
 }
 \examples{
 \donttest{

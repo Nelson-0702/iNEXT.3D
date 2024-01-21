@@ -5,8 +5,7 @@
 Abundance data (datatype = "abundance")
 }
 \description{
-  This dataset includes tree species abundance counts in two assemblages/habitats (Edge and Interior) collected from
-  rainforests in Brazil by Magnago et al. (2014, 2015, 2017). \cr
+  This dataset includes tree species abundances in two assemblages/habitats (Edge and Interior) collected from rainforests in Brazil by Magnago et al. (2014, 2015, 2017). \cr
 }
 \usage{data(Brazil_rainforest_abun_data)}
 \format{

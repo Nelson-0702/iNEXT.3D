@@ -43,7 +43,7 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{PDtree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -79,58 +79,59 @@ Similar output is obtained for \code{base = "size"}. \cr\cr
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance data
+# diversity = 'TD' for abundance data with two target coverages (93\% and 97\%)
 data(Brazil_rainforest_abun_data)
 output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-                                 datatype = "abundance", base = "size")
+                                 datatype = "abundance", base = "coverage", level = c(0.93, 0.97))
 output_est_TD_abun
 
 
-# diversity = 'PD' for abundance data
+# diversity = 'PD' for abundance data with two target sizes (1500 and 3500)
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
 output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
-                                 level = c(1500, 3500), base = "size", PDtree = tree)
+                                 base = "size", level = c(1500, 3500), PDtree = tree)
 output_est_PD_abun
 
 
-# diversity = 'FD' for abundance data
+# diversity = 'FD' for abundance data with two target coverages (93\% and 97\%)
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
 output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
-                                 level = c(0.93, 0.97), base = "coverage", nboot = 10, 
+                                 base = "coverage", level = c(0.93, 0.97), nboot = 10, 
                                  FDdistM = distM, FDtype = 'AUC')
 output_est_FD_abun
 
 
-# diversity = 'TD' for incidence data
+# diversity = 'TD' for incidence data with two target coverages (97.5\% and 99\%)
 data(Fish_incidence_data)
-output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,1,2), 
-                                 datatype = "incidence_raw", base = "coverage")
+output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
+                                 datatype = "incidence_raw", base = "coverage", 
+                                 level = c(0.975, 0.99))
 output_est_TD_inci
 
 
-# diversity = 'PD' for incidence data
+# diversity = 'PD' for incidence data with two target coverages (97.5\% and 99\%)
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
 output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-                                 level = c(0.975, 0.99), base = "coverage", PDtree = tree)
+                                 base = "coverage", level = c(0.975, 0.99), PDtree = tree)
 output_est_PD_inci
 
 
-# diversity = 'FD' for incidence data
+# diversity = 'FD' for incidence data with two target number of sampling units (30 and 70)
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
 output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
-                                 level = c(30, 70), base = "size", nboot = 10, 
+                                 base = "size", level = c(30, 70), nboot = 10, 
                                  FDdistM = distM, FDtype = 'AUC')
 output_est_FD_inci
 }

@@ -24,7 +24,7 @@ DataInfo3D(
 
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{PDtree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -48,14 +48,14 @@ of those singletons (\code{g1}) and of those doubletons (\code{g2}), and the ref
 (3) FD (\code{FDtype = "AUC"}): the minimum distance among all non-diagonal elements in the distance matrix (\code{dmin}), the mean distance
 (\code{dmean}), and the maximum distance (\code{dmax}) in the distance matrix.\cr \cr
 (4) FD (\code{FDtype = "tau_value"}): the number of singletons (\code{a1*}) and of doubletons (\code{a2*}) among the functionally indistinct
- set at the specified threshold level \code{'Tau'}, as well as the total contribution of singletons (\code{h1}) and of doubletons (\code{h2})
-  at the specified threshold level \code{'Tau'}.\cr\cr
+set at the specified threshold level \code{'Tau'}, as well as the total attribute contribution of singletons (\code{h1}) and of doubletons (\code{h2})
+at the specified threshold level \code{'Tau'}.\cr\cr
  
- For incidence data, the basic information for TD includes assemblage name (\code{Assemblage}), number of sampling units (\code{T}), 
- total number of incidences (\code{U}), observed species richness (\code{S.obs}), 
- sample coverage estimates of the reference sample (\code{SC(T)}), sample coverage estimate for twice the reference sample size
- (\code{SC(2T)}), as well as the first five species incidence frequency counts (\code{Q1}--\code{Q5}). For mean-PD and FD, output is similar to that
- for abundance data.
+For incidence data, the basic information for TD includes assemblage name (\code{Assemblage}), number of sampling units (\code{T}), 
+total number of incidences (\code{U}), observed species richness (\code{S.obs}), 
+sample coverage estimates of the reference sample (\code{SC(T)}), sample coverage estimate for twice the reference sample size
+(\code{SC(2T)}), as well as the first five species incidence frequency counts (\code{Q1}--\code{Q5}). For mean-PD and FD, output is similar to that
+for abundance data.
 }
 \description{
 \code{DataInfo3D} provides basic data information for 3D diversity based on a reference sample.

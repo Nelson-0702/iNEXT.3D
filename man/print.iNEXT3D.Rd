@@ -7,7 +7,7 @@
 \method{print}{iNEXT3D}(x, ...)
 }
 \arguments{
-\item{x}{an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.}
+\item{x}{an \code{iNEXT3D} object computed by \code{iNEXT3D}.}
 
 \item{...}{additional arguments.}
 }

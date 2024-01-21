@@ -6,7 +6,7 @@
 #' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrices/data.frames (species by sampling units); data can also be input as a single matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (\code{nT}, see below) must be specified. 
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.
 #' @param PDtree (required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of \code{PDtree}).  
 #' @param FDdistM (required argument for \code{diversity = "FD"}), a species pairwise distance matrix for all species in the pooled assemblage. 
@@ -24,14 +24,14 @@
 #' (3) FD (\code{FDtype = "AUC"}): the minimum distance among all non-diagonal elements in the distance matrix (\code{dmin}), the mean distance
 #' (\code{dmean}), and the maximum distance (\code{dmax}) in the distance matrix.\cr \cr
 #' (4) FD (\code{FDtype = "tau_value"}): the number of singletons (\code{a1*}) and of doubletons (\code{a2*}) among the functionally indistinct
-#'  set at the specified threshold level \code{'Tau'}, as well as the total contribution of singletons (\code{h1}) and of doubletons (\code{h2})
-#'   at the specified threshold level \code{'Tau'}.\cr\cr
+#' set at the specified threshold level \code{'Tau'}, as well as the total attribute contribution of singletons (\code{h1}) and of doubletons (\code{h2})
+#' at the specified threshold level \code{'Tau'}.\cr\cr
 #'  
-#'  For incidence data, the basic information for TD includes assemblage name (\code{Assemblage}), number of sampling units (\code{T}), 
-#'  total number of incidences (\code{U}), observed species richness (\code{S.obs}), 
-#'  sample coverage estimates of the reference sample (\code{SC(T)}), sample coverage estimate for twice the reference sample size
-#'  (\code{SC(2T)}), as well as the first five species incidence frequency counts (\code{Q1}--\code{Q5}). For mean-PD and FD, output is similar to that
-#'  for abundance data.
+#' For incidence data, the basic information for TD includes assemblage name (\code{Assemblage}), number of sampling units (\code{T}), 
+#' total number of incidences (\code{U}), observed species richness (\code{S.obs}), 
+#' sample coverage estimates of the reference sample (\code{SC(T)}), sample coverage estimate for twice the reference sample size
+#' (\code{SC(2T)}), as well as the first five species incidence frequency counts (\code{Q1}--\code{Q5}). For mean-PD and FD, output is similar to that
+#' for abundance data.
 #'  
 #' 
 #' @examples
@@ -260,7 +260,7 @@ NULL
 
 #' iNterpolation and EXTrapolation of Hill-Chao number
 #' 
-#' \code{iNEXT3D}: Interpolation and extrapolation of Hill-Chao number with order q
+#' \code{iNEXT3D} computes standardized 3D estimates with a common sample size or sample coverage with order q = 0, 1 and 2.
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrices/data.frames (species by sampling units); data can also be input as a single matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (\code{nT}, see below) must be specified.
@@ -277,7 +277,7 @@ NULL
 #' If the \code{endpoint} is larger than the reference sample size, then \code{iNEXT3D()} computes rarefaction estimates for approximately K/2 evenly spaced \code{knots} between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced \code{knots} between the reference sample size and the \code{endpoint}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
 #' @param PDtree (required argument only for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of PDtree).  
 #' @param PDtree (required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
@@ -697,57 +697,58 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' 
 #' @examples
 #' \donttest{
-#' # diversity = 'TD' for abundance data
+#' # plot three types of curves when diversity = 'TD' for abundance data
 #' data(Brazil_rainforest_abun_data)
-#' output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-#'                                 datatype = "abundance")
+#' output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
+#'                           datatype = "abundance")
 #' ggiNEXT3D(output_TD_abun, facet.var = "Assemblage")
 #' 
 #' 
-#' # diversity = 'PD' for abundance data
+#' # plot two types (1 and 3) of curves when diversity = 'PD' for abundance data
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_phylo_tree)
 #' data <- Brazil_rainforest_abun_data
 #' tree <- Brazil_rainforest_phylo_tree
-#' output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
-#'                                 nboot = 20, PDtree = tree)
+#' output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+#'                           nboot = 20, PDtree = tree)
 #' ggiNEXT3D(output_PD_abun, type = c(1, 3))
 #' 
 #' 
-#' # diversity = 'FD' for abundance data
+#' # plot three types of curves when diversity = 'FD' for abundance data
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_distance_matrix)
 #' data <- Brazil_rainforest_abun_data
 #' distM <- Brazil_rainforest_distance_matrix
 #' output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
-#'                                 FDdistM = distM, FDtype = 'AUC')
+#'                           FDdistM = distM, FDtype = 'AUC')
 #' ggiNEXT3D(output_FD_abun)
 #' 
 #' 
-#' # diversity = 'TD' for incidence data
+#' # plot three types of curves when diversity = 'TD' for incidence data
 #' data(Fish_incidence_data)
 #' output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
-#'                                 datatype = "incidence_raw")
+#'                           datatype = "incidence_raw")
 #' ggiNEXT3D(output_TD_inci)
 #' 
 #' 
-#' # diversity = 'PD' for incidence data
+#' # plot three types of curves with facet.var = "Order.q" and color.var = "Assemblage" 
+#' # when diversity = 'PD' for incidence data
 #' data(Fish_incidence_data)
 #' data(Fish_phylo_tree)
 #' data <- Fish_incidence_data
 #' tree <- Fish_phylo_tree
 #' output_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-#'                                 nboot = 20, PDtree = tree)
+#'                           nboot = 20, PDtree = tree)
 #' ggiNEXT3D(output_PD_inci, facet.var = "Order.q", color.var = "Assemblage")
 #' 
 #' 
-#' # diversity = 'FD' for incidence data
+#' # plot three types of curves when diversity = 'FD' for incidence data
 #' data(Fish_incidence_data)
 #' data(Fish_distance_matrix)
 #' data <- Fish_incidence_data
 #' distM <- Fish_distance_matrix
 #' output_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
-#'                                 FDdistM = distM, FDtype = 'AUC')
+#'                           FDdistM = distM, FDtype = 'AUC')
 #' ggiNEXT3D(output_FD_inci)
 #' }
 #' 
@@ -1055,7 +1056,7 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' If \code{base = "size"} and \code{level = NULL}, then this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes. 
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
 #' @param PDtree (required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of \code{PDtree}).  
 #' @param PDtype (argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.
@@ -1081,58 +1082,59 @@ type_plot = function(x_list, type, class, datatype, facet.var, color.var) {
 #' 
 #' @examples
 #' \donttest{
-#' # diversity = 'TD' for abundance data
+#' # diversity = 'TD' for abundance data with two target coverages (93% and 97%)
 #' data(Brazil_rainforest_abun_data)
 #' output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-#'                                  datatype = "abundance", base = "size")
+#'                                  datatype = "abundance", base = "coverage", level = c(0.93, 0.97))
 #' output_est_TD_abun
 #' 
 #' 
-#' # diversity = 'PD' for abundance data
+#' # diversity = 'PD' for abundance data with two target sizes (1500 and 3500)
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_phylo_tree)
 #' data <- Brazil_rainforest_abun_data
 #' tree <- Brazil_rainforest_phylo_tree
 #' output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
-#'                                  level = c(1500, 3500), base = "size", PDtree = tree)
+#'                                  base = "size", level = c(1500, 3500), PDtree = tree)
 #' output_est_PD_abun
 #' 
 #' 
-#' # diversity = 'FD' for abundance data
+#' # diversity = 'FD' for abundance data with two target coverages (93% and 97%)
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_distance_matrix)
 #' data <- Brazil_rainforest_abun_data
 #' distM <- Brazil_rainforest_distance_matrix
 #' output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
-#'                                  level = c(0.93, 0.97), base = "coverage", nboot = 10, 
+#'                                  base = "coverage", level = c(0.93, 0.97), nboot = 10, 
 #'                                  FDdistM = distM, FDtype = 'AUC')
 #' output_est_FD_abun
 #' 
 #' 
-#' # diversity = 'TD' for incidence data
+#' # diversity = 'TD' for incidence data with two target coverages (97.5% and 99%)
 #' data(Fish_incidence_data)
-#' output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,1,2), 
-#'                                  datatype = "incidence_raw", base = "coverage")
+#' output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
+#'                                  datatype = "incidence_raw", base = "coverage", 
+#'                                  level = c(0.975, 0.99))
 #' output_est_TD_inci
 #' 
 #' 
-#' # diversity = 'PD' for incidence data
+#' # diversity = 'PD' for incidence data with two target coverages (97.5% and 99%)
 #' data(Fish_incidence_data)
 #' data(Fish_phylo_tree)
 #' data <- Fish_incidence_data
 #' tree <- Fish_phylo_tree
 #' output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
-#'                                  level = c(0.975, 0.99), base = "coverage", PDtree = tree)
+#'                                  base = "coverage", level = c(0.975, 0.99), PDtree = tree)
 #' output_est_PD_inci
 #' 
 #' 
-#' # diversity = 'FD' for incidence data
+#' # diversity = 'FD' for incidence data with two target number of sampling units (30 and 70)
 #' data(Fish_incidence_data)
 #' data(Fish_distance_matrix)
 #' data <- Fish_incidence_data
 #' distM <- Fish_distance_matrix
 #' output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
-#'                                  level = c(30, 70), base = "size", nboot = 10, 
+#'                                  base = "size", level = c(30, 70), nboot = 10, 
 #'                                  FDdistM = distM, FDtype = 'AUC')
 #' output_est_FD_inci
 #' }
@@ -1297,16 +1299,16 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 
 #' Asymptotic diversity and observed diversity of order q
 #' 
-#' \code{ObsAsy3D}: The estimated asymptotic and observed diversity of order q 
+#' \code{ObsAsy3D} computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; these 3D values with different order q can be used to depict a q-profile in the \code{ggObsAsy3D} function. It also computes observed and asymptotic PD for various reference times by specifying the argument \code{PDreftime}; these PD values with different reference times can be used to depict a time-profile in the \code{ggObsAsy3D} function. It also computes observed and asymptotic FD for various threshold tau levels by specifying the argument \code{FDtau}; these FD values with different threshold levels can be used to depict a tau-profile in the \code{ggObsAsy3D} function.
 #' 
 #' @param data (a) For \code{datatype = "abundance"}, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. \cr
 #' (b) For \code{datatype = "incidence_raw"}, data can be input as a list of matrices/data.frames (species by sampling units); data can also be input as a single matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (\code{nT}, see below) must be specified. 
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
-#' @param q a numerical vector specifying the diversity orders. Default is \code{c(0, 1, 2)}.
+#' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, by = 0.2)}.
 #' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is 0.95.
-#' @param nT (required only when \code{datatype = "incidence_raw"} and input data is a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
+#' @param nT (required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc. 
 #' @param method computing type. Select \code{'Asymptotic'} or \code{'Observed'}.
 #' @param PDtree (required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage. 
 #' @param PDreftime (argument only for \code{diversity = "PD"}), a vector of numerical values specifying reference times for PD. Default is \code{NULL} (i.e., the age of the root of \code{PDtree}).  
@@ -1514,23 +1516,22 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 
 #' ggplot2 extension for plotting q-profile, time-profile, and tau-profile
 #'
-#' \code{ggObsAsy3D} is a \code{ggplot} extension for \code{ObsAsy3D} object to plot q-profile, time-profile, and tau-profile based on the output of \code{ObsAsy3D} using the ggplot2 package.\cr
-#' Note, it will only show the confidence interval of \code{'Asymptotic'} when setting \code{method = "both"} in \code{ObsAsy3D}.
+#' \code{ggObsAsy3D} is a \code{ggplot} extension for \code{ObsAsy3D} object to plot q-profile for 3D for q between 0 and 2 (in increments of 0.2); it also plots time-profile (for PD when \code{diversity = "PD"} specified in the \code{ObsAsy3D} function), and tau-profile (for FD when \code{diversity = "FD"} specified in the \code{ObsAsy3D} function) based on the output of \code{ObsAsy3D}.
 #' 
 #' @param output the output of the function \code{ObsAsy3D}.\cr
-#' @param profile a selection of profile versus to diversity. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile. \code{'time'} profile for only when \code{diversity = "PD"}. \code{'tau'} profile for only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}.\cr
+#' @param profile a selection of profile. User can choose \code{'q'}, \code{'time'}, and \code{'tau'}. Default is \code{'q'} profile.\cr
 #' @return a figure of asymptotic and observed diversity in q-profile, time-profile, or tau-profile.\cr\cr
 #'
 #' @examples
 #' \donttest{
-#' # diversity = 'TD' for abundance data
+#' # plot q-profile when diversity = 'TD' for abundance data
 #' data(Brazil_rainforest_abun_data)
 #' output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
 #'                                   datatype = "abundance")
 #' ggObsAsy3D(output_ObsAsy_TD_abun)
 #' 
 #' 
-#' # diversity = 'PD' for abundance data
+#' # plot q-profile when diversity = 'PD' for abundance data
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_phylo_tree)
 #' data <- Brazil_rainforest_abun_data
@@ -1541,7 +1542,7 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' ggObsAsy3D(output_ObsAsy_PD_abun, profile = "q")
 #' 
 #' 
-#' # diversity = 'FD' for abundance data
+#' # plot q-profile when diversity = 'FD' and FDtype = 'AUC' for abundance data
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_distance_matrix)
 #' data <- Brazil_rainforest_abun_data
@@ -1552,13 +1553,13 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' ggObsAsy3D(output_ObsAsy_FD_abun)
 #' 
 #' 
-#' # diversity = 'TD' for incidence data
+#' # plot q-profile when diversity = 'TD' for incidence data
 #' data(Fish_incidence_data)
 #' output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
 #' ggObsAsy3D(output_ObsAsy_TD_inci)
 #' 
 #' 
-#' # diversity = 'PD' for incidence data
+#' # plot time-profile when diversity = 'PD' for incidence data
 #' data(Fish_incidence_data)
 #' data(Fish_phylo_tree)
 #' data <- Fish_incidence_data
@@ -1569,7 +1570,7 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' ggObsAsy3D(output_ObsAsy_PD_inci, profile = "time")
 #' 
 #' 
-#' # diversity = 'FD' for incidence data
+#' # plot q-profile when diversity = 'FD' and FDtype = 'AUC' for incidence data
 #' data(Fish_incidence_data)
 #' data(Fish_distance_matrix)
 #' data <- Fish_incidence_data
@@ -1577,6 +1578,17 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' output_ObsAsy_FD_inci <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
 #'                                   FDdistM = distM, FDtype = 'AUC')
 #' ggObsAsy3D(output_ObsAsy_FD_inci)
+#' 
+#' 
+#' # plot tau-profile when diversity = 'FD' and FDtype = 'tau_values' for incidence data
+#' data(Fish_incidence_data)
+#' data(Fish_distance_matrix)
+#' data <- Fish_incidence_data
+#' distM <- Fish_distance_matrix
+#' output_ObsAsy_FD_tau_inci <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
+#'                                       datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.1), 
+#'                                       FDdistM = distM, FDtype = 'tau_values')
+#' ggObsAsy3D(output_ObsAsy_FD_tau_inci, profile = "tau")
 #' }
 #' 
 #' 

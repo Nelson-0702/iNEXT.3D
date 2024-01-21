@@ -38,13 +38,13 @@ There are six main functions in this package: \cr
 
 2. \code{ggiNEXT3D} visualizes the output from the function \code{iNEXT3D}. \cr
 
-3. \code{ObsAsy3D} computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity. \cr
+3. \code{ObsAsy3D} computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; it also computes observed and asymptotic PD for specified reference times, and observed and asymptotic FD for specified threshold levels. \cr
 
 4. \code{ggObsAsy3D} visualizes the output from the function \code{ObsAsy3D}. \cr
 
-5. \code{estimate3D} computes 3D diversity of order q = 0, 1 and 2 with a particular user-specified level of sample size or sample coverage. \cr
+5. \code{estimate3D} computes 3D diversity of order q = 0, 1 and 2 with a particular set of user-specified level of sample sizes or sample coverage values. \cr
 
-6. \code{DataInfo3D} provides basic data information. \cr
+6. \code{DataInfo3D} provides basic data information based on the observed data. \cr
 
 }
 \author{

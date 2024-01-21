@@ -32,57 +32,58 @@ a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\
 }
 \examples{
 \donttest{
-# diversity = 'TD' for abundance data
+# plot three types of curves when diversity = 'TD' for abundance data
 data(Brazil_rainforest_abun_data)
-output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
-                                datatype = "abundance")
+output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
+                          datatype = "abundance")
 ggiNEXT3D(output_TD_abun, facet.var = "Assemblage")
 
 
-# diversity = 'PD' for abundance data
+# plot two types (1 and 3) of curves when diversity = 'PD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
-output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0,1,2), datatype = "abundance", 
-                                nboot = 20, PDtree = tree)
+output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+                          nboot = 20, PDtree = tree)
 ggiNEXT3D(output_PD_abun, type = c(1, 3))
 
 
-# diversity = 'FD' for abundance data
+# plot three types of curves when diversity = 'FD' for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
 distM <- Brazil_rainforest_distance_matrix
 output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 0, 
-                                FDdistM = distM, FDtype = 'AUC')
+                          FDdistM = distM, FDtype = 'AUC')
 ggiNEXT3D(output_FD_abun)
 
 
-# diversity = 'TD' for incidence data
+# plot three types of curves when diversity = 'TD' for incidence data
 data(Fish_incidence_data)
 output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
-                                datatype = "incidence_raw")
+                          datatype = "incidence_raw")
 ggiNEXT3D(output_TD_inci)
 
 
-# diversity = 'PD' for incidence data
+# plot three types of curves with facet.var = "Order.q" and color.var = "Assemblage" 
+# when diversity = 'PD' for incidence data
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
 output_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-                                nboot = 20, PDtree = tree)
+                          nboot = 20, PDtree = tree)
 ggiNEXT3D(output_PD_inci, facet.var = "Order.q", color.var = "Assemblage")
 
 
-# diversity = 'FD' for incidence data
+# plot three types of curves when diversity = 'FD' for incidence data
 data(Fish_incidence_data)
 data(Fish_distance_matrix)
 data <- Fish_incidence_data
 distM <- Fish_distance_matrix
 output_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
-                                FDdistM = distM, FDtype = 'AUC')
+                          FDdistM = distM, FDtype = 'AUC')
 ggiNEXT3D(output_FD_inci)
 }
 

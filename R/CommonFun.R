@@ -93,7 +93,7 @@ Coverage = function(data, datatype, m){
 #' Printing iNEXT3D object
 #' 
 #' \code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
-#' @param x an \code{iNEXT3D} object computed by \code{\link{iNEXT3D}}.
+#' @param x an \code{iNEXT3D} object computed by \code{iNEXT3D}.
 #' @param ... additional arguments.
 #' @export
 print.iNEXT3D <- function(x, ...){
