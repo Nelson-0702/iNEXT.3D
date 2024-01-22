@@ -28,12 +28,12 @@ use different colors for combinations of diversity order and assemblage (\code{c
 a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\code{type = 1}), sample completeness curve (\code{type = 2}), and coverage-based rarefaction/extrapolation curve (\code{type = 3}).
 }
 \description{
-\code{ggiNEXT3D} is a \code{ggplot} extension for \code{iNEXT3D} object to plot sample-size- and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve.
+\code{ggiNEXT3D} is a \code{ggplot} extension for an \code{iNEXT3D} object to plot sample-size- and coverage-based rarefaction/extrapolation sampling curves along with a bridging sample completeness curve.
 }
 \examples{
 \donttest{
-# Plot three types of curves with facet.var = "Assemblage"
-# of taxonomic diversity for abundance data with order q = 0, 1, 2
+# Plot three types of curves of taxonomic diversity with facet.var = "Assemblage"
+# for abundance data with order q = 0, 1, 2
 data(Brazil_rainforest_abun_data)
 output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
                           datatype = "abundance")
@@ -67,8 +67,8 @@ output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1,
 ggiNEXT3D(output_TD_inci)
 
 
-# Plot three types of curves with facet.var = "Order.q" and color.var = "Assemblage" 
-# of phylogenetic diversity for incidence data with order q = 0, 1, 2
+# Plot three types of curves of phylogenetic diversity with facet.var = "Order.q"
+#  and color.var = "Assemblage" for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data

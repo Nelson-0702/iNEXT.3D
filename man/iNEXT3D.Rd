@@ -66,13 +66,13 @@ If the \code{endpoint} is larger than the reference sample size, then \code{iNEX
 \item{FDcut_number}{(argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is \code{FDcut_number = 50}. A larger value can be set to obtain more accurate AUC value.}
 }
 \value{
-a list of three objects: \cr
-\code{$TDInfo} (or \code{$PDInfo}, \code{$FDInfo}) for summarizing data information. Details please refer to the output of \code{DataInfo3D}. \cr\cr
-\code{$TDiNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics by \code{"$size_based"} and \code{"$coverage_based"}. \cr\cr
+a list of three objects: \cr\cr
+(1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo3D} for details. \cr\cr
+(2) \code{$TDiNextEst} (\code{$PDiNextEst}, or \code{$FDiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics. There are two data frames: \code{"$size_based"} and \code{"$coverage_based"}. \cr\cr
    In \code{"$size_based"}, the output includes:
    \item{Assemblage}{the name of assemblage.} 
    \item{Order.q}{the diversity order of q.}
-   \item{m, mT}{the target number of sample size (or sampling units).}
+   \item{m, mT}{the target sample size (or number of sampling units for incidence data).}
    \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target sample size is less than, equal to, or greater than the size of the reference sample.}
    \item{qTD, qPD, qFD}{the estimated diversity estimate.}
    \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
@@ -81,8 +81,8 @@ a list of three objects: \cr
    \item{Reftime}{the reference times for PD.}
    \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
- Similar output is obtained for \code{"$coverage_based"}. \cr
-\code{$TDAsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: \cr\cr
+ Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+(3) \code{$TDAsyEst} (\code{$PDAsyEst}, or \code{$FDAsyEst}) for showing asymptotic diversity estimates along with related statistics: 
    \item{Assemblage}{the name of assemblage.} 
    \item{qTD, qPD, qFD}{the diversity order of q.}
    \item{TD_obs, PD_obs, FD_obs}{the observed diversity.}
@@ -94,18 +94,21 @@ a list of three objects: \cr
    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
 }
 \description{
-\code{iNEXT3D} computes standardized 3D estimates with a common sample size or sample coverage for orders q = 0, 1 and 2.
+\code{iNEXT3D} mainly computes standardized 3D estimates with a common sample size or sample coverage for orders q = 0, 1 and 2. It also computes relevant information/statistics.\cr\cr 
+For \code{diversity = "TD"}, relevant data information is summarized in the output \code{$TDInfo}. Diversity estimates for rarefied and extrapolated samples are provided in the output \code{$TDiNextEst}, which includes two data frames (\code{"$size_based"} and \code{"$coverage_based"}) based on two different standardizations; in the size-based standardization, all samples are standardized to a common target sample size, whereas the in the latter standardization, all samples are standardized to a common target level of sample coverage. The asymptotic diversity estimates for q = 0, 1 and 2 are provided in the list \code{$TDAsyEst}.\cr\cr 
+For \code{diversity = "PD"}, the corresponding three lists are \code{$PDInfo}, \code{$PDiNextEst} and \code{$PDAsyEst};\cr 
+For \code{diversity = "FD"}, the corresponding three lists are \code{$FDInfo}, \code{$FDiNextEst} and \code{$FDAsyEst}.
 }
 \examples{
 \donttest{
-# Compute estimates of taxonomic diversity for abundance data with order q = 0, 1, 2
+# Compute standardized estimates of taxonomic diversity for abundance data with order q = 0, 1, 2
 data(Brazil_rainforest_abun_data)
 output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0, 1, 2), 
                           datatype = "abundance")
 output_TD_abun
 
 
-# Compute estimates of phylogenetic diversity for abundance data with order q = 0, 1, 2
+# Compute standardized estimates of phylogenetic diversity for abundance data with order q = 0, 1, 2
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
@@ -115,7 +118,7 @@ output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "ab
 output_PD_abun
 
 
-# Compute estimates of functional diversity for abundance data
+# Compute standardized estimates of functional diversity for abundance data
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
@@ -125,14 +128,14 @@ output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot 
 output_FD_abun
 
 
-# Compute estimates of taxonomic diversity for incidence data with order q = 0, 1, 2
+# Compute standardized estimates of taxonomic diversity for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
 output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
                           datatype = "incidence_raw")
 output_TD_inci
 
 
-# Compute estimates of phylogenetic diversity for incidence data with order q = 0, 1, 2
+# Compute standardized estimates of phylogenetic diversity for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
