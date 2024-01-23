@@ -338,7 +338,8 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
+      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses) %>%
+        arrange(Reftime,Order.q,SC)
     }) %>% do.call(rbind,.)
   }else if(datatype=='incidence_raw'){
     out <- lapply(datalist,function(x_){
@@ -373,7 +374,8 @@ invChatPD <- function(datalist, datatype,phylotr, q, reft, cal,level, nboot, con
       }else{
         ses <- rep(NA,nrow(est))
       }
-      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses)
+      est <- est %>% mutate(s.e.=ses,qPD.LCL=qPD-qtile*ses,qPD.UCL=qPD+qtile*ses) %>%
+        arrange(Reftime,Order.q,SC)
     }) %>% do.call(rbind,.)
   }
   Assemblage = rep(names(datalist), each = length(q)*length(reft)*length(level))

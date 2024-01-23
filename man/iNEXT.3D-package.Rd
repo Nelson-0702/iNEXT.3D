@@ -6,8 +6,8 @@
 Interpolation and Extrapolation for three dimensions of biodiversity
 }
 \description{
-\code{iNEXT.3D} (iNterpolation and EXTrapolation for three dimensions of biodiversity) is a sequel to iNEXT (Hsieh et al., 2016). 
-Here the three dimensions (3D) of diversity includes taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). An online version "iNEXT.3D Online"
+\code{iNEXT.3D} (iNterpolation and EXTrapolation for three dimensions of biodiversity) is a sequel to \code{iNEXT} (Hsieh et al., 2016).
+Here the three dimensions (3D) of diversity refer to taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). An online version "iNEXT.3D Online"
 (https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background.
 
 A unified framework based on Hill numbers (for TD) and their generalizations (Hill-Chao numbers, for PD and FD) 
@@ -30,30 +30,30 @@ For each of the three dimensions of biodiversity, \code{iNEXT.3D} features two s
 
 (2) An asymptotic approach to infer asymptotic 3D diversity (i.e., Hill-Chao numbers)
 
-\code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds.   \cr
+\code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. \cr
 
-This package contains six main functions: \cr
+There are six main functions in this package: \cr
 
-1. \code{iNEXT3D} computing interpolation and extrapolation with order q for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size. \cr
+1. \code{iNEXT3D} computes 3D diversity of order q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample coverage values and sample sizes. \cr
 
-2. \code{ggiNEXT3D} visualizing the output from the function \code{iNEXT3D}. \cr
+2. \code{ggiNEXT3D} visualizes the output from the function \code{iNEXT3D}. \cr
 
-3. \code{ObsAsy3D} computing asymptotic and observed (empirical) diversity with order q for three dimensions: taxonomic, phylogenetic and functional diversity. \cr
+3. \code{ObsAsy3D} computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; it also computes observed and asymptotic PD for specified reference times, and observed and asymptotic FD for specified threshold levels. \cr
 
-4. \code{ggObsAsy3D} visualizing the output from the function \code{ObsAsy3D}. \cr
+4. \code{ggObsAsy3D} visualizes the output from the function \code{ObsAsy3D}. \cr
 
-5. \code{estimate3D} computes taxonomic, phylogenetic, and functional diversity (Hill-Chao family with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage. \cr
+5. \code{estimate3D} computes 3D diversity of order q = 0, 1 and 2 with a particular set of user-specified level of sample sizes or sample coverage values. \cr
 
-6. \code{DataInfo3D} provides basic data information. \cr
+6. \code{DataInfo3D} provides basic data information based on the observed data. \cr
 
 }
 \author{
-Anne Chao, K.H. Hu \cr
+Anne Chao, Kai-Hsiang Hu \cr
 
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 }
 \references{
-*	Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940. \cr\cr
-*	T.C. Hsieh, K. H. Ma, and Chao, A. (2016). iNEXT: An R package for rarefaction and extrapolation of species diversity (Hill numbers). Methods in Ecology and Evolution, 7, 1451-1456. \cr\cr
+Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M. and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940. \cr\cr
+Hsieh, T. C., Ma, K. H. and Chao, A. (2016). iNEXT: An R package for rarefaction and extrapolation of species diversity (Hill numbers). Methods in Ecology and Evolution, 7, 1451-1456. \cr\cr
 }
 \keyword{package}

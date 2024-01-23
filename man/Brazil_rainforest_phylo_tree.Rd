@@ -5,11 +5,11 @@
 Phylogenetic tree for \code{Brazil_rainforest_abun_data}
 }
 \description{
-  This dataset includes a phylogenetic tree spanned by 425 species listed in the \code{Brazil_rainforest_abun_data} dataset. \cr
+  This dataset includes a phylogenetic tree spanned by 425 species listed in the dataset \code{Brazil_rainforest_abun_data}. \cr
 }
 \usage{data(Brazil_rainforest_phylo_tree)}
 \format{
-  \code{Brazil_rainforest_phylo_tree} with the following phylogenetic information: \cr
+  \code{Brazil_rainforest_phylo_tree} is a list with the following phylogenetic information: \cr
   A list of 5: \cr
   $ edge: int [1:629, 1:2] 426 427 428 429 430 431 427 428 429 430 ... \cr
   $ edge.length: num [1:629] 75 146 8 6 4 14 10 10 127 6 ... \cr
