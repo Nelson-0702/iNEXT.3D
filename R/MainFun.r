@@ -730,7 +730,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' ggiNEXT3D(output_TD_abun, facet.var = "Assemblage")
 #' 
 #' 
-#' # Plot two types (1 and 3) of curves of phylogenetic diversity for abundance data with order q = 0, 1, 2
+#' # Plot two types (1 and 3) of curves of phylogenetic diversity 
+#' # for abundance data with order q = 0, 1, 2
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_phylo_tree)
 #' data <- Brazil_rainforest_abun_data
