@@ -43,7 +43,7 @@ If \code{base = "size"} and \code{level = NULL}, then this function computes the
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of positive integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{PDtree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -64,8 +64,8 @@ a data.frame of diversity table including the following arguments: (when \code{b
 \item{Assemblage}{the name of assemblage.}
 \item{Order.q}{the diversity order of q.}
 \item{SC}{the target standardized coverage value.}
-\item{m, mT}{the corresponding sample size (or sampling units) for the standardized coverage value.}
-\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{size = infinity}) represents the estimated asymptotic diversity.}
+\item{m, mT}{the corresponding sample size (or number of sampling units) for the standardized coverage value.}
+\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (when \code{base = "coverage"} and \code{level = 1}, or \code{base = "size"} and \code{level = Inf}) represents the estimated asymptotic diversity.}
 \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
 \item{s.e.}{standard error of diversity estimate.}
 \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}

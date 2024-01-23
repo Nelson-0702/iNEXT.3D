@@ -49,7 +49,7 @@ If the \code{endpoint} is larger than the reference sample size, then \code{iNEX
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of positive integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{PDtree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -96,7 +96,7 @@ a list of three objects: \cr\cr
 \description{
 \code{iNEXT3D} mainly computes standardized 3D estimates with a common sample size or sample coverage for orders q = 0, 1 and 2. It also computes relevant information/statistics.\cr\cr 
 For \code{diversity = "TD"}, relevant data information is summarized in the output \code{$TDInfo}. Diversity estimates for rarefied and extrapolated samples are provided in the output \code{$TDiNextEst}, which includes two data frames (\code{"$size_based"} and \code{"$coverage_based"}) based on two different standardizations; in the size-based standardization, all samples are standardized to a common target sample size, whereas the in the latter standardization, all samples are standardized to a common target level of sample coverage. The asymptotic diversity estimates for q = 0, 1 and 2 are provided in the list \code{$TDAsyEst}.\cr\cr 
-For \code{diversity = "PD"}, the corresponding three lists are \code{$PDInfo}, \code{$PDiNextEst} and \code{$PDAsyEst};\cr 
+For \code{diversity = "PD"}, the corresponding three lists are \code{$PDInfo}, \code{$PDiNextEst} and \code{$PDAsyEst}.\cr 
 For \code{diversity = "FD"}, the corresponding three lists are \code{$FDInfo}, \code{$FDiNextEst} and \code{$FDAsyEst}.
 }
 \examples{

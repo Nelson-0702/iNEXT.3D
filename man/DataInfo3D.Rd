@@ -24,7 +24,7 @@ DataInfo3D(
 
 \item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence/occurrence matrix (\code{datatype = "incidence_raw"}) with all entries being 0 (non-detection) or 1 (detection).}
 
-\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
+\item{nT}{(required only when \code{datatype = "incidence_raw"} and input data in a single matrix/data.frame) a vector of positive integers specifying the number of sampling units in each assemblage. If assemblage names are not specified (i.e., \code{names(nT) = NULL}), then assemblages are automatically named as "assemblage1", "assemblage2",..., etc.}
 
 \item{PDtree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.}
 
@@ -47,7 +47,7 @@ the number of singletons (\code{f1*}) and doubletons (\code{f2*}) in the node/br
 of those singletons (\code{g1}) and of those doubletons (\code{g2}), and the reference time (\code{Reftime}).\cr\cr
 (3) FD (\code{FDtype = "AUC"}): the minimum distance among all non-diagonal elements in the distance matrix (\code{dmin}), the mean distance
 (\code{dmean}), and the maximum distance (\code{dmax}) in the distance matrix.\cr \cr
-(4) FD (\code{FDtype = "tau_value"}): the number of singletons (\code{a1*}) and of doubletons (\code{a2*}) among the functionally indistinct
+(4) FD (\code{FDtype = "tau_values"}): the number of singletons (\code{a1*}) and of doubletons (\code{a2*}) among the functionally indistinct
 set at the specified threshold level \code{'Tau'}, as well as the total attribute contribution of singletons (\code{h1}) and of doubletons (\code{h2})
 at the specified threshold level \code{'Tau'}.\cr\cr
  

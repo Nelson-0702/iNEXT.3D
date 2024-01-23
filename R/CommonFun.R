@@ -161,6 +161,8 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, DATATYPE)
   
+  if(sum(nT <= 0) != 0) stop("Number of sampling units should be a positive value.", call. = FALSE)
+  
   if (datatype == "incidence_raw" & raw.to.inci == TRUE) {
     
     if (!inherits(data, "list")) 
@@ -470,6 +472,8 @@ check.size <- function(data, datatype, size, endpoint, knots) {
       }else{
         mi <- floor(c(seq(1, ni, length.out = floor(knots[i]/2)), seq(ni+1, endpoint[i], length.out = knots[i]-floor(knots[i]/2))))
       }
+      
+      if(sum(mi < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
       unique(mi)
     })
     
@@ -491,10 +495,12 @@ check.size <- function(data, datatype, size, endpoint, knots) {
       
       if ( (sum(size[[i]] == ni) == 0) & (sum(size[[i]] > ni) != 0) & (sum(size[[i]] < ni) != 0) ) 
         mi <- sort(c(ni,size[[i]])) else mi <- sort(size[[i]])
-        
-        unique(mi)
+      
+      if(sum(mi < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
+      unique(mi)
     })
   }
+  
   
   return(size)
 }
@@ -540,6 +546,9 @@ check.level <- function(data, datatype, base, level) {
     
     level <- min(level)
   }
+  
+  if(base == "size" & sum(level < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
+  if(base == "coverage" & sum(level < 0 | level > 1) > 0) stop("The sample coverage values should be between zero and one.", call. = FALSE)  
   
   return(level)
 }
