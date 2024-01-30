@@ -30,11 +30,11 @@ For each of the three dimensions of biodiversity, \code{iNEXT.3D} features two s
 
 (2) An asymptotic approach to infer asymptotic 3D diversity (i.e., Hill-Chao numbers)
 
-\code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. \cr
+\code{iNEXT.3D} computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles (q-profiles) for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q \eqn{\geq} 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. \code{iNEXT.3D} also features a time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times), and a tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau). \cr
 
 There are six main functions in this package: \cr
 
-1. \code{iNEXT3D} computes 3D diversity of order q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample coverage values and sample sizes. \cr
+1. \code{iNEXT3D} computes standardized 3D diversity of order q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample coverage values and sample sizes. \cr
 
 2. \code{ggiNEXT3D} visualizes the output from the function \code{iNEXT3D}. \cr
 
