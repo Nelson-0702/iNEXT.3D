@@ -67,17 +67,35 @@ Coverage = function(data, datatype, m){
   A <- ifelse(f1>0, n*f0.hat/(n*f0.hat+f1), 1)
   Sub <- function(m){
     if(m < n) {
-      xx <- x[(n-x)>=m]
-      out <- 1-sum(xx / n * exp(lgamma(n-xx+1)-lgamma(n-xx-m+1)-lgamma(n)+lgamma(n-m)))
-    }
+      if (m == round(m)) {
+        xx <- x[(n-x)>=m]
+        out <- 1-sum(xx / n * exp(lgamma(n-xx+1)-lgamma(n-xx-m+1)-lgamma(n)+lgamma(n-m)))
+      } else {
+        cbym = rbind(c(floor(m), ceiling(m)), 
+                     sapply(c(floor(m), ceiling(m)), function(k) {
+                       xx <- x[(n-x)>=k]
+                       if (k == n) 1-f1/n*A else 1-sum(xx / n * exp(lgamma(n-xx+1)-lgamma(n-xx-k+1)-lgamma(n)+lgamma(n-k)))
+                     }))
+        out <- (ceiling(m) - m)*cbym[-1, cbym[1,] == floor(m)] + (m - floor(m))*cbym[-1, cbym[1,] == ceiling(m)] 
+      }
+      }
     if(m == n) out <- 1-f1/n*A
     if(m > n) out <- 1-f1/n*A^(m-n+1)
     out
   }
   Sub2 <- function(m){
     if(m < n) {
-      xx <- x[(n-x)>=m]
-      out <- 1-sum(xx / u * exp(lgamma(n-xx+1)-lgamma(n-xx-m+1)-lgamma(n)+lgamma(n-m)))
+      if (m == round(m)) {
+        xx <- x[(n-x)>=m]
+        out <- 1-sum(xx / u * exp(lgamma(n-xx+1)-lgamma(n-xx-m+1)-lgamma(n)+lgamma(n-m)))
+      } else {
+        cbym = rbind(c(floor(m), ceiling(m)), 
+                     sapply(c(floor(m), ceiling(m)), function(k) {
+                       xx <- x[(n-x)>=k]
+                       if (k == n) 1-f1/u*A else 1-sum(xx / u * exp(lgamma(n-xx+1)-lgamma(n-xx-k+1)-lgamma(n)+lgamma(n-k)))
+                     }))
+        out <- (ceiling(m) - m)*cbym[-1, cbym[1,] == floor(m)] + (m - floor(m))*cbym[-1, cbym[1,] == ceiling(m)] 
+      }
     }
     if(m == n) out <- 1-f1/u*A
     if(m > n) out <- 1-f1/u*A^(m-n+1)

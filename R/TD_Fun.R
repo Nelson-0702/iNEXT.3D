@@ -156,7 +156,8 @@ iNEXT.Ind <- function(Spec, q=0, m=NULL, endpoint=2*sum(Spec), knots=40, nboot=2
   if(unconditional_var){
     goalSC <- unique(C.hat)
     Dq.hat_unc <- unique(invChat.Ind(x = Spec,q = q,C = goalSC))
-    Dq.hat_unc$Method[round(Dq.hat_unc$m) == n] = "Observed"
+    refC <- Coverage(Spec, 'abundance', n)
+    Dq.hat_unc$Method[Dq.hat_unc$SC == refC] = "Observed"
   }
   
   if(nboot > 1 & length(Spec) > 1) {
@@ -247,7 +248,8 @@ iNEXT.Sam <- function(Spec, t=NULL, q=0, endpoint=2*max(Spec), knots=40, nboot=2
   if(unconditional_var){
     goalSC <- unique(C.hat)
     Dq.hat_unc <- unique(invChat.Sam(x = Spec,q = q,C = goalSC))
-    Dq.hat_unc$Method[round(Dq.hat_unc$nT) == nT] = "Observed"
+    refC <- Coverage(Spec, "incidence_freq", nT)
+    Dq.hat_unc$Method[Dq.hat_unc$SC == refC] = "Observed"
   }
   
   if(nboot > 1 & length(Spec) > 2){

@@ -308,7 +308,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
   order <- rep(rep(q,each = length(mm)),length(tau))
   SC <- rep(SC,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
-  method[round(m) == n] = "Observed"
+  method[SC == refC] = "Observed"
   data.frame(m = m,Method = method,Order.q = order,
              qFD = out,SC=SC, Tau = threshold)
 }
@@ -356,7 +356,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
   order <- rep(rep(q,each = length(mm)),length(tau))
   SC <- rep(SC,length(q)*length(tau))
   threshold <- rep(tau,each = length(q)*length(mm))
-  method[round(m) == n] = "Observed"
+  method[SC == refC] = "Observed"
   data.frame(m = m,Method = method,Order.q = order,
              qFD = out,SC=SC, Tau = threshold)
 }

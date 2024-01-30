@@ -101,7 +101,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         goalSC <- unique(covm)
         qPD_unc <- invChatPD_abu(x = x,ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                                  q = q,Cs = goalSC,n = n,reft = reft,cal = cal)
-        qPD_unc$Method[round(qPD_unc$m) == n] = "Observed"
+        refC <- Coverage(x, 'abundance', n)
+        qPD_unc$Method[qPD_unc$SC == refC] = "Observed"
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT)
@@ -205,7 +206,8 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         goalSC <- unique(covm)
         qPD_unc <- invChatPD_inc(x = rowSums(x),ai = aL$treeNabu$branch.abun,Lis = aL$BLbyT,
                                  q = q,Cs = goalSC,n = n,reft = reft,cal = cal)
-        qPD_unc$Method[round(qPD_unc$nT) == n] = "Observed"
+        refC <- Coverage(x, "incidence_raw", n)
+        qPD_unc$Method[qPD_unc$SC == refC] = "Observed"
       }
       if(nboot>1){
         Boots <- Boots.one(phylo = phylotr,aL$treeNabu,datatype,nboot,reft,aL$BLbyT,n)
