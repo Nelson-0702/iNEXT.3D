@@ -730,7 +730,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' ggiNEXT3D(output_TD_abun, facet.var = "Assemblage")
 #' 
 #' 
-#' # Plot two types (1 and 3) of curves of phylogenetic diversity for abundance data with order q = 0, 1, 2
+#' # Plot two types (1 and 3) of curves of phylogenetic diversity 
+#' # for abundance data with order q = 0, 1, 2
 #' data(Brazil_rainforest_abun_data)
 #' data(Brazil_rainforest_phylo_tree)
 #' data <- Brazil_rainforest_abun_data
@@ -1436,7 +1437,7 @@ estimate3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' data <- Fish_incidence_data
 #' distM <- Fish_distance_matrix
 #' output_ObsAsy_FD_tau_inci <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
-#'                                       datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.1), 
+#'                                       datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.05), 
 #'                                       FDdistM = distM, FDtype = 'tau_values')
 #' output_ObsAsy_FD_tau_inci
 #' 
@@ -1649,7 +1650,7 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
 #' data <- Fish_incidence_data
 #' distM <- Fish_distance_matrix
 #' output_ObsAsy_FD_tau_inci <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
-#'                                       datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.1), 
+#'                                       datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.05), 
 #'                                       FDdistM = distM, FDtype = 'tau_values')
 #' ggObsAsy3D(output_ObsAsy_FD_tau_inci, profile = "tau")
 #' }
