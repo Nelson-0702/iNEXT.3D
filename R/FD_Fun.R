@@ -686,7 +686,7 @@ FDtable_est <- function(datalist, dij, tau, q, datatype, nboot = 30, conf = 0.95
         ses <- rep(NA,length(est))
       }
       output <- cbind(est,ses,est-qtile*ses,est+qtile*ses)
-      output[output[,2]<0,2] <- 0
+      output[output[,3]<0,3] <- 0
       # list(estimates = output,info = est_info$info)
       output
     })

@@ -15,32 +15,46 @@ ggObsAsy3D(output, profile = "q")
 a q-profile, time-profile, or tau-profile based on the observed diversity and the asymptotic diversity estimate.\cr\cr
 }
 \description{
-\code{ggObsAsy3D} is a \code{ggplot2} extension for an \code{ObsAsy3D} object to plot 3D q-profile (which depicts the observed diversity and asymptotic diversity estimate with respect to order q) for q between 0 and 2 (in increments of 0.2).\cr\cr It also plots time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times when \code{diversity = "PD"} specified in the \code{ObsAsy3D} function), and tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau when \code{diversity = "FD"} and \code{FDtype = "tau_values"} specified in the \code{ObsAsy3D} function) based on the output of \code{ObsAsy3D}.
+\code{ggObsAsy3D} is a \code{ggplot2} extension for an \code{ObsAsy3D} object to plot 3D q-profile (which depicts the observed diversity and asymptotic diversity estimate with respect to order q) for q between 0 and 2 (in increments of 0.2).\cr\cr 
+It also plots time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times when \code{diversity = "PD"} specified in the \code{ObsAsy3D} function), and tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau when \code{diversity = "FD"} and \code{FDtype = "tau_values"} specified in the \code{ObsAsy3D} function) based on the output of \code{ObsAsy3D}.\cr\cr 
+In the plot of profiles, only confidence intervals of the asymptotic diversity will be shown when both the observed and asymptotic diversity estimates are computed.
 }
 \examples{
 \donttest{
 # Plot q-profile of taxonomic diversity for abundance data
-# with order q between 0 and 2 (in increments of 0.2 by default)
+# with order q between 0 and 2 (in increments of 0.2 by default).
 data(Brazil_rainforest_abun_data)
 output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
                                   datatype = "abundance")
 ggObsAsy3D(output_ObsAsy_TD_abun)
 
 
-# Plot q-profile of phylogenetic diversity for abundance data
-# with order q between 0 and 2 (in increments of 0.5)
+# Plot time-profile of phylogenetic diversity for abundance data
+# with order q = 0, 1, 2 under reference times from 0.01 to 400 (tree height).
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_phylo_tree)
 data <- Brazil_rainforest_abun_data
 tree <- Brazil_rainforest_phylo_tree
-output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, by = 0.5), 
-                                  datatype = "abundance", nboot = 20, PDtree = tree, 
-                                  PDtype = "meanPD")
-ggObsAsy3D(output_ObsAsy_PD_abun, profile = "q")
+output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), 
+                                  PDreftime = seq(0.01, 400, length.out = 20),
+                                  datatype = "abundance", nboot = 20, PDtree = tree)
+ggObsAsy3D(output_ObsAsy_PD_abun, profile = "time")
+
+
+# Plot tau-profile of functional diversity for abundance data
+# with order q = 0, 1, 2 under tau values from 0 to 1.
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun_tau <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
+                                      datatype = "abundance", nboot = 10, FDdistM = distM, 
+                                      FDtype = 'tau_values', FDtau = seq(0, 1, 0.05))
+ggObsAsy3D(output_ObsAsy_FD_abun_tau, profile = "tau")
 
 
 # Plot q-profile of functional diversity for abundance data
-# with order q between 0 and 2 (in increments of 0.5)
+# with order q between 0 and 2 (in increments of 0.5).
 data(Brazil_rainforest_abun_data)
 data(Brazil_rainforest_distance_matrix)
 data <- Brazil_rainforest_abun_data
@@ -48,26 +62,28 @@ distM <- Brazil_rainforest_distance_matrix
 output_ObsAsy_FD_abun <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
                                   datatype = "abundance", nboot = 10, 
                                   FDdistM = distM, FDtype = 'AUC')
-ggObsAsy3D(output_ObsAsy_FD_abun)
+ggObsAsy3D(output_ObsAsy_FD_abun, profile = "q")
 
 
 # Plot q-profile of taxonomic diversity for incidence data
 # with order q between 0 and 2 (in increments of 0.2 by default)
 data(Fish_incidence_data)
-output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
+output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', 
+                                  datatype = "incidence_raw")
 ggObsAsy3D(output_ObsAsy_TD_inci)
 
 
-# Plot time-profile of observed phylogenetic diversity for incidence data 
-# with order q = 0, 1, 2 and reference times from 0.1 to 1
+# Plot q-profile of phylogenetic diversity for incidence data 
+# with order q between 0 and 2 (in increments of 0.2 by default), 
+# for the default reference time = 0.977 (the tree depth).
 data(Fish_incidence_data)
 data(Fish_phylo_tree)
 data <- Fish_incidence_data
 tree <- Fish_phylo_tree
-output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), 
+output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, 0.2), 
                                   datatype = "incidence_raw", nboot = 20, PDtree = tree, 
-                                  PDreftime = seq(0.1, 1, length.out = 40), method = "Observed")
-ggObsAsy3D(output_ObsAsy_PD_inci, profile = "time")
+                                  PDreftime = NULL)
+ggObsAsy3D(output_ObsAsy_PD_inci, profile = "q")
 
 
 # Plot q-profile of functional diversity for incidence data
@@ -78,19 +94,7 @@ data <- Fish_incidence_data
 distM <- Fish_distance_matrix
 output_ObsAsy_FD_inci <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw", 
                                   nboot = 20, FDdistM = distM, FDtype = 'AUC')
-ggObsAsy3D(output_ObsAsy_FD_inci)
-
-
-# Plot tau-profile of functional diversity for incidence data with FDtype = 'tau_values'
-# and tau values (threshold levels) from 0 to 0.6
-data(Fish_incidence_data)
-data(Fish_distance_matrix)
-data <- Fish_incidence_data
-distM <- Fish_distance_matrix
-output_ObsAsy_FD_tau_inci <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
-                                      datatype = "incidence_raw", FDtau = seq(0, 0.6, 0.05), 
-                                      FDdistM = distM, FDtype = 'tau_values')
-ggObsAsy3D(output_ObsAsy_FD_tau_inci, profile = "tau")
+ggObsAsy3D(output_ObsAsy_FD_inci, profile = "q")
 }
 
 
