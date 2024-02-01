@@ -48,7 +48,7 @@ For each of the three dimensions of biodiversity, `iNEXT.3D` features two statis
 
 (2) An asymptotic approach to infer asymptotic 3D diversity (i.e., Hill-Chao numbers) 
 
-`iNEXT.3D` computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles (q-profiles) for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q â‰? 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. `iNEXT.3D` also features a time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times), and a tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau).
+`iNEXT.3D` computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles (q-profiles) for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q $\geq$ 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. `iNEXT.3D` also features a time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times), and a tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau).
 
 
 ## How to cite
@@ -116,7 +116,7 @@ Although species identities/names are not required to assess TD or compare TD ac
 
 2. Sampling-unit-based incidence data: Incidence-raw data (`datatype = "incidence_raw"`): for each assemblage, input data for a reference sample consist of a species-by-sampling-unit matrix, in addition to the sampling-unit names (as column names) and the species names (as row names). When there are N assemblages, input data consist of N lists of matrices, and each matrix is a species-by-sampling-unit matrix. Each element in the incidence raw matrix is 1 for a detection, and 0 for a non-detection. Input a matrix which combines data for all assemblages is allowed, but the argument `nT` in the function `iNEXT3D` must be specified so that the number of sampling units in each assemblage is specified.
   
-For example, the dataset `Brazil_rainforest_abun_data` included in the `iNEXT.3D` package consists of species sample abundances of two assemblages/habitats: â€œEdgeâ€? and â€œInteriorâ€?. Run the following code to view the first 15 rows of the abundance data. 
+For example, the dataset `Brazil_rainforest_abun_data` included in the `iNEXT.3D` package consists of species sample abundances of two assemblages/habitats: ?€œEdge?€? and ?€œInterior?€?. Run the following code to view the first 15 rows of the abundance data. 
 
 ```{r eval=FALSE}
 data("Brazil_rainforest_abun_data")
