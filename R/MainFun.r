@@ -781,8 +781,8 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' @export
 ggiNEXT3D = function(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q"){
   
-  if(!inherits(output, "iNEXT3D"))
-    stop("Please use the output from specified function 'iNEXT3D'")
+  # if(!inherits(output, "iNEXT3D"))
+  #   stop("Please use the output from specified function 'iNEXT3D'")
   
   if (sum(names(output) %in% c('TDInfo', 'TDiNextEst', 'TDAsyEst')) == 3) {
     
