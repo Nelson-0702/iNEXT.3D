@@ -12,11 +12,14 @@ knitr::opts_chunk$set(
   comment = "",
   fig.path = "README/README-",
   fig.align = 'center',
-  fig.retina=2, fig.width = 7, fig.height = 5,
+  fig.retina=2, fig.width = 6, fig.height = 4,
   warning = FALSE,
   message = FALSE
 )
 options("width"=200)
+
+library(iNEXT.3D)
+library(ggplot2)
 ```
 
 iNEXT.3D (R package)
@@ -31,78 +34,184 @@ iNEXT.3D (R package)
 <i>Institute of Statistics, National Tsing Hua University, Hsin-Chu, Taiwan 30043</i>  
 </h5>
 <br>
-iNEXT.3D (INterpolation and EXTrapolation for three dimensions of diversity) is an R package, available in [Github](https://github.com/AnneChao), for rarefaction and extrapolation of species diversity (Hill numbers) for three dimensions. Here we provide a quick introduction demonstrating how to run iNEXT.3D, and showing three types of rarefaction/extrapolation sampling curves. See Chao et al. (2021) for methodologies. An online version of [iNEXT.3D Online](https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background. Detailed information about all functions in iNEXT.3D is provided in the iNEXT.3D Manual in [iNEXT.3D_vignettes](http://chao.stat.nthu.edu.tw/wordpress/wp-content/uploads/software/A%20Quick%20Introduction%20to%20iNEXT.3D%20via%20Examples.html), which is also available from [Anne Chao's website](http://chao.stat.nthu.edu.tw/wordpress/software_download/).
+`iNEXT.3D` (INterpolation and EXTrapolation for three dimensions of biodiversity) is a sequel to [iNEXT](https://cran.r-project.org/web/packages/iNEXT/index.html) (Hsieh et al., 2016). 
+Here the three dimensions (3D) of diversity include taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). An online version "iNEXT.3D Online"
+(https://chao.shinyapps.io/iNEXT_3D/) is also available for users without an R background.
 
-`iNEXT.3D` is the extension of R package [iNEXT](https://cran.r-project.org/web/packages/iNEXT/index.html) (Hsieh et al., 2016). `iNEXT.3D` focuses on three measures of Hill numbers of order q: species richness (`q = 0`), Shannon diversity (`q = 1`, the exponential of Shannon entropy) and Simpson diversity (`q = 2`, the inverse of Simpson concentration) and extend Hill number to three dimensions: taxonomic diversity (TD), phylogenetic diversity (PD), and functional diversity (FD) under Hill-Chao family frame work (Chao et al., 2019). Besides, `iNEXT.3D` also provide statistic estimation for three dimensions biodiversity (Chao et al., 2021). For each diversity measure, `iNEXT.3D` uses the observed sample of abundance or incidence data (called the “reference sample”) to compute diversity estimates and the associated confidence intervals for the following two types of rarefaction and extrapolation (R/E): 
+A unified framework based on Hill numbers (for TD) and their generalizations (Hill-Chao numbers, for PD and FD) 
+is adopted to quantify 3D. In this framework, TD quantifies the effective number of species, PD quantifies the effective total branch length, mean-PD (PD divided by tree depth) quantifies the effective number of lineages, and FD quantifies the effective number of virtual functional groups (or functional "species"). Thus, TD, mean-PD, and FD are all in the same units of species/lineage equivalents and can be meaningfully compared; see Chao et al. (2014) for the basic standardization theory for TD, and Chao et al. (2021) for a review of the unified theory for 3D. 
 
-1. Sample-size-based R/E sampling curves:`iNEXT3D` computes diversity estimates for rarefied and extrapolated samples up to an appropriate size. This type of sampling curve plots the diversity estimates with respect to sample size.     
-2. Coverage-based R/E sampling curves: `iNEXT3D` computes diversity estimates for rarefied and extrapolated samples with sample completeness (as measured by sample coverage) up to an appropriate coverage. This type of sampling curve plots the diversity estimates with respect to sample coverage. 
+For each of the three dimensions of biodiversity, `iNEXT.3D` features two statistical analyses (non-asymptotic and asymptotic):
 
-`iNEXT.3D` also plots the above two types of sampling curves and a sample completeness curve by `ggiNEXT3D`. The sample completeness curve provides a bridge between these two types of curves.
+(1) A non-asymptotic approach based on interpolation and extrapolation for 3D diversity (i.e., Hill-Chao numbers)
+
+`iNEXT.3D` computes the estimated 3D diversity for standardized samples with a common sample size or sample completeness. This approach aims to compare diversity estimates for equally-large (with a common sample size) or equally-complete (with a common sample coverage) samples; it is based on the seamless rarefaction and extrapolation (R/E) sampling curves of Hill-Chao numbers for q = 0, 1 and 2. For each dimension of biodiversity, `iNEXT.3D` offers three types of R/E sampling curves:
 
 
-### SOFTWARE NEEDED TO RUN INEXT.3D IN R
+* Sample-size-based (or size-based) R/E sampling curves: This type of sampling curve plots the diversity estimates with respect to sample size.
 
--   Required: [R](http://cran.rstudio.com/)
--   Suggested: [RStudio IDE](http://www.rstudio.com/ide/download/)
+* Coverage-based R/E sampling curves: This type of sampling curve plots the diversity estimates with respect to sample coverage.
 
-### HOW TO RUN INEXT.3D:
+* Sample completeness curve: This curve depicts how sample coverage varies with sample size. The sample completeness curve provides a bridge between the size- and coverage-based R/E sampling curves.
 
-The iNEXT.3D package is available on [Github](https://github.com/AnneChao/iNEXT.3D) and can be downloaded with a standard installation procedure using the commands shown below. For a first-time installation, an additional visualization extension package (ggplot2) must be installed and loaded.  
+(2) An asymptotic approach to infer asymptotic 3D diversity (i.e., Hill-Chao numbers) 
+
+`iNEXT.3D` computes the estimated asymptotic 3D diversity and also plots 3D diversity profiles (q-profiles) for q between 0 and 2, in comparison with the observed diversity. Typically, the asymptotic estimates for q $\geq$ 1 are reliable, but for q < 1 (especially for q = 0, species richness), the asymptotic estimates represent only lower bounds. `iNEXT.3D` also features a time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times), and a tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau).
+
+
+## How to cite
+If you publish your work based on results from `iNEXT.3D` package, you should make references to the following methodology paper and the package:
+
+*	Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K-H., Dornelas, M and. Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+
+- Chao, A. and Hu, K.-H. (2023). The iNEXT.3D package: interpolation and extrapolation for three dimensions of biodiversity. R package available from CRAN.  
+
+
+## SOFTWARE NEEDED TO RUN iNEXT.3D IN R
+- Required: [R](https://cran.r-project.org/)
+- Suggested: [RStudio IDE](https://www.rstudio.com/products/RStudio/#Desktop)
+
+
+## HOW TO RUN iNEXT.3D:
+The `iNEXT.3D` package can be downloaded from CRAN or Anne Chao's [iNEXT.3D_github](https://github.com/AnneChao/iNEXT.3D) using the commands below. For a first-time installation, some additional packages must be installed and loaded; see package manual. 
+
 
 ```{r install, eval=FALSE}
 ## install iNEXT.3D package from CRAN
-# install.packages("iNEXT.3D")  # coming soon
+install.packages("iNEXT.3D")  
 
-## install the latest version from github
+## or install the latest version from github
 install.packages('devtools')
 library(devtools)
 install_github('AnneChao/iNEXT.3D')
 
 ## import packages
 library(iNEXT.3D)
-library(ggplot2)
 ```
 
 
-In this document, here provide a quick introduction demonstrating how to run the package `iNEXT.3D` (iNterpolation and EXTrapolation in three Dimensions). `iNEXT.3D` has several main functions: `iNEXT3D`, `ggiNEXT3D`, `ObsAsy3D`, `ggObsAsy3D`, `estimate3D`, and `DataInfo3D.`
+There are six main functions in this package: 
+
+Two functions for non-asymptotic analysis with graphical displays:
+
+- **iNEXT3D** computes standardized 3D diversity estimates of order q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample coverage values and sample sizes.
+
+- **ggiNEXT3D** visualizes the output from the function `iNEXT3D`.
 
 
-### MAIN FUNCTION: iNEXT3D()
+Two functions for point estimation and basic data information
 
-The main function iNEXT3D() with default arguments is described below:
+- **estimate3D** computes 3D diversity of order q = 0, 1 and 2 with a particular set of user-specified level of sample sizes or sample coverage values.
 
+- **DataInfo3D** provides basic data information based on the observed data.
+
+
+Two functions for asymptotic analysis with graphical displays:
+
+- **ObsAsy3D** computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; it also computes observed and asymptotic PD for specified reference times, and observed and asymptotic FD for specified threshold levels.
+
+- **ggObsAsy3D** visualizes the output from the function `ObsAsy3D`.
+
+
+
+## <span style="color:red;">DATA INPUT FORMAT</span>
+
+### Species abundance/incidence data format
+
+Although species identities/names are not required to assess TD or compare TD across individual assemblages (as in the `iNEXT` package), they are required for PD and FD. Thus, for `iNEXT.3D` package, information on species identity (or any unique identification code) and assemblage affiliation is required. Two types of species abundance/incidence data are supported:
+
+1. Individual-based abundance data (`datatype = "abundance"`): When there are multiple assemblages, in addition to the assemblage/site names (as column names) and the species names (as row names), species abundance data (reference sample) can be input as a species (in rows) by assemblage (in columns) matrix/data.frame or a list of species abundance vectors. In the special case that there is only one assemblage, all data should be read in one column.
+
+2. Sampling-unit-based incidence data: Incidence-raw data (`datatype = "incidence_raw"`): for each assemblage, input data for a reference sample consist of a species-by-sampling-unit matrix, in addition to the sampling-unit names (as column names) and the species names (as row names). When there are N assemblages, input data consist of N lists of matrices, and each matrix is a species-by-sampling-unit matrix. Each element in the incidence raw matrix is 1 for a detection, and 0 for a non-detection. Input a matrix which combines data for all assemblages is allowed, but the argument `nT` in the function `iNEXT3D` must be specified so that the number of sampling units in each assemblage is specified.
+  
+For example, the dataset `Brazil_rainforest_abun_data` included in the `iNEXT.3D` package consists of species sample abundances of two assemblages/habitats: "Edge" and "Interior". Run the following code to view the first 15 rows of the abundance data. 
+
+```{r eval=FALSE}
+data("Brazil_rainforest_abun_data")
+Brazil_rainforest_abun_data
+```
+
+```{r echo=FALSE}
+data("Brazil_rainforest_abun_data")
+Brazil_rainforest_abun_data[1:15,]
+```
+
+
+We use data (`Fish_incidence_data`) collected from two time periods, namely `"2013-2015"` and `"2016-2018"`, as an example. Each time period is designated as an assemblage. The purpose was to compare 3D diversity of the two time periods. In each time period, species incidence/occurrence was recorded in 36 sampling units in each assemblage; each sampling unit represents a sampling date. Thus, there are 36 columns in each time period. Run the following code to view the first 7 rows and 7 columns for each matrix.
+
+
+```{r eval=FALSE}
+data("Fish_incidence_data")
+Fish_incidence_data
+```
+
+```{r echo=FALSE}
+data("Fish_incidence_data")
+lapply(Fish_incidence_data, function(x) x[1:7,1:7])
+```
+
+### Phylogenetic tree format for PD
+To perform PD analysis, the phylogenetic tree (in Newick format) spanned by species observed in the pooled data is required. For the dataset `Fish_incidence_data`, the phylogenetic tree for all observed species (including species in both time periods) is stored in the file `fish_phylo_tree`; for the dataset `Brazil_rainforest_abun_data`, the phylogenetic tree for all observed species (including species in both Edge and Interior habitats) is stored in the file `Brazil_rainforest_phylo_tree`. A partial list of the tip labels and node labels are shown below. 
+
+```{r}
+data("Brazil_rainforest_phylo_tree")
+Brazil_rainforest_phylo_tree
+```
+
+
+### Species pairwise distance matrix format for FD
+To perform FD analysis, the species-pairwise distance matrix (Gower distance computed from species traits) for species observed in the pooled data is required in a matrix/data.frame format. For the dataset `Fish_incidence_data`, the distance matrix for all observed species (including species in both time periods) is stored in the file `fish_dist_matrix`; for the dataset `Brazil_rainforest_abun_data`, the distance matrix for all species (including species in both Edge and Interior habitats) is stored in the file `Brazil_rainforest_dist_matrix`. The distance matrix for the first 3 Brazil rainforest tree species is shown below. 
+
+
+```{r eval=FALSE}
+data("Brazil_rainforest_distance_matrix")
+Brazil_rainforest_distance_matrix
+```
+
+```{r echo=FALSE}
+data("Brazil_rainforest_distance_matrix")
+round(Brazil_rainforest_distance_matrix[1:3,1:3], 3)
+```
+
+
+## <span style="color:red;">MAIN FUNCTION iNEXT3D(): RAREFACTION/EXTRAPOLATION</span>
+
+We first describe the main function `iNEXT3D()` with default arguments: 
 
 ```{r eval=FALSE}
 iNEXT3D(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
         size = NULL, endpoint = NULL, knots = 40, nboot = 50, conf = 0.95, nT = NULL, 
         PDtree = NULL, PDreftime = NULL, PDtype = 'meanPD', 
-        FDdistM, FDtype = 'AUC', FDtau = NULL)
+        FDdistM, FDtype = 'AUC', FDtau = NULL, FDcut_number = 50)
 ```
 
 
-This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots = K`) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, `endpoint` = double the reference sample size for abundance data or double the total sampling units for incidence data. For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).
+The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text. This main function computes standardized 3D diversity estimates of order q = 0, 1 and 2, the sample coverage estimates, and related statistics for K (if `knots = K` in the specified argument) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which 3D diversity estimates will be calculated. By default, `endpoint` = double the reference sample size for abundance data or double the total sampling units for incidence data. For example, if `endpoint = 10`, `knot = 4` is specified, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).  
 
 
 ```{r, echo=FALSE,warning=FALSE}
-Des <- c("data"," (a). For datatype = 'abundance', data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors. 
-         (b). For datatype = 'incidence_freq', data can be input as a vector of incidence frequencies (for a single assemblage), matrix/data.frame (species by assemblages), or a list of incidence frequencies; the first entry in all types of input must be the number of sampling units in each assemblage. 
-         (c). For datatype = 'incidence_raw', data can be input as a list of matrix/data.frame (species by sampling units); data can also be input as a matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be input.",
-"diversity"," selection of diversity type: 'TD' = Taxonomic diversity, 'PD' = Phylogenetic diversity, and 'FD' = Functional diversity.",
-"q","	a numerical vector specifying the diversity orders. Default is c(0, 1, 2).",
-"datatype"	,"data type of input data: individual-based abundance data (datatype = 'abundance'), sampling-unit-based incidence frequencies data (datatype = 'incidence_freq'), or species by sampling-units incidence matrix (datatype = 'incidence_raw') with all entries being 0 (non-detection) or 1 (detection).", 
-"size","an integer vector of sample sizes for which diversity estimates will be computed. If NULL, then diversity estimates will be calculated for those sample sizes determined by the specified/default endpoint and knots;",
-"endpoint","an integer specifying the sample size that is the endpoint for R/E calculation; If NULL, then endpoint=double the reference sample size;",
-"knots","	an integer specifying the number of equally-spaced knots (say K, default is 40) between size 1 and the endpoint;each knot represents a particular sample size for which diversity estimate will be calculated. If the endpoint is smaller than the reference sample size, then iNEXT3D() computes only the rarefaction esimates for approximately K evenly spaced knots. If the endpoint is larger than the reference sample size, then iNEXT3D() computes rarefaction estimates for approximately K/2 evenly spaced knots between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced knots between the reference sample size and the endpoint.",
-"nboot"," a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.",
-"conf","	a positive number < 1 specifying the level of confidence interval. Default is 0.95.",
-"nT","(required only when datatype = 'incidence_raw' and input data is matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified, then assemblages are automatically named as 'assemblage1', 'assemblage2',..., etc.",
-"PDtree","	(required only when diversity = 'PD'), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.",
-"PDreftime", "(required only when diversity = 'PD'), a vector of numerical values specifying reference times for PD. Default is NULL (i.e., the age of the root of PDtree).",
-"PDtype"," (required only when diversity = 'PD'), select PD type: PDtype = 'PD' (effective total branch length) or PDtype = 'meanPD' (effective number of equally divergent lineages). Default is 'meanPD', where meanPD = PD/tree depth.",
-"FDdistM"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
-"FDtype"," (required only when diversity = 'FD'), select FD type: FDtype = 'tau_values' for FD under specified threshold values, or FDtype = 'AUC' (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is 'AUC'.",
-"FDtau"," (required only when diversity = 'FD' and FDtype = 'tau_values'), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy)."
+Des <- c("data","(a) For <code>datatype = 'abundance'</code>, data can be input as a vector of species abundances (for a single assemblage), matrix/data.frame (species by assemblages), or a list of species abundance vectors.
+(b) For <code>datatype = 'incidence_raw'</code>, data can be input as a list of matrices/data.frames (species by sampling units); data can also be input as a single matrix/data.frame by merging all sampling units across assemblages based on species identity; in this case, the number of sampling units (nT, see below) must be specified. ",
+"diversity","selection of diversity type: <code>'TD'</code> = Taxonomic diversity, <code>'PD'</code> = Phylogenetic diversity, and <code>'FD'</code> = Functional diversity.",
+"q","a numerical vector specifying the diversity orders. Default is <code>c(0, 1, 2)</code>.",
+"datatype","data type of input data: individual-based abundance data (<code>datatype = 'abundance'</code>), or species by sampling-units incidence/occurrence matrix (<code>datatype = 'incidence_raw'</code>) with all entries being 0 (non-detection) or 1 (detection).", 
+"size","an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed.
+If <code>NULL</code>, then diversity estimates will be computed for those sample sizes determined by the specified/default <code>endpoint</code> and <code>knots</code>.",
+"endpoint","an integer specifying the sample size that is the <code>endpoint</code> for rarefaction/extrapolation.
+If NULL, then <code>endpoint</code> <code>=</code> double the reference sample size.",
+"knots","an integer specifying the number of equally-spaced <code>knots</code> (say K, default is 40) between size 1 and the <code>endpoint</code>; each knot represents a particular sample size for which diversity estimate will be calculated.
+If the <code>endpoint</code> is smaller than the reference sample size, then <code>iNEXT3D()</code> computes only the rarefaction estimates for approximately K evenly spaced <code>knots</code>. 
+If the <code>endpoint</code> is larger than the reference sample size, then <code>iNEXT3D()</code> computes rarefaction estimates for approximately K/2 evenly spaced <code>knots</code> between sample size 1 and the reference sample size, and computes extrapolation estimates for approximately K/2 evenly spaced <code>knots</code> between the reference sample size and the <code>endpoint</code>.",
+"nboot","a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.",
+"conf","a positive number < 1 specifying the level of confidence interval. Default is 0.95.",
+"nT","(required only when <code>datatype = 'incidence_raw'</code> and input data in a single matrix/data.frame) a vector of nonnegative integers specifying the number of sampling units in each assemblage. If assemblage names are not specified(i.e., <code>names(nT) = NULL</code>), then assemblages are automatically named as 'assemblage1', 'assemblage2',..., etc. ",
+"PDtree","(required argument for <code>diversity = 'PD'</code>), a phylogenetic tree in Newick format for all observed species in the pooled assemblage.",
+"PDreftime", "(argument only for <code>diversity = 'PD'</code>), a vector of numerical values specifying reference times for PD. Default is <code>NULL</code> (i.e., the age of the root of PDtree).",
+"PDtype","(argument only for <code>diversity = 'PD'</code>), select PD type: <code>PDtype = 'PD'</code> (effective total branch length) or <code>PDtype = 'meanPD'</code> (effective number of equally divergent lineages). Default is <code>'meanPD'</code>, where <code>meanPD = PD/tree depth</code>.",
+"FDdistM","(required argument for <code>diversity = 'FD'</code>), a species pairwise distance matrix for all species in the pooled assemblage.",
+"FDtype","(argument only for <code>diversity = 'FD'</code>), select FD type: <code>FDtype = 'tau_values'</code> for FD under specified threshold values, or <code>FDtype = 'AUC'</code> (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is <code>'AUC'</code>.",
+"FDtau","(argument only for <code>diversity = 'FD'</code> and <code>FDtype = 'tau_values'</code>), a numerical vector between 0 and 1 specifying tau values (threshold levels). If <code>NULL</code> (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).",
+"FDcut_number","(argument only for <code>diversity = 'FD'</code> and <code>FDtype = 'AUC'</code>), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is <code>FDcut_number = 50</code>. A larger value can be set to obtain more accurate AUC value."
 )
 output <- 
   matrix(Des, 
@@ -114,78 +223,23 @@ htmlTable(output,
           )
 ```
 
-This function returns an "iNEXT3D" object which can be further used to make plots by the function `ggiNEXT3D()` to  described later.
+For each dimension of diversity (`TD`, `PD`, `FD`), the main function `iNEXT3D()` returns the `iNEXT3D` object, which can be further used to make plots using the function `ggiNEXT3D()` to be described below. The `"iNEXT3D"` object includes three lists: 
 
-### DATA FORMAT/INFORMATION
-Three types of data are supported:
+(1) `$TDInfo` (`$PDInfo`,or `$FDInfo`) for summarizing data information. 
 
-1. Individual-based abundance data (`datatype = "abundance"`): Input data for each assemblage/site include samples species abundances in an empirical sample of n individuals (“reference sample”). When there are N assemblages, input data consist of an S by N abundance matrix, or N lists of species abundances.  
+(2) `$TDiNextEst` (`$PDiNextEst`, or `$FDiNextEst`) for showing diversity estimates along with related statistics for a series of rarefied and extrapolated samples; there are two data frames (`$size_based` and `$coverage_based`) conditioning on standardized sample size or sample coverage, respectively.
 
-2. Sampling-unit-based incidence data: There are two kinds of input data.  
- (a) Incidence-raw data (`datatype = "incidence_raw"`): for each assemblage, input data for a reference sample consist of a species-by-sampling-unit matrix; when there are N assemblages, input data consist of N lists of matrices, and each matrix is a species-by-sampling-unit matrix. The matrix of combined assemblage is allowed, but nT must be specified (see above description).
- 
- (b) Incidence-frequency data (`datatype = "incidence_freq"`): input data for each assemblage consist of species sample incidence frequencies (row sums of each incidence matrix). When there are N assemblages, input data consist of an (S + 1) by N matrix, or N lists of species incidence frequencies. The first entry of each list must be the total number of sampling units, followed by the species incidence frequencies.
+(3) `$TDAsyEst` (`$PDAsyEst`, or `$FDAsyEst`) for showing asymptotic diversity estimates along with related statistics.
 
-```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(comment="", message=FALSE, warning=FALSE)
-library(iNEXT.3D)
-library(ggplot2)
-```
+## <span style="color:red;">FUNCTION ggiNEXT3D(): GRAPHIC DISPLAYS</span>
 
-
-```{r}
-data("Brazil_rainforest_data")
-
-out.TD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "TD", 
-                  q = c(0, 1, 2), datatype = "abundance", 
-                  nboot = 10)
-out.PD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "PD", 
-                  q = c(0, 1, 2), datatype = "abundance", 
-                  PDtree = Brazil_rainforest_data$tree, 
-                  nboot = 10)
-out.FD <- iNEXT3D(data = Brazil_rainforest_data$data, diversity = "FD", 
-                  q = c(0, 1, 2), datatype = "abundance", 
-                  FDdistM = Brazil_rainforest_data$dist,
-                  nboot = 5)
-
-```
-
-```{r}
-out.TD$TDInfo
-```
-
-Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default (for example in "EM" assemblage, corresponding to sample sizes m = 1, 20, 40, ..., 372, 373, 374, ..., 746), which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$TDiNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q, the lower and upper confidence limits of diversity conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
-
-Here only show first six rows for taxonomic diversity:
-
-```{r}
-head(out.TD$TDiNextEst$size_based)
-```
-
-The second data frame of list `$TDiNextEst` (as shown below for 'coverage_based') includes the sample coverage estimate ('SC'), the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q, the lower and upper confidence limits of diversity conditioning on sample coverage estimate. 
-
-Here only show first six rows for taxonomic diversity:
-
-```{r}
-head(out.TD$TDiNextEst$coverage_based)
-```
-
-The output `$TDAsyEst` lists the diversity labels, the observed diversity, asymptotic diversity estimates, estimated bootstrap standard error (`s.e.`) and  confidence intervals for diversity with q = 0, 1, and 2 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also be computed via the function `ObsAsy3D()`. The output are shown below:
-
-```{r}
-out.TD$TDAsyEst
-```
-
-
-### BASIC GRAPHIC DISPLAYS: FUNCTION ggiNEXT3D()
 The function `ggiNEXT3D()`, which extends `ggplot2` with default arguments, is described as follows: 
 
 ```{r eval=FALSE}
-ggiNEXT3D(outcome, type = 1:3, se = TRUE,
-          facet.var = "Assemblage", color.var = "Order.q")  
+ggiNEXT3D(output, type = 1:3, facet.var = "Assemblage", color.var = "Order.q")  
 ```
 
-Here `outcome` is the object of `iNEXT3D()`'s output. Three types of curves are allowed for different diversity dimensions:  
+Here `output` is the `iNEXT3D()` object. Three types of curves are allowed for 3D diversity:  
 
 (1) Sample-size-based R/E curve (`type = 1`): This curve plots diversity estimates with confidence intervals as a function of sample size.  
 
@@ -193,222 +247,1479 @@ Here `outcome` is the object of `iNEXT3D()`'s output. Three types of curves are 
 
 (3) Coverage-based R/E curve (`type = 3`): This curve plots the diversity estimates with confidence intervals as a function of sample coverage. 
 
-<br><br>
-The argument `facet.var = "Order.q"` or `facet.var = "Assemblage"` is used to create a separate plot for each value of the specified variable. For example, the following code displays a separate plot of the diversity order q. The `ggiNEXT3D()` function is a wrapper with package `ggplot2` to create a R/E curve in a single line of code. The figure object is of class `"ggplot"`, so can be manipulated by using the `ggplot2` tools. 
+The argument `facet.var = "Order.q"`, `facet.var = "Assemblage"`, `facet.var = "Both"`, or `facet.var = "None"` is used to create a separate plot for each value of the specified variable. 
 
-When `facet.var = "Assemblage"` in `ggiNEXT3D` function, it creates a separate plot for each assemblage and the different color lines represent each diversity order. Sample-size-based R/E curve (`type = 1`) as below:
+The `ggiNEXT3D()` function is a wrapper with the package `ggplot2` to create a rarefaction/extrapolation sampling curve in a single line of code. The figure object is of class `"ggplot"`, so it can be manipulated by using the `ggplot2` tools. 
 
 
-```{r }
-# Sample-size-based R/E curves, separating by "assemblage""
-ggiNEXT3D(out.TD, type = 1, facet.var = "Assemblage")
+## <span style="color:blue;">TAXONOMIC DIVERSITY (TD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
+
+### EXAMPLE 1: TD rarefaction/extrapolation for abundance data 
+
+
+```{r, echo=FALSE, cache = TRUE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data(Brazil_rainforest_distance_matrix)
+
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+distM <- Brazil_rainforest_distance_matrix
+
+output_TD_abun <- iNEXT3D(data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance")
+
+output_PD_abun  <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+                           nboot = 20, PDtree = tree)
+
+output_FD_abun  <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, 
+                           FDdistM = distM, FDtype = 'AUC')
+
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data(Fish_distance_matrix)
+
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+distM <- Fish_distance_matrix
+
+output_TD_inci <- iNEXT3D(data, diversity = 'TD', q = c(0, 1, 2), datatype = "incidence_raw")
+
+output_PD_inci  <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
+                           nboot = 20, PDtree = tree)
+
+output_FD_inci  <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                           FDdistM = distM, FDtype = 'AUC')
+```
+
+Based on the dataset (`Brazil_rainforest_abun_data`) included in the package, the following commands return all numerical results for `TD`. The first list of the output (`$TDInfo`) returns basic data information including the name of the Assemblage, sample size (`n`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size n (`SC(n)`), sample coverage estimate of the extrapolated sample with size 2n (`SC(2n)`) as well as the first five species abundance frequency counts in the reference sample (`f1-f5`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'TD'` and `datatype = "abundance"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later.
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+output_TD_abun <- iNEXT3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+                          datatype = "abundance")
+output_TD_abun$TDInfo
+```
+
+```{r echo=FALSE}
+output_TD_abun[1]$TDInfo$`SC(n)`  <- round(output_TD_abun[1]$TDInfo$`SC(n)`, 3)
+output_TD_abun[1]$TDInfo$`SC(2n)` <- round(output_TD_abun[1]$TDInfo$`SC(2n)`, 3)
+output_TD_abun[1]
+```
+
+The second list of the output (`$TDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the "Edge" assemblage, corresponding to the target sample size `m` = 1, 95, 189, ..., 1699, 1794, 1795, 1899, ..., 3588), which locates the reference sample size at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity estimate of order q (`qTD`), the lower and upper confidence limits of diversity (`qTD.LCL` and `qTD.UCL`) conditioning on the sample size, and the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_TD_abun$TDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_TD_abun$TDiNextEst$size_based$qTD     <- round(output_TD_abun$TDiNextEst$size_based$qTD, 3)
+output_TD_abun$TDiNextEst$size_based$qTD.LCL <- round(output_TD_abun$TDiNextEst$size_based$qTD.LCL, 3)
+output_TD_abun$TDiNextEst$size_based$qTD.UCL <- round(output_TD_abun$TDiNextEst$size_based$qTD.UCL, 3)
+output_TD_abun$TDiNextEst$size_based$SC      <- round(output_TD_abun$TDiNextEst$size_based$SC, 3)
+output_TD_abun$TDiNextEst$size_based$SC.LCL  <- round(output_TD_abun$TDiNextEst$size_based$SC.LCL, 3)
+output_TD_abun$TDiNextEst$size_based$SC.UCL  <- round(output_TD_abun$TDiNextEst$size_based$SC.UCL, 3)
+output_TD_abun$TDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage), the diversity estimate of order q (`qTD`), the lower and upper confidence limits of diversity (`qTD.LCL` and `qTD.UCL`) conditioning on the target sample coverage value. Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+
+```{r, eval=FALSE}
+output_TD_abun$TDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_TD_abun$TDiNextEst$coverage_based$qTD     <- round(output_TD_abun$TDiNextEst$coverage_based$qTD, 3)
+output_TD_abun$TDiNextEst$coverage_based$qTD.LCL <- round(output_TD_abun$TDiNextEst$coverage_based$qTD.LCL, 3)
+output_TD_abun$TDiNextEst$coverage_based$qTD.UCL <- round(output_TD_abun$TDiNextEst$coverage_based$qTD.UCL, 3)
+output_TD_abun$TDiNextEst$coverage_based$SC      <- round(output_TD_abun$TDiNextEst$coverage_based$SC, 3)
+output_TD_abun$TDiNextEst$coverage_based$m       <- round(output_TD_abun$TDiNextEst$coverage_based$m, 3)
+output_TD_abun$TDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$TDAsyEst`) includes the name of the Assemblage, diversity label (`qTD`, species richness for q = 0, Shannon diversity for q = 1, and Simpson diversity for q = 2), the observed diversity (`TD_obs`), asymptotic diversity estimate (`TD_asy`) and its estimated bootstrap standard error (`s.e.`) as well as the confidence intervals for asymptotic diversity (`qTD.LCL` and `qTD.UCL`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output for `$TDAsyEst` is shown below:
+
+```{r, eval=FALSE}
+output_TD_abun$TDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_TD_abun$TDAsyEst
+tmp[,-(1:2)] = round(tmp[,-(1:2)], 3)
+tmp
+```
+
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) is given below:
+
+```{r eval=FALSE}
+# TD sample-size-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_TD_abun, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_abun, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# TD sample-size-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_TD_abun, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_abun, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors represent different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for abundance data, separating by "Assemblage"
+ggiNEXT3D(output_TD_abun, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_abun, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# TD coverage-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_TD_abun, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_abun, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# TD coverage-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_TD_abun, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_abun, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
 ```
 
 
-When `facet.var = "Order.q"` in `ggiNEXT3D` function, it creates a separate plot for each diversity order and the different color lines represent each assemblage. Sample-size-based R/E curve (`type = 1`) as below:
+### EXAMPLE 2: TD rarefaction/extrapolation for incidence data
 
-```{r }
-# Sample-size-based R/E curves, separating by "Order.q"
-ggiNEXT3D(out.TD, type = 1, facet.var = "Order.q")
+Based on the dataset (`Fish_incidence_data`) included in the package, the following commands return all numerical results for `TD`. The first list of the output (`$TDInfo`) returns basic data information including the name of the Assemblage, number of sampling units (`T`), total number of incidences (`U`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size T (`SC(T)`), sample coverage estimate of the extrapolated sample with size 2T (`SC(2T)`) as well as the first five species incidence frequency counts in the reference sample (`Q1-Q5`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'TD'` and `datatype = "incidence_raw"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later.
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
+                          datatype = "incidence_raw")
+output_TD_inci$TDInfo
 ```
 
-The following command return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for the three assemblages. 
+```{r echo=FALSE}
+output_TD_inci[1]$TDInfo$`SC(T)`  <- round(output_TD_inci[1]$TDInfo$`SC(T)`,3)
+output_TD_inci[1]$TDInfo$`SC(2T)` <- round(output_TD_inci[1]$TDInfo$`SC(2T)`,3)
+output_TD_inci[1]
+```
 
-```{r}
-ggiNEXT3D(out.TD, type = 2, facet.var = "Order.q", color.var = "Assemblage")
+The second list of the output (`$TDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the `"2013-2015"` time period, corresponding to the target number of sample units `mT` = 1, 2, 4, ..., 34, 36, 37, 38, ..., 72), which locates the reference sampling units at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target number of sampling units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the target number of sample units `mT` is less than, equal to, or greater than the number of sampling units in the reference sample), the diversity estimate of order q (`qTD`), the lower and upper confidence limits of diversity (`qTD.LCL` and `qTD.UCL`) conditioning on the sample size, and the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_TD_inci$TDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_TD_inci$TDiNextEst$size_based$qTD     <- round(output_TD_inci$TDiNextEst$size_based$qTD, 3)
+output_TD_inci$TDiNextEst$size_based$qTD.LCL <- round(output_TD_inci$TDiNextEst$size_based$qTD.LCL, 3)
+output_TD_inci$TDiNextEst$size_based$qTD.UCL <- round(output_TD_inci$TDiNextEst$size_based$qTD.UCL, 3)
+output_TD_inci$TDiNextEst$size_based$SC      <- round(output_TD_inci$TDiNextEst$size_based$SC, 3)
+output_TD_inci$TDiNextEst$size_based$SC.LCL  <- round(output_TD_inci$TDiNextEst$size_based$SC.LCL, 3)
+output_TD_inci$TDiNextEst$size_based$SC.UCL  <- round(output_TD_inci$TDiNextEst$size_based$SC.UCL, 3)
+output_TD_inci$TDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding number of sampling units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage),  the diversity estimate of order q (`qTD`), the lower and upper confidence limits of diversity (`qTD.LCL` and `qTD.UCL`) conditioning on the target sample coverage value. Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the  `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+
+```{r, eval=FALSE}
+output_TD_inci$TDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_TD_inci$TDiNextEst$coverage_based$qTD     <- round(output_TD_inci$TDiNextEst$coverage_based$qTD, 3)
+output_TD_inci$TDiNextEst$coverage_based$qTD.LCL <- round(output_TD_inci$TDiNextEst$coverage_based$qTD.LCL, 3)
+output_TD_inci$TDiNextEst$coverage_based$qTD.UCL <- round(output_TD_inci$TDiNextEst$coverage_based$qTD.UCL, 3)
+output_TD_inci$TDiNextEst$coverage_based$SC      <- round(output_TD_inci$TDiNextEst$coverage_based$SC, 3)
+output_TD_inci$TDiNextEst$coverage_based$mT      <- round(output_TD_inci$TDiNextEst$coverage_based$mT, 3)
+output_TD_inci$TDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$TDAsyEst`) includes the name of the Assemblage, diversity label (`qTD`, species richness for q = 0, Shannon diversity for q = 1, and Simpson diversity for q = 2), the observed diversity (`TD_obs`), asymptotic diversity estimate (`TD_asy`) and its estimated bootstrap standard error (`s.e.`) as well as the confidence intervals for asymptotic diversity (`qTD.LCL` and `qTD.UCL`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output is shown below:
+
+```{r, eval=FALSE}
+output_TD_inci$TDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_TD_inci$TDAsyEst
+tmp[,-(1:2)] = round(tmp[,-(1:2)], 3)
+tmp
+```
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) for incidence data is given below:
+
+```{r eval=FALSE}
+# TD sample-size-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_TD_inci, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_inci, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# TD sample-size-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_TD_inci, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_inci, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_TD_inci, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_inci, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# TD coverage-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_TD_inci, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_inci, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# TD coverage-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_TD_inci, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_TD_inci, type = 3, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
 ```
 
 
-The following commands return the coverage-based R/E sampling curves in which different colors are used for the three assemblages (`facet.var = "Assemblage"`) and for three diversity orders (`facet.var = "Order.q"`).
+## <span style="color:blue;">PHYLOGENETIC DIVERSITY (PD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
 
-```{r}
-ggiNEXT3D(out.TD, type = 3, facet.var = "Assemblage")
+### EXAMPLE 3: PD rarefaction/extrapolation for abundance data 
+
+Based on the dataset (`Brazil_rainforest_abun_data`) and the phylogentic tree (`Brazil_rainforest_phylo_tree`) included in the package, the following commands return all numerical results for `PD`. The first list of the output (`$PDInfo`) returns basic data information including the name of the Assemblage, sample size (`n`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size n (`SC(n)`), sample coverage estimate of the extrapolated sample with size 2n (`SC(2n)`), the observed total branch length in the phylogenetic tree spanned by all observed specise (`PD.obs`), the number of singletons and doubletons in the node/branch abundance set (`f1*,f2*`), the total branch length of those singletons and doubletons in the node/branch abundance set (`g1,g2`), and the reference time (`Reftime`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'PD'` and `datatype = "abundance"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later.
+
+The required argument for performing PD analysis is `PDtree`. For example, the phylogenetic tree for all observed species (including species in both Edge and Interior habitats) is stored in `Brazil_rainforest_phylo_tree`. Then we enter the argument `PDtree = Brazil_rainforest_phylo_tree`. Two optional arguments are: `PDtype` and `PDreftime`. There are two options for `PDtype`: `"PD"` (effective total branch length) or `"meanPD"` (effective number of equally divergent lineages, `meanPD` = PD/tree depth). Default is `PDtype = "meanPD"`. `PDreftime` is a numerical value specifying a reference time for computing phylogenetic diversity. By default (`PDreftime = NULL`), the reference time is set to the tree depth, i.e., age of the root of the phylogenetic tree. Run the following code to perform PD analysis.  
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_PD_abun <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
+                          nboot = 20, PDtree = tree)
+output_PD_abun$PDInfo
 ```
 
-```{r}
-ggiNEXT3D(out.TD, type = 3, facet.var = "Order.q")
+```{r echo=FALSE}
+output_PD_abun[1]$PDInfo$`SC(n)`  <- round(output_PD_abun[1]$PDInfo$`SC(n)`,3)
+output_PD_abun[1]$PDInfo$`SC(2n)` <- round(output_PD_abun[1]$PDInfo$`SC(2n)`,3)
+output_PD_abun[1]
+```
+
+The second list of the output (`$PDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the "Edge" assemblage, corresponding to the target sample size `m` = 1, 95, 189, ..., 1699, 1794, 1795, 1899, ..., 3588), which locates the reference sample size at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity estimate of order q (`qPD`), the lower and upper confidence limits of diversity (`qPD.LCL` and `qPD.UCL`) conditioning on the sample size, the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`), the reference time (`Reftime`) and the type of PD (`Type`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_PD_abun$PDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_PD_abun$PDiNextEst$size_based$qPD     <- round(output_PD_abun$PDiNextEst$size_based$qPD, 3)
+output_PD_abun$PDiNextEst$size_based$qPD.LCL <- round(output_PD_abun$PDiNextEst$size_based$qPD.LCL, 3)
+output_PD_abun$PDiNextEst$size_based$qPD.UCL <- round(output_PD_abun$PDiNextEst$size_based$qPD.UCL, 3)
+output_PD_abun$PDiNextEst$size_based$SC      <- round(output_PD_abun$PDiNextEst$size_based$SC, 3)
+output_PD_abun$PDiNextEst$size_based$SC.LCL  <- round(output_PD_abun$PDiNextEst$size_based$SC.LCL, 3)
+output_PD_abun$PDiNextEst$size_based$SC.UCL  <- round(output_PD_abun$PDiNextEst$size_based$SC.UCL, 3)
+output_PD_abun$PDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage),  the diversity estimate of order q (`qPD`), the lower and upper confidence limits of diversity (`qPD.LCL` and `qPD.UCL`) conditioning on the target sample coverage value, the reference times (`Reftime`) and the type of PD (`Type`). Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+```{r, eval=FALSE}
+output_PD_abun$PDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_PD_abun$PDiNextEst$coverage_based$qPD     <- round(output_PD_abun$PDiNextEst$coverage_based$qPD, 3)
+output_PD_abun$PDiNextEst$coverage_based$qPD.LCL <- round(output_PD_abun$PDiNextEst$coverage_based$qPD.LCL, 3)
+output_PD_abun$PDiNextEst$coverage_based$qPD.UCL <- round(output_PD_abun$PDiNextEst$coverage_based$qPD.UCL, 3)
+output_PD_abun$PDiNextEst$coverage_based$SC      <- round(output_PD_abun$PDiNextEst$coverage_based$SC, 3)
+output_PD_abun$PDiNextEst$coverage_based$m       <- round(output_PD_abun$PDiNextEst$coverage_based$m, 3)
+output_PD_abun$PDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$PDAsyEst`) includes the name of the Assemblage, PD (or meanPD) for q = 0, 1, and 2 (`qPD`), the observed diversity (`PD_obs`), asymptotic diversity estimates  (`PD_asy`), estimated asymptotic bootstrap standard error (`s.e.`) as well as the confidence intervals for asymptotic diversity with q = 0, 1, and 2 (`qPD.LCL` and `qPD.UCL`), the reference times (`Reftime`) and the type of PD (`Type`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output is shown below:
+
+```{r, eval=FALSE}
+output_PD_abun$PDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_PD_abun$PDAsyEst
+tmp[,-c(1:2,9)] = round(tmp[,-c(1:2,9)], 3)
+tmp
+```
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) is given below:
+
+```{r eval=FALSE}
+# PD sample-size-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_PD_abun, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_abun, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# PD sample-size-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_PD_abun, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_abun, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for abundance data, separating by "Assemblage"
+ggiNEXT3D(output_PD_abun, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_abun, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# PD coverage-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_PD_abun, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_abun, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# PD coverage-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_PD_abun, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_abun, type = 3, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+### EXAMPLE 4: PD rarefaction/extrapolation for incidence data 
+
+Based on the dataset (`Fish_incidence_data`) included in the package and the phylogentic tree (`Fish_phylo_tree`), the following commands return all numerical results for `PD`. The first list of the output (`$PDInfo`) returns basic data information including the name of the Assemblage, number of sampling units (`T`), total number of incidences (`U`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size T (`SC(T)`),  sample coverage estimate of the extrapolated sample with size 2T (`SC(2T)`), the observed total branch length in the phylogenetic tree spanned by all observed species (`PD.obs`), the singletons/doubletons in the sample branch incidence (`Q1*,Q2*`), the total branch length of those singletons/doubletons in the sample branch incidence (`R1,R2`), and the reference time (`Reftime`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'PD'` and `datatype = "incidence_raw"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later.
+
+The required argument for performing PD analysis is `PDtree`. For example, the phylogenetic tree for all observed species (including species in both `"2013-2015"` and `"2016-2018"` time periods) is stored in `Fish_phylo_tree`. Then we enter the argument `PDtree = Fish_phylo_tree`. Two optional arguments are: `PDtype` and `PDreftime`. There are two options for `PDtype`: `"PD"` (effective total branch length) or `"meanPD"` (effective number of equally divergent lineages, `meanPD` = PD/tree depth). Default is `PDtype = "meanPD"`. `PDreftime` is a numerical value specifying a reference time for computing phylogenetic diversity. By default (`PDreftime = NULL`), the reference time is set to the tree depth, i.e., age of the root of the phylogenetic tree. Run the following code to perform PD analysis. 
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_PD_inci <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), 
+                          datatype = "incidence_raw", nboot = 20, PDtree = tree)
+output_PD_inci$PDInfo
+```
+
+```{r echo=FALSE}
+output_PD_inci[1]$PDInfo$`SC(T)`  <- round(output_PD_inci[1]$PDInfo$`SC(T)`, 3)
+output_PD_inci[1]$PDInfo$`SC(2T)` <- round(output_PD_inci[1]$PDInfo$`SC(2T)`, 3)
+output_PD_inci[1]$PDInfo$R1       <- round(output_PD_inci[1]$PDInfo$R1, 3)
+output_PD_inci[1]$PDInfo$R2       <- round(output_PD_inci[1]$PDInfo$R2, 3)
+output_PD_inci[1]$PDInfo$Reftime  <- round(output_PD_inci[1]$PDInfo$Reftime, 3)
+output_PD_inci[1]
+```
+
+The second list of the output (`$PDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the `"2013-2015"` time period, corresponding to the target number of sample units `mT` = 1, 2, 4, ..., 34, 36, 37, 38, ..., 72), which locates the reference sampling units at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target number of sample units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the target number of sample units `mT` is less than, equal to, or greater than the number of sampling units in the reference sample), the diversity estimate of order q (`qPD`), the lower and upper confidence limits of diversity (`qPD.LCL` and `qPD.UCL`) conditioning on the sample size, the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`), the reference time (`Reftime`) and the type of PD (`Type`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_PD_inci$PDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_PD_inci$PDiNextEst$size_based$qPD     <- round(output_PD_inci$PDiNextEst$size_based$qPD, 3)
+output_PD_inci$PDiNextEst$size_based$qPD.LCL <- round(output_PD_inci$PDiNextEst$size_based$qPD.LCL, 3)
+output_PD_inci$PDiNextEst$size_based$qPD.UCL <- round(output_PD_inci$PDiNextEst$size_based$qPD.UCL, 3)
+output_PD_inci$PDiNextEst$size_based$SC      <- round(output_PD_inci$PDiNextEst$size_based$SC, 3)
+output_PD_inci$PDiNextEst$size_based$SC.LCL  <- round(output_PD_inci$PDiNextEst$size_based$SC.LCL, 3)
+output_PD_inci$PDiNextEst$size_based$SC.UCL  <- round(output_PD_inci$PDiNextEst$size_based$SC.UCL, 3)
+output_PD_inci$PDiNextEst$size_based$Reftime <- round(output_PD_inci$PDiNextEst$size_based$Reftime, 3)
+output_PD_inci$PDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding number of sample units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage),  the diversity estimate of order q (`qPD`), the lower and upper confidence limits of diversity (`qPD.LCL` and `qPD.UCL`) conditioning on the target sample coverage value, the reference time (`Reftime`) and the type of PD (`Type`). Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the  `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+
+```{r, eval=FALSE}
+output_PD_inci$PDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_PD_inci$PDiNextEst$coverage_based$qPD     <- round(output_PD_inci$PDiNextEst$coverage_based$qPD, 3)
+output_PD_inci$PDiNextEst$coverage_based$qPD.LCL <- round(output_PD_inci$PDiNextEst$coverage_based$qPD.LCL, 3)
+output_PD_inci$PDiNextEst$coverage_based$qPD.UCL <- round(output_PD_inci$PDiNextEst$coverage_based$qPD.UCL, 3)
+output_PD_inci$PDiNextEst$coverage_based$SC      <- round(output_PD_inci$PDiNextEst$coverage_based$SC, 3)
+output_PD_inci$PDiNextEst$coverage_based$mT      <- round(output_PD_inci$PDiNextEst$coverage_based$mT, 3)
+output_PD_inci$PDiNextEst$coverage_based$Reftime <- round(output_PD_inci$PDiNextEst$coverage_based$Reftime, 3)
+output_PD_inci$PDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$PDAsyEst`) includes the name of the Assemblage, PD (or meanPD) for q = 0, 1, and 2 (`qPD`), the observed diversity (`PD_obs`), asymptotic diversity estimate (`PD_asy`) and its estimated bootstrap standard error (`s.e.`), the confidence intervals for asymptotic diversity (`qPD.LCL` and `qPD.UCL`), the reference time (`Reftime`) and the type of PD (`Type`) . These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output is shown below:
+
+```{r, eval=FALSE}
+output_PD_inci$PDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_PD_inci$PDAsyEst
+tmp[,-c(1:2,9)] = round(tmp[,-c(1:2,9)], 3)
+tmp
+```
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) is given below:
+
+```{r eval=FALSE}
+# PD sample-size-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_PD_inci, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_inci, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# PD sample-size-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_PD_inci, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_inci, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_PD_inci, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_inci, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# PD coverage-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_PD_inci, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_inci, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# PD coverage-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_PD_inci, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_PD_inci, type = 3, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
 ```
 
 
-### EXAMPLE for INCIDENCE-RAW DATA
+## <span style="color:blue;">FUNCTIONAL DIVERSITY (FD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
 
-Incidence raw data is allowed for three diversity dimensions. For illustration, use the Hinkley's fish data (the dataset is included in the package) at three time periods (1981-1985, 1987-1991 and 2015-2019). This data set (`fish_incidence_data`) includes a list with three matrices; each matrix is a species-by-sampling-unit data. Here only use taxonomic diversity (TD) as demonstration below.
+### EXAMPLE 5: FD rarefaction/extrapolation for abundance data 
 
-```{r}
-data("fish_incidence_data")
-head(fish_incidence_data$data$`1981-1985`)
+Based on the dataset (`Brazil_rainforest_abun_data`) and the the distance matrix (`Brazil_rainforest_distance_matrix`) included in the package, the following commands return all numerical results for `FD`. The first list of the output (`$FDInfo`) returns basic data information including the name of the Assemblage, sample size (`n`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size n (`SC(n)`), sample coverage estimate of the extrapolated sample with size 2n (`SC(2n)`), and the minimum, mean, and maximum distance among all non-diagonal elements in the distance matrix(`dmin, dmean, dmax`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'FD'` and `datatype = "abundance"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later. 
+
+The required argument for performing FD analysis is `FDdistM`. For example, the distance matrix for all species (including species in both Edge and Interior habitats) is stored in `Brazil_rainforest_distance_matrix`. Then we enter the argument `FDdistM = Brazil_rainforest_distance_matrix` Three optional arguments are (1) `FDtype`: `FDtype = "AUC"` means FD is computed from the area under the curve of a tau-profile by integrating all plausible threshold values between zero and one; `FDtype = "tau_values"` means FD is computed under specific threshold values to be specified in the argument `FD_tau`. (2) `FD_tau`: a numerical value specifying the tau value (threshold level) that will be used to compute FD. If `FDtype = "tau_values"` and `FD_tau = NULL`, then the threshold level is set to be the mean distance between any two individuals randomly selected from the pooled data over all data (i.e., quadratic entropy). 
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot = 10, 
+                          FDdistM = distM, FDtype = 'AUC')
+output_FD_abun$FDInfo
+```
+
+```{r echo=FALSE}
+output_FD_abun[1]$FDInfo$`SC(n)`  <- round(output_FD_abun[1]$FDInfo$`SC(n)`, 3)
+output_FD_abun[1]$FDInfo$`SC(2n)` <- round(output_FD_abun[1]$FDInfo$`SC(2n)`, 3)
+output_FD_abun[1]$FDInfo$dmean    <- round(output_FD_abun[1]$FDInfo$dmean, 3)
+output_FD_abun[1]$FDInfo$dmax     <- round(output_FD_abun[1]$FDInfo$dmax, 3)
+output_FD_abun[1]
+```
+
+The second list of the output (`$FDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the "Edge" assemblage, corresponding to the target sample size `m` = 1, 95, 189, ..., 1699, 1794, 1795, 1899, ..., 3588), which locates the reference sample size at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity estimate of order q (`qFD`), the lower and upper confidence limits of diversity (`qFD.LCL` and `qFD.UCL`) conditioning on the sample size, and the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_FD_abun$FDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_FD_abun$FDiNextEst$size_based$qFD     <- round(output_FD_abun$FDiNextEst$size_based$qFD, 3)
+output_FD_abun$FDiNextEst$size_based$qFD.LCL <- round(output_FD_abun$FDiNextEst$size_based$qFD.LCL, 3)
+output_FD_abun$FDiNextEst$size_based$qFD.UCL <- round(output_FD_abun$FDiNextEst$size_based$qFD.UCL, 3)
+output_FD_abun$FDiNextEst$size_based$SC      <- round(output_FD_abun$FDiNextEst$size_based$SC, 3)
+output_FD_abun$FDiNextEst$size_based$SC.LCL  <- round(output_FD_abun$FDiNextEst$size_based$SC.LCL, 3)
+output_FD_abun$FDiNextEst$size_based$SC.UCL  <- round(output_FD_abun$FDiNextEst$size_based$SC.UCL, 3)
+output_FD_abun$FDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage),  the diversity estimate of order q (`qFD`), and the lower and upper confidence limits of diversity (`qFD.LCL` and `qFD.UCL`) conditioning on the target sample coverage value. Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+
+```{r, eval=FALSE}
+output_FD_abun$FDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_FD_abun$FDiNextEst$coverage_based$qFD     <- round(output_FD_abun$FDiNextEst$coverage_based$qFD, 3)
+output_FD_abun$FDiNextEst$coverage_based$qFD.LCL <- round(output_FD_abun$FDiNextEst$coverage_based$qFD.LCL, 3)
+output_FD_abun$FDiNextEst$coverage_based$qFD.UCL <- round(output_FD_abun$FDiNextEst$coverage_based$qFD.UCL, 3)
+output_FD_abun$FDiNextEst$coverage_based$SC      <- round(output_FD_abun$FDiNextEst$coverage_based$SC, 3)
+output_FD_abun$FDiNextEst$coverage_based$m       <- round(output_FD_abun$FDiNextEst$coverage_based$m, 3)
+output_FD_abun$FDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$FDAsyEst`) includes the name of the Assemblage, FD for q = 0, 1, and 2 (`qFD`), the observed diversity (`FD_obs`), asymptotic diversity estimate (`FD_asy`) and its estimated bootstrap standard error (`s.e.`) as well as the confidence intervals for asymptotic diversity (`qFD.LCL` and `qFD.UCL`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output is shown below:
+
+```{r, eval=FALSE}
+output_FD_abun$FDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_FD_abun$FDAsyEst
+tmp[,-(1:2)] = round(tmp[,-(1:2)], 3)
+tmp
+```
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) is given below:
+
+```{r eval=FALSE}
+# FD sample-size-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_FD_abun, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_abun, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# FD sample-size-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_FD_abun, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_abun, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for abundance data, separating by "Assemblage"
+ggiNEXT3D(output_FD_abun, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_abun, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# FD coverage-based R/E curves, separating by "Assemblage"
+ggiNEXT3D(output_FD_abun, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_abun, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# FD coverage-based R/E curves, separating by "Order.q"
+ggiNEXT3D(output_FD_abun, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_abun, type = 3, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
 ```
 
 
-```{r }
-# fish.tree = fish_incidence_data$tree  ## for PD
-# fish.dis = fish_incidence_data$dist   ## for FD
+### EXAMPLE 6: FD rarefaction/extrapolation for incidence data
 
-out.raw <- iNEXT3D(data = fish_incidence_data$data, diversity = "TD",
-                   q = c(0, 1, 2), datatype = "incidence_raw", nboot = 30)
-ggiNEXT3D(out.raw, type = 1)
+Based on the dataset (`Fish_incidence_data`) and the the distance matrix (`Fish_distance_matrix`) included in the package, the following commands return all numerical results for `FD`. The first list of the output (`$FDInfo`) returns basic data information including the name of the Assemblage, number of sampling units (`T`), total number of incidences (`U`), observed species richness (`S.obs`), sample coverage estimate of the reference sample with size T (`SC(T)`), sample coverage estimate of the reference sample with size 2T (`SC(2T)`), and the minimum, mean, and maximum distance among all non-diagonal elements in the distance matrix(`dmin, dmean, dmax`). The output is identical to that based on the function `DataInfo3D()` by specifying `diversity = 'FD'` and `datatype = "incidence_raw"`; see later text). Thus, if only data information is required, the simpler function `DataInfo3D()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy3D()`, which will be introduced later.
+
+The required argument for performing FD analysis is `FDdistM`. For example, the distance matrix for all species (including species in both `"2013-2015"` and `"2016-2018"` time periods) is stored in `Fish_distance_matrix`. Then we enter the argument `FDdistM = Fish_distance_matrix` Three optional arguments are (1) `FDtype`: `FDtype = "AUC"` means FD is computed from the area under the curve of a tau-profile by integrating all plausible threshold values between zero and one; `FDtype = "tau_values"` means FD is computed under specific threshold values to be specified in the argument FD_tau. (2) `FD_tau`: a numerical value specifying the tau value (threshold level) that will be used to compute FD. If `FDtype = "tau_values"` and `FD_tau = NULL`, then the threshold level is set to be the mean distance between any two individuals randomly selected from the pooled data over all data (i.e., quadratic entropy). 
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_FD_inci <- iNEXT3D(data, diversity = 'FD', datatype = "incidence_raw", nboot = 20, 
+                          FDdistM = distM, FDtype = 'AUC')
+output_FD_inci$FDInfo
+```
+
+```{r echo=FALSE}
+output_FD_inci[1]$FDInfo$`SC(T)`  <- round(output_FD_inci[1]$FDInfo$`SC(T)`, 3)
+output_FD_inci[1]$FDInfo$`SC(2T)` <- round(output_FD_inci[1]$FDInfo$`SC(2T)`, 3)
+output_FD_inci[1]$FDInfo$S.obs    <- round(output_FD_inci[1]$FDInfo$S.obs, 3)
+output_FD_inci[1]$FDInfo$dmin     <- round(output_FD_inci[1]$FDInfo$dmin, 3)
+output_FD_inci[1]$FDInfo$dmean    <- round(output_FD_inci[1]$FDInfo$dmean, 3)
+output_FD_inci[1]$FDInfo$dmax     <- round(output_FD_inci[1]$FDInfo$dmax, 3)
+output_FD_inci[1]
+```
+
+The second list of the output (`$FDiNextEst`) includes size- and coverage-based standardized diversity estimates and related statistics computed for 40 knots by default (for example in the `"2013-2015"` time period, corresponding to the target number of sample units `mT` = 1, 2, 4, ..., 34, 36, 37, 38, ..., 72), which locates the reference sampling units at the mid-point of the selected knots. There are two data frames (`$size_based` and `$coverage_based`). 
+
+The first data frame (`$size_based`) includes the name of the Assemblage, diversity order (`Order.q`), the target number of sample units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the target number of sample units `mT` is less than, equal to, or greater than the number of sampling units in the reference sample), the diversity estimate of order q (`qFD`), the lower and upper confidence limits of diversity (`qFD.LCL` and `qFD.UCL`) conditioning on the sample size, and the corresponding sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL` and `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. If the argument `nboot` is greater than zero, then a bootstrap method is applied to obtain the confidence intervals for the diversity and sample coverage estimates. Otherwise, all confidence intervals will not be computed. Here only the first six rows of the `$size_based` output are displayed:
+
+```{r eval=FALSE}
+output_FD_inci$FDiNextEst$size_based
+```
+
+```{r, echo=FALSE}
+output_FD_inci$FDiNextEst$size_based$qFD     <- round(output_FD_inci$FDiNextEst$size_based$qFD, 3)
+output_FD_inci$FDiNextEst$size_based$qFD.LCL <- round(output_FD_inci$FDiNextEst$size_based$qFD.LCL, 3)
+output_FD_inci$FDiNextEst$size_based$qFD.UCL <- round(output_FD_inci$FDiNextEst$size_based$qFD.UCL, 3)
+output_FD_inci$FDiNextEst$size_based$SC      <- round(output_FD_inci$FDiNextEst$size_based$SC, 3)
+output_FD_inci$FDiNextEst$size_based$SC.LCL  <- round(output_FD_inci$FDiNextEst$size_based$SC.LCL, 3)
+output_FD_inci$FDiNextEst$size_based$SC.UCL  <- round(output_FD_inci$FDiNextEst$size_based$SC.UCL, 3)
+output_FD_inci$FDiNextEst$size_based[1:6,]
+```
+
+The second data frame (`$coverage_based`) includes the name of assemblage, the diversity order (`Order.q`), the target sample coverage value (`SC`), the corresponding number of sample units (`mT`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the coverage `SC` is less than, equal to, or greater than the reference sample coverage),  the diversity estimate of order q (`qFD`), and the lower and upper confidence limits of diversity (`qFD.LCL` and `qFD.UCL`) conditioning on the target sample coverage value. Here only the first six rows of the `$coverage_based` output are displayed below: (Note for a fixed coverage value, the confidence interval in the  `$coverage_based` table is wider than the corresponding interval in the `$size_based` table. This is because, for a given coverage value, the sample size needed to attain a fixed coverage value varies with bootstrap replication, leading to higher uncertainty on the resulting diversity estimate.)
+
+
+```{r, eval=FALSE}
+output_FD_inci$FDiNextEst$coverage_based
+```
+
+```{r, echo=FALSE}
+output_FD_inci$FDiNextEst$coverage_based$qFD     <- round(output_FD_inci$FDiNextEst$coverage_based$qFD, 3)
+output_FD_inci$FDiNextEst$coverage_based$qFD.LCL <- round(output_FD_inci$FDiNextEst$coverage_based$qFD.LCL, 3)
+output_FD_inci$FDiNextEst$coverage_based$qFD.UCL <- round(output_FD_inci$FDiNextEst$coverage_based$qFD.UCL, 3)
+output_FD_inci$FDiNextEst$coverage_based$SC      <- round(output_FD_inci$FDiNextEst$coverage_based$SC, 3)
+output_FD_inci$FDiNextEst$coverage_based$mT      <- round(output_FD_inci$FDiNextEst$coverage_based$mT, 3)
+output_FD_inci$FDiNextEst$coverage_based[1:6,]
+```
+
+The third list of the output (`$FDAsyEst`) includes the name of the Assemblage, FD for q = 0, 1, and 2 (`qFD`), the observed diversity (`FD_obs`), asymptotic diversity estimate (`FD_asy`) and its estimated bootstrap standard error (`s.e.`), and the confidence intervals for asymptotic diversity (`qFD.LCL` and `qFD.UCL`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy3D()`. The output is shown below:
+
+```{r, eval=FALSE}
+output_FD_inci$FDAsyEst
+```
+
+```{r, echo=FALSE}
+tmp = output_FD_inci$FDAsyEst
+tmp[,-c(1:2)] = round(tmp[,-c(1:2)], 3)
+tmp
+```
+The `ggiNEXT3D` function can be used to make graphical displays for rarefaction and extrapolation sampling curves. When `facet.var = "Assemblage"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each assemblage; within each assemblage, different color curves represent diversity of different orders. An example for showing sample-size-based rarefaction/extrapolation curves (`type = 1`) is given below:
+
+```{r eval=FALSE}
+# FD sample-size-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_FD_inci, type = 1, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_inci, type = 1, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+When `facet.var = "Order.q"` is specified in the `ggiNEXT3D` function, it creates a separate plot for each diversity order; within each plot, different color curves represent different assemblages. An example is shown below:
+
+```{r eval=FALSE}
+# FD sample-size-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_FD_inci, type = 1, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_inci, type = 1, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for different assemblages. 
+
+```{r eval=FALSE}
+# Sample completeness curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_FD_inci, type = 2, color.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_inci, type = 2, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
+
+```{r eval=FALSE}
+# FD coverage-based R/E curves for incidence data, separating by "Assemblage"
+ggiNEXT3D(output_FD_inci, type = 3, facet.var = "Assemblage")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_inci, type = 3, facet.var = "Assemblage")
+out + theme(text = element_text(size = 12))
+```
+
+```{r eval=FALSE}
+# FD coverage-based R/E curves for incidence data, separating by "Order.q"
+ggiNEXT3D(output_FD_inci, type = 3, facet.var = "Order.q")
+```
+
+```{r echo=FALSE}
+out <- ggiNEXT3D(output_FD_inci, type = 3, facet.var = "Order.q")
+out + theme(text = element_text(size = 12))
 ```
 
 
-```{r}
-ggiNEXT3D(out.raw, type = 2)
-```
 
-```{r}
-ggiNEXT3D(out.raw, type = 3)
-```
+## <span style="color:red;">FUNCTION DataInfo3D(): DATA INFORMATION</span> 
 
-### EXAMPLE for INCIDENCE-FREQUENCY DATA
-
-We transform Hinkley's fish data (incidence-raw data) to incidence-frequency data (`incidence_freq`). The first row must be the total number of sampling units, followed by the species incidence frequencies in each assemblage. Here only use taxonomic diversity (TD) for demonstration below.
-
-```{r}
-fish.freq = cbind(c( ncol(fish_incidence_data$data$`1981-1985`), rowSums(fish_incidence_data$data$`1981-1985`) ),
-                  c( ncol(fish_incidence_data$data$`1987-1991`), rowSums(fish_incidence_data$data$`1987-1991`) ),
-                  c( ncol(fish_incidence_data$data$`2015-2019`), rowSums(fish_incidence_data$data$`2015-2019`) ))
-rownames(fish.freq)[1] = "sample units"
-colnames(fish.freq) = names(fish_incidence_data$data)
-```
-
-```{r}
-head(fish.freq)
-```
-
-Note that incidence-frequency data (`datatype = "incidence_freq`) is allowed only for diversity class: `"TD"`, `"FD"`. If `"PD"` required, use incidence-raw data instead. The following commands return three R/E sampling curves for fish data. The argument `color.var =  "Order.q"` is used to display curves in different colors for diversity order.
-
-```{r}
-out.incfreq <- iNEXT3D(data = fish.freq, diversity = "TD",
-                       q = c(0, 1, 2), datatype = "incidence_freq",nboot = 30)
-
-
-# Sample-size-based R/E curves
-ggiNEXT3D(out.incfreq, type = 1, color.var = "Order.q")
-```
-
-```{r}
-# Sample completeness curves
-ggiNEXT3D(out.incfreq, type = 2)
-```
-
-```{r}
-# Coverage-based R/E curves
-ggiNEXT3D(out.incfreq, type = 3, color.var = "Order.q")     
-```
-
-
-### DATA INFORMATION FUNCTION: DataInfo3D()
-
+The function `DataInfo3D()` provides basic data information for the reference sample in each individual assemblage. The function `DataInfo3D()` with default arguments is shown below:
+ 
 ```{r eval=FALSE}
 DataInfo3D(data, diversity = "TD", datatype = "abundance", 
            nT = NULL, PDtree, PDreftime = NULL, 
            FDdistM, FDtype = "AUC", FDtau = NULL) 
 ```
 
-Here provide the function `DataInfo3D` to compute three diversity dimensions ('TD', 'PD', 'FD') data information, which including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts when `diversity = TD`. And so on for PD, FD.
+All arguments in the above function are the same as those for the main function `iNEXT3D`. Running the `DataInfo3D()` function returns basic data information including sample size, observed species richness, two sample coverage estimates (`SC(n)` and `SC(2n)`) as well as other relevant information in each of the three dimensions of diversity. We use Brazil_rainforest_abun_data and Fish_incidence_data to demo the function for each dimension of diversity. 
 
-```{r}
-DataInfo3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance")
+### TAXONOMIC DIVERSITY (TD): Basic data information for abundance data
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+DataInfo3D(Brazil_rainforest_abun_data, diversity = 'TD', datatype = "abundance")
 ```
 
+```{r echo=FALSE}
+tmp <- DataInfo3D(Brazil_rainforest_abun_data, diversity = 'TD', datatype = "abundance")
+tmp$`SC(n)`  <- round(tmp$`SC(n)`, 3)
+tmp$`SC(2n)` <- round(tmp$`SC(2n)`, 3)
+tmp
+```
 
-### POINT ESTIMATION FUNCTION: estimate3D()
+Output description:
+
+- `Assemblage` = assemblage name. 
+
+- `n` = number of observed individuals in the reference sample (sample size).
+
+- `S.obs` = number of observed species in the reference sample.
+
+- `SC(n)` = sample coverage estimate of the reference sample with size n.
+
+- `SC(2n)` = sample coverage estimate of the reference sample with size 2n.
+
+- `f1`-`f5` = the first five species abundance frequency counts in the reference sample.
+
+
+### TAXONOMIC DIVERSITY (TD): Basic data information for incidence data
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+DataInfo3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
+```
+
+```{r echo=FALSE}
+tmp <- DataInfo3D(Fish_incidence_data, diversity = 'TD', datatype = "incidence_raw")
+tmp$`SC(T)`  <- round(tmp$`SC(T)`, 3)
+tmp$`SC(2T)` <- round(tmp$`SC(2T)`, 3)
+tmp
+```
+
+Output description:
+
+- `Assemblage` = assemblage name. 
+
+- `T` = number of sampling units in the reference sample (sample size for incidence data).
+
+- `U` = total number of incidences in the reference sample.
+
+- `S.obs` = number of observed species in the reference sample.
+
+- `SC(T)` = sample coverage estimate of the reference sample with size T.
+
+- `SC(2T)` = sample coverage estimate of the reference sample with size 2T.
+
+- `Q1`-`Q5` = the first five species incidence frequency counts in the reference sample.
+
+### PHYLOGENETIC DIVERSITY (PD): Basic data information for abundance data
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+DataInfo3D(data, diversity = 'PD', datatype = "abundance", PDtree = tree)
+```
+
+```{r echo=FALSE}
+tmp <- DataInfo3D(Brazil_rainforest_abun_data, diversity = 'PD', 
+                  datatype = "abundance", PDtree = Brazil_rainforest_phylo_tree)
+tmp$`SC(n)`  <- round(tmp$`SC(n)`, 3)
+tmp$`SC(2n)` <- round(tmp$`SC(2n)`, 3)
+tmp
+```
+
+Output description:
+
+- `Assemblage`, `n`, `S.obs`, `SC(n)` and `SC(2n)`: definitions are the same as in the TD abundance output and thus are omitted.
+
+- `PD.obs` = the observed total branch length in the phylogenetic tree spanned by all observed species.
+
+- `f1*`,`f2*` = the number of singletons and doubletons in the node/branch abundance set.
+
+- `g1`,`g2` = the total branch length of those singletons/doubletons in the node/branch abundance set.
+
+- `Reftime` = reference time for phylogenetic diversity (the age of the root of phylogenetic tree).
+
+### PHYLOGENETIC DIVERSITY (PD): Basic data information for incidence data
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+DataInfo3D(data, diversity = 'PD', datatype = "incidence_raw", PDtree = tree)
+```
+
+```{r echo=FALSE, cache=TRUE}
+tmp <- DataInfo3D(Fish_incidence_data, diversity = 'PD',
+                  datatype = "incidence_raw", PDtree = Fish_phylo_tree)
+tmp$`SC(T)`  <- round(tmp$`SC(T)`, 3)
+tmp$`SC(2T)` <- round(tmp$`SC(2T)`, 3)
+tmp$PD.obs <- round(tmp$PD.obs, 3)
+tmp$R1 <- round(tmp$R1, 3)
+tmp$R2 <- round(tmp$R2, 3)
+tmp
+```
+
+Output description:
+
+- `Assemblage`, `T`, `U`, `S.obs`, `SC(T)` and `SC(2T)`: definitions are the same as in the TD incidence output and thus are omitted.
+
+- `PD.obs` = the observed total branch length in the phylogenetic tree spanned by all observed species.
+
+- `Q1*`,`Q2*` = the singletons/doubletons in the sample branch incidence.
+
+- `R1`,`R2` = the total branch length of those singletons/doubletons in the sample branch incidence.
+
+- `Reftime` = reference time.
+
+### FUNCTIONAL DIVERSITY (FD): Basic data information for abundance data
+
+```{r eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+DataInfo3D(data, diversity = 'FD', datatype = "abundance", 
+           FDdistM = distM, FDtype = 'AUC')
+```
+
+```{r echo=FALSE}
+tmp <- DataInfo3D(Brazil_rainforest_abun_data, diversity = 'FD', 
+                datatype = "abundance", FDtype = "AUC", 
+                FDdistM = Brazil_rainforest_distance_matrix)
+tmp$`SC(n)`  <- round(tmp$`SC(n)`, 3)
+tmp$`SC(2n)` <- round(tmp$`SC(2n)`, 3)
+tmp$dmean <- round(tmp$dmean, 3)
+tmp$dmax  <- round(tmp$dmax, 3)
+tmp
+```
+
+Output description:
+
+- `Assemblage`, `n`, `S.obs`, `SC(n)` and `SC(2n)`: definitions are the same as in TD abundance output and thus are omitted.
+
+- `dmin` = the minimum distance among all non-diagonal elements in the distance matrix.
+
+- `dmean` = the mean distance between any two individuals randomly selected from each assemblage.
+
+- `dmax` = the maximum distance among all elements in the distance matrix.
+
+### FUNCTIONAL DIVERSITY (FD): Basic data information for incidence data
+
+```{r eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+DataInfo3D(data, diversity = 'FD', datatype = "incidence_raw", 
+           FDdistM = distM, FDtype = 'AUC')
+```
+
+```{r echo=FALSE}
+tmp <- DataInfo3D(Fish_incidence_data, diversity = 'FD', 
+                datatype = "incidence_raw", FDtype = "AUC", 
+                FDdistM = Fish_distance_matrix)
+tmp$`SC(T)`  <- round(tmp$`SC(T)`, 3)
+tmp$`SC(2T)` <- round(tmp$`SC(2T)`, 3)
+tmp$dmin  <- round(tmp$dmin, 3)
+tmp$dmean <- round(tmp$dmean, 3)
+tmp$dmax  <- round(tmp$dmax, 3)
+tmp
+```
+
+Output description:
+
+- `Assemblage`, `T`, `U`, `S.obs`, `SC(T)` and `SC(2T)`: definitions are the same as in the TD incidence output and thus are omitted.
+
+- `dmin` = the minimum distance among all non-diagonal elements in the distance matrix.
+
+- `dmean` = the mean distance between any two individuals randomly selected from each assemblage.
+
+- `dmax` = the maximum distance among all elements in the distance matrix.
+
+
+## <span style="color:red;">FUNCTION estimate3D(): POINT ESTIMATION</span>
+
+`estimate3D` is used to compute 3D diversity (TD, PD, FD) estimates with q = 0, 1, 2 under any specified levels of sample size (when `base = "size"`) and sample coverage values (when `base = "coverage"`) for abundance data (`datatype = "abundance"`) or incidence data (`datatype = "incidence_raw"`). When `base = "size"`, `level` can be specified with a particular vector of sample sizes (greater than 0); if `level = NULL`, this function computes the diversity estimates for the minimum sample size among all samples extrapolated to the double reference sizes. When `base = "coverage"`, `level` can be specified with a particular vector of sample coverage values (between 0 and 1); if `level = NULL`, this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to the double reference sizes. All arguments in the function are the same as those for the main function `iNEXT3D`.
 
 ```{r eval=FALSE}
 estimate3D(data, diversity = "TD", q = c(0, 1, 2), datatype = "abundance", 
            base = "coverage", level = NULL, nboot = 50, conf = 0.95, 
            nT = NULL, PDtree, PDreftime = NULL, PDtype = "meanPD", 
-           FDdistM, FDtype = "AUC", FDtau = NULL)
+           FDdistM, FDtype = "AUC", FDtau = NULL, FDcut_number = 50) 
 ```
 
-`estimate3D` is used to compute three diversity dimensions (TD, PD, FD) estimates with q = 0, 1, 2 under any specified level of sample size (when `base = "size"`) or sample coverage (when `base = "coverage"`) for either abundance data (`datatype = "abundance"`) or incidence data (`datatype = "incidence_freq"` or `"incidence_raw"`). If `level = NULL`, this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes (when `base = "size"`) or the minimum sample coverage among all samples extrapolated to double reference sizes (when `base = "coverage"`). 
+## <span style="color:blue;">TAXONOMIC DIVERSITY (TD): point estimation</span>
 
-For example, the following command returns the taxonomic diversity ('TD') with a specified level of sample coverage = 99.5% for the Brazil rainforest data. For some assemblages, this coverage value corresponds to the rarefaction part whereas the others correspond to extrapolation. 
+### Example 7a: TD for abundance data with two target coverage values (93% and 97%)
+
+The following commands return the TD estimates with two specified levels of sample coverage (93% and 97%) based on the `Brazil_rainforest_abun_data`.  
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+                                 datatype = "abundance", base = "coverage", level = c(0.93, 0.97))
+output_est_TD_abun
+```
+
+```{r, echo=FALSE}
+output_est_TD_abun <- estimate3D(Brazil_rainforest_abun_data, diversity = 'TD', q = c(0,1,2), 
+                                 datatype = "abundance", base = "coverage", level = c(0.93, 0.97))
+
+output_est_TD_abun[,c('SC', 'm', 'qTD', 's.e.', 'qTD.LCL', 'qTD.UCL')] = 
+  round(output_est_TD_abun[,c('SC', 'm', 'qTD', 's.e.', 'qTD.LCL', 'qTD.UCL')], 3)
+
+output_est_TD_abun
+```
+
+### Example 7b: TD for incidence data with two target coverage values (97.5% and 99%)
+
+The following commands return the TD estimates with two specified levels of sample coverage (97.5% and 99%) for the `Fish_incidence_data`.
+
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
+                                 datatype = "incidence_raw", base = "coverage", 
+                                 level = c(0.975, 0.99))
+output_est_TD_inci
+```
+
+```{r, echo=FALSE}
+output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
+                                 datatype = "incidence_raw", base = "coverage", 
+                                 level = c(0.975, 0.99))
+
+output_est_TD_inci[,c('SC', 'mT', 'qTD', 's.e.', 'qTD.LCL', 'qTD.UCL')] = 
+  round(output_est_TD_inci[,c('SC', 'mT', 'qTD', 's.e.', 'qTD.LCL', 'qTD.UCL')], 3)
+
+output_est_TD_inci
+```
+
+## <span style="color:blue;">PHYLOGENETIC DIVERSITY (PD): point estimation</span>
+
+### Example 8a: PD for abundance data with two target sample sizes (1500 and 3500)
+
+The following commands return the PD estimates with two specified levels of sample sizes (1500 and 3500) for the `Brazil_rainforest_abun_data`.
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
+                                 base = "size", level = c(1500, 3500), PDtree = tree)
+output_est_PD_abun
+```
+
+```{r, echo=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_est_PD_abun <- estimate3D(data, diversity = 'PD', datatype = "abundance", 
+                                 base = "size", level = c(1500, 3500), PDtree = tree)
+
+output_est_PD_abun[,c('m', 'SC', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL')] = 
+  round(output_est_PD_abun[,c('m', 'SC', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL')], 3)
+
+output_est_PD_abun
+```
+
+### Example 8b: PD for incidence data with two target coverage values (97.5% and 99%)
+
+The following commands return the PD estimates with two specified levels of sample coverage (97.5% and 99%) for the `Fish_incidence_data`.
+  
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+                                 base = "coverage", level = c(0.975, 0.99), PDtree = tree)
+output_est_PD_inci
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_est_PD_inci <- estimate3D(data, diversity = 'PD', datatype = "incidence_raw", 
+                                 base = "coverage", level = c(0.975, 0.99), PDtree = tree)
+
+output_est_PD_inci[,c('SC', 'mT', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL')] = 
+  round(output_est_PD_inci[,c('SC', 'mT', 'qPD', 's.e.', 'qPD.LCL', 'qPD.UCL')], 3)
+
+output_est_PD_inci
+```
+
+## <span style="color:blue;">FUNCTIONAL DIVERSITY (FD): point estimation</span>
+
+### Example 9a: FD for abundance data with two target coverage values (93% and 97%)
+
+The following commands return the FD estimates with two specified levels of sample coverage (93% and 97%) for the `Brazil_rainforest_abun_data`.
+  
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
+                                 base = "coverage", level = c(0.93, 0.97), nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
+output_est_FD_abun
+```
+
+
+```{r, echo=FALSE, cache=TRUE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_est_FD_abun <- estimate3D(data, diversity = 'FD', datatype = "abundance", 
+                                 base = "coverage", level = c(0.93, 0.97), nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
+
+output_est_FD_abun[,c('SC', 'm', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL')] = 
+  round(output_est_FD_abun[,c('SC', 'm', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL')], 3)
+
+output_est_FD_abun
+```
+
+### Example 9b: FD for incidence data with two target number of sampling units (30 and 70)
+
+The following commands return the FD estimates with two specified levels of sample sizes (30 and 70) for the `Fish_incidence_data`.
+  
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                                 base = "size", level = c(30, 70), nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
+output_est_FD_inci
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_est_FD_inci <- estimate3D(data, diversity = 'FD', datatype = "incidence_raw", 
+                                 base = "size", level = c(30, 70), nboot = 10, 
+                                 FDdistM = distM, FDtype = 'AUC')
+
+output_est_FD_inci[,c('mT', 'SC', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL')] = 
+  round(output_est_FD_inci[,c('mT', 'SC', 'qFD', 's.e.', 'qFD.LCL', 'qFD.UCL')], 3)
+
+output_est_FD_inci
+```
+
+## <span style="color:red;">FUNCTION ObsAsy3D: ASYMPTOTIC AND OBSERVED DIVERSITY PROFILES</span>
+
+```{r, eval=FALSE}
+ObsAsy3D(data, diversity = "TD", q = seq(0, 2, 0.2), datatype = "abundance",
+         nboot = 50, conf = 0.95, nT = NULL, 
+         method = c("Asymptotic", "Observed"),
+         PDtree, PDreftime = NULL, PDtype = "meanPD",
+         FDdistM, FDtype = "AUC", FDtau = NULL, FDcut_number = 50
+         )
+```
+
+All arguments in the above function are the same as those for the main function `iNEXT3D` (except that the default of `q` here is `seq(0, 2, 0.2)`). The function `ObsAsy3D()` computes observed and asymptotic diversity of order q between 0 and 2 (in increments of 0.2) for 3D diversity; these 3D values with different order q can be used to depict a q-profile in the `ggObsAsy3D` function.
+
+It also computes observed and asymptotic PD for various reference times by specifying the argument `PDreftime`; these PD values with different reference times can be used to depict a time-profile in the `ggObsAsy3D` function.
+
+It also computes observed and asymptotic FD for various threshold tau levels by specifying the argument `FDtau`; these FD values with different threshold levels can be used to depict a tau-profile in the `ggObsAsy3D` function.
+
+For each dimension, by default, both the observed and asymptotic diversity estimates will be computed.
+
+
+## <span style="color:red;">FUNCTION ggObsAsy3D(): GRAPHIC DISPLAYS OF DIVERSITY PROFILES</span>
+
+```{r,eval=FALSE}
+ggObsAsy3D(output, profile = "q")
+```
+
+`ggObsAsy3D` is a ggplot2 extension for an `ObsAsy3D` object to plot 3D q-profile (which depicts the observed diversity and asymptotic diversity estimate with respect to order q) for q between 0 and 2 (in increments of 0.2).
+
+It also plots time-profile (which depicts the observed and asymptotic estimate of PD or mean PD with respect to reference times when `diversity = "PD"` specified in the ObsAsy3D function), and tau-profile (which depicts the observed and asymptotic estimate of FD with respect to threshold level tau when `diversity = "FD"` and `FDtype = "tau_values"` specified in the `ObsAsy3D` function) based on the output from the function `ObsAsy3D`.
+
+In the plot of profiles, only confidence intervals of the asymptotic diversity will be shown when both the observed and asymptotic diversity estimates are computed.
+
+
+## <span style="color:blue;">TAXONOMIC DIVERSITY (TD): q-profiles</span>
+
+### Example 10a: TD q-profiles for abundance data
+
+The following commands returns the observed and asymptotic taxonomic diversity ('TD') for the `Brazil_rainforest_abun_data`, along with its confidence interval for diversity order q between 0 to 2. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
+                                  datatype = "abundance")
+output_ObsAsy_TD_abun
+```
+
+```{r, echo=FALSE, cache=TRUE}
+output_ObsAsy_TD_abun <- ObsAsy3D(Brazil_rainforest_abun_data, diversity = 'TD', 
+                                  datatype = "abundance")
+
+tmp = output_ObsAsy_TD_abun
+tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
 
 ```{r}
-estimate3D(Brazil_rainforest_data$data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", 
-           base = "coverage", level = 0.995)
-```
-
-
-
-### EMPIRICAL AND ASYMPTOTIC DIVERSITY FUNCTION: ObsAsy3D
-
-```{r eval=FALSE}
-ObsAsy3D(data,diversity = "TD",q = seq(0,2,0.2),datatype = "abundance",
-         nboot = 50,conf = 0.95,nT = NULL,method = c("Asymptotic", "Observed"),
-         PDtree,PDreftime = NULL,PDtype = "meanPD",
-         FDdistM,FDtype = "AUC",FDtau = NULL)
-```
-
-The function `ObsAsy3D()` compute three diversity dimensions (TD, PD, FD) for empirical (observed) diversity and estimated asymptotic diversity with any diversity order. For example, the following commands returns empirical and asymptotic taxonomic diversity ('TD') for Brazil rainforest data, along with its confidence interval at diversity order q from 0 to 2. Here only show the first ten rows.
-
-```{r}
-out1 <- ObsAsy3D(Brazil_rainforest_data$data, diversity = 'TD', datatype = "abundance", 
-                 method = c("Asymptotic", "Observed"), nboot = 30, conf = 0.95)
-
-head(out1, 10)
-```
-
-
-### GRAPHIC DISPLAYS FUNCTION: ggObsAsy3D()
-
-Plots q-profile, time-profile, and tau-profile based on the outcome of ObsAsy3D using the ggplot2 package.
-
-The function ggObsAsy3D(), which extends ggplot2 with default arguments, is described as follows:
-
-```{r eval=FALSE}
-ggObsAsy3D(outcome, profile = "q")
-```
-
-`ggObsAsy3D` plots q-profile, time-profile, and tau-profile based on `ggplot2`. Here `outcome` is the object from the function `ObsAsy3D`, and `profile` is a profile selection versus to diversity. Default is `profile = "q"`. Note that `profile = "time"` is allowed for only when diversity = "PD" and `profile = "tau"` profile is allowed for only when `diversity = "FD"` and `FDtype = "tau_values"`.  
-
-```{r }
 # q-profile curves
-ggObsAsy3D(out1,profile = "q")
-```
-
-The argument `profile = "time"` in `ggObsAsy3D` function creates a separate plot for each diversity order q. Therefore the different assemblages will be represented by different color lines.
-
-```{r }
-# time-profile curves, separating by "Order.q"
-data(fish_incidence_data)
-data <- fish_incidence_data$data
-tree <- fish_incidence_data$tree
-
-out2 <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "incidence_raw", 
-                 nboot = 30, method = c("Asymptotic", "Observed"), 
-                 PDtree = tree, PDreftime = seq(0.1, 82.8575, length.out = 40))
-ggObsAsy3D(out2, profile = "time")
-```
-
-The argument `profile = "tau"` in `ggObsAsy3D` function creates a separate plot for each diversity order q. Therefore the different assemblages will be represented by different color lines.
-
-```{r }
-# tau-profile curves, separating by "Order.q"
-data <- Brazil_rainforest_data$data
-distM <- Brazil_rainforest_data$dist
-
-out3 <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), datatype = "abundance", nboot = 30, 
-                 method = c("Asymptotic", "Observed"), FDtau = seq(0, 1, 0.1), FDdistM = distM, FDtype = 'tau_values')
-ggObsAsy3D(out3, profile = "tau")
+ggObsAsy3D(output_ObsAsy_TD_abun)
 ```
 
 
 
-### How to cite
-If you publish your work based on results from iNEXT.3D package, you should make references to the following Online reference:
+### Example 10b: TD q-profiles for incidence data
 
-*	Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and. Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+The following commands return the observed and asymptotic taxonomic diversity ('TD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', 
+                                  datatype = "incidence_raw")
+output_ObsAsy_TD_inci
+```
+
+```{r, echo=FALSE, cache=TRUE}
+output_ObsAsy_TD_inci <- ObsAsy3D(Fish_incidence_data, diversity = 'TD', 
+                                  datatype = "incidence_raw")
+
+tmp = output_ObsAsy_TD_inci
+tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
+
+```{r}
+# q-profile curves
+ggObsAsy3D(output_ObsAsy_TD_inci)
+```
+
+
+## <span style="color:blue;">PHYLOGENETIC DIVERSITY (PD): time-profiles and q-profiles</span>
+
+### Example 11a: PD time-profiles for abundance data
+
+The following commands return the observed and asymptotic phylogenetic diversity ('PD') estimates for the `Brazil_rainforest_abun_data`, along with its confidence interval for diversity order q = 0, 1, 2 under reference times from 0.01 to 400 (tree height). Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), 
+                                  PDreftime = seq(0.01, 400, length.out = 20),
+                                  datatype = "abundance", nboot = 20, PDtree = tree)
+output_ObsAsy_PD_abun
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_phylo_tree)
+data <- Brazil_rainforest_abun_data
+tree <- Brazil_rainforest_phylo_tree
+output_ObsAsy_PD_abun <- ObsAsy3D(data, diversity = 'PD', q = c(0, 1, 2), 
+                                  PDreftime = seq(0.1, 400, length.out = 40),
+                                  datatype = "abundance", nboot = 20, PDtree = tree)
+
+tmp = output_ObsAsy_PD_abun
+tmp[,c(3:6,8)] <- round(tmp[,c(3:6,8)], 3)
+tmp[1:10,]
+```
+
+The argument `profile = "time"` in the `ggObsAsy3D` function creates a separate plot for each diversity order q = 0, 1, and 2 with x-axis being "Reference time". Different assemblages will be represented by different color lines.
+
+```{r}
+# time-profile curves
+ggObsAsy3D(output_ObsAsy_PD_abun, profile = "time")
+```
+
+
+### Example 11b: PD q-profiles for incidence data
+
+The following commands return the observed and asymptotic taxonomic diversity ('PD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, 0.2), 
+                                  datatype = "incidence_raw", nboot = 20, PDtree = tree, 
+                                  PDreftime = NULL)
+output_ObsAsy_PD_inci
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Fish_incidence_data)
+data(Fish_phylo_tree)
+data <- Fish_incidence_data
+tree <- Fish_phylo_tree
+output_ObsAsy_PD_inci <- ObsAsy3D(data, diversity = 'PD', q = seq(0, 2, 0.2), 
+                                  datatype = "incidence_raw", nboot = 20, PDtree = tree, 
+                                  PDreftime = NULL)
+
+tmp = output_ObsAsy_PD_inci
+tmp[,c(3:6,8)] <- round(tmp[,c(3:6,8)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2, for the default reference time = 0.977 (the tree depth).
+
+```{r}
+# q-profile curves
+ggObsAsy3D(output_ObsAsy_PD_inci, profile = "q")
+```
+
+
+## <span style="color:blue;">FUNCTIONAL DIVERSITY (FD): tau-profiles and q-profiles</span>
+
+### Example 12a: FD tau-profiles for abundance data 
+
+The following commands returns observed and asymptotic functional diversity ('FD') for `Brazil_rainforest_abun_data`, along with its confidence interval at diversity order q = 0, 1, 2 under tau values from 0 to 1. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun_tau <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
+                                      datatype = "abundance", nboot = 10, FDdistM = distM, 
+                                      FDtype = 'tau_values', FDtau = seq(0, 1, 0.05))
+output_ObsAsy_FD_abun_tau
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun_tau <- ObsAsy3D(data, diversity = 'FD', q = c(0, 1, 2), 
+                                      datatype = "abundance", nboot = 10, FDdistM = distM, 
+                                      FDtype = 'tau_values', FDtau = seq(0, 1, 0.05))
+
+tmp = output_ObsAsy_FD_abun_tau
+tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding tau-profiles, along with its confidence interval for diversity order q = 0, 1, 2.
+
+```{r eval=FALSE}
+# tau-profile curves
+ggObsAsy3D(output_ObsAsy_FD_abun_tau, profile = "tau")
+```
+
+```{r echo=FALSE}
+out <- ggObsAsy3D(output_ObsAsy_FD_abun_tau, profile = "tau")
+out + theme(text = element_text(size = 12))
+```
+
+
+### Example 12b: FD q-profiles for abundance data 
+
+The following commands returns the observed and asymptotic taxonomic diversity ('FD') for the `Brazil_rainforest_abun_data`, along with its confidence interval for diversity order q between 0 to 2 with `FDtype = 'AUC'`. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
+                                  datatype = "abundance", nboot = 10, 
+                                  FDdistM = distM, FDtype = 'AUC')
+output_ObsAsy_FD_abun
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Brazil_rainforest_abun_data)
+data(Brazil_rainforest_distance_matrix)
+data <- Brazil_rainforest_abun_data
+distM <- Brazil_rainforest_distance_matrix
+output_ObsAsy_FD_abun <- ObsAsy3D(data, diversity = 'FD', q = seq(0, 2, 0.5), 
+                                  datatype = "abundance", nboot = 10, 
+                                  FDdistM = distM, FDtype = 'AUC')
+
+tmp = output_ObsAsy_FD_abun
+tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
+
+```{r}
+# q-profile curves
+ggObsAsy3D(output_ObsAsy_FD_abun, profile = "q")
+```
+
+
+### Example 12c: FD q-profiles for incidence data 
+
+The following commands returns observed and asymptotic functional diversity ('FD') for `Fish_incidence_data`, along with its confidence interval at diversity order q from 0 to 2. Here only the first ten rows of the output are shown.
+
+```{r, eval=FALSE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_ObsAsy_FD_inci <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw",
+                                  nboot = 20, FDdistM = distM, FDtype = 'AUC')
+output_ObsAsy_FD_inci
+```
+
+```{r, echo=FALSE, cache=TRUE}
+data(Fish_incidence_data)
+data(Fish_distance_matrix)
+data <- Fish_incidence_data
+distM <- Fish_distance_matrix
+output_ObsAsy_FD_inci <- ObsAsy3D(data, diversity = 'FD', datatype = "incidence_raw",
+                                  nboot = 20, FDdistM = distM, FDtype = 'AUC')
+
+tmp = output_ObsAsy_FD_inci
+tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
+tmp[1:10,]
+```
+
+The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
+
+```{r}
+# q-profile curves
+ggObsAsy3D(output_ObsAsy_FD_inci, profile = "q")
+```
 
 
 
-### License
+
+## License
 The iNEXT.3D package is licensed under the GPLv3. To help refine `iNEXT.3D`, your comments or feedback would be welcome (please send them to Anne Chao or report an issue on the iNEXT.3D github [iNEXT.3D_github](https://github.com/AnneChao/iNEXT.3D). 
 
-### References
-- Chao, A., Chiu, C.-H., Villéger, S., Sun, I.-F., Thorn, S., Lin, Y.-C., Chiang, J. M. and Sherwin, W. B. (2019). An attribute-diversity approach to functional diversity, functional beta diversity, and related (dis)similarity measures. Ecological Monographs, 89, e01343. 10.1002/ecm.1343.
+## References
+- Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M. and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 
-- Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
+- Hsieh, T. C., Ma, K-H, and Chao, A. (2016). iNEXT: An R package for rarefaction and extrapolation of species diversity (Hill numbers). Methods in Ecology and Evolution, 7, 1451-1456.
 
-- T.C. Hsieh, K. H. Ma, and Chao, A. (2016). iNEXT: An R package for rarefaction and extrapolation of species diversity (Hill numbers). Methods in Ecology and Evolution, 7, 1451-1456.
 

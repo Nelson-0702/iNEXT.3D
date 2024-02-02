@@ -19,10 +19,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "",
 options("width"=200)
 
 if("gridExtra" %in% rownames(installed.packages()) == FALSE) {install.packages("gridExtra")}
-# devtools::load_all(".")
+
 library(iNEXT.3D)
 library(ggplot2)
-# data("beetles.abu")
 ```
 
 
@@ -116,7 +115,7 @@ Although species identities/names are not required to assess TD or compare TD ac
 
 2. Sampling-unit-based incidence data: Incidence-raw data (`datatype = "incidence_raw"`): for each assemblage, input data for a reference sample consist of a species-by-sampling-unit matrix, in addition to the sampling-unit names (as column names) and the species names (as row names). When there are N assemblages, input data consist of N lists of matrices, and each matrix is a species-by-sampling-unit matrix. Each element in the incidence raw matrix is 1 for a detection, and 0 for a non-detection. Input a matrix which combines data for all assemblages is allowed, but the argument `nT` in the function `iNEXT3D` must be specified so that the number of sampling units in each assemblage is specified.
   
-For example, the dataset `Brazil_rainforest_abun_data` included in the `iNEXT.3D` package consists of species sample abundances of two assemblages/habitats: ?€œEdge?€? and ?€œInterior?€?. Run the following code to view the first 15 rows of the abundance data. 
+For example, the dataset `Brazil_rainforest_abun_data` included in the `iNEXT.3D` package consists of species sample abundances of two assemblages/habitats: "Edge" and "Interior". Run the following code to view the first 15 rows of the abundance data. 
 
 ```{r eval=FALSE}
 data("Brazil_rainforest_abun_data")
@@ -442,7 +441,7 @@ out + theme(text = element_text(size = 12))
 The following commands return the coverage-based rarefaction/extrapolation sampling curves in which different color curves represent three diversity orders within each assemblage (`facet.var = "Assemblage"`), or represent two assemblages within each diversity order (`facet.var = "Order.q"`), respectively.
 
 ```{r eval=FALSE}
-# TD coverage-based R/E curves, separating by "Assemblage""
+# TD coverage-based R/E curves, separating by "Assemblage"
 ggiNEXT3D(output_TD_abun, type = 3, facet.var = "Assemblage")
 ```
 
@@ -452,7 +451,7 @@ out + theme(text = element_text(size = 12))
 ```
 
 ```{r eval=FALSE}
-# TD coverage-based R/E curves, separating by "Order.q""
+# TD coverage-based R/E curves, separating by "Order.q"
 ggiNEXT3D(output_TD_abun, type = 3, facet.var = "Order.q")
 ```
 
@@ -1537,6 +1536,7 @@ tmp[1:10,]
 The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
 
 ```{r}
+# q-profile curves
 ggObsAsy3D(output_ObsAsy_TD_abun)
 ```
 
@@ -1544,7 +1544,7 @@ ggObsAsy3D(output_ObsAsy_TD_abun)
 
 ### Example 10b: TD q-profiles for incidence data
 
-The following commands return the observed and asymptotic taxonomic diversity ('TD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only show the first ten rows.
+The following commands return the observed and asymptotic taxonomic diversity ('TD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only the first ten rows of the output are shown.
 
 ```{r, eval=FALSE}
 data(Fish_incidence_data)
@@ -1574,7 +1574,7 @@ ggObsAsy3D(output_ObsAsy_TD_inci)
 
 ### Example 11a: PD time-profiles for abundance data
 
-The following commands return the observed and asymptotic phylogenetic diversity ('PD') estimates for the `Brazil_rainforest_abun_data`, along with its confidence interval for diversity order q = 0, 1, 2 under reference times from 0.01 to 400 (tree height). Here only show the first ten rows of the output.
+The following commands return the observed and asymptotic phylogenetic diversity ('PD') estimates for the `Brazil_rainforest_abun_data`, along with its confidence interval for diversity order q = 0, 1, 2 under reference times from 0.01 to 400 (tree height). Here only the first ten rows of the output are shown.
 
 ```{r, eval=FALSE}
 data(Brazil_rainforest_abun_data)
@@ -1611,7 +1611,7 @@ ggObsAsy3D(output_ObsAsy_PD_abun, profile = "time")
 
 ### Example 11b: PD q-profiles for incidence data
 
-The following commands return the observed and asymptotic taxonomic diversity ('PD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only show the first ten rows.
+The following commands return the observed and asymptotic taxonomic diversity ('PD') estimates for the `Fish_incidence_data`, along with its confidence interval for diversity order q between 0 to 2. Here only the first ten rows of the output are shown.
 
 ```{r, eval=FALSE}
 data(Fish_incidence_data)
@@ -1640,7 +1640,7 @@ tmp[1:10,]
 
 The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2, for the default reference time = 0.977 (the tree depth).
 
-```{r, echo=FALSE, cache=TRUE}
+```{r}
 # q-profile curves
 ggObsAsy3D(output_ObsAsy_PD_inci, profile = "q")
 ```
@@ -1756,7 +1756,7 @@ tmp[1:10,]
 
 The following commands plot the corresponding q-profiles, along with its confidence interval for q between 0 to 2.
 
-```{r, echo=FALSE, cache=TRUE}
+```{r}
 # q-profile curves
 ggObsAsy3D(output_ObsAsy_FD_inci, profile = "q")
 ```
