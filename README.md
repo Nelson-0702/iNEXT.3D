@@ -3,7 +3,7 @@
 # iNEXT.3D (R package)
 
 <h5 align="right">
-Latest version: 2024-02-02
+Latest version: 2024-02-03
 </h5>
 <font color="394CAE">
 <h3 color="394CAE" style="font-weight: bold">
@@ -635,11 +635,11 @@ output_TD_abun$TDiNextEst$size_based
 
       Assemblage Order.q   m      Method     qTD qTD.LCL qTD.UCL    SC SC.LCL SC.UCL
     1       Edge       0   1 Rarefaction   1.000   1.000   1.000 0.012  0.010  0.013
-    2       Edge       0  95 Rarefaction  66.306  64.958  67.654 0.484  0.468  0.500
-    3       Edge       0 189 Rarefaction 106.743 104.014 109.472 0.638  0.622  0.653
-    4       Edge       0 284 Rarefaction 137.029 132.994 141.064 0.718  0.703  0.733
-    5       Edge       0 378 Rarefaction 161.010 155.760 166.261 0.768  0.754  0.783
-    6       Edge       0 472 Rarefaction 181.073 174.681 187.466 0.803  0.790  0.817
+    2       Edge       0  95 Rarefaction  66.306  64.878  67.734 0.484  0.467  0.501
+    3       Edge       0 189 Rarefaction 106.743 103.952 109.535 0.638  0.622  0.653
+    4       Edge       0 284 Rarefaction 137.029 133.062 140.996 0.718  0.705  0.732
+    5       Edge       0 378 Rarefaction 161.010 156.022 165.998 0.768  0.756  0.781
+    6       Edge       0 472 Rarefaction 181.073 175.177 186.970 0.803  0.792  0.814
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -662,12 +662,12 @@ output_TD_abun$TDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC   m      Method     qTD qTD.LCL qTD.UCL
-    1       Edge       0 0.012   1 Rarefaction   1.000   0.966   1.034
-    2       Edge       0 0.484  95 Rarefaction  66.306  61.873  70.739
-    3       Edge       0 0.638 189 Rarefaction 106.743  99.701 113.785
-    4       Edge       0 0.718 284 Rarefaction 137.029 127.629 146.430
-    5       Edge       0 0.768 378 Rarefaction 161.010 149.526 172.495
-    6       Edge       0 0.803 472 Rarefaction 181.073 167.695 194.451
+    1       Edge       0 0.012   1 Rarefaction   1.000   0.958   1.042
+    2       Edge       0 0.484  95 Rarefaction  66.306  61.580  71.032
+    3       Edge       0 0.638 189 Rarefaction 106.743  99.839 113.647
+    4       Edge       0 0.718 284 Rarefaction 137.029 128.379 145.680
+    5       Edge       0 0.768 378 Rarefaction 161.010 150.914 171.107
+    6       Edge       0 0.803 472 Rarefaction 181.073 169.728 192.419
 
 The third list of the output (`$TDAsyEst`) includes the name of the
 Assemblage, diversity label (`qTD`, species richness for q = 0, Shannon
@@ -685,12 +685,12 @@ output_TD_abun$TDAsyEst
 ```
 
       Assemblage               qTD  TD_obs  TD_asy   s.e. qTD.LCL qTD.UCL
-    1       Edge  Species richness 319.000 444.971 25.893 394.222 495.721
-    2       Edge Shannon diversity 155.386 178.000  6.164 165.919 190.081
-    3       Edge Simpson diversity  82.023  85.905  4.992  76.121  95.690
-    4   Interior  Species richness 356.000 513.518 29.407 455.880 571.155
-    5   Interior Shannon diversity 163.514 186.983  7.683 171.924 202.042
-    6   Interior Simpson diversity  72.153  74.718  5.832  63.287  86.148
+    1       Edge  Species richness 319.000 444.971 24.053 397.828 492.115
+    2       Edge Shannon diversity 155.386 178.000  4.865 168.464 187.535
+    3       Edge Simpson diversity  82.023  85.905  4.205  77.664  94.147
+    4   Interior  Species richness 356.000 513.518 26.493 461.593 565.442
+    5   Interior Shannon diversity 163.514 186.983  5.925 175.371 198.595
+    6   Interior Simpson diversity  72.153  74.718  4.790  65.330  84.105
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -810,12 +810,12 @@ output_TD_inci$TDiNextEst$size_based
 ```
 
       Assemblage Order.q mT      Method    qTD qTD.LCL qTD.UCL    SC SC.LCL SC.UCL
-    1  2013-2015       0  1 Rarefaction 14.778  13.867  15.688 0.606  0.581  0.630
-    2  2013-2015       0  2 Rarefaction 20.603  19.416  21.790 0.749  0.726  0.771
-    3  2013-2015       0  4 Rarefaction 27.079  25.595  28.564 0.851  0.831  0.870
-    4  2013-2015       0  6 Rarefaction 31.121  29.393  32.850 0.894  0.878  0.910
-    5  2013-2015       0  8 Rarefaction 34.042  32.076  36.007 0.919  0.906  0.932
-    6  2013-2015       0 10 Rarefaction 36.319  34.136  38.502 0.934  0.923  0.945
+    1  2013-2015       0  1 Rarefaction 14.778  14.035  15.521 0.606  0.574  0.637
+    2  2013-2015       0  2 Rarefaction 20.603  19.639  21.567 0.749  0.726  0.772
+    3  2013-2015       0  4 Rarefaction 27.079  25.703  28.455 0.851  0.834  0.867
+    4  2013-2015       0  6 Rarefaction 31.121  29.430  32.813 0.894  0.880  0.908
+    5  2013-2015       0  8 Rarefaction 34.042  32.095  35.989 0.919  0.907  0.931
+    6  2013-2015       0 10 Rarefaction 36.319  34.149  38.488 0.934  0.923  0.945
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -838,12 +838,12 @@ output_TD_inci$TDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC mT      Method    qTD qTD.LCL qTD.UCL
-    1  2013-2015       0 0.606  1 Rarefaction 14.778  13.875  15.681
-    2  2013-2015       0 0.749  2 Rarefaction 20.603  19.228  21.978
-    3  2013-2015       0 0.851  4 Rarefaction 27.079  25.019  29.139
-    4  2013-2015       0 0.894  6 Rarefaction 31.121  28.532  33.711
-    5  2013-2015       0 0.919  8 Rarefaction 34.042  31.053  37.031
-    6  2013-2015       0 0.934 10 Rarefaction 36.319  33.044  39.594
+    1  2013-2015       0 0.606  1 Rarefaction 14.778  13.999  15.556
+    2  2013-2015       0 0.749  2 Rarefaction 20.603  19.158  22.049
+    3  2013-2015       0 0.851  4 Rarefaction 27.079  24.966  29.193
+    4  2013-2015       0 0.894  6 Rarefaction 31.121  28.553  33.690
+    5  2013-2015       0 0.919  8 Rarefaction 34.042  31.102  36.982
+    6  2013-2015       0 0.934 10 Rarefaction 36.319  33.010  39.628
 
 The third list of the output (`$TDAsyEst`) includes the name of the
 Assemblage, diversity label (`qTD`, species richness for q = 0, Shannon
@@ -861,12 +861,12 @@ output_TD_inci$TDAsyEst
 ```
 
       Assemblage               qTD TD_obs TD_asy   s.e. qTD.LCL qTD.UCL
-    1  2013-2015  Species richness 50.000 59.803 17.533  25.439  94.168
-    2  2013-2015 Shannon diversity 30.089 31.542  1.170  29.249  33.834
-    3  2013-2015 Simpson diversity 23.961 24.394  0.821  22.784  26.003
-    4  2016-2018  Species richness 53.000 69.431 15.173  39.693  99.169
-    5  2016-2018 Shannon diversity 31.534 33.393  1.337  30.773  36.014
-    6  2016-2018 Simpson diversity 24.889 25.409  0.862  23.719  27.099
+    1  2013-2015  Species richness 50.000 59.803  8.208  43.716  75.890
+    2  2013-2015 Shannon diversity 30.089 31.542  1.185  29.219  33.864
+    3  2013-2015 Simpson diversity 23.961 24.394  0.754  22.915  25.873
+    4  2016-2018  Species richness 53.000 69.431 10.444  48.961  89.900
+    5  2016-2018 Shannon diversity 31.534 33.393  1.252  30.940  35.847
+    6  2016-2018 Simpson diversity 24.889 25.409  0.738  23.963  26.855
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -1011,12 +1011,12 @@ output_PD_abun$PDiNextEst$size_based
 ```
 
       Assemblage Order.q   m      Method    qPD qPD.LCL qPD.UCL    SC SC.LCL SC.UCL Reftime   Type
-    1       Edge       0   1 Rarefaction  1.000   0.988   1.012 0.012  0.010  0.013     400 meanPD
-    2       Edge       0  95 Rarefaction 18.547  18.078  19.015 0.484  0.468  0.500     400 meanPD
-    3       Edge       0 189 Rarefaction 26.723  26.010  27.437 0.638  0.625  0.650     400 meanPD
-    4       Edge       0 284 Rarefaction 32.305  31.420  33.190 0.718  0.707  0.730     400 meanPD
-    5       Edge       0 378 Rarefaction 36.498  35.490  37.507 0.768  0.758  0.779     400 meanPD
-    6       Edge       0 472 Rarefaction 39.882  38.774  40.989 0.803  0.792  0.814     400 meanPD
+    1       Edge       0   1 Rarefaction  1.000   0.989   1.011 0.012  0.011  0.013     400 meanPD
+    2       Edge       0  95 Rarefaction 18.547  18.090  19.004 0.484  0.470  0.498     400 meanPD
+    3       Edge       0 189 Rarefaction 26.723  26.039  27.407 0.638  0.625  0.650     400 meanPD
+    4       Edge       0 284 Rarefaction 32.305  31.458  33.153 0.718  0.707  0.730     400 meanPD
+    5       Edge       0 378 Rarefaction 36.498  35.522  37.475 0.768  0.758  0.779     400 meanPD
+    6       Edge       0 472 Rarefaction 39.882  38.791  40.972 0.803  0.792  0.814     400 meanPD
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -1039,12 +1039,12 @@ output_PD_abun$PDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC   m      Method    qPD qPD.LCL qPD.UCL Reftime   Type
-    1       Edge       0 0.012   1 Rarefaction  1.000   0.985   1.015     400 meanPD
-    2       Edge       0 0.484  95 Rarefaction 18.547  17.594  19.499     400 meanPD
-    3       Edge       0 0.638 189 Rarefaction 26.723  25.489  27.958     400 meanPD
-    4       Edge       0 0.718 284 Rarefaction 32.305  30.875  33.735     400 meanPD
-    5       Edge       0 0.768 378 Rarefaction 36.498  34.877  38.119     400 meanPD
-    6       Edge       0 0.803 472 Rarefaction 39.882  38.050  41.713     400 meanPD
+    1       Edge       0 0.012   1 Rarefaction  1.000   0.977   1.023     400 meanPD
+    2       Edge       0 0.484  95 Rarefaction 18.547  17.705  19.388     400 meanPD
+    3       Edge       0 0.638 189 Rarefaction 26.723  25.592  27.854     400 meanPD
+    4       Edge       0 0.718 284 Rarefaction 32.305  30.931  33.679     400 meanPD
+    5       Edge       0 0.768 378 Rarefaction 36.498  34.900  38.097     400 meanPD
+    6       Edge       0 0.803 472 Rarefaction 39.882  38.070  41.693     400 meanPD
 
 The third list of the output (`$PDAsyEst`) includes the name of the
 Assemblage, PD (or meanPD) for q = 0, 1, and 2 (`qPD`), the observed
@@ -1062,12 +1062,12 @@ output_PD_abun$PDAsyEst
 ```
 
       Assemblage      qPD PD_obs PD_asy  s.e. qPD.LCL qPD.UCL Reftime   Type
-    1       Edge q = 0 PD 61.290 80.027 5.153  69.928  90.127     400 meanPD
-    2       Edge q = 1 PD  5.246  5.372 0.107   5.161   5.582     400 meanPD
-    3       Edge q = 2 PD  1.797  1.798 0.023   1.752   1.843     400 meanPD
-    4   Interior q = 0 PD 69.318 86.375 5.471  75.651  97.099     400 meanPD
-    5   Interior q = 1 PD  5.721  5.854 0.146   5.568   6.140     400 meanPD
-    6   Interior q = 2 PD  1.914  1.915 0.036   1.843   1.986     400 meanPD
+    1       Edge q = 0 PD 61.290 80.027 4.638  70.936  89.118     400 meanPD
+    2       Edge q = 1 PD  5.246  5.372 0.147   5.084   5.660     400 meanPD
+    3       Edge q = 2 PD  1.797  1.798 0.032   1.735   1.860     400 meanPD
+    4   Interior q = 0 PD 69.318 86.375 4.199  78.145  94.605     400 meanPD
+    5   Interior q = 1 PD  5.721  5.854 0.121   5.616   6.092     400 meanPD
+    6   Interior q = 2 PD  1.914  1.915 0.031   1.854   1.975     400 meanPD
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -1210,12 +1210,12 @@ output_PD_inci$PDiNextEst$size_based
 ```
 
       Assemblage Order.q mT      Method   qPD qPD.LCL qPD.UCL    SC SC.LCL SC.UCL Reftime   Type
-    1  2013-2015       0  1 Rarefaction 5.744   5.515   5.973 0.606  0.581  0.630   0.977 meanPD
-    2  2013-2015       0  2 Rarefaction 6.813   6.564   7.062 0.749  0.734  0.764   0.977 meanPD
-    3  2013-2015       0  4 Rarefaction 7.716   7.497   7.936 0.851  0.838  0.864   0.977 meanPD
-    4  2013-2015       0  6 Rarefaction 8.130   7.871   8.388 0.894  0.881  0.907   0.977 meanPD
-    5  2013-2015       0  8 Rarefaction 8.389   8.070   8.709 0.919  0.906  0.931   0.977 meanPD
-    6  2013-2015       0 10 Rarefaction 8.589   8.215   8.963 0.934  0.922  0.946   0.977 meanPD
+    1  2013-2015       0  1 Rarefaction 5.744   5.518   5.969 0.606  0.576  0.635   0.977 meanPD
+    2  2013-2015       0  2 Rarefaction 6.813   6.551   7.075 0.749  0.731  0.767   0.977 meanPD
+    3  2013-2015       0  4 Rarefaction 7.716   7.447   7.986 0.851  0.840  0.861   0.977 meanPD
+    4  2013-2015       0  6 Rarefaction 8.130   7.813   8.446 0.894  0.886  0.903   0.977 meanPD
+    5  2013-2015       0  8 Rarefaction 8.389   8.012   8.767 0.919  0.911  0.927   0.977 meanPD
+    6  2013-2015       0 10 Rarefaction 8.589   8.151   9.027 0.934  0.926  0.941   0.977 meanPD
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -1239,12 +1239,12 @@ output_PD_inci$PDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC mT      Method   qPD qPD.LCL qPD.UCL Reftime   Type
-    1  2013-2015       0 0.606  1 Rarefaction 5.744   5.519   5.968   0.977 meanPD
-    2  2013-2015       0 0.749  2 Rarefaction 6.813   6.557   7.068   0.977 meanPD
-    3  2013-2015       0 0.851  4 Rarefaction 7.716   7.465   7.968   0.977 meanPD
-    4  2013-2015       0 0.894  6 Rarefaction 8.130   7.840   8.419   0.977 meanPD
-    5  2013-2015       0 0.919  8 Rarefaction 8.389   8.033   8.746   0.977 meanPD
-    6  2013-2015       0 0.934 10 Rarefaction 8.589   8.160   9.018   0.977 meanPD
+    1  2013-2015       0 0.606  1 Rarefaction 5.744   5.504   5.983   0.977 meanPD
+    2  2013-2015       0 0.749  2 Rarefaction 6.813   6.557   7.069   0.977 meanPD
+    3  2013-2015       0 0.851  4 Rarefaction 7.716   7.455   7.978   0.977 meanPD
+    4  2013-2015       0 0.894  6 Rarefaction 8.130   7.811   8.448   0.977 meanPD
+    5  2013-2015       0 0.919  8 Rarefaction 8.389   8.003   8.776   0.977 meanPD
+    6  2013-2015       0 0.934 10 Rarefaction 8.589   8.138   9.041   0.977 meanPD
 
 The third list of the output (`$PDAsyEst`) includes the name of the
 Assemblage, PD (or meanPD) for q = 0, 1, and 2 (`qPD`), the observed
@@ -1261,12 +1261,12 @@ output_PD_inci$PDAsyEst
 ```
 
       Assemblage      qPD PD_obs PD_asy  s.e. qPD.LCL qPD.UCL Reftime   Type
-    1  2013-2015 q = 0 PD  9.847 10.039 1.011   8.058  12.021   0.977 meanPD
-    2  2013-2015 q = 1 PD  7.635  7.729 0.146   7.444   8.014   0.977 meanPD
-    3  2013-2015 q = 2 PD  7.013  7.057 0.142   6.780   7.335   0.977 meanPD
-    4  2016-2018 q = 0 PD  9.659  9.854 0.823   8.240  11.468   0.977 meanPD
-    5  2016-2018 q = 1 PD  7.781  7.859 0.156   7.553   8.166   0.977 meanPD
-    6  2016-2018 q = 2 PD  7.202  7.244 0.153   6.944   7.544   0.977 meanPD
+    1  2013-2015 q = 0 PD  9.847 10.039 0.651   8.764  11.315   0.977 meanPD
+    2  2013-2015 q = 1 PD  7.635  7.729 0.169   7.397   8.061   0.977 meanPD
+    3  2013-2015 q = 2 PD  7.013  7.057 0.160   6.744   7.371   0.977 meanPD
+    4  2016-2018 q = 0 PD  9.659  9.854 1.309   7.288  12.420   0.977 meanPD
+    5  2016-2018 q = 1 PD  7.781  7.859 0.194   7.478   8.240   0.977 meanPD
+    6  2016-2018 q = 2 PD  7.202  7.244 0.185   6.882   7.606   0.977 meanPD
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -1407,11 +1407,11 @@ output_FD_abun$FDiNextEst$size_based
 
       Assemblage Order.q   m      Method    qFD qFD.LCL qFD.UCL    SC SC.LCL SC.UCL
     1       Edge       0   1 Rarefaction  1.000   1.000   1.000 0.012  0.010  0.013
-    2       Edge       0  95 Rarefaction 10.900  10.486  11.314 0.484  0.469  0.499
-    3       Edge       0 189 Rarefaction 12.993  12.259  13.726 0.638  0.624  0.651
-    4       Edge       0 284 Rarefaction 14.129  13.104  15.155 0.718  0.707  0.730
-    5       Edge       0 378 Rarefaction 14.860  13.584  16.137 0.768  0.758  0.779
-    6       Edge       0 472 Rarefaction 15.383  13.891  16.875 0.803  0.793  0.813
+    2       Edge       0  95 Rarefaction 10.900  10.585  11.215 0.484  0.466  0.502
+    3       Edge       0 189 Rarefaction 12.993  12.453  13.532 0.638  0.625  0.650
+    4       Edge       0 284 Rarefaction 14.129  13.405  14.853 0.718  0.710  0.727
+    5       Edge       0 378 Rarefaction 14.860  13.982  15.738 0.768  0.762  0.775
+    6       Edge       0 472 Rarefaction 15.383  14.369  16.397 0.803  0.797  0.809
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -1434,12 +1434,12 @@ output_FD_abun$FDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC   m      Method    qFD qFD.LCL qFD.UCL
-    1       Edge       0 0.012   1 Rarefaction  1.000   0.968   1.032
-    2       Edge       0 0.484  95 Rarefaction 10.900  10.172  11.628
-    3       Edge       0 0.638 189 Rarefaction 12.993  11.881  14.104
-    4       Edge       0 0.718 284 Rarefaction 14.129  12.706  15.553
-    5       Edge       0 0.768 378 Rarefaction 14.860  13.197  16.524
-    6       Edge       0 0.803 472 Rarefaction 15.383  13.521  17.245
+    1       Edge       0 0.012   1 Rarefaction  1.000   0.993   1.007
+    2       Edge       0 0.484  95 Rarefaction 10.900  10.497  11.303
+    3       Edge       0 0.638 189 Rarefaction 12.993  12.439  13.546
+    4       Edge       0 0.718 284 Rarefaction 14.129  13.431  14.827
+    5       Edge       0 0.768 378 Rarefaction 14.860  14.021  15.700
+    6       Edge       0 0.803 472 Rarefaction 15.383  14.398  16.368
 
 The third list of the output (`$FDAsyEst`) includes the name of the
 Assemblage, FD for q = 0, 1, and 2 (`qFD`), the observed diversity
@@ -1456,12 +1456,12 @@ output_FD_abun$FDAsyEst
 ```
 
       Assemblage           qFD FD_obs FD_asy   s.e. qFD.LCL qFD.UCL
-    1       Edge q = 0 FD(AUC) 17.851 19.008  4.989   9.229  28.786
-    2       Edge q = 1 FD(AUC) 11.781 12.037  0.440  11.175  12.899
-    3       Edge q = 2 FD(AUC)  9.139  9.228  0.382   8.479   9.978
-    4   Interior q = 0 FD(AUC) 17.168 18.208 13.139   0.000  43.960
-    5   Interior q = 1 FD(AUC)  9.716  9.922  0.350   9.236  10.608
-    6   Interior q = 2 FD(AUC)  7.007  7.055  0.183   6.696   7.415
+    1       Edge q = 0 FD(AUC) 17.851 19.008  6.753   5.771  32.244
+    2       Edge q = 1 FD(AUC) 11.781 12.037  0.420  11.214  12.860
+    3       Edge q = 2 FD(AUC)  9.139  9.228  0.292   8.657   9.800
+    4   Interior q = 0 FD(AUC) 17.168 18.208 10.050   0.000  37.907
+    5   Interior q = 1 FD(AUC)  9.716  9.922  0.429   9.081  10.763
+    6   Interior q = 2 FD(AUC)  7.007  7.055  0.184   6.694   7.416
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -1600,12 +1600,12 @@ output_FD_inci$FDiNextEst$size_based
 ```
 
       Assemblage Order.q mT      Method    qFD qFD.LCL qFD.UCL    SC SC.LCL SC.UCL
-    1  2013-2015       0  1 Rarefaction 14.778  14.093  15.462 0.606  0.573  0.638
-    2  2013-2015       0  2 Rarefaction 15.318  14.631  16.006 0.749  0.723  0.775
-    3  2013-2015       0  4 Rarefaction 15.888  15.187  16.588 0.851  0.830  0.871
-    4  2013-2015       0  6 Rarefaction 16.224  15.505  16.942 0.894  0.877  0.912
-    5  2013-2015       0  8 Rarefaction 16.463  15.723  17.203 0.919  0.904  0.934
-    6  2013-2015       0 10 Rarefaction 16.652  15.890  17.413 0.934  0.921  0.947
+    1  2013-2015       0  1 Rarefaction 14.778  13.788  15.768 0.606  0.573  0.638
+    2  2013-2015       0  2 Rarefaction 15.318  14.309  16.328 0.749  0.720  0.778
+    3  2013-2015       0  4 Rarefaction 15.888  14.855  16.920 0.851  0.829  0.873
+    4  2013-2015       0  6 Rarefaction 16.224  15.171  17.276 0.894  0.876  0.912
+    5  2013-2015       0  8 Rarefaction 16.463  15.386  17.539 0.919  0.903  0.934
+    6  2013-2015       0 10 Rarefaction 16.652  15.549  17.755 0.934  0.920  0.947
 
 The second data frame (`$coverage_based`) includes the name of
 assemblage, the diversity order (`Order.q`), the target sample coverage
@@ -1628,12 +1628,12 @@ output_FD_inci$FDiNextEst$coverage_based
 ```
 
       Assemblage Order.q    SC mT      Method    qFD qFD.LCL qFD.UCL
-    1  2013-2015       0 0.606  1 Rarefaction 14.778  14.253  15.303
-    2  2013-2015       0 0.749  2 Rarefaction 15.318  14.773  15.864
-    3  2013-2015       0 0.851  4 Rarefaction 15.888  15.266  16.509
-    4  2013-2015       0 0.894  6 Rarefaction 16.224  15.520  16.928
-    5  2013-2015       0 0.919  8 Rarefaction 16.463  15.676  17.249
-    6  2013-2015       0 0.934 10 Rarefaction 16.652  15.788  17.516
+    1  2013-2015       0 0.606  1 Rarefaction 14.778  13.904  15.652
+    2  2013-2015       0 0.749  2 Rarefaction 15.318  14.455  16.182
+    3  2013-2015       0 0.851  4 Rarefaction 15.888  14.999  16.776
+    4  2013-2015       0 0.894  6 Rarefaction 16.224  15.299  17.148
+    5  2013-2015       0 0.919  8 Rarefaction 16.463  15.491  17.434
+    6  2013-2015       0 0.934 10 Rarefaction 16.652  15.629  17.675
 
 The third list of the output (`$FDAsyEst`) includes the name of the
 Assemblage, FD for q = 0, 1, and 2 (`qFD`), the observed diversity
@@ -1650,12 +1650,12 @@ output_FD_inci$FDAsyEst
 ```
 
       Assemblage           qFD FD_obs FD_asy  s.e. qFD.LCL qFD.UCL
-    1  2013-2015 q = 0 FD(AUC) 17.904 18.906 1.540  15.888  21.923
-    2  2013-2015 q = 1 FD(AUC) 15.944 16.043 0.521  15.021  17.064
-    3  2013-2015 q = 2 FD(AUC) 15.463 15.490 0.502  14.506  16.474
-    4  2016-2018 q = 0 FD(AUC) 17.739 19.770 6.506   7.019  32.521
-    5  2016-2018 q = 1 FD(AUC) 15.749 15.867 0.541  14.808  16.927
-    6  2016-2018 q = 2 FD(AUC) 15.275 15.305 0.452  14.419  16.192
+    1  2013-2015 q = 0 FD(AUC) 17.904 18.906 2.659  13.693  24.118
+    2  2013-2015 q = 1 FD(AUC) 15.944 16.043 0.454  15.154  16.932
+    3  2013-2015 q = 2 FD(AUC) 15.463 15.490 0.441  14.625  16.355
+    4  2016-2018 q = 0 FD(AUC) 17.739 19.770 3.201  13.495  26.045
+    5  2016-2018 q = 1 FD(AUC) 15.749 15.867 0.473  14.940  16.795
+    6  2016-2018 q = 2 FD(AUC) 15.275 15.305 0.443  14.436  16.174
 
 The `ggiNEXT3D` function can be used to make graphical displays for
 rarefaction and extrapolation sampling curves. When
@@ -1958,18 +1958,18 @@ output_est_TD_abun
 ```
 
        Assemblage Order.q   SC        m        Method     qTD   s.e. qTD.LCL qTD.UCL
-    1        Edge       0 0.93 1547.562   Rarefaction 302.879 11.010 281.299 324.459
-    2        Edge       0 0.97 3261.971 Extrapolation 383.307 19.812 344.476 422.138
-    3        Edge       1 0.93 1547.562   Rarefaction 152.374  4.870 142.829 161.919
-    4        Edge       1 0.97 3261.971 Extrapolation 166.837  5.379 156.294 177.381
-    5        Edge       2 0.93 1547.562   Rarefaction  81.437  4.374  72.864  90.010
-    6        Edge       2 0.97 3261.971 Extrapolation  83.726  4.593  74.724  92.728
-    7    Interior       0 0.93 1699.021   Rarefaction 331.917 12.964 306.509 357.326
-    8    Interior       0 0.97 3883.447 Extrapolation 433.807 19.995 394.617 472.996
-    9    Interior       1 0.93 1699.021   Rarefaction 159.330  4.774 149.973 168.688
-    10   Interior       1 0.97 3883.447 Extrapolation 175.739  5.231 165.487 185.992
-    11   Interior       2 0.93 1699.021   Rarefaction  71.611  3.266  65.210  78.012
-    12   Interior       2 0.97 3883.447 Extrapolation  73.326  3.385  66.692  79.959
+    1        Edge       0 0.93 1547.562   Rarefaction 302.879  8.892 285.450 320.308
+    2        Edge       0 0.97 3261.971 Extrapolation 383.307 17.598 348.816 417.798
+    3        Edge       1 0.93 1547.562   Rarefaction 152.374  3.819 144.889 159.860
+    4        Edge       1 0.97 3261.971 Extrapolation 166.837  4.443 158.130 175.544
+    5        Edge       2 0.93 1547.562   Rarefaction  81.437  4.048  73.503  89.372
+    6        Edge       2 0.97 3261.971 Extrapolation  83.726  4.304  75.290  92.163
+    7    Interior       0 0.93 1699.021   Rarefaction 331.917 14.476 303.545 360.289
+    8    Interior       0 0.97 3883.447 Extrapolation 433.807 22.432 389.840 477.773
+    9    Interior       1 0.93 1699.021   Rarefaction 159.330  4.873 149.779 168.882
+    10   Interior       1 0.97 3883.447 Extrapolation 175.739  5.536 164.890 186.589
+    11   Interior       2 0.93 1699.021   Rarefaction  71.611  4.173  63.432  79.789
+    12   Interior       2 0.97 3883.447 Extrapolation  73.326  4.412  64.678  81.973
 
 ### Example 7b: TD for incidence data with two target coverage values (97.5% and 99%)
 
@@ -1984,19 +1984,19 @@ output_est_TD_inci <- estimate3D(Fish_incidence_data, diversity = 'TD', q = c(0,
 output_est_TD_inci
 ```
 
-       Assemblage Order.q    SC     mT        Method    qTD   s.e. qTD.LCL qTD.UCL
-    1   2013-2015       0 0.975 29.169   Rarefaction 47.703  3.968  39.926  55.481
-    2   2013-2015       0 0.990 58.667 Extrapolation 54.914 11.215  32.932  76.896
-    3   2013-2015       1 0.975 29.169   Rarefaction 29.773  0.945  27.921  31.624
-    4   2013-2015       1 0.990 58.667 Extrapolation 30.751  1.100  28.594  32.907
-    5   2013-2015       2 0.975 29.169   Rarefaction 23.861  0.676  22.537  25.185
-    6   2013-2015       2 0.990 58.667 Extrapolation 24.126  0.699  22.756  25.496
-    7   2016-2018       0 0.975 34.825   Rarefaction 52.574  4.823  43.122  62.026
-    8   2016-2018       0 0.990 76.971 Extrapolation 62.688  6.550  49.851  75.525
-    9   2016-2018       1 0.975 34.825   Rarefaction 31.479  1.296  28.939  34.018
-    10  2016-2018       1 0.990 76.971 Extrapolation 32.721  1.335  30.104  35.339
-    11  2016-2018       2 0.975 34.825   Rarefaction 24.872  0.836  23.233  26.510
-    12  2016-2018       2 0.990 76.971 Extrapolation 25.163  0.845  23.508  26.818
+       Assemblage Order.q    SC     mT        Method    qTD  s.e. qTD.LCL qTD.UCL
+    1   2013-2015       0 0.975 29.169   Rarefaction 47.703 3.144  41.542  53.865
+    2   2013-2015       0 0.990 58.667 Extrapolation 54.914 4.952  45.209  64.620
+    3   2013-2015       1 0.975 29.169   Rarefaction 29.773 1.000  27.813  31.732
+    4   2013-2015       1 0.990 58.667 Extrapolation 30.751 0.970  28.849  32.653
+    5   2013-2015       2 0.975 29.169   Rarefaction 23.861 0.768  22.356  25.367
+    6   2013-2015       2 0.990 58.667 Extrapolation 24.126 0.771  22.615  25.638
+    7   2016-2018       0 0.975 34.825   Rarefaction 52.574 5.922  40.968  64.180
+    8   2016-2018       0 0.990 76.971 Extrapolation 62.688 9.742  43.595  81.782
+    9   2016-2018       1 0.975 34.825   Rarefaction 31.479 1.298  28.935  34.022
+    10  2016-2018       1 0.990 76.971 Extrapolation 32.721 1.394  29.989  35.454
+    11  2016-2018       2 0.975 34.825   Rarefaction 24.872 0.742  23.418  26.325
+    12  2016-2018       2 0.990 76.971 Extrapolation 25.163 0.746  23.700  26.626
 
 ## <span style="color:blue;">PHYLOGENETIC DIVERSITY (PD): point estimation</span>
 
@@ -2016,18 +2016,18 @@ output_est_PD_abun
 ```
 
        Assemblage Order.q    m        Method    SC    qPD  s.e. qPD.LCL qPD.UCL Reftime   Type
-    1        Edge       0 1500   Rarefaction 0.928 58.370 1.083  56.247  60.493     400 meanPD
-    2        Edge       0 3500 Extrapolation 0.973 71.893 2.094  67.789  75.996     400 meanPD
-    3        Edge       1 1500   Rarefaction 0.928  5.224 0.132   4.965   5.482     400 meanPD
-    4        Edge       1 3500 Extrapolation 0.973  5.320 0.134   5.058   5.583     400 meanPD
-    5        Edge       2 1500   Rarefaction 0.928  1.797 0.031   1.735   1.858     400 meanPD
-    6        Edge       2 3500 Extrapolation 0.973  1.797 0.031   1.736   1.859     400 meanPD
-    7    Interior       0 1500   Rarefaction 0.922 63.555 1.444  60.726  66.385     400 meanPD
-    8    Interior       0 3500 Extrapolation 0.965 78.004 2.382  73.335  82.673     400 meanPD
-    9    Interior       1 1500   Rarefaction 0.922  5.675 0.121   5.439   5.911     400 meanPD
-    10   Interior       1 3500 Extrapolation 0.965  5.784 0.124   5.541   6.028     400 meanPD
-    11   Interior       2 1500   Rarefaction 0.922  1.913 0.031   1.852   1.975     400 meanPD
-    12   Interior       2 3500 Extrapolation 0.965  1.914 0.031   1.853   1.975     400 meanPD
+    1        Edge       0 1500   Rarefaction 0.928 58.370 1.280  55.861  60.880     400 meanPD
+    2        Edge       0 3500 Extrapolation 0.973 71.893 2.758  66.487  77.298     400 meanPD
+    3        Edge       1 1500   Rarefaction 0.928  5.224 0.109   5.011   5.437     400 meanPD
+    4        Edge       1 3500 Extrapolation 0.973  5.320 0.111   5.102   5.538     400 meanPD
+    5        Edge       2 1500   Rarefaction 0.928  1.797 0.024   1.749   1.844     400 meanPD
+    6        Edge       2 3500 Extrapolation 0.973  1.797 0.024   1.750   1.844     400 meanPD
+    7    Interior       0 1500   Rarefaction 0.922 63.555 1.066  61.466  65.645     400 meanPD
+    8    Interior       0 3500 Extrapolation 0.965 78.004 2.117  73.853  82.154     400 meanPD
+    9    Interior       1 1500   Rarefaction 0.922  5.675 0.133   5.414   5.936     400 meanPD
+    10   Interior       1 3500 Extrapolation 0.965  5.784 0.135   5.520   6.048     400 meanPD
+    11   Interior       2 1500   Rarefaction 0.922  1.913 0.032   1.850   1.977     400 meanPD
+    12   Interior       2 3500 Extrapolation 0.965  1.914 0.032   1.851   1.978     400 meanPD
 
 ### Example 8b: PD for incidence data with two target coverage values (97.5% and 99%)
 
@@ -2045,18 +2045,18 @@ output_est_PD_inci
 ```
 
        Assemblage Order.q    SC     mT        Method    qPD  s.e. qPD.LCL qPD.UCL   Reftime   Type
-    1   2013-2015       0 0.975 29.169   Rarefaction  9.672 0.394   8.900  10.445 0.9770115 meanPD
-    2   2013-2015       0 0.990 58.667 Extrapolation 10.018 0.606   8.831  11.205 0.9770115 meanPD
-    3   2013-2015       1 0.975 29.169   Rarefaction  7.612 0.146   7.327   7.898 0.9770115 meanPD
-    4   2013-2015       1 0.990 58.667 Extrapolation  7.680 0.143   7.399   7.960 0.9770115 meanPD
-    5   2013-2015       2 0.975 29.169   Rarefaction  7.003 0.149   6.711   7.294 0.9770115 meanPD
-    6   2013-2015       2 0.990 58.667 Extrapolation  7.030 0.148   6.740   7.320 0.9770115 meanPD
-    7   2016-2018       0 0.975 34.825   Rarefaction  9.646 0.445   8.774  10.519 0.9770115 meanPD
-    8   2016-2018       0 0.990 76.971 Extrapolation  9.831 0.604   8.647  11.016 0.9770115 meanPD
-    9   2016-2018       1 0.975 34.825   Rarefaction  7.779 0.144   7.495   8.062 0.9770115 meanPD
-    10  2016-2018       1 0.990 76.971 Extrapolation  7.835 0.143   7.554   8.116 0.9770115 meanPD
-    11  2016-2018       2 0.975 34.825   Rarefaction  7.201 0.140   6.927   7.474 0.9770115 meanPD
-    12  2016-2018       2 0.990 76.971 Extrapolation  7.224 0.139   6.953   7.496 0.9770115 meanPD
+    1   2013-2015       0 0.975 29.169   Rarefaction  9.672 0.406   8.876  10.469 0.9770115 meanPD
+    2   2013-2015       0 0.990 58.667 Extrapolation 10.018 0.718   8.611  11.426 0.9770115 meanPD
+    3   2013-2015       1 0.975 29.169   Rarefaction  7.612 0.125   7.368   7.857 0.9770115 meanPD
+    4   2013-2015       1 0.990 58.667 Extrapolation  7.680 0.127   7.431   7.929 0.9770115 meanPD
+    5   2013-2015       2 0.975 29.169   Rarefaction  7.003 0.121   6.765   7.240 0.9770115 meanPD
+    6   2013-2015       2 0.990 58.667 Extrapolation  7.030 0.122   6.792   7.268 0.9770115 meanPD
+    7   2016-2018       0 0.975 34.825   Rarefaction  9.646 0.413   8.838  10.455 0.9770115 meanPD
+    8   2016-2018       0 0.990 76.971 Extrapolation  9.831 0.704   8.451  11.211 0.9770115 meanPD
+    9   2016-2018       1 0.975 34.825   Rarefaction  7.779 0.135   7.513   8.044 0.9770115 meanPD
+    10  2016-2018       1 0.990 76.971 Extrapolation  7.835 0.141   7.558   8.112 0.9770115 meanPD
+    11  2016-2018       2 0.975 34.825   Rarefaction  7.201 0.135   6.936   7.465 0.9770115 meanPD
+    12  2016-2018       2 0.990 76.971 Extrapolation  7.224 0.136   6.957   7.491 0.9770115 meanPD
 
 ## <span style="color:blue;">FUNCTIONAL DIVERSITY (FD): point estimation</span>
 
@@ -2077,18 +2077,18 @@ output_est_FD_abun
 ```
 
        Assemblage Order.q   SC        m        Method    qFD  s.e. qFD.LCL qFD.UCL
-    1        Edge       0 0.93 1547.562   Rarefaction 17.590 1.530  14.592  20.588
-    2        Edge       0 0.97 3261.971 Extrapolation 18.578 2.489  13.700  23.456
-    3        Edge       1 0.93 1547.562   Rarefaction 11.732 0.113  11.511  11.954
-    4        Edge       1 0.97 3261.971 Extrapolation 11.920 0.128  11.670  12.170
-    5        Edge       2 0.93 1547.562   Rarefaction  9.120 0.169   8.790   9.451
-    6        Edge       2 0.97 3261.971 Extrapolation  9.183 0.175   8.840   9.527
-    7    Interior       0 0.93 1699.021   Rarefaction 16.890 1.424  14.099  19.682
-    8    Interior       0 0.97 3883.447 Extrapolation 17.839 5.091   7.860  27.817
-    9    Interior       1 0.93 1699.021   Rarefaction  9.668 0.269   9.141  10.195
-    10   Interior       1 0.97 3883.447 Extrapolation  9.834 0.284   9.278  10.390
-    11   Interior       2 0.93 1699.021   Rarefaction  6.994 0.217   6.568   7.420
-    12   Interior       2 0.97 3883.447 Extrapolation  7.033 0.221   6.601   7.466
+    1        Edge       0 0.93 1547.562   Rarefaction 17.590 1.700  14.257  20.923
+    2        Edge       0 0.97 3261.971 Extrapolation 18.578 1.937  14.781  22.374
+    3        Edge       1 0.93 1547.562   Rarefaction 11.732 0.395  10.958  12.506
+    4        Edge       1 0.97 3261.971 Extrapolation 11.920 0.398  11.140  12.700
+    5        Edge       2 0.93 1547.562   Rarefaction  9.120 0.269   8.593   9.648
+    6        Edge       2 0.97 3261.971 Extrapolation  9.183 0.271   8.652   9.714
+    7    Interior       0 0.93 1699.021   Rarefaction 16.890 1.952  13.065  20.716
+    8    Interior       0 0.97 3883.447 Extrapolation 17.839 3.166  11.634  24.044
+    9    Interior       1 0.93 1699.021   Rarefaction  9.668 0.303   9.074  10.262
+    10   Interior       1 0.97 3883.447 Extrapolation  9.834 0.317   9.212  10.456
+    11   Interior       2 0.93 1699.021   Rarefaction  6.994 0.180   6.641   7.348
+    12   Interior       2 0.97 3883.447 Extrapolation  7.033 0.184   6.673   7.393
 
 ### Example 9b: FD for incidence data with two target number of sampling units (30 and 70)
 
@@ -2107,18 +2107,18 @@ output_est_FD_inci
 ```
 
        Assemblage Order.q mT        Method    SC    qFD  s.e. qFD.LCL qFD.UCL
-    1   2013-2015       0 30   Rarefaction 0.976 17.748 0.511  16.746  18.750
-    2   2013-2015       0 70 Extrapolation 0.993 18.550 0.810  16.962  20.138
-    3   2013-2015       1 30   Rarefaction 0.976 15.929 0.405  15.135  16.724
-    4   2013-2015       1 70 Extrapolation 0.993 16.006 0.402  15.218  16.793
-    5   2013-2015       2 30   Rarefaction 0.976 15.459 0.407  14.661  16.257
-    6   2013-2015       2 70 Extrapolation 0.993 15.477 0.407  14.680  16.274
-    7   2016-2018       0 30   Rarefaction 0.972 17.503 0.857  15.824  19.183
-    8   2016-2018       0 70 Extrapolation 0.988 18.705 1.343  16.072  21.337
-    9   2016-2018       1 30   Rarefaction 0.972 15.729 0.381  14.983  16.475
-    10  2016-2018       1 70 Extrapolation 0.988 15.816 0.395  15.042  16.590
-    11  2016-2018       2 30   Rarefaction 0.972 15.268 0.322  14.637  15.900
-    12  2016-2018       2 70 Extrapolation 0.988 15.290 0.323  14.657  15.922
+    1   2013-2015       0 30   Rarefaction 0.976 17.748 0.255  17.248  18.248
+    2   2013-2015       0 70 Extrapolation 0.993 18.550 0.582  17.410  19.691
+    3   2013-2015       1 30   Rarefaction 0.976 15.929 0.217  15.505  16.354
+    4   2013-2015       1 70 Extrapolation 0.993 16.006 0.210  15.594  16.417
+    5   2013-2015       2 30   Rarefaction 0.976 15.459 0.215  15.038  15.880
+    6   2013-2015       2 70 Extrapolation 0.993 15.477 0.215  15.056  15.898
+    7   2016-2018       0 30   Rarefaction 0.972 17.503 0.704  16.124  18.883
+    8   2016-2018       0 70 Extrapolation 0.988 18.705 1.135  16.480  20.930
+    9   2016-2018       1 30   Rarefaction 0.972 15.729 0.506  14.738  16.720
+    10  2016-2018       1 70 Extrapolation 0.988 15.816 0.515  14.808  16.825
+    11  2016-2018       2 30   Rarefaction 0.972 15.268 0.486  14.316  16.221
+    12  2016-2018       2 70 Extrapolation 0.988 15.290 0.486  14.337  16.242
 
 ## <span style="color:red;">FUNCTION ObsAsy3D: ASYMPTOTIC AND OBSERVED DIVERSITY PROFILES</span>
 
@@ -2191,16 +2191,16 @@ output_ObsAsy_TD_abun
 ```
 
        Assemblage Order.q     qTD   s.e. qTD.LCL qTD.UCL     Method
-    1        Edge     0.0 444.971 23.260 399.382 490.560 Asymptotic
-    2        Edge     0.2 375.270 16.328 343.269 407.272 Asymptotic
-    3        Edge     0.4 312.452 11.138 290.623 334.281 Asymptotic
-    4        Edge     0.6 258.379  7.686 243.316 273.443 Asymptotic
-    5        Edge     0.8 213.730  5.689 202.579 224.881 Asymptotic
-    6        Edge     1.0 178.000  4.702 168.784 187.216 Asymptotic
-    7        Edge     1.2 149.914  4.301 141.484 158.344 Asymptotic
-    8        Edge     1.4 127.945  4.206 119.702 136.188 Asymptotic
-    9        Edge     1.6 110.672  4.261 102.321 119.023 Asymptotic
-    10       Edge     1.8  96.948  4.382  88.360 105.536 Asymptotic
+    1        Edge     0.0 444.971 29.065 388.005 501.938 Asymptotic
+    2        Edge     0.2 375.270 20.145 335.787 414.754 Asymptotic
+    3        Edge     0.4 312.452 13.210 286.561 338.343 Asymptotic
+    4        Edge     0.6 258.379  8.563 241.595 275.164 Asymptotic
+    5        Edge     0.8 213.730  6.097 201.780 225.680 Asymptotic
+    6        Edge     1.0 178.000  5.154 167.898 188.101 Asymptotic
+    7        Edge     1.2 149.914  4.881 140.347 159.482 Asymptotic
+    8        Edge     1.4 127.945  4.803 118.532 137.357 Asymptotic
+    9        Edge     1.6 110.672  4.779 101.305 120.039 Asymptotic
+    10       Edge     1.8  96.948  4.784  87.571 106.325 Asymptotic
 
 The following commands plot the corresponding q-profiles, along with its
 confidence interval for q between 0 to 2.
@@ -2227,16 +2227,16 @@ output_ObsAsy_TD_inci
 ```
 
        Assemblage Order.q    qTD   s.e. qTD.LCL qTD.UCL     Method
-    1   2013-2015     0.0 59.803 13.897  32.566  87.041 Asymptotic
-    2   2013-2015     0.2 50.828  7.338  36.446  65.210 Asymptotic
-    3   2013-2015     0.4 43.790  3.696  36.547  51.034 Asymptotic
-    4   2013-2015     0.6 38.458  2.021  34.496  42.420 Asymptotic
-    5   2013-2015     0.8 34.490  1.398  31.749  37.231 Asymptotic
-    6   2013-2015     1.0 31.542  1.176  29.237  33.846 Asymptotic
-    7   2013-2015     1.2 29.328  1.061  27.247  31.408 Asymptotic
-    8   2013-2015     1.4 27.635  0.977  25.720  29.550 Asymptotic
-    9   2013-2015     1.6 26.312  0.908  24.533  28.091 Asymptotic
-    10  2013-2015     1.8 25.255  0.850  23.589  26.921 Asymptotic
+    1   2013-2015     0.0 59.803 11.767  36.740  82.867 Asymptotic
+    2   2013-2015     0.2 50.828  6.526  38.037  63.619 Asymptotic
+    3   2013-2015     0.4 43.790  3.500  36.930  50.651 Asymptotic
+    4   2013-2015     0.6 38.458  1.993  34.553  42.364 Asymptotic
+    5   2013-2015     0.8 34.490  1.343  31.858  37.121 Asymptotic
+    6   2013-2015     1.0 31.542  1.084  29.418  33.665 Asymptotic
+    7   2013-2015     1.2 29.328  0.966  27.434  31.222 Asymptotic
+    8   2013-2015     1.4 27.635  0.897  25.877  29.392 Asymptotic
+    9   2013-2015     1.6 26.312  0.846  24.655  27.969 Asymptotic
+    10  2013-2015     1.8 25.255  0.804  23.680  26.831 Asymptotic
 
 The following commands plot the corresponding q-profiles, along with its
 confidence interval for q between 0 to 2.
@@ -2270,16 +2270,16 @@ output_ObsAsy_PD_abun
 ```
 
        Assemblage Order.q     qPD   s.e. qPD.LCL qPD.UCL     Method Reftime   Type
-    1        Edge       0 444.971 26.833 392.379 497.564 Asymptotic   0.100 meanPD
-    2        Edge       1 178.000  6.654 164.958 191.041 Asymptotic   0.100 meanPD
-    3        Edge       2  85.905  4.854  76.392  95.419 Asymptotic   0.100 meanPD
-    4    Interior       0 513.518 38.039 438.962 588.074 Asymptotic   0.100 meanPD
-    5    Interior       1 186.983  5.873 175.472 198.494 Asymptotic   0.100 meanPD
-    6    Interior       2  74.718  4.337  66.218  83.217 Asymptotic   0.100 meanPD
-    7        Edge       0 371.100 22.831 326.352 415.847 Asymptotic  10.354 meanPD
-    8        Edge       1 141.418  4.963 131.692 151.145 Asymptotic  10.354 meanPD
-    9        Edge       2  72.848  3.706  65.584  80.112 Asymptotic  10.354 meanPD
-    10   Interior       0 413.568 29.155 356.425 470.711 Asymptotic  10.354 meanPD
+    1        Edge       0 444.971 27.967 390.156 499.787 Asymptotic   0.100 meanPD
+    2        Edge       1 178.000  5.913 166.411 189.589 Asymptotic   0.100 meanPD
+    3        Edge       2  85.905  5.294  75.529  96.281 Asymptotic   0.100 meanPD
+    4    Interior       0 513.518 26.491 461.597 565.438 Asymptotic   0.100 meanPD
+    5    Interior       1 186.983  6.267 174.700 199.266 Asymptotic   0.100 meanPD
+    6    Interior       2  74.718  4.907  65.100  84.335 Asymptotic   0.100 meanPD
+    7        Edge       0 371.100 21.565 328.834 413.366 Asymptotic  10.354 meanPD
+    8        Edge       1 141.418  4.579 132.443 150.393 Asymptotic  10.354 meanPD
+    9        Edge       2  72.848  3.824  65.353  80.343 Asymptotic  10.354 meanPD
+    10   Interior       0 413.568 25.413 363.758 463.377 Asymptotic  10.354 meanPD
 
 The argument `profile = "time"` in the `ggObsAsy3D` function creates a
 separate plot for each diversity order q = 0, 1, and 2 with x-axis being
@@ -2312,16 +2312,16 @@ output_ObsAsy_PD_inci
 ```
 
        Assemblage Order.q    qPD  s.e. qPD.LCL qPD.UCL     Method Reftime   Type
-    1   2013-2015     0.0 10.039 1.096   7.892  12.187 Asymptotic   0.977 meanPD
-    2   2013-2015     0.2  9.462 0.509   8.464  10.461 Asymptotic   0.977 meanPD
-    3   2013-2015     0.4  8.802 0.308   8.198   9.406 Asymptotic   0.977 meanPD
-    4   2013-2015     0.6  8.329 0.211   7.915   8.743 Asymptotic   0.977 meanPD
-    5   2013-2015     0.8  7.985 0.168   7.655   8.315 Asymptotic   0.977 meanPD
-    6   2013-2015     1.0  7.729 0.151   7.432   8.026 Asymptotic   0.977 meanPD
-    7   2013-2015     1.2  7.533 0.146   7.247   7.818 Asymptotic   0.977 meanPD
-    8   2013-2015     1.4  7.378 0.145   7.094   7.662 Asymptotic   0.977 meanPD
-    9   2013-2015     1.6  7.252 0.147   6.964   7.539 Asymptotic   0.977 meanPD
-    10  2013-2015     1.8  7.147 0.150   6.854   7.440 Asymptotic   0.977 meanPD
+    1   2013-2015     0.0 10.039 1.241   7.607  12.471 Asymptotic   0.977 meanPD
+    2   2013-2015     0.2  9.462 0.538   8.407  10.517 Asymptotic   0.977 meanPD
+    3   2013-2015     0.4  8.802 0.322   8.170   9.433 Asymptotic   0.977 meanPD
+    4   2013-2015     0.6  8.329 0.227   7.884   8.773 Asymptotic   0.977 meanPD
+    5   2013-2015     0.8  7.985 0.187   7.619   8.351 Asymptotic   0.977 meanPD
+    6   2013-2015     1.0  7.729 0.170   7.397   8.061 Asymptotic   0.977 meanPD
+    7   2013-2015     1.2  7.533 0.162   7.216   7.849 Asymptotic   0.977 meanPD
+    8   2013-2015     1.4  7.378 0.158   7.067   7.688 Asymptotic   0.977 meanPD
+    9   2013-2015     1.6  7.252 0.158   6.943   7.561 Asymptotic   0.977 meanPD
+    10  2013-2015     1.8  7.147 0.159   6.836   7.458 Asymptotic   0.977 meanPD
 
 The following commands plot the corresponding q-profiles, along with its
 confidence interval for q between 0 to 2, for the default reference time
@@ -2355,16 +2355,16 @@ output_ObsAsy_FD_abun_tau
 ```
 
        Assemblage Order.q     qFD   s.e. qFD.LCL qFD.UCL     Method  Tau
-    1        Edge       0 444.971 31.146 383.926 506.017 Asymptotic 0.00
-    2        Edge       1 178.000  5.491 167.238 188.761 Asymptotic 0.00
-    3        Edge       2  85.905  4.004  78.058  93.753 Asymptotic 0.00
-    4        Edge       0  79.904 29.841  21.417 138.391 Asymptotic 0.05
-    5        Edge       1  45.187  1.877  41.508  48.866 Asymptotic 0.05
-    6        Edge       2  32.092  1.407  29.335  34.849 Asymptotic 0.05
-    7        Edge       0  73.276 30.977  12.561 133.990 Asymptotic 0.10
-    8        Edge       1  42.200  1.778  38.715  45.684 Asymptotic 0.10
-    9        Edge       2  30.182  1.318  27.599  32.765 Asymptotic 0.10
-    10       Edge       0  35.372 24.389   0.000  83.174 Asymptotic 0.15
+    1        Edge       0 444.971 23.002 399.888 490.055 Asymptotic 0.00
+    2        Edge       1 178.000  6.655 164.956 191.043 Asymptotic 0.00
+    3        Edge       2  85.905  6.033  74.081  97.730 Asymptotic 0.00
+    4        Edge       0  79.904 16.209  48.135 111.673 Asymptotic 0.05
+    5        Edge       1  45.187  2.311  40.658  49.716 Asymptotic 0.05
+    6        Edge       2  32.092  1.727  28.707  35.477 Asymptotic 0.05
+    7        Edge       0  73.276 17.121  39.719 106.832 Asymptotic 0.10
+    8        Edge       1  42.200  2.228  37.832  46.567 Asymptotic 0.10
+    9        Edge       2  30.182  1.596  27.053  33.311 Asymptotic 0.10
+    10       Edge       0  35.372 19.020   0.000  72.651 Asymptotic 0.15
 
 The following commands plot the corresponding tau-profiles, along with
 its confidence interval for diversity order q = 0, 1, 2.
@@ -2395,16 +2395,16 @@ output_ObsAsy_FD_abun
 ```
 
        Assemblage Order.q    qFD  s.e. qFD.LCL qFD.UCL     Method
-    1        Edge     0.0 19.008 6.137   6.980  31.036 Asymptotic
-    2        Edge     0.5 14.698 1.233  12.282  17.115 Asymptotic
-    3        Edge     1.0 12.037 0.396  11.261  12.813 Asymptotic
-    4        Edge     1.5 10.345 0.257   9.842  10.849 Asymptotic
-    5        Edge     2.0  9.228 0.228   8.781   9.676 Asymptotic
-    6    Interior     0.0 18.208 6.602   5.268  31.148 Asymptotic
-    7    Interior     0.5 13.071 1.092  10.930  15.212 Asymptotic
-    8    Interior     1.0  9.922 0.342   9.251  10.593 Asymptotic
-    9    Interior     1.5  8.103 0.244   7.625   8.581 Asymptotic
-    10   Interior     2.0  7.055 0.201   6.661   7.449 Asymptotic
+    1        Edge     0.0 19.008 8.458   2.431  35.585 Asymptotic
+    2        Edge     0.5 14.698 1.114  12.515  16.882 Asymptotic
+    3        Edge     1.0 12.037 0.205  11.636  12.438 Asymptotic
+    4        Edge     1.5 10.345 0.128  10.094  10.597 Asymptotic
+    5        Edge     2.0  9.228 0.150   8.934   9.523 Asymptotic
+    6    Interior     0.0 18.208 6.907   4.671  31.745 Asymptotic
+    7    Interior     0.5 13.071 1.030  11.051  15.090 Asymptotic
+    8    Interior     1.0  9.922 0.228   9.475  10.369 Asymptotic
+    9    Interior     1.5  8.103 0.202   7.708   8.499 Asymptotic
+    10   Interior     2.0  7.055 0.196   6.671   7.440 Asymptotic
 
 The following commands plot the corresponding q-profiles, along with its
 confidence interval for q between 0 to 2.
@@ -2434,16 +2434,16 @@ output_ObsAsy_FD_inci
 ```
 
        Assemblage Order.q    qFD  s.e. qFD.LCL qFD.UCL     Method
-    1   2013-2015     0.0 18.906 2.069  14.850  22.962 Asymptotic
-    2   2013-2015     0.2 17.826 1.113  15.644  20.008 Asymptotic
-    3   2013-2015     0.4 17.115 0.693  15.757  18.472 Asymptotic
-    4   2013-2015     0.6 16.624 0.523  15.599  17.649 Asymptotic
-    5   2013-2015     0.8 16.284 0.463  15.375  17.192 Asymptotic
-    6   2013-2015     1.0 16.043 0.442  15.176  16.909 Asymptotic
-    7   2013-2015     1.2 15.868 0.434  15.017  16.718 Asymptotic
-    8   2013-2015     1.4 15.736 0.430  14.893  16.580 Asymptotic
-    9   2013-2015     1.6 15.635 0.429  14.795  16.476 Asymptotic
-    10  2013-2015     1.8 15.555 0.428  14.716  16.394 Asymptotic
+    1   2013-2015     0.0 18.906 2.065  14.859  22.952 Asymptotic
+    2   2013-2015     0.2 17.826 0.907  16.048  19.604 Asymptotic
+    3   2013-2015     0.4 17.115 0.582  15.974  18.256 Asymptotic
+    4   2013-2015     0.6 16.624 0.469  15.706  17.543 Asymptotic
+    5   2013-2015     0.8 16.284 0.433  15.436  17.132 Asymptotic
+    6   2013-2015     1.0 16.043 0.418  15.223  16.863 Asymptotic
+    7   2013-2015     1.2 15.868 0.411  15.063  16.673 Asymptotic
+    8   2013-2015     1.4 15.736 0.406  14.941  16.532 Asymptotic
+    9   2013-2015     1.6 15.635 0.402  14.847  16.423 Asymptotic
+    10  2013-2015     1.8 15.555 0.399  14.773  16.338 Asymptotic
 
 The following commands plot the corresponding q-profiles, along with its
 confidence interval for q between 0 to 2.
