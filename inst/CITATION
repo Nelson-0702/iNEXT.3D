@@ -4,17 +4,6 @@ note <- sprintf("R package version %s", meta$Version)
 citHeader("To cite iNEXT.3D in publications use:")
 
 citEntry(
-		 entry = 'manual',
-		 title = paste('iNEXT.3D:', meta$Title),
-		 author = personList(as.person("Anne Chao"),
-    	                   as.person("Kai-Hsiang Hu")),
-		 year = year,
-		 note = note,
-		 url = "https://sites.google.com/view/chao-lab-website/software/inext-3d/",
-		 textVersion = paste("Chao, A. and Hu, K.-H.", year, "iNEXT.3D: Interpolation and Extrapolation for three dimensions of diversity.", note, "URL: https://sites.google.com/view/chao-lab-website/software/inext-3d/.")
-)
-
-citEntry(
 		 entry = 'Article',
 		 title = 'Measuring temporal change in alpha diversity: A framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization.',
          author = personList(as.person("Anne Chao"),
@@ -26,6 +15,7 @@ citEntry(
                              as.person("Anne E. Magurran")),
 		 journal = 'Methods in Ecology and Evolution',
 		 year   = '2021',
+		 month  = "10",
 		 volume = "12",
      pages  = "1926-1940",
      doi    = '10.1111/2041-210X.13682',

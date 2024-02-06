@@ -128,7 +128,7 @@ Brazil_rainforest_abun_data[1:15,]
 ```
 
 
-We use data (`Fish_incidence_data`) collected from two time periods, namely `"2013-2015"` and `"2016-2018"`, as an example. Each time period is designated as an assemblage. The purpose was to compare 3D diversity of the two time periods. In each time period, species incidence/occurrence was recorded in 36 sampling units in each assemblage; each sampling unit represents a sampling date. Thus, there are 36 columns in each time period. Run the following code to view the first 7 rows and 7 columns for each matrix.
+We use data (`Fish_incidence_data`) collected from two time periods, namely `"2013-2015"` and `"2016-2018"`, as an example. Each time period is designated as an assemblage. The purpose was to compare 3D diversity of the two time periods. In each time period, species incidence/occurrence was recorded in 36 sampling units in each assemblage; each sampling unit represents a sampling date. Thus, there are 36 columns in each time period. Run the following code to view the first 6 rows and 6 columns for each matrix.
 
 
 ```{r eval=FALSE}
@@ -138,7 +138,7 @@ Fish_incidence_data
 
 ```{r echo=FALSE}
 data("Fish_incidence_data")
-lapply(Fish_incidence_data, function(x) x[1:7,1:7])
+lapply(Fish_incidence_data, function(x) x[1:6,1:6])
 ```
 
 
