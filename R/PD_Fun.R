@@ -615,7 +615,7 @@ PD.Tprofile=function(ai,Lis, q, reft, cal, nt) {
   
   out <- sapply(1:length(t_bars), function(i) {
     sapply(q, function(j){
-      if(j==1) as.numeric(-(pAbun/t_bars[i]*log(pAbun/t_bars[i])) %*% Lis[,i]) %>% exp()
+      if(j==1) as.numeric(-(pAbun/t_bars[i]*log(pAbun/t_bars[i])) %*% Lis[,i]) %>% exp(.)
       else as.numeric((pAbun/t_bars[i])^j %*% Lis[,i]) %>% .^(1/(1-j))
     }) %>% matrix(.,ncol = length(q))
   }) %>% t()

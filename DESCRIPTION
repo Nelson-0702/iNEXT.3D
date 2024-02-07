@@ -2,7 +2,7 @@ Package: iNEXT.3D
 Type: Package
 Title: Interpolation and Extrapolation for Three Dimensions of Biodiversity
 Version: 1.0.0
-Author: Anne Chao [aut, cre] and KaiHsiang Hu [ctb]
+Author: Anne Chao [aut, cre], KaiHsiang Hu [ctb]
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 Authors@R: 
   c(person("Anne", 
@@ -14,7 +14,7 @@ Authors@R:
            role = "ctb",
            email = "river19951224@gmail.com"))
 URL: https://sites.google.com/view/chao-lab-website/software/inext-3d
-Description: 'iNEXT.3D' extends 'iNEXT' to include three dimensions (3D) of biodiversity, 
+Description: This package extends 'iNEXT' to include three dimensions (3D) of biodiversity, 
             i.e., taxonomic diversity (TD), phylogenetic diversity (PD) and functional diversity (FD). 
             This package provides functions to compute standardized 3D diversity estimates with a 
             common sample size or sample coverage. A unified framework based on Hill numbers 

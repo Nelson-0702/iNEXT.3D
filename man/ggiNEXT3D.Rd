@@ -61,9 +61,9 @@ output_FD_abun <- iNEXT3D(data, diversity = 'FD', datatype = "abundance", nboot 
 ggiNEXT3D(output_FD_abun)
 
 
-# Plot three types of curves of taxonomic diversity for incidence data with order q = 1
+# Plot three types of curves of taxonomic diversity for incidence data with order q = 0, 1, 2
 data(Fish_incidence_data)
-output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
+output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
                           datatype = "incidence_raw")
 ggiNEXT3D(output_TD_inci)
 

@@ -1,25 +1,21 @@
-year <- sub("-.*", "", meta$Date)
-note <- sprintf("R package version %s", meta$Version)
-
-citHeader("To cite iNEXT.3D in publications use:")
-
-citEntry(
-		 entry = 'Article',
+bibentry(
+		 bibtype = 'Article',
 		 title = 'Measuring temporal change in alpha diversity: A framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization.',
-         author = personList(as.person("Anne Chao"),
-                             as.person("Peter A. Henderson"),
-  		                       as.person("Chun-Huo Chiu"),
-  		                       as.person("Faye Moyes"),
-  		                       as.person("Kai-Hsiang Hu"),
-    	                       as.person("Maria Dornelas"),
-                             as.person("Anne E. Magurran")),
+     author = c(person("Anne Chao"),
+                person("Peter A. Henderson"),
+  		          person("Chun-Huo Chiu"),
+  		          person("Faye Moyes"),
+  		          person("Kai-Hsiang Hu"),
+    	          person("Maria Dornelas"),
+                person("Anne E. Magurran")),
 		 journal = 'Methods in Ecology and Evolution',
-		 year   = '2021',
-		 month  = "10",
-		 volume = "12",
-     pages  = "1926-1940",
-     doi    = '10.1111/2041-210X.13682',
-  textVersion = paste('Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M. and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.')
+		 year    = '2021',
+		 month   = "10",
+		 volume  = "12",
+     pages   = "1926-1940",
+     doi     = '10.1111/2041-210X.13682',
+     header  = "To cite iNEXT.3D in publications use:",
+		 textVersion = paste('Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M. and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.')
 )
 
 

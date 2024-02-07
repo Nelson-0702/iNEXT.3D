@@ -310,19 +310,19 @@ NULL
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy). 
 #' @param FDcut_number (argument only for \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to cut [0, 1] interval into equal-spaced sub-intervals to obtain the AUC value by integrating the tau-profile. Equivalently, the number of tau values that will be considered to compute the integrated AUC value. Default is \code{FDcut_number = 50}. A larger value can be set to obtain more accurate AUC value.
 #' 
-#' @importFrom reshape2 dcast
-#' @import ape
 #' @import ggplot2
 #' @import dplyr
 #' @import tidytree
 #' @import tibble
+#' @importFrom reshape2 dcast
+#' @importFrom ape node.depth.edgelength
 #' @importFrom stats rmultinom
 #' @importFrom stats rbinom
 #' @importFrom stats rbinom
 #' @importFrom stats qnorm
 #' @importFrom stats sd
-#' @importFrom phyclust get.rooted.tree.height
 #' @importFrom stats optimize
+#' @importFrom phyclust get.rooted.tree.height
 #' 
 #' @return a list of three objects: \cr\cr
 #' (1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo3D} for details. \cr\cr
@@ -749,9 +749,9 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
 #' ggiNEXT3D(output_FD_abun)
 #' 
 #' 
-#' # Plot three types of curves of taxonomic diversity for incidence data with order q = 1
+#' # Plot three types of curves of taxonomic diversity for incidence data with order q = 0, 1, 2
 #' data(Fish_incidence_data)
-#' output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = 1, 
+#' output_TD_inci <- iNEXT3D(Fish_incidence_data, diversity = 'TD', q = c(0, 1, 2), 
 #'                           datatype = "incidence_raw")
 #' ggiNEXT3D(output_TD_inci)
 #' 
