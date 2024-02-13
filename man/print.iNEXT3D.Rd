@@ -11,6 +11,9 @@
 
 \item{...}{additional arguments.}
 }
+\value{
+a list of three objects (see \code{iNEXT3D} for more details) with simplified outputs and notes.
+}
 \description{
 \code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
 }

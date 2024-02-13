@@ -113,6 +113,7 @@ Coverage = function(data, datatype, m){
 #' \code{print.iNEXT3D}: Print method for objects inheriting from class "iNEXT3D"
 #' @param x an \code{iNEXT3D} object computed by \code{iNEXT3D}.
 #' @param ... additional arguments.
+#' @return a list of three objects (see \code{iNEXT3D} for more details) with simplified outputs and notes.
 #' @export
 print.iNEXT3D <- function(x, ...){
   site.n <- nrow(x[[1]])
