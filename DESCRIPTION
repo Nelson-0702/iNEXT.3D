@@ -48,5 +48,5 @@ RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 ByteCompile: true
 LinkingTo: Rcpp
-Packaged: 2022-01-30 12:08:00 UTC; KaiHsiang
+Packaged: 2024-02-06 22:00:00 UTC; KaiHsiang
 Repository: CRAN
