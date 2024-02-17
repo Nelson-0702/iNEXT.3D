@@ -352,12 +352,12 @@ check.dist <- function(data, datatype, distM, threshold) {
 
 # check tree and transform data matrix to data list
 # 
-# \code{check.dist}
+# \code{check.tree}
 # 
 # @param data input a data matrix
 # @param datatype data type
-# @param distM a symmetric distance matrix
-# @param threshold a value between zero and one
+# @param tree a phylo tree
+# @param reftime a positive value
 # @return a list of reftime, tree, and datalist
 # @export
 
