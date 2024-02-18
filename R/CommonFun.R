@@ -21,7 +21,7 @@ as.incfreq <- function(data, nT = NULL) {
       ntmp <- ntmp+nT[i]
     }
     if(is.null(names(nT))) {
-      names(mydata) <- paste0("assemblage",1:length(nT))
+      names(mydata) <- paste0("Assemblage",1:length(nT))
     }else{
       names(mydata) = names(nT)
     }
@@ -196,6 +196,12 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   
   if (datatype == "incidence_raw") {
     
+    if (inherits(data, c("data.frame", "matrix"))) {
+      data = as.matrix(data)
+      if (is.null(nT)) nT = c('Assemblage_1' = ncol(data))
+      if (is.null(names(nT))) names(nT) = paste0("Assemblage_", 1:length(nT))
+    }
+    
     if (inherits(data, c("numeric", "integer", "double"))) {
       data = as.matrix(data)
       nT = c('Assemblage_1' = 1)
@@ -267,6 +273,8 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
     data = as.matrix(data)
     
+    nT = data[1,]
+    
     if (to.datalist == TRUE) {
       datalist <- lapply(1:ncol(data), function(i)  x <- data[,i])
       names(datalist) = colnames(data)
@@ -276,6 +284,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   }
   
   if(inherits(nT, 'data.frame')) nT = unlist(nT)
+  if(sum(nT < 5) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
   
   return(list(datatype, data, nT))
 }
@@ -362,8 +371,11 @@ check.dist <- function(data, datatype, distM, threshold) {
 # @export
 
 check.tree <- function(data, datatype, tree, reftime, nT) {
-  if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
-    stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  # if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
+  #   stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+  
+  if(sum(duplicated(tree$tip.label))>0)
+    stop("The phylo tree should not contains duplicated tip labels, please remove them.", call. = FALSE)
   
   if( is.null(rownames(data)) )
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)

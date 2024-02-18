@@ -167,3 +167,81 @@ test_that("ObsAsy3D for sampling-unit-based incidence raw data", {
   expect_equal(nrow(out), 2)
 })
 
+
+test_that("estimate3D for abundance-based data in a single assemblage", {
+  
+  ## TD
+  # Test input by a demo data
+  data("Brazil_rainforest_abun_data")
+  out <- estimate3D(Brazil_rainforest_abun_data$Edge, diversity = 'TD', 
+                    datatype = "abundance", q = 1)
+  expect_equal(nrow(out), 1)
+  
+  ## PD
+  data("Brazil_rainforest_abun_data")
+  data("Brazil_rainforest_phylo_tree")
+  data = Brazil_rainforest_abun_data$Edge
+  names(data) = rownames(Brazil_rainforest_abun_data)
+  out <- estimate3D(data, diversity = 'PD', q = 2, PDreftime = 2, 
+                    datatype = "abundance", nboot = 10, PDtree = Brazil_rainforest_phylo_tree)
+  expect_equal(nrow(out), 1)
+  
+  
+  ## FD (single tau)
+  data("Brazil_rainforest_abun_data")
+  data("Brazil_rainforest_distance_matrix")
+  data = Brazil_rainforest_abun_data$Interior
+  names(data) = rownames(Brazil_rainforest_abun_data)
+  out <- estimate3D(data, diversity = 'FD', q = 1, 
+                    datatype = "abundance", nboot = 10, FDdistM = Brazil_rainforest_distance_matrix, 
+                    FDtype = 'tau_values', FDtau = 0.1)
+  expect_equal(nrow(out), 1)
+  
+  
+  ## FD (AUC)
+  data("Brazil_rainforest_abun_data")
+  data("Brazil_rainforest_distance_matrix")
+  data = Brazil_rainforest_abun_data$Edge
+  names(data) = rownames(Brazil_rainforest_abun_data)
+  out <- estimate3D(data, diversity = 'FD', q = 2, 
+                    datatype = "abundance", nboot = 10, FDdistM = Brazil_rainforest_distance_matrix, 
+                    FDtype = 'AUC', FDcut_number = 30)
+  expect_equal(nrow(out), 1)
+})
+
+test_that("estimate3D for sampling-unit-based incidence raw data in a single assemblage", {
+  
+  ## TD
+  # Test input by a demo data
+  data("Fish_incidence_data")
+  out <- estimate3D(Fish_incidence_data$`2016-2018`, diversity = 'TD', q = 0,
+                    datatype = "incidence_raw")
+  expect_equal(nrow(out), 1)
+  
+  
+  ## PD
+  data("Fish_incidence_data")
+  data("Fish_phylo_tree")
+  data = Fish_incidence_data$`2016-2018`
+  out <- estimate3D(data.frame(data), diversity = 'PD', q = 1, datatype = "incidence_raw", 
+                    PDtree = Fish_phylo_tree, nboot = 0)
+  expect_equal(nrow(out), 1)
+  
+  
+  ## FD (single tau)
+  data("Fish_distance_matrix")
+  data = Fish_incidence_data$`2016-2018`
+  out <- estimate3D(data, diversity = 'FD', q = 1, datatype = "incidence_raw", 
+                    FDdistM = Fish_distance_matrix, FDtype = "tau_values", FDtau = 0.1)
+  expect_equal(nrow(out), 1)
+  
+  
+  ## FD (AUC)
+  data("Fish_distance_matrix")
+  data = Fish_incidence_data$`2016-2018`
+  out <- estimate3D(data, diversity = 'FD', q = 2, datatype = "incidence_raw", 
+                    FDdistM = Fish_distance_matrix, FDtype = "AUC", nboot = 20)
+  expect_equal(nrow(out), 1)
+})
+
+

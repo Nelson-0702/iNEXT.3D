@@ -1,5 +1,8 @@
 # iNEXT.3D 1.0.0
 Publish public version
 - Create functions 'iNEXT3D', 'ggiNEXT3D', 'estimate3D', 'ObsAsy3D', 'ggObsAsy3D', 'DataInfo3D'.
-- Create the project and ready to upload to CRAN.
+- Create the project and upload to CRAN.
+
+# iNEXT.3D 1.0.1
+- Modify errors when incidence raw data is a matrix/data.frame for PD and when phylo tree contains duplicated node labels.
 
