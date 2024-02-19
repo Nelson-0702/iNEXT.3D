@@ -284,7 +284,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   }
   
   if(inherits(nT, 'data.frame')) nT = unlist(nT)
-  if(sum(nT < 5) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
+  if(datatype != "abundance" & sum(nT < 5) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
   
   return(list(datatype, data, nT))
 }
