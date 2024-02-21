@@ -273,7 +273,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
     data = as.matrix(data)
     
-    nT = data[1,]
+    if (datatype == "incidence_freq") nT = data[1,]
     
     if (to.datalist == TRUE) {
       datalist <- lapply(1:ncol(data), function(i)  x <- data[,i])

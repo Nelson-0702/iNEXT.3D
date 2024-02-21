@@ -859,7 +859,7 @@ AUCtable_mle <- function(datalist, dij, q = c(0,1,2), tau=NULL, datatype,
   #   tau <- seq(dmin,dmax,length.out = knots)
   # }
   if(is.null(tau)){
-    tau <- seq(0,1,length.out = FDcut_number)
+    # tau <- seq(0,1,length.out = FDcut_number)
     tau <- seq(1e-8,1,length.out = FDcut_number)
   }
   #q_int <- c(0, 1, 2)
