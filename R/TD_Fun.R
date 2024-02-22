@@ -50,6 +50,8 @@ TD.m.est = function(x, m, qs){ ## here q is allowed to be a vector containing no
   if (sum(m < n) != 0) {
     int.m = sort(unique(c(floor(m[m<n]), ceiling(m[m<n]))))
     mRTD = rbind(int.m, sapply(int.m, function(k) RTD(ifi,n,k,qs)))
+    
+    if (0 %in% int.m) mRTD[,mRTD[1,] == 0] = 0
   }
   as.vector(t(sapply(m, Sub))) 
 }
@@ -110,6 +112,8 @@ TD.m.est_inc <- function(y, t_, qs){
   if (sum(t_ < nT) != 0) {
     int.t_ = sort(unique(c(floor(t_[t_<nT]), ceiling(t_[t_<nT]))))
     mRTD_inc = rbind(int.t_, sapply(int.t_, function(k) RTD_inc(iQi,nT,k,qs)))
+    
+    if (0 %in% int.t_) mRTD_inc[,mRTD_inc[1,] == 0] = 0
   }
   as.vector(t(sapply(t_, Sub)))
 }

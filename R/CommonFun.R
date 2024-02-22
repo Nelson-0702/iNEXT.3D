@@ -284,7 +284,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   }
   
   if(inherits(nT, 'data.frame')) nT = unlist(nT)
-  if(datatype != "abundance" & sum(nT < 5) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
+  if(datatype != "abundance" & sum(nT <= 3) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
   
   return(list(datatype, data, nT))
 }
@@ -504,7 +504,7 @@ check.size <- function(data, datatype, size, endpoint, knots) {
         mi <- floor(c(seq(1, ni, length.out = floor(knots[i]/2)), seq(ni+1, endpoint[i], length.out = knots[i]-floor(knots[i]/2))))
       }
       
-      if(sum(mi < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
+      if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
       unique(mi)
     })
     
@@ -527,7 +527,7 @@ check.size <- function(data, datatype, size, endpoint, knots) {
       if ( (sum(size[[i]] == ni) == 0) & (sum(size[[i]] > ni) != 0) & (sum(size[[i]] < ni) != 0) ) 
         mi <- sort(c(ni,size[[i]])) else mi <- sort(size[[i]])
       
-      if(sum(mi < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
+      if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
       unique(mi)
     })
   }
@@ -578,7 +578,7 @@ check.level <- function(data, datatype, base, level) {
     level <- min(level)
   }
   
-  if(base == "size" & sum(level < 1) > 0) stop("Sample size or number of sampling units should be larger than or equal to one.", call. = FALSE)
+  if(base == "size" & sum(level < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
   if(base == "coverage" & sum(level < 0 | level > 1) > 0) stop("The sample coverage values should be between zero and one.", call. = FALSE)  
   
   return(level)

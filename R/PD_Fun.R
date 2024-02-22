@@ -44,6 +44,9 @@ PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
     int.m = sort(unique(c(floor(m[m<nt]), ceiling(m[m<nt]))))
     mRPD = lapply(int.m, function(k) RPD(ai = ai,Lis = Lis,n = nt,m = k,q = q))
     names(mRPD) = int.m
+    
+    if (0 %in% int.m) mRPD[names(mRPD) == 0][[1]] = matrix(0, nrow = nrow(mRPD[names(mRPD) == 0][[1]]),
+                                                           ncol = ncol(mRPD[names(mRPD) == 0][[1]]))
   }
   
   if (cal == 'PD'){

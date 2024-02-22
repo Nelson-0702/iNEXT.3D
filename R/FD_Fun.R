@@ -91,6 +91,8 @@ FD.m.est = function(ai_vi, m, q, nT, ai_vi_MLE){
     if (sum(m < nT) != 0) {
       int.m = sort(unique(c(floor(m[m<nT]), ceiling(m[m<nT]))))
       mRFD = rbind(int.m, sapply(int.m, function(k) RFD(av,nT,k,q,V_bar)))
+      
+      if (0 %in% int.m) mRFD[,mRFD[1,] == 0] = 0
     }
     
     sapply(m, function(mm){
