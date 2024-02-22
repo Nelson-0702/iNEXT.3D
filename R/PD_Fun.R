@@ -407,6 +407,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
     if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC <= cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -426,7 +427,7 @@ invChatPD_abu <- function(x,ai,Lis, q, Cs, n, reft, cal){
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   SC <- Cs
   
   out <- as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft=reft,cal = cal))
@@ -449,6 +450,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
     if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC <= cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -469,7 +471,7 @@ invChatPD_inc <- function(x,ai,Lis, q, Cs, n, reft, cal){
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   
   SC <- Cs
   out <-  as.numeric(PhD.m.est(ai = ai,Lis = Lis,m = mm,q = q,nt = n,reft = reft,cal = cal))

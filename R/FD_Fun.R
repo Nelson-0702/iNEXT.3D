@@ -277,6 +277,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
     if (refC > cvrg) {
       opt <- optimize(f, cvrg = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC <= cvrg) {
       f1 <- sum(data_ == 1)
       f2 <- sum(data_ == 2)
@@ -300,7 +301,7 @@ invChatFD_abu <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   SC <- Cs
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n,ai_vi_MLE = ai_vi_MLE)
   out <- as.vector(out)
@@ -324,6 +325,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
     if (refC > cvrg) {
       opt <- optimize(f, cvrg = cvrg, lower = 0, upper = n)
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC <= cvrg) {
       f1 <- sum(data_ == 1)
       f2 <- sum(data_ == 2)
@@ -348,7 +350,7 @@ invChatFD_inc <- function(ai_vi, data_, q, Cs, tau, ai_vi_MLE){
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   SC <- Cs
   out <- FD.m.est(ai_vi = ai_vi,m = mm,q = q,nT = n,ai_vi_MLE = ai_vi_MLE)
   out <- as.vector(out)

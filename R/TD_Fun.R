@@ -418,6 +418,7 @@ invChat.Ind <- function (x, q, C) {
     }else if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = sum(x))
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC < cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -437,7 +438,7 @@ invChat.Ind <- function (x, q, C) {
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   SC <- C
   # if (sum(round(mm) > 2 * n)>0) 
   #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
@@ -465,6 +466,7 @@ invChat.Sam <- function (x, q, C) {
     }else if (refC > cvrg) {
       opt <- optimize(f, C = cvrg, lower = 0, upper = max(x))
       mm <- opt$minimum
+      if (cvrg == 0) mm = 0
     }else if (refC < cvrg) {
       f1 <- sum(x == 1)
       f2 <- sum(x == 2)
@@ -483,7 +485,7 @@ invChat.Sam <- function (x, q, C) {
     }
     mm
   })
-  mm[mm < 1] <- 1
+  # mm[mm < 1] <- 1
   SC <- C
   # if (sum(round(mm) > 2 * n)>0) 
   #   warning("The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.")
