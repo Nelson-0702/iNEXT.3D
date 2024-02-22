@@ -6,3 +6,5 @@ Publish public version
 # iNEXT.3D 1.0.1
 - Modify errors when incidence raw data is a matrix/data.frame for PD and when phylo tree contains duplicated node labels.
 
+# iNEXT.3D 1.0.2
+- Modify errors when size (or level) is zero.
