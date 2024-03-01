@@ -210,6 +210,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     if (inherits(data, "list")) {
       data = lapply(data, function(i) data.frame(i))
       data2 = lapply(data, function(i) {
+        if (sum(i) == 0) stop("Data values are all zero in some assemblages. Please remove these assemblages.", call. = FALSE)
         i$species = rownames(i)
         return(i) 
       })
@@ -246,8 +247,16 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
         region_names = if (is.null(names(data))) paste0("Assemblage_", 1:length(data)) else names(data)
         
         data2 = lapply(data, function(x) {
-          if (is.null(names(x)) & datatype == 'abundance') names(x) = paste('Species', 1:length(x), sep = '')
-          if (is.null(names(x)) & datatype == 'incidence_freq') names(x) = c('nT', paste('Species', 1:(length(x)-1), sep = ''))
+          
+          if ( (is.null(names(x)) | sum(names(x) == "") > 0) & datatype == 'abundance') {
+            warning('The species names are not provided in data.', call. = FALSE)
+            names(x) = paste('Species', 1:length(x), sep = '')
+          }
+          
+          if ( (is.null(names(x)) | sum(names(x) == "") > 0) & datatype == 'incidence_freq') {
+            warning('The species names are not provided in data.', call. = FALSE)
+            names(x) = c('nT', paste('Species', 1:(length(x)-1), sep = ''))
+          }
           
           x = as.matrix(x)
           x = data.frame('species' = rownames(x), x)
@@ -274,6 +283,9 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     data = as.matrix(data)
     
     if (datatype == "incidence_freq") nT = data[1,]
+    
+    if ( (datatype == "abundance" & sum(colSums(data) == 0) > 0) |
+         (datatype == "incidence_freq" & sum(colSums(data[-1,]) == 0) > 0) ) stop("Data values are all zero in some assemblages. Please remove these assemblages.", call. = FALSE)
     
     if (to.datalist == TRUE) {
       datalist <- lapply(1:ncol(data), function(i)  x <- data[,i])
