@@ -321,6 +321,7 @@ NULL
 #' @importFrom stats sd
 #' @importFrom stats optimize
 #' @importFrom phyclust get.rooted.tree.height
+#' @importFrom grDevices hcl
 #' 
 #' @return a list of three objects: \cr\cr
 #' (1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo3D} for details. \cr\cr
