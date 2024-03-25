@@ -8,3 +8,10 @@ Publish public version
 
 # iNEXT.3D 1.0.2
 - Modify errors when size (or level) is zero.
+
+# iNEXT.3D 1.0.2
+- Modify errors when size (or level) is zero.
+
+# iNEXT 3.0.1
+- Improved color palette generation in `ggiNEXT3D` and `ggObsAsy3D`. This update addresses the limitation of the fixed 8-color palette, enhancing clarity and user experience in data representation.
+
