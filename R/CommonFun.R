@@ -384,10 +384,13 @@ check.dist <- function(data, datatype, distM, threshold) {
 
 check.tree <- function(data, datatype, tree, reftime, nT) {
   if(sum(c(duplicated(tree$tip.label),duplicated(tree$node.label[tree$node.label!=""])))>0)
-    stop("The phylo tree should not contains duplicated tip or node labels, please remove them.", call. = FALSE)
+    stop("The phylo tree should not contain duplicated tip or node labels, please remove them.", call. = FALSE)
   
   # if(sum(duplicated(tree$tip.label))>0)
   #   stop("The phylo tree should not contains duplicated tip labels, please remove them.", call. = FALSE)
+  
+  if(sum(tree$node.label[tree$node.label!=""] %in% tree$tip.label)>0)
+    stop("PDtree$node.label should not contain the same names as PDtree$tip.label, please rename them.", call. = FALSE)
   
   if( is.null(rownames(data)) )
     stop("Row names of data must be the species names that match tip names in tree and thus can not be empty.", call. = FALSE)
