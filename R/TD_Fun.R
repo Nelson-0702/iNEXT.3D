@@ -617,7 +617,7 @@ Diversity_profile <- function(x,q){
   f1 = sum(x==1)
   f2 = sum(x==2)
   
-  if ( !((f1 == 0) | (f2 == 0 & f1 == 1)) ) {
+  # if ( !((f1 == 0) | (f2 == 0 & f1 == 1)) ) {
     
     p1 = ifelse(f2>0,2*f2/((n-1)*f1+2*f2),ifelse(f1>0,2/((n-1)*(f1-1)+2),1))
     sortx = sort(unique(x))
@@ -644,7 +644,7 @@ Diversity_profile <- function(x,q){
       ans[q_part2] <- TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = q[q_part2],f1 = f1,A = p1)
     }
     
-  } else ans = Diversity_profile_MLE(x, q)
+  # } else ans = Diversity_profile_MLE(x, q)
   
   ans
 }
@@ -659,7 +659,7 @@ Diversity_profile.inc <- function(data,q){
   Q2 <- sum(Yi==2)
   Sobs <- length(Yi)
   
-  if ( !((1 == 0) | (Q2 == 0 & Q1 == 1)) ) {
+  # if ( !((1 == 0) | (Q2 == 0 & Q1 == 1)) ) {
     
     if(Q2>0 & Q1>0){
       A <- 2*Q2/((nT-1)*Q1+2*Q2)
@@ -684,7 +684,7 @@ Diversity_profile.inc <- function(data,q){
       qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT))
     }
     
-  } else qD = Diversity_profile_MLE.inc(data, q)
+  # } else qD = Diversity_profile_MLE.inc(data, q)
   
   
   return(qD)

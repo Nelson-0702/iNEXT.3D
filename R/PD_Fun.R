@@ -771,7 +771,7 @@ asymPD <- function(datalist, datatype, phylotr, q,reft, cal,nboot, conf){#change
 
 PhD.q.est = function(ai,Lis, q, nt, reft, cal){
   
-  if ( !((sum(ai == 1) == 0) | (sum(ai == 2) == 0 & sum(ai == 1) == 1)) ) {
+  # if ( !((sum(ai == 1) == 0) | (sum(ai == 2) == 0 & sum(ai == 1) == 1)) ) {
     
     t_bars <- as.numeric(t(ai) %*% Lis/nt)
     S <- length(ai)
@@ -838,7 +838,7 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
       }))
     }
     
-  } else est <- PD.Tprofile(ai, Lis, q = q, reft = reft, cal = cal, nt = nt) %>% t %>% c
+  # } else est <- PD.Tprofile(ai, Lis, q = q, reft = reft, cal = cal, nt = nt) %>% t %>% c
   
   return(est)
 }
