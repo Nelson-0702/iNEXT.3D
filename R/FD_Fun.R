@@ -1009,10 +1009,12 @@ EstiBootComm.Func = function(data, distance, datatype){
   if (datatype=="abundance") {
     C1 = ifelse(f2>0, 1-f1*(n-1)*f1/n/((n-1)*f1+2*f2), 1-f1*(n-1)*(f1-1)/n/((n-1)*(f1-1)+2))
     W <- (1 - C1)/sum(X/n*(1-X/n)^n)
+    if (W == "NaN") W = 0
     Prob.hat.Unse <- rep((1-C1)/f0.hat, f0.hat)
   } else if (datatype=="incidence_freq") {
     C1 = ifelse(f2>0, 1-f1/u*(n-1)*f1/((n-1)*f1+2*f2), 1-f1*(n-1)*(f1-1)/u/((n-1)*(f1-1)+2))
     W <- (1 - C1)/sum(X/u*(1-X/n)^n)
+    if (W == "NaN") W = 0
     Prob.hat.Unse <- rep(u/n*(1-C1)/f0.hat, f0.hat)
   }
   
