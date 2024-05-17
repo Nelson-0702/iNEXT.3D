@@ -20,4 +20,7 @@ Publish public version
 - Recover the asymptotic estimation when sample coverage is one.
 - Add checking machine when PDtree$node.label and PDtree$tip.label have the same names.
 
+# iNEXT.3D 1.0.5
+- Modify error for ObsAsy3D when diversity = "PD".
+
 
