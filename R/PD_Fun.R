@@ -505,7 +505,7 @@ EmpPD <- function(datalist, datatype, phylotr, q, reft, cal, nboot, conf){
       } else if (sum(first.Inode < reft) != 0) {
         emp <- PD.Tprofile(ai = aL$treeNabu$branch.abun,Lis=aL$BLbyT, q=q,reft = reft,cal = cal,nt = n) %>% c()
       } else {
-        TDq = Diversity_profile(x, q)
+        TDq = Diversity_profile_MLE(x, q)
         emp <- sapply(reft, function(i) TDq*ifelse(cal == 'meanPD', 1, i)) %>% t %>% c}
       
       
