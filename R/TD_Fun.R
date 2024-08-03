@@ -638,6 +638,8 @@ Diversity_profile <- function(x,q){
     q_part1 = which(abs(q-round(q))==0)
     if(length(q_part1)>0){
       ans[q_part1] <- sapply(q[q_part1], Sub_q012)
+      
+      if (sum(x == 1) == length(x) & sum(q %in% 2) > 0) ans[which(q==2)] = TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = 1.99,f1 = f1,A = p1)
     }
     q_part2 <- which(!abs(q-round(q))==0)
     if(length(q_part2)>0){
@@ -675,13 +677,22 @@ Diversity_profile.inc <- function(data,q){
     B <- sapply(q,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12)))
     qD <- (U/nT)^(q/(q-1))*(qTDFUN(q,Yi,nT) + B)^(1/(1-q))
     qD[which(q==0)] = Sobs+Q0hat
+    
+    if (sum(Yi == 1) == length(Yi) & sum(q %in% 2) > 0) {
+      for_q2 = 1.99
+      B_forq2 <- sapply(for_q2,function(q) ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12)))
+      qD[which(q==2)] <- (U/nT)^(for_q2/(for_q2-1))*(qTDFUN(for_q2,Yi,nT) + B_forq2)^(1/(1-for_q2))
+    }
+    
     yi <- Yi[Yi>=1 & Yi<=(nT-1)]
     delta <- function(i){
       (yi[i]/nT)*sum(1/c(yi[i]:(nT-1)))
     }
     if(sum(q %in% 1)>0){
       C_ <- ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*(-log(A)-sum(sapply(c(1:(nT-1)),function(r) (1-A)^r/r))))
-      qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT))
+      
+      if (length(yi) != 0) qD[which(q==1)] <- exp((nT/U)*( sum(sapply(c(1:length(yi)),function(i) delta(i))) + C_)+log(U/nT)) else 
+        qD[which(q==1)] <- Diversity_profile_MLE.inc(data, 1)
     }
     
   # } else qD = Diversity_profile_MLE.inc(data, q)
