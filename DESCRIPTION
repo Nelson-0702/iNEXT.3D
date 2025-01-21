@@ -1,7 +1,7 @@
 Package: iNEXT.3D
 Type: Package
 Title: Interpolation and Extrapolation for Three Dimensions of Biodiversity
-Version: 1.0.6
+Version: 1.0.7
 Author: Anne Chao [aut, cre], KaiHsiang Hu [ctb]
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 Authors@R: 

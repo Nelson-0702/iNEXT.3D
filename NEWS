@@ -23,4 +23,5 @@ Publish public version
 # iNEXT.3D 1.0.6
 - Modify error when all values of incidence frequency data are sampling unit (nT) or one.
 
-
+# iNEXT.3D 1.0.7
+- Modify error for "PD" when there is no internode in phylogenetic tree.
