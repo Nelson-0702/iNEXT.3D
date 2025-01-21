@@ -195,8 +195,17 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
       
       ivalue_each<-sapply(inodelist,function(x){offspring(tmp.treeNdata,x,tiponly=T) %>% select(x) %>% max()})
     })
-    inode_x <- rowSums(inode_each)
-    tmp.inode<-data.frame(label=names(inode_x),branch.abun=inode_x)
+    
+    if (is.matrix(inode_each)) {
+      inode_x <- rowSums(inode_each)
+      tmp.inode<-data.frame(label=names(inode_x),branch.abun=inode_x)
+    }    
+    
+    if (!is.matrix(inode_each)) {
+      inode_x <- sum(inode_each)
+      tmp.inode<-data.frame(label=treeNdata$label[treeNdata$tgroup == "Root"],branch.abun=inode_x)
+    }    
+    
     
     tmp.tip<-tmp.tip %>% rename(branch.abun=x)
     tmp_all<-rbind(tmp.tip,tmp.inode)
