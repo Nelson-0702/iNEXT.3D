@@ -140,6 +140,8 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
     else if(datatype=="incidence_raw"){
       sp = unique(rownames(data)[rowSums(data)>0])
       subdata = data[sp, ]
+      
+      if (!inherits(subdata, c("matrix", "data.frame"))) subdata = matrix(subdata, nrow = 1) %>% set_rownames(sp)
     }
     dtip <- phylo$tip.label[-match(sp,phylo$tip.label)]
     subtree = ape::drop.tip(phylo, dtip)
@@ -182,7 +184,8 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
     y <- y[-1]
     names(y) <- labels
     tmp.tip<-data.frame(label=names(y),x=y,stringsAsFactors=F)
-    treeNdata<-full_join(phylo.t.1, tmp.tip, by="label")
+    if (length(y) != 0) treeNdata<-full_join(phylo.t.1, tmp.tip, by="label") else 
+      treeNdata<-full_join(phylo.t.1, data.frame(label=as.character(tmp.tip$label),x=y,stringsAsFactors=F), by="label")
     
     inode_each<-apply(subdata,2,function(i){
       tmp<-data.frame(label=labels,x=i)
@@ -196,12 +199,12 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
       ivalue_each<-sapply(inodelist,function(x){offspring(tmp.treeNdata,x,tiponly=T) %>% select(x) %>% max()})
     })
     
-    if (is.matrix(inode_each)) {
+    if (inherits(inode_each, c("matrix", "data.frame"))) {
       inode_x <- rowSums(inode_each)
       tmp.inode<-data.frame(label=names(inode_x),branch.abun=inode_x)
     }    
     
-    if (!is.matrix(inode_each)) {
+    if (!inherits(inode_each, c("matrix", "data.frame"))) {
       inode_x <- sum(inode_each)
       tmp.inode<-data.frame(label=treeNdata$label[treeNdata$tgroup == "Root"],branch.abun=inode_x)
     }    
@@ -210,6 +213,8 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
     tmp.tip<-tmp.tip %>% rename(branch.abun=x)
     tmp_all<-rbind(tmp.tip,tmp.inode)
     treeNdata<-full_join(treeNdata, tmp_all, by="label") %>% select(-x,-edgelengthv,-node.age)
+    
+    treeNdata$branch.abun[is.na(treeNdata$branch.abun)] = 0
     
     phyL<-sapply(refT,function(y) phyL_Abu_T_(treeNdata,y,rootExtend,treeH))
     colnames(phyL)<-paste("T",refT,sep="")

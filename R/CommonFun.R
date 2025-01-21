@@ -17,7 +17,7 @@ as.incfreq <- function(data, nT = NULL) {
     if(ncol(data) != sum(nT)) stop("Number of columns does not euqal to the sum of nT (number of sampling units for each assemblage).", call. = FALSE)
     ntmp <- 0
     for(i in 1:length(nT)){
-      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i])]
+      mydata[[i]] <- data[,(ntmp+1):(ntmp+nT[i]),drop=FALSE]
       ntmp <- ntmp+nT[i]
     }
     if(is.null(names(nT))) {
@@ -33,7 +33,10 @@ as.incfreq <- function(data, nT = NULL) {
     data <- lapply(data, function(i) {
       if (sum(i > 1) != 0) stop("The data for datatype = 'incidence_raw' can only contain values zero (undetected) or one (detected). Please transform values to zero or one.", call. = FALSE)
       c('nT' = ncol(i), rowSums(i))}
-      )
+      
+      ) else if (inherits(data, "integer")) 
+        data <- list("Assemblage1" = c('nT' = length(data), sum(data)))
+        
   if (length(data) == 1) data = data[[1]]
   return(data)
 }
