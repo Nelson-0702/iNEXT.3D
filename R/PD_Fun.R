@@ -1,5 +1,9 @@
 PhD.m.est = function(ai,Lis, m, q, nt, reft, cal){
   t_bars <- as.numeric(t(ai) %*% Lis/nt)
+  
+  Lis = Lis[ai > 0,,drop = FALSE]
+  ai = ai[ai > 0]
+  
   if(sum(m>nt)>0){
     #Extrapolation
     RPD_m <- RPD(ai,Lis,nt,nt-1,q)
