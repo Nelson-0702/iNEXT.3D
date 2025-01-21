@@ -141,7 +141,10 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
       sp = unique(rownames(data)[rowSums(data)>0])
       subdata = data[sp, ]
       
-      if (!inherits(subdata, c("matrix", "data.frame"))) subdata = matrix(subdata, nrow = 1) %>% set_rownames(sp)
+      if (!inherits(subdata, c("matrix", "data.frame"))) {
+        subdata = matrix(subdata, nrow = 1)
+        rownames(subdata) = sp
+      }
     }
     dtip <- phylo$tip.label[-match(sp,phylo$tip.label)]
     subtree = ape::drop.tip(phylo, dtip)
