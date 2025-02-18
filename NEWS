@@ -25,3 +25,8 @@ Publish public version
 
 # iNEXT.3D 1.0.7
 - Modify error for "PD" when there is no internode in phylogenetic tree.
+
+# iNEXT.3D 1.0.8
+- Remove information messages in PD from the package "tidytree".
+
+
