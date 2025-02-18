@@ -91,7 +91,7 @@ phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T
                                   branch.height=case_when(tgroup=="Tip" ~ branch.length,
                                                           tgroup=="Root"~treeH,
                                                           TRUE ~branch.length+node.age )
-    ) %>% select(-label) %>% rename(label=newlabel)
+    ) %>% as_tibble %>% select(-label) %>% rename(label=newlabel)
     
     tmp<-tibble(label=names(subdata),x=subdata)
     treeNdata<-full_join(phylo.t.1, tmp, by="label")
@@ -100,7 +100,10 @@ phyBranchAL_Abu <- function(phylo,data, datatype="abundance",refT=0,rootExtend=T
     
     class(treeNdata) = c("tbl_tree", class(treeNdata))  ## tidytree version 0.4.5
     
-    inode_x<-sapply(inodelist,function(x){offspring(treeNdata,x,tiponly=T) %>% select(x) %>% sum()})
+    inode_x<-sapply(inodelist,function(x){
+      offtree = offspring(treeNdata,x,tiponly=T)
+      offtree %>% as_tibble %>% select(x) %>% sum()
+      })
     
     tmp_all<-bind_rows(tibble(label=names(subdata),branch.abun=subdata),tibble(label=names(inode_x),branch.abun=inode_x))
     treeNdata<-full_join(treeNdata, tmp_all, by="label") %>% select(-x,-edgelengthv,-node.age)
@@ -179,7 +182,7 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
                                   branch.height=case_when(tgroup=="Tip" ~ branch.length,
                                                           tgroup=="Root"~treeH,
                                                           TRUE ~branch.length+node.age )
-    ) %>% select(-label) %>% rename(label=newlabel)
+    ) %>% as_tibble %>% select(-label) %>% rename(label=newlabel)
     
     
     y <- as.incfreq(subdata)
@@ -199,7 +202,10 @@ phyBranchAL_Inc<-function(phylo,data, datatype="incidence_raw",refT=0,rootExtend
       
       class(tmp.treeNdata) = c("tbl_tree", class(tmp.treeNdata))  ## tidytree version 0.4.5
       
-      ivalue_each<-sapply(inodelist,function(x){offspring(tmp.treeNdata,x,tiponly=T) %>% select(x) %>% max()})
+      ivalue_each<-sapply(inodelist,function(x){
+        offtree = offspring(tmp.treeNdata,x,tiponly=T) 
+        offtree %>% as_tibble %>% select(x) %>% max()
+        })
     })
     
     if (inherits(inode_each, c("matrix", "data.frame"))) {
@@ -242,12 +248,12 @@ phylo2phytree<-function(phylo){
   phylo.t <- tidytree::as_tibble(phylo)
   
   ###leaves
-  phylo.t.leaves<-phylo.t %>% filter(node<phylo.root)
+  phylo.t.leaves<-phylo.t %>% as_tibble %>% filter(node<phylo.root)
   data.leaves<-phylo.t.leaves$branch.length
   names(data.leaves) <- phylo.t.leaves$label
   
   ###nodes
-  phylo.t.nodes<-phylo.t %>% filter(node>=phylo.root)
+  phylo.t.nodes<-phylo.t %>% as_tibble %>% filter(node>=phylo.root)
   phylo.t.nodes<-phylo.t.nodes %>% mutate(Inode=node-phylo.root)
   phylo.t.nodes<-phylo.t.nodes %>% mutate(newlable=ifelse(Inode==0,"Root",paste("I",Inode,sep="")))
   phylo.t.nodes<-phylo.t.nodes %>% mutate(label.new=ifelse(is.na(label)|label=="",newlable,label))
@@ -333,8 +339,10 @@ phy_BranchAL_IncBootP<-function(phylo,pdata,refT=0,rootExtend=T,remove0=T){
   class(treeNdata) = c("tbl_tree", class(treeNdata))  ## tidytree version 0.4.5
   
   inode_x<-sapply(inodelist,function(x){
-    tmp<-offspring(treeNdata,x,tiponly=T) %>% mutate(y=1-x) %>% select (y) %>% prod()
-    pi<-1-tmp
+    offtree <- offspring(treeNdata,x,tiponly=T) 
+    offtree_unpi = offtree %>% as_tibble %>% mutate(y=1-x) %>% select (y) %>% prod()
+    
+    pi <- 1 - offtree_unpi
     return(pi)
   })
   
