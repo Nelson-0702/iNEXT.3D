@@ -405,7 +405,7 @@ check.tree <- function(data, datatype, tree, reftime, nT) {
     stop("Data and tree tip label contain unmatched species", call. = FALSE)
   
   tip <- tree$tip.label[-match(pool.name, tree$tip.label)]
-  mytree <- drop.tip(tree, tip)
+  mytree <- ape::drop.tip(tree, tip)
   
   # if (is.null(reftime)) reftime <- ifelse(is.ultrametric(mytree), get.rooted.tree.height(mytree), max(ape::node.depth.edgelength(mytree))) else 
   #   reftime <- reftime
