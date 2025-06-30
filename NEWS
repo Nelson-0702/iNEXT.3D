@@ -29,4 +29,5 @@ Publish public version
 # iNEXT.3D 1.0.8
 - Remove information messages in PD from the package "tidytree".
 
-
+# iNEXT.3D 1.0.9
+- Avoid overflow in the asymptotic estimator when n is large.
