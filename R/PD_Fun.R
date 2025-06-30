@@ -802,7 +802,7 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
         ans <- PD_obs+PDq0(nt,f1,f2,g1,g2)
       }else if(q==1){
         
-        if(is.infinite((1-A)^(-nt+1))){
+        if(is.infinite((1-A)^(1-nt))){
           h2 = 0
         }else{
           h2 <- PDq1_2(nt,g1,A)

@@ -628,7 +628,7 @@ Diversity_profile <- function(x,q){
       }else if(q==1){
         A <- sum(tab*sortx/n*(digamma(n)-digamma(sortx)))
         
-        if(is.infinite((1-A)^(-n+1))){
+        if(is.infinite((1-A)^(1-n))){
           B <- 0
         }else{
           B <- TD1_2nd(n,f1,f2)

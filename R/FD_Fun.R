@@ -506,7 +506,7 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
       ans <- FD_obs+FDq0(nT,f1,f2,h1,h2,A)
     }else if(q==1){
       
-      if(is.infinite((1-A)^(-n+1))){
+      if(is.infinite((1-A)^(1-nT))){
         h_est_2 = 0
       }else{
          h_est_2 <- FDq1_1(nT,h1,A)
