@@ -627,7 +627,13 @@ Diversity_profile <- function(x,q){
         length(x) + (n-1)/n*ifelse(f2>0, f1^2/2/f2, f1*(f1-1)/2)
       }else if(q==1){
         A <- sum(tab*sortx/n*(digamma(n)-digamma(sortx)))
-        B <- TD1_2nd(n,f1,f2)
+        
+        if(is.infinite((1-A)^(-n+1))){
+          B <- 0
+        }else{
+          B <- TD1_2nd(n,f1,f2)
+        }
+
         exp(A+B)
       }else if(abs(q-round(q))==0){
         A <- sum(tab[sortx>=q]*exp(lchoose(sortx[sortx>=q],q)-lchoose(n,q)))
@@ -638,6 +644,8 @@ Diversity_profile <- function(x,q){
     q_part1 = which(abs(q-round(q))==0)
     if(length(q_part1)>0){
       ans[q_part1] <- sapply(q[q_part1], Sub_q012)
+      
+      
       
       if (sum(x == 1) == length(x) & sum(q %in% 2) > 0) ans[which(q==2)] = TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = 1.99,f1 = f1,A = p1)
     }

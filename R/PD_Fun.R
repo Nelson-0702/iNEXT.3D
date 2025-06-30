@@ -801,7 +801,14 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
       if(q==0){
         ans <- PD_obs+PDq0(nt,f1,f2,g1,g2)
       }else if(q==1){
-        h2 <- PDq1_2(nt,g1,A)
+        
+        if(is.infinite((1-A)^(-nt+1))){
+          h2 = 0
+        }else{
+          h2 <- PDq1_2(nt,g1,A)
+        }
+        
+        
         h1 <- sum(Li*h1_pt2)
         h <- h1+h2
         ans <- t_bar*exp(h/t_bar)

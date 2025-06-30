@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-#include <cmath>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -25,18 +24,8 @@ double PDq1_2(double n, double g1, double A) {
       q1 = q1 + pow((1-A),r)/r;
     }
     
-    double pow_term = pow(1 - A, (-n + 1));
-    double round_term = round((-log(A) - q1) * pow(10, 12)) / pow(10, 12);
     
-    
-    if(std::isinf(pow_term) && round_term == 0){
-      
-      h2 = 0;
-    }else{
-      h2 = (g1 / n) * pow_term * round_term;
-    }
-    
-
+    h2 = (g1 / n) * pow(1 - A, (-n + 1)) * round((-log(A) - q1) * pow(10, 12)) / pow(10, 12);
   }
   return(h2);
 }
@@ -63,15 +52,9 @@ double PDq_2nd(double n, double g1, double A, double q) {
       //Rcpp::Rcout << "qq: " << qq << std::endl;
     }
     
-    double pow_term = (pow(1-A,(-n+1)));
-    double round_term = round((pow(A,q-1)-qq)*pow(10,12))/pow(10,12);
-    
-    
-    if(std::isinf(pow_term) && round_term == 0){
-      ans = 0;
-    }else{
-      ans = (g1 / n) * pow_term * round_term;
-    }
+
+  ans = (g1 / n) * (pow(1-A,(-n+1))) * round((pow(A,q-1)-qq)*pow(10,12))/pow(10,12);
+  
     
     
   }
