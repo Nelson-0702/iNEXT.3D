@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include <cmath>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -19,10 +20,23 @@ double PDq1_2(double n, double g1, double A) {
   if(A==1||g1==0){
     h2 = 0;
   }else{
+    
     for(int r = 1; r < n; r++){
       q1 = q1 + pow((1-A),r)/r;
     }
-    h2 = (g1/n)*(pow(1-A,(-n+1)))*round((-log(A)-q1)*pow(10,12))/pow(10,12);
+    
+    double pow_term = pow(1 - A, (-n + 1));
+    double round_term = round((-log(A) - q1) * pow(10, 12)) / pow(10, 12);
+    
+    
+    if(std::isinf(pow_term) && round_term == 0){
+      
+      h2 = 0;
+    }else{
+      h2 = (g1 / n) * pow_term * round_term;
+    }
+    
+
   }
   return(h2);
 }
@@ -48,7 +62,18 @@ double PDq_2nd(double n, double g1, double A, double q) {
       qq = qq + Rf_choose(q-1,r)*pow((A-1),r);
       //Rcpp::Rcout << "qq: " << qq << std::endl;
     }
-    ans = (g1/n)*(pow(1-A,(-n+1)))*round((pow(A,q-1)-qq)*pow(10,12))/pow(10,12);
+    
+    double pow_term = (pow(1-A,(-n+1)));
+    double round_term = round((pow(A,q-1)-qq)*pow(10,12))/pow(10,12);
+    
+    
+    if(std::isinf(pow_term) && round_term == 0){
+      ans = 0;
+    }else{
+      ans = (g1 / n) * pow_term * round_term;
+    }
+    
+    
   }
   return(ans);
 }

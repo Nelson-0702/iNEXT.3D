@@ -12,7 +12,11 @@ Authors@R:
     person("KaiHsiang", 
            "Hu", 
            role = "ctb",
-           email = "river19951224@gmail.com"))
+           email = "river19951224@gmail.com"),
+    person("PoYen", 
+           "Chuang", 
+           role = "ctb",
+           email = "zerind0970983096@gmail.com"))
 URL: https://sites.google.com/view/chao-lab-website/software/inext-3d
 Description: Biodiversity is a multifaceted concept covering different levels of organization from
             genes to ecosystems. 'iNEXT.3D' extends 'iNEXT' to include three dimensions (3D) 

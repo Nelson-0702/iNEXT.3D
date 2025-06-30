@@ -1,5 +1,6 @@
 
 #include <Rcpp.h>
+#include <cmath>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -76,15 +77,27 @@ double FDq0(double n, double f1, double f2, double h1,  double h2, double A) {
 }
 // [[Rcpp::export]]
 double FDq1_1(double n, double h1, double A) {
-  double q1 = 0;
-  double h_est_2 = 0;
+    double q1 = 0;
+    double h_est_2 = 0;
+  
   if(A==1){
     h_est_2 = 0;
   }else{
     for(int r = 1; r < n; r++){
       q1 = q1 + pow((1-A),r)/r;
     }
-    h_est_2 = (h1/n)*(pow(1-A,(-n+1)))*round((-log(A)-q1)*pow(10,12))/pow(10,12);
+    
+    double pow_term = pow(1 - A, (-n + 1));
+    double round_term = round((-log(A) - q1) * pow(10, 12)) / pow(10, 12);
+
+    
+    if(std::isinf(pow_term) && round_term == 0){
+    
+      h_est_2 = 0;
+    }else{
+      h_est_2 = (h1 / n) * pow_term * round_term;
+    }
+    
   }
   return(h_est_2);
 }
