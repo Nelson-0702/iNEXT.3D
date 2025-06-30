@@ -48,7 +48,7 @@ Suggests: testthat,
     ggthemes
 BugReports: https://github.com/AnneChao/iNEXT.3D/issues
 LazyLoad: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 ByteCompile: true
 LinkingTo: Rcpp
