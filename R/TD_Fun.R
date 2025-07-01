@@ -686,7 +686,7 @@ Diversity_profile.inc <- function(data,q){
     Q0hat <- ifelse(Q2 == 0, (nT - 1) / nT * Q1 * (Q1 - 1) / 2, (nT - 1) / nT * Q1 ^ 2/ 2 / Q2)
     B <- sapply(q,function(q)  
       
-    if(is.infinite((1-A)^(1-n))){
+    if(is.infinite((1-A)^(1-nT))){
      0
     }else{
      ifelse(A==1,0,(Q1/nT)*(1-A)^(-nT+1)*round((A^(q-1)-sum(sapply(c(0:(nT-1)),function(r) choose(q-1,r)*(A-1)^r))), 12))
