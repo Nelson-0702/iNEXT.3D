@@ -509,8 +509,9 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
       if(is.infinite((1-A)^(1-nT))){
         h_est_2 = 0
       }else{
-         h_est_2 <- FDq1_1(nT,h1,A)
+        h_est_2 <- FDq1_1(nT,h1,A)
       }
+      
       h_est_1 <- av %>% filter(ai<=(nT-1)) %>% mutate(diga = digamma(nT)-digamma(ai)) %>%
         apply(., 1, prod) %>% sum(.)/nT
       ans <- V_bar*exp((h_est_1+h_est_2)/V_bar)
@@ -519,6 +520,13 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
     }else{
       k <- 0:(nT-1)
       a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
+      
+      if(is.infinite((1-A)^(1-nT))){
+        b <- 0
+      }else{
+        b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(round(A^(q-1)-sum(choose(q-1,k)*(A-1)^k),12)))
+      }
+      
       b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(round(A^(q-1)-sum(choose(q-1,k)*(A-1)^k),12)))
       ans <- ((a+b)/(V_bar^q))^(1/(1-q))
     }

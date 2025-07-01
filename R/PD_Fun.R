@@ -820,7 +820,14 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
         k <- 0:(nt-1)
         deltas <- as.numeric(deltas_pt2 %*% Li)
         a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
-        b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
+        
+        if(is.infinite((1-A)^(1-nt))){
+          b = 0
+        }else{
+          b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
+        }
+        
+        #b <- ifelse(g1==0|A==1,0,(g1*((1-A)^(1-nt))/nt)*(A^(q-1)-round(sum(choose(q-1,k)*(A-1)^k), 12)))
         ans <- ((a+b)/(t_bar^q))^(1/(1-q))
         # timeb <- Sys.time()
         # print(timeb-timea)
