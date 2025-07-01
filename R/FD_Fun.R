@@ -527,7 +527,7 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
         b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(round(A^(q-1)-sum(choose(q-1,k)*(A-1)^k),12)))
       }
       
-      b <- ifelse(h1==0|A==1,0,(h1*((1-A)^(1-nT))/nT)*(round(A^(q-1)-sum(choose(q-1,k)*(A-1)^k),12)))
+     
       ans <- ((a+b)/(V_bar^q))^(1/(1-q))
     }
     return(ans)
