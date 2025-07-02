@@ -31,3 +31,6 @@ Publish public version
 
 # iNEXT.3D 1.0.9
 - Avoid overflow in the asymptotic estimator when n is large.
+
+# iNEXT.3D 1.0.10
+- Corrected errors in the vignette documentation.
