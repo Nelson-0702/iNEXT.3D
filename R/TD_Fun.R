@@ -648,7 +648,8 @@ Diversity_profile <- function(x,q){
       
       
       if (sum(x == 1) == length(x) & sum(q %in% 2) > 0){
-        ans[which(q==2)] = TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = 1.99,f1 = f1,A = p1)
+        # ans[which(q==2)] = TDq(ifi = cbind(i = sortx, fi = tab),n = n,qs = 1.99,f1 = f1,A = p1)
+        ans[which(q==2)] = Diversity_profile_MLE(x, 2)
       } 
     }
     q_part2 <- which(!abs(q-round(q))==0)

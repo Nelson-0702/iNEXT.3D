@@ -517,6 +517,8 @@ FD_est = function(ai_vi, q, nT, ai_vi_MLE){ # ai_vi is array containing two elem
       ans <- V_bar*exp((h_est_1+h_est_2)/V_bar)
     }else if(q==2){
       ans <- FDq2(as.matrix(avtab),nT)*V_bar^2
+      
+      if(nrow(avtab)==1 & avtab[1,1]==1) ans = 1 / sum(avtab[,3] * avtab[,2] * (avtab[,1]/nT)^2) * V_bar^2
     }else{
       k <- 0:(nT-1)
       a <- (choose(q-1,k)*(-1)^k*deltas) %>% sum
@@ -1023,6 +1025,7 @@ EstiBootComm.Func = function(data, distance, datatype){
   }
   distance = as.matrix(distance)
   dij = distance[data!=0, data!=0]
+  if (class(dij)[1] == "numeric"){dij = as.matrix(dij)}
   
   X = data[data>0]
   f1 <- sum(X == 1) ; f2 <- sum(X == 2)

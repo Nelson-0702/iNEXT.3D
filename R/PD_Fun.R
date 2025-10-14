@@ -815,6 +815,7 @@ PhD.q.est = function(ai,Lis, q, nt, reft, cal){
       }else if(q==2){
         #ans <- PDq2(as.matrix(tmpaL),nt,t_bar)
         ans <- t_bar^2/sum(Li*q2_pt2)
+        if (ans == Inf) ans <- t_bar^2/sum(Li*unlist(ai^2/nt^2))
       }else{
         # timea <- Sys.time()
         k <- 0:(nt-1)
