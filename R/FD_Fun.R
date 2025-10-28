@@ -175,7 +175,7 @@ iNextFD = function(datalist, dij, q = c(0,1,2), datatype, tau, nboot, conf = 0.9
         ses <- sapply(1:nboot, function(B){
           Boot.X <- c(nT,rbinom(n = p_hat,size = nT,prob = p_hat))
           
-          while(sum(Boots.X[-1]) == 0) Boot.X <- c(nT,rbinom(n = p_hat, size = nT, prob = p_hat)) # 20251028
+          while(sum(Boot.X[-1]) == 0) Boot.X <- c(nT,rbinom(n = p_hat, size = nT, prob = p_hat)) # 20251028
           
           Boot_aivi <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype, integer = TRUE)
           Boot_aivi_MLE <- data_transform(data = Boot.X,dij = dij_boot,tau = tau,datatype = datatype)
