@@ -341,6 +341,13 @@ check.dist <- function(data, datatype, distM, threshold) {
   
   distM <- distM[order_sp, order_sp]
   distM <- distM[rowSums(data)>0, rowSums(data)>0]
+  
+  if(is.numeric(distM)) {
+    distM <-  as.matrix(distM)
+    colnames(distM) = rownames(data)[rowSums(data)>0]
+    rownames(distM) = rownames(data)[rowSums(data)>0]
+    }
+  
   data <- data[rowSums(data)>0, , drop=FALSE]
   
   if(datatype == 'incidence_freq'){
