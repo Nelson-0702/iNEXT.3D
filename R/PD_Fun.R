@@ -228,6 +228,10 @@ inextPD = function(datalist, datatype, phylotr, q,reft, m, cal, nboot, conf=0.95
         colnames(Li_b) <- refinfo
         f0 <- Boots$f0
         tgroup_B <- c(rep("Tip",nrow(x)+f0),rep("Inode",nrow(Li_b)-nrow(x)-f0))
+        
+        tmp <- which(colSums(Boots$boot_data) == n | colSums(Boots$boot_data[tgroup_B == "Tip",, drop = FALSE]) == 0)  # 20251028
+        if(length(tmp) > 0) {Boots$boot_data  <- Boots$boot_data[,-tmp]; nboot = ncol(Boots$boot_data)}                # 20251028
+        
         if(unconditional_var){
           ses <- sapply(1:nboot, function(B){
             # atime <- Sys.time()
