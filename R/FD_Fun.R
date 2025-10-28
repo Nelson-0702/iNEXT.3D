@@ -1,5 +1,6 @@
 data_transform <- function(data, dij, tau, datatype, integer = FALSE, truncate = TRUE, filt_zero = TRUE){
   if(datatype == 'abundance'){
+  dij <- as.matrix(dij)
     if (filt_zero) {
       dij <- dij[data>0,data>0]
       data <- data[data>0] 
@@ -25,6 +26,7 @@ data_transform <- function(data, dij, tau, datatype, integer = FALSE, truncate =
   }else if (datatype == 'incidence_freq'){
     nT = data[1]
     data <- data[-1]
+    dij <- as.matrix(dij)
     if (filt_zero) {
       dij <- dij[data>0,data>0]
       data <- data[data>0]
