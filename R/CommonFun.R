@@ -171,7 +171,7 @@ print.iNEXT3D <- function(x, ...){
 # @return a list of datatype, matrix data, and nT
 # @export
 
-check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.inci = TRUE) {
+check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.inci = TRUE, empirical = FALSE) {
   
   if(datatype == "incidence") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
   # if(datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.") #datatype = "incidence_freq" or   
@@ -212,6 +212,11 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
     if (inherits(data, "list")) {
       data = lapply(data, function(i) data.frame(i))
+
+      
+      if ( sum(sapply(data, function(y) sum(rowSums(y) > 0)) < 5) > 0 & !empirical) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five.
+", call. = FALSE)
+      
       data2 = lapply(data, function(i) {
         if (sum(i) == 0) stop("Data values are all zero in some assemblages. Please remove these assemblages.", call. = FALSE)
         i$species = rownames(i)
@@ -287,8 +292,12 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
     if (datatype == "incidence_freq") nT = data[1,]
     
+    if ( (datatype == "abundance" & sum(colSums(data > 0) < 5) > 0 ) |
+         (datatype == "incidence_freq" & sum(colSums(data[-1,,drop=FALSE] > 0) < 5) > 0 ) & !empirical ) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five.
+", call. = FALSE)
+    
     if ( (datatype == "abundance" & sum(colSums(data) == 0) > 0) |
-         (datatype == "incidence_freq" & sum(colSums(data[-1,,drop=FALSE]) == 0) > 0) ) stop("Data values are all zero in some assemblages. Please remove these assemblages.", call. = FALSE)
+         (datatype == "incidence_freq" & sum(colSums(data[-1,,drop=FALSE]) == 0) > 0)) stop("Data values are all zero in some assemblages. Please remove these assemblages.", call. = FALSE)
     
     if (to.datalist == TRUE) {
       datalist <- lapply(1:ncol(data), function(i)  x <- data[,i])
