@@ -39,4 +39,4 @@ Publish public version
 - Fix the Nan in the one species case.
 
 # iNEXT.3D 1.0.12
-- Fix bootstrap error for small species numbers.
+- Filter the sparse species dataset.
