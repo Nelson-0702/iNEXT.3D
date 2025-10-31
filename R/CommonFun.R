@@ -311,7 +311,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   }
   
   if(inherits(nT, 'data.frame')) nT = unlist(nT)
-  if(datatype != "abundance" & sum(nT <= 3) != 0 & !empirical) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
+  if(datatype != "abundance" & sum(nT <= 3) != 0 & !empirical) stop("The number of sampling units in some assemblages is too small. Please provide additional sampling unit data.", call. = FALSE)
   
   return(list(datatype, data, nT))
 }
