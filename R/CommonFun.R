@@ -213,8 +213,9 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     if (inherits(data, "list")) {
       data = lapply(data, function(i) data.frame(i))
 
+      # 20251028
       
-      if ( sum(sapply(data, function(y) sum(rowSums(y) > 0)) < 5) > 0 & !empirical) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five.
+      if ( sum(sapply(data, function(y) sum(rowSums(y) > 0)) < 5) > 0 & !empirical) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five. 
 ", call. = FALSE)
       
       data2 = lapply(data, function(i) {
@@ -292,8 +293,10 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
     
     if (datatype == "incidence_freq") nT = data[1,]
     
-    if ( (datatype == "abundance" & sum(colSums(data > 0) < 5) > 0 ) |
-         (datatype == "incidence_freq" & sum(colSums(data[-1,,drop=FALSE] > 0) < 5) > 0 ) & !empirical ) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five.
+    # 20251028
+    
+    if ( ((datatype == "abundance" & sum(colSums(data > 0) < 5) > 0 ) |
+         (datatype == "incidence_freq" & sum(colSums(data[-1,,drop=FALSE] > 0) < 5) > 0 )& !empirical)  ) stop("To ensure reliable results, iNEXT.3D requires sufficient data; the number of observed species should be at least five.
 ", call. = FALSE)
     
     if ( (datatype == "abundance" & sum(colSums(data) == 0) > 0) |
@@ -308,7 +311,7 @@ check.datatype <- function(data, datatype, nT = nT, to.datalist = FALSE, raw.to.
   }
   
   if(inherits(nT, 'data.frame')) nT = unlist(nT)
-  if(datatype != "abundance" & sum(nT <= 3) != 0) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
+  if(datatype != "abundance" & sum(nT <= 3) != 0 & !empirical) stop("Number of sampling units of some assemblages is too less. Please add more sampling units data.", call. = FALSE)
   
   return(list(datatype, data, nT))
 }

@@ -114,7 +114,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
     # if (datatype == "incidence_freq") stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
     if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
-    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F, empirical = TRUE)
+    checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F, empirical = TRUE)   # 20251028
     datatype = checkdatatype[[1]]
     data = checkdatatype[[2]]
     nT = checkdatatype[[3]]
@@ -151,7 +151,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
   
   if (diversity == 'FD' & FDtype == 'tau_values') {
     
-    checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)
+    checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)  # 20251028
     datatype = checkdatatype[[1]]
     data = checkdatatype[[2]]
     
@@ -221,7 +221,7 @@ DataInfo3D <- function(data, diversity = 'TD', datatype = "abundance", nT = NULL
   
   if (diversity == 'FD' & FDtype == 'AUC') {
     
-    checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)
+    checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)  # 20251028
     datatype = checkdatatype[[1]]
     data = checkdatatype[[2]]
     
@@ -420,7 +420,7 @@ iNEXT3D <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance"
     data.original = data
     datatype.original = datatype
     
-    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE)
+    checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE) 
     datatype = checkdatatype[[1]]
     data = checkdatatype[[2]]
     
@@ -1460,6 +1460,9 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
   
   if (diversity == "TD") {
+    
+    # 20251028
+    
     if ("Asymptotic" %in% method) checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE) else
       checkdatatype = check.datatype(data, datatype, nT = nT, to.datalist = TRUE, empirical = TRUE)
     
@@ -1487,6 +1490,7 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
     #   stop("The diversity = 'PD' can only accept 'datatype = incidence_raw'.")
     if (datatype == "incidence_freq") stop("iNEXT.3D can only accept 'datatype = incidence_raw'.")
     
+    # 20251028
     
     if ("Asymptotic" %in% method) checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F) else
       checkdatatype = check.datatype(data, datatype, nT = nT, raw.to.inci = F, empirical = TRUE)
@@ -1526,6 +1530,8 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
   
   if (diversity == "FD" & FDtype == "tau_values") {
     
+    # 20251028
+    
     if ("Asymptotic" %in% method) checkdatatype = check.datatype(data, datatype, nT = nT) else
       checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)
     
@@ -1557,6 +1563,8 @@ ObsAsy3D <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abu
   }
   
   if (diversity == "FD" & FDtype == "AUC") {
+    
+    # 20251028
     
     if ("Asymptotic" %in% method) checkdatatype = check.datatype(data, datatype, nT = nT) else
       checkdatatype = check.datatype(data, datatype, nT = nT, empirical = TRUE)
